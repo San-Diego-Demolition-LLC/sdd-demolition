@@ -595,12 +595,14 @@ function openEditCustomer(id){
   const pm = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
   const nameParts = (pm.name||'').split(' ');
 
-  // ── STEP 1: Company info ─────────────────────────────────────────────
+  // Fill step 1 fields
   g('nc_company', c.name);
   g('nc_phone', pm.phone||c.phone||'');
   g('nc_email', pm.email||'');
   g('nc_fname', nameParts[0]||'');
   g('nc_lname', nameParts.slice(1).join(' ')||'');
+
+  // Address
   const addrParts = (c.address||'').split(',');
   const streetParts = (addrParts[0]||'').trim().split(' ');
   g('nc_snum', streetParts[0]||'');
@@ -611,17 +613,18 @@ function openEditCustomer(id){
   if(streetTypes.includes(lastWord)){ stype=lastWord; sname=streetWords.slice(0,-1).join(' '); }
   else { sname=streetWords.join(' '); }
   g('nc_sname', sname);
-  const stEl = document.getElementById('nc_stype'); if(stEl) stEl.value=stype;
+  const stEl=document.getElementById('nc_stype'); if(stEl) stEl.value=stype;
   const cityStateZip = addrParts.slice(1).join(',').trim();
   const cityMatch = cityStateZip.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/);
   if(cityMatch){
     g('nc_city', (cityMatch[1]||'').trim());
-    const stEl2 = document.getElementById('nc_state'); if(stEl2) stEl2.value=cityMatch[2]||'CA';
+    const st2=document.getElementById('nc_state'); if(st2) st2.value=cityMatch[2]||'CA';
     g('nc_zip', cityMatch[3]||'');
   } else {
-    const cityParts = (c.city||'').split(',');
-    g('nc_city', (cityParts[0]||'').trim());
+    g('nc_city', (c.city||'').split(',')[0].trim());
   }
+
+  // Type radio
   const commEl=document.getElementById('nc_commercial'), resEl=document.getElementById('nc_residential');
   const lblC=document.getElementById('nc_lbl_comm'), lblR=document.getElementById('nc_lbl_res');
   if(c.type==='residential'){
@@ -630,51 +633,13 @@ function openEditCustomer(id){
     if(commEl)commEl.checked=true; if(lblC)lblC.style.borderColor='var(--gold)'; if(lblR)lblR.style.borderColor='var(--border2)';
   }
 
-  // ── STEP 2: Show existing jobs + PMs ────────────────────────────────
-  const allJobs = getAllJobs(c);
-  const step2El = document.getElementById('ncStep2');
-  if(step2El){
-    const jobsListHTML = allJobs.length ? allJobs.map(j=>`
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;">
-        <div>
-          <div style="font-size:13px;font-weight:700;">${j.est}${j.address?' — '+j.address:''}</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${j.contactName||''} · ${j.status} · ${j.amount}</div>
-        </div>
-        <span style="font-size:10px;padding:3px 10px;border-radius:20px;background:var(--surface2);color:var(--muted);font-weight:700;">${j.date}</span>
-      </div>`).join('') : '<div style="font-size:13px;color:var(--muted2);font-style:italic;padding:8px 0;">No jobs yet — fill the form below to add one.</div>';
-
-    const pmEl = c.contacts.filter(x=>x.role==='project-manager');
-    const pmListHTML = pmEl.length ? pmEl.map(p=>`
-      <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;">
-        <div class="avatar ${p.color}" style="width:30px;height:30px;font-size:11px;">${p.initials}</div>
-        <div><strong>${p.name}</strong> · ${p.email||''} ${p.phone?'· '+p.phone:''}</div>
-      </div>`).join('') : '';
-
-    // Inject existing data before the form
-    let s2html = step2El.innerHTML;
-    const existingInfoId = 'edit_existing_jobs_'+id;
-    if(!document.getElementById(existingInfoId)){
-      const insertPoint = step2El.querySelector('.fsec');
-      if(insertPoint){
-        const existingDiv = document.createElement('div');
-        existingDiv.id = existingInfoId;
-        existingDiv.style.cssText = 'margin-bottom:16px;';
-        existingDiv.innerHTML = `
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Existing jobs</div>
-          ${jobsListHTML}
-          ${pmListHTML ? '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 8px;">Project Managers</div>'+pmListHTML : ''}
-          <div style="height:1px;background:var(--border);margin:14px 0;"></div>
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Add new job</div>`;
-        step2El.insertBefore(existingDiv, insertPoint);
-      }
-    }
-  }
-
-  // ── Open modal ───────────────────────────────────────────────────────
-  _ncStep=1; _ncCC=[];
+  // Clear errors, set edit mode, open modal
   document.querySelectorAll('#modalBg .ferr').forEach(e=>{if(e&&e.classList)e.classList.remove('show');});
+  _ncStep=1; _ncCC=[];
   ncGo(1);
   window._editingCustomerId = id;
+  // Update modal title
+  const t=document.getElementById('ncTitle'); if(t) t.textContent='Edit customer';
   const mb=document.getElementById('modalBg');
   if(mb){mb.classList.add('open');mb.style.visibility='visible';mb.style.pointerEvents='all';}
 }
@@ -755,23 +720,25 @@ function renderDetail(id){
   document.getElementById('panelRight').innerHTML = `
   <div class="detail-wrap">
     <div class="card" style="padding:0;overflow:hidden;">
-      <div style="padding:20px 24px;display:flex;justify-content:space-between;align-items:flex-start;">
-        <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'} · Since ${c.since}</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${c.name}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
-            <span>📍 ${c.address}</span>
-            <span>📞 ${c.phone}</span>
-          </div>
-          ${pmRowHTML}
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;">
-          <button class="btn btn-ghost btn-sm" onclick="openEditCustomer(${c.id})">Edit</button>
-          <button class="btn btn-gold btn-sm" onclick="openTypeSel('${c.name.replace(/'/g,"\\'")}')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New estimate
+      <div style="padding:0;overflow:hidden;">
+      <div style="padding:16px 24px 20px 24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="openEditCustomer(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn btn-gold btn-sm" onclick="openAddJobModal(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add New Job
           </button>
         </div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'} · Since ${c.since}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${c.name}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
+          <span>📍 ${c.address}</span>
+          <span>📞 ${c.phone}</span>
+        </div>
+        ${pmRowHTML}
       </div>
       ${bannerHTML}
             <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
@@ -1563,33 +1530,27 @@ function closeModal(){
 
 function ncGo(step){
   _ncStep=step;
-  [1,2,3].forEach(s=>{
-    const p=document.getElementById('ncStep'+s);if(p)p.style.display=s===step?'block':'none';
-    const b=document.getElementById('ncBar'+s);if(b)b.style.background=s<=step?'var(--gold)':'var(--border2)';
-    const l=document.getElementById('ncLbl'+s);if(l)l.style.color=s===step?'var(--gold)':s<step?'var(--muted)':'var(--muted2)';
-  });
-  const t=document.getElementById('ncTitle');if(t)t.textContent='New customer — Step '+step+' of 3';
-  const back=document.getElementById('ncBtnBack');if(back)back.style.display=step>1?'':'none';
-  const skip=document.getElementById('ncBtnSkip');if(skip)skip.style.display=step>1?'':'none';
-  const later=document.getElementById('ncBtnLater');if(later)later.style.display=step>1?'':'none';
+  const p1=document.getElementById('ncStep1');if(p1)p1.style.display='block';
+  const t=document.getElementById('ncTitle');if(t)t.textContent='New customer';
+  const back=document.getElementById('ncBtnBack');if(back)back.style.display='none';
+  const skip=document.getElementById('ncBtnSkip');if(skip)skip.style.display='none';
+  const later=document.getElementById('ncBtnLater');if(later)later.style.display='none';
   const btn=document.getElementById('ncBtnNext');
-  if(btn)btn.textContent=step===1?'Continue → Job info':step===2?'Continue → Billing info':'✓ Save customer';
+  if(btn)btn.textContent='✓ Save customer';
 }
 
 function ncNext(){
-  if(_ncStep===1){
-    let ok=true;
-    const chk=(id,eid)=>{const el=document.getElementById(id);const err=document.getElementById(eid);const v=el?el.value.trim():'';if(!v){if(err)err.classList.add('show');if(el)el.style.borderColor='var(--danger)';return false;}if(err)err.classList.remove('show');if(el)el.style.borderColor='';return true;};
-    ok=chk('nc_company','e_nc_company')&&ok;ok=chk('nc_fname','e_nc_fname')&&ok;ok=chk('nc_lname','e_nc_lname')&&ok;
-    ok=chk('nc_phone','e_nc_phone')&&ok;ok=chk('nc_email','e_nc_email')&&ok;
-    ok=chk('nc_snum','e_nc_snum')&&ok;ok=chk('nc_sname','e_nc_sname')&&ok;ok=chk('nc_stype','e_nc_stype')&&ok;
-    ok=chk('nc_city','e_nc_city')&&ok;ok=chk('nc_zip','e_nc_zip')&&ok;
-    const comm=document.getElementById('nc_commercial')?.checked;const res=document.getElementById('nc_residential')?.checked;
-    const et=document.getElementById('e_nc_type');if(!comm&&!res){if(et)et.classList.add('show');ok=false;}else{if(et)et.classList.remove('show');}
-    if(!ok){const fe=document.querySelector('#ncStep1 .ferr.show');if(fe)fe.scrollIntoView({behavior:'smooth',block:'center'});return;}
-    ncGo(2);
-  }else if(_ncStep===2){ncGo(3);}
-  else{ncSaveAll();}
+  // Only step 1 — validate then save directly
+  let ok=true;
+  const chk=(id,eid)=>{const el=document.getElementById(id);const err=document.getElementById(eid);const v=el?el.value.trim():'';if(!v){if(err)err.classList.add('show');if(el)el.style.borderColor='var(--danger)';return false;}if(err)err.classList.remove('show');if(el)el.style.borderColor='';return true;};
+  ok=chk('nc_company','e_nc_company')&&ok;ok=chk('nc_fname','e_nc_fname')&&ok;ok=chk('nc_lname','e_nc_lname')&&ok;
+  ok=chk('nc_phone','e_nc_phone')&&ok;ok=chk('nc_email','e_nc_email')&&ok;
+  ok=chk('nc_snum','e_nc_snum')&&ok;ok=chk('nc_sname','e_nc_sname')&&ok;ok=chk('nc_stype','e_nc_stype')&&ok;
+  ok=chk('nc_city','e_nc_city')&&ok;ok=chk('nc_zip','e_nc_zip')&&ok;
+  const comm=document.getElementById('nc_commercial')?.checked;const res=document.getElementById('nc_residential')?.checked;
+  const et=document.getElementById('e_nc_type');if(!comm&&!res){if(et)et.classList.add('show');ok=false;}else{if(et)et.classList.remove('show');}
+  if(!ok){const fe=document.querySelector('#ncStep1 .ferr.show');if(fe)fe.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  ncSaveAll();
 }
 
 function ncBack(){if(_ncStep>1)ncGo(_ncStep-1);}
@@ -2337,6 +2298,7 @@ function openSOVInvoicePreview(estNum){
     +'<span>SDD Demolition &nbsp;·&nbsp; San Diego, CA &nbsp;·&nbsp; License #1094583</span>'
     +'<span>Thank you for your business</span>'
     +'</div>'
+    +'</div>'
     +'</body></html>');
   w.document.close();
 }
@@ -2443,6 +2405,159 @@ function navigateFromStat(type, customerId){
 // ── DOCUMENT FUNCTIONS ──
 
 
+
+// ══ ADD JOB MODAL ══
+let _ajCustomerId = null;
+
+function openAddJobModal(cid){
+  _ajCustomerId = parseInt(cid);
+  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
+  if(!c) return;
+
+  // Clear fields
+  ['aj_po','aj_name','aj_addr','aj_pm_fn','aj_pm_ln','aj_pm_ph','aj_pm_em'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const err=document.getElementById('e_aj_addr'); if(err) err.classList.remove('show');
+  const fields=document.getElementById('aj_pm_fields'); if(fields) fields.style.display='none';
+
+  // Fill company info banner
+  const primary = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
+  const coName = document.getElementById('aj_co_name');
+  const coContact = document.getElementById('aj_co_contact');
+  const coPhone = document.getElementById('aj_co_phone');
+  const coEmail = document.getElementById('aj_co_email');
+  const jobClientName = document.getElementById('addJobClientName');
+  if(coName) coName.textContent = c.name;
+  if(coContact) coContact.textContent = primary.name || '';
+  if(coPhone) coPhone.textContent = primary.phone ? '📞 '+primary.phone : '';
+  if(coEmail) coEmail.textContent = primary.email ? '✉ '+primary.email : '';
+  if(jobClientName) jobClientName.textContent = c.name;
+
+  // Build PM dropdown — primary contact + existing PMs + New PM
+  const sel = document.getElementById('aj_pm_select');
+  if(sel){
+    sel.innerHTML = '<option value="">— Select project manager —</option>';
+    // Add primary contact as first option
+    const primaryOpt = document.createElement('option');
+    primaryOpt.value = 'primary';
+    primaryOpt.textContent = (primary.name||'Primary contact') + ' (Primary contact)';
+    sel.appendChild(primaryOpt);
+    // Add existing PMs (exclude primary if same)
+    const pms = c.contacts.filter(x=>x.role==='project-manager' && x.id !== (primary.id||''));
+    pms.forEach(pm=>{
+      const opt=document.createElement('option');
+      opt.value='pm_'+pm.id;
+      opt.textContent=pm.name+' (Project Manager)';
+      sel.appendChild(opt);
+    });
+    // Add "New Project Manager" option
+    const newOpt=document.createElement('option');
+    newOpt.value='new';
+    newOpt.textContent='+ New Project Manager';
+    sel.appendChild(newOpt);
+    sel.value='';
+  }
+
+  const mb=document.getElementById('addJobModal');
+  if(mb){mb.style.display='flex';mb.style.visibility='visible';}
+}
+
+function ajPMSelect(val){
+  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
+  if(!c) return;
+  const fields = document.getElementById('aj_pm_fields');
+  const g = (id, v) => { const el=document.getElementById(id); if(el){el.value=v||'';el.readOnly=(val!=='new');el.style.background=val!=='new'?'var(--surface3)':'';} };
+
+  if(!val){
+    if(fields) fields.style.display='none';
+    return;
+  }
+
+  if(fields) fields.style.display='block';
+
+  if(val==='primary'){
+    const p = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
+    const parts=(p.name||'').split(' ');
+    g('aj_pm_fn', parts[0]||'');
+    g('aj_pm_ln', parts.slice(1).join(' ')||'');
+    g('aj_pm_ph', p.phone||'');
+    g('aj_pm_em', p.email||'');
+  } else if(val.startsWith('pm_')){
+    const pmId = val.replace('pm_','');
+    const pm = c.contacts.find(x=>x.id===pmId)||{};
+    const parts=(pm.name||'').split(' ');
+    g('aj_pm_fn', parts[0]||'');
+    g('aj_pm_ln', parts.slice(1).join(' ')||'');
+    g('aj_pm_ph', pm.phone||'');
+    g('aj_pm_em', pm.email||'');
+  } else if(val==='new'){
+    // Clear for new entry — editable
+    ['aj_pm_fn','aj_pm_ln','aj_pm_ph','aj_pm_em'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el){el.value='';el.readOnly=false;el.style.background='';}
+    });
+  }
+}
+
+function closeAddJobModal(){
+  const mb=document.getElementById('addJobModal');
+  if(mb) mb.style.display='none';
+}
+
+function saveNewJob(){
+  const g=id=>(document.getElementById(id)||{value:''}).value.trim();
+  const addr=g('aj_addr');
+  if(!addr){
+    const err=document.getElementById('e_aj_addr'); if(err) err.classList.add('show');
+    return;
+  }
+  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
+  if(!c) return;
+
+  const estNum = 'EST-' + String(Math.floor(Math.random()*900)+100);
+  const newJob = {
+    est: estNum, address: addr, po: g('aj_po'), jobName: g('aj_name'),
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    amount: '$0', status: 'Pending scheduled'
+  };
+
+  const pmVal = (document.getElementById('aj_pm_select')||{value:''}).value;
+  const avC = ['av-gold','av-info','av-success','av-warning'];
+
+  if(pmVal==='new'){
+    const pfn=g('aj_pm_fn'),pln=g('aj_pm_ln'),pem=g('aj_pm_em'),pph=g('aj_pm_ph');
+    if(pfn){
+      c.contacts.push({
+        id:'c_'+Date.now(), name:pfn+' '+pln,
+        initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),
+        color:avC[c.contacts.length%avC.length],
+        email:pem, phone:pph, title:'Project Manager',
+        role:'project-manager', jobs:[newJob]
+      });
+    } else {
+      const first=c.contacts[0]; if(first){if(!first.jobs)first.jobs=[];first.jobs.push(newJob);}
+    }
+  } else if(pmVal==='primary'||pmVal.startsWith('pm_')){
+    const pmId = pmVal==='primary'
+      ? (c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{}).id
+      : pmVal.replace('pm_','');
+    const pm = c.contacts.find(x=>x.id===pmId);
+    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
+  } else {
+    const first=c.contacts[0]; if(first){if(!first.jobs)first.jobs=[];first.jobs.push(newJob);}
+  }
+
+  closeAddJobModal();
+  renderDetail(_ajCustomerId);
+  renderList();
+
+  const fl=document.createElement('div');
+  fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
+  fl.textContent='✓ Job added — '+estNum;
+  document.body.appendChild(fl); setTimeout(()=>fl.remove(),3500);
+}
+
 </script>
 
 <!-- ══ STAT DETAIL POPUP ══ -->
@@ -2459,6 +2574,73 @@ function navigateFromStat(type, customerId){
     <div class="stat-popup-foot">
       <div style="font-size:12px;color:var(--muted);" id="spFootNote"></div>
       <button class="btn btn-ghost btn-sm" id="spNavBtn" onclick="closeStatPopup()">Go to module →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD JOB MODAL ══ -->
+<div id="addJobModal" class="modal-bg" onclick="if(event.target===this)closeAddJobModal()" style="display:none;">
+  <div class="modal-box" style="max-width:580px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="addJobTitle">Add New Job</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="addJobClientName"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">✕ Cancel</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Company info banner -->
+      <div id="ajCompanyInfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Company &amp; Primary contact</div>
+        <div style="font-size:14px;font-weight:700;" id="aj_co_name"></div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px;display:flex;gap:16px;flex-wrap:wrap;">
+          <span id="aj_co_contact"></span>
+          <span id="aj_co_phone"></span>
+          <span id="aj_co_email"></span>
+        </div>
+      </div>
+
+      <!-- Job info -->
+      <div class="fsec">
+        <div class="fsec-title">Job information</div>
+        <div class="fg2">
+          <div class="ff"><label>PO Number</label><input type="text" id="aj_po" placeholder="e.g. PO-4891"></div>
+          <div class="ff"><label>Job name</label><input type="text" id="aj_name" placeholder="e.g. Harbor Blvd Demo Phase 1"></div>
+        </div>
+        <div class="ff"><label>Job site address <span class="req">*</span></label><input type="text" id="aj_addr" placeholder="e.g. 1420 Harbor Blvd, San Diego CA 92101"><div class="ferr" id="e_aj_addr">Required</div></div>
+      </div>
+
+      <!-- Project Manager -->
+      <div class="fsec" style="margin-bottom:0;padding-bottom:0;border:none;">
+        <div class="fsec-title">Project Manager</div>
+        <div class="ff">
+          <label>Select project manager</label>
+          <select id="aj_pm_select" onchange="ajPMSelect(this.value)" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;">
+            <option value="">— Select —</option>
+          </select>
+        </div>
+        <!-- PM fields — hidden until selected -->
+        <div id="aj_pm_fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:4px;">
+          <div class="fg2">
+            <div class="ff"><label>First name</label><input type="text" id="aj_pm_fn" placeholder="First name"></div>
+            <div class="ff"><label>Last name</label><input type="text" id="aj_pm_ln" placeholder="Last name"></div>
+            <div class="ff"><label>Phone</label><input type="tel" id="aj_pm_ph" placeholder="(619) 555-0000"></div>
+            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="aj_pm_em" placeholder="email@company.com"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <div style="font-size:11px;color:var(--muted);">Fields marked <span class="req">*</span> are required</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="saveNewJob()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save job
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -2499,16 +2681,7 @@ function navigateFromStat(type, customerId){
         <div class="modal-title" id="ncTitle">New customer</div>
         <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Cancel</button>
       </div>
-      <div style="display:flex;gap:3px;">
-        <div id="ncBar1" style="flex:1;height:4px;border-radius:4px;background:var(--gold);"></div>
-        <div id="ncBar2" style="flex:1;height:4px;border-radius:4px;background:var(--border2);"></div>
-        <div id="ncBar3" style="flex:1;height:4px;border-radius:4px;background:var(--border2);"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">
-        <span id="ncLbl1" style="color:var(--gold);">1. Company</span>
-        <span id="ncLbl2" style="color:var(--muted2);">2. Job</span>
-        <span id="ncLbl3" style="color:var(--muted2);">3. Billing</span>
-      </div>
+
     </div>
 
     <!-- STEP 1: Company -->
