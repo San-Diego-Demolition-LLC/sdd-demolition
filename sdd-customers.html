@@ -114,8 +114,8 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .ccj-amt{font-size:14px;font-weight:600;color:var(--gold);}
 .ccj-date{font-size:10px;color:var(--muted2);}
 /* MODAL */
-.modal-bg{display:flex;visibility:hidden;pointer-events:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
-.modal-bg.open{visibility:visible;pointer-events:all;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;}
+.modal-bg.open{display:flex;}
 .modal-box{background:var(--surface);border-radius:16px;width:100%;max-width:660px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
 .modal-head{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;border-radius:16px 16px 0 0;}
 .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;}
@@ -299,6 +299,7 @@ svg{display:block;}
   .mobile-nav{display:none;}
 }
 
+
 </style>
 </head>
 <body>
@@ -351,7 +352,322 @@ svg{display:block;}
 </div>
 
 <!-- ══ NEW CUSTOMER MODAL ══ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="ncModalTitle">New customer</div>
+    </div>
+    <div class="modal-body">
 
+      <div class="fsec">
+        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg>Company information</div>
+        <div class="ff">
+          <label>Company / Customer name <span class="req">*</span></label>
+          <input type="text" id="f_company" placeholder="e.g. ABC Construction Corp">
+          <div class="ferr" id="e_company">Required</div>
+        </div>
+        <div class="ff" style="margin-bottom:0;">
+          <label>Customer type <span class="req">*</span></label>
+          <div style="display:flex;gap:24px;margin-top:10px;">
+            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 18px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;" id="lbl_commercial"
+              onmouseover="this.style.borderColor='var(--gold)'" onmouseout="if(!document.getElementById('f_commercial').checked)this.style.borderColor='var(--border2)'">
+              <input type="radio" name="customer_type" id="f_commercial" value="commercial"
+                style="width:17px;height:17px;accent-color:var(--gold);cursor:pointer;"
+                onchange="onTypeChange()">
+              🏢 Commercial
+            </label>
+            <label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 18px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;" id="lbl_residential"
+              onmouseover="this.style.borderColor='var(--gold)'" onmouseout="if(!document.getElementById('f_residential').checked)this.style.borderColor='var(--border2)'">
+              <input type="radio" name="customer_type" id="f_residential" value="residential"
+                style="width:17px;height:17px;accent-color:var(--gold);cursor:pointer;"
+                onchange="onTypeChange()">
+              🏠 Residential
+            </label>
+          </div>
+          <div class="ferr" id="e_type" style="margin-top:6px;">Please select a customer type</div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Primary contact</div>
+        <div class="fg2">
+          <div class="ff">
+            <label>First name <span class="req">*</span></label>
+            <input type="text" id="f_fname" placeholder="Maria">
+            <div class="ferr" id="e_fname">Required</div>
+          </div>
+          <div class="ff">
+            <label>Last name <span class="req">*</span></label>
+            <input type="text" id="f_lname" placeholder="Rodriguez">
+            <div class="ferr" id="e_lname">Required</div>
+          </div>
+          <div class="ff">
+            <label>Phone number <span class="req">*</span></label>
+            <input type="tel" id="f_phone" placeholder="(619) 555-0000">
+            <div class="ferr" id="e_phone">Required</div>
+          </div>
+          <div class="ff">
+            <label>Email address <span class="req">*</span></label>
+            <input type="email" id="f_email" placeholder="contact@company.com">
+            <div class="ferr" id="e_email">Required</div>
+          </div>
+          <div class="ff">
+            <label>Title / position</label>
+            <input type="text" id="f_title" placeholder="Project Manager">
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Physical address</div>
+        <div class="addr-box">
+          <div class="addr-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Street address</div>
+          <div class="fg3" style="margin-bottom:10px;">
+            <div class="ff">
+              <label>Street number <span class="req">*</span></label>
+              <input type="text" id="f_snum" placeholder="1420">
+              <div class="ferr" id="e_snum">Required</div>
+            </div>
+            <div class="ff">
+              <label>Street name <span class="req">*</span></label>
+              <input type="text" id="f_sname" placeholder="Harbor">
+              <div class="ferr" id="e_sname">Required</div>
+            </div>
+            <div class="ff">
+              <label>Street type <span class="req">*</span></label>
+              <select id="f_stype">
+                <option value="">Select…</option>
+                <option>Street</option><option>Avenue</option><option>Boulevard</option>
+                <option>Circle</option><option>Court</option><option>Drive</option>
+                <option>Lane</option><option>Place</option><option>Road</option>
+                <option>Trail</option><option>Way</option><option>Highway</option>
+                <option>Parkway</option><option>Terrace</option><option>Loop</option>
+              </select>
+              <div class="ferr" id="e_stype">Required</div>
+            </div>
+          </div>
+          <div class="fg2" style="margin-bottom:10px;">
+            <div class="ff">
+              <label>Unit type <span class="opt-tag">(if applicable)</span></label>
+              <select id="f_utype">
+                <option value="">None</option><option>Suite</option><option>Unit</option>
+                <option>Apartment</option><option>Number</option><option>Floor</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>Unit number <span class="opt-tag">(if applicable)</span></label>
+              <input type="text" id="f_unum" placeholder="e.g. 200, A">
+            </div>
+          </div>
+          <div class="fg3">
+            <div class="ff">
+              <label>City <span class="req">*</span></label>
+              <input type="text" id="f_city" placeholder="San Diego">
+              <div class="ferr" id="e_city">Required</div>
+            </div>
+            <div class="ff">
+              <label>State <span class="req">*</span></label>
+              <select id="f_state">
+                <option value="">Select…</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                <option selected>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+                <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
+                <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+                <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+                <option>NH</option><option>NJ</option><option>NM</option><option>NY</option>
+                <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+                <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+                <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
+                <option>WI</option><option>WY</option>
+              </select>
+              <div class="ferr" id="e_state">Required</div>
+            </div>
+            <div class="ff">
+              <label>ZIP code <span class="req">*</span></label>
+              <input type="text" id="f_zip" placeholder="92101" maxlength="10">
+              <div class="ferr" id="e_zip">Required</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Additional contacts <span style="font-size:10px;font-weight:400;color:var(--muted2);text-transform:none;letter-spacing:0;margin-left:4px;">optional</span></div>
+
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Use the button below to add project managers, billing contacts, or additional contacts.</div>
+        <div id="extraContacts"></div>
+        <button class="add-contact-btn" id="btnAddContact">+ Add contact</button>
+      </div>
+
+    
+    <div class="modal-foot">
+      <div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);font-weight:700;">*</span> are required</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" id="btnCancelModal" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-gold" id="btnSaveCustomer">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save customer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ ADD CONTACT MODAL ══ -->
+<div class="modal-bg" id="addContactModal" style="display:none;">
+  <div class="modal-box" style="max-width:580px;">
+    <div class="modal-head">
+      <div class="modal-title">Add contact</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeAddContactModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- CONTACT TYPE -->
+      <div class="ff" style="margin-bottom:16px;">
+        <label>Contact type <span class="req">*</span></label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+          <label class="ac-type-lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 16px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;">
+            <input type="radio" name="ac_type" value="project-manager" id="ac_pm" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;" onchange="highlightACType()"> 👷 Project Manager
+          </label>
+
+          <label class="ac-type-lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 16px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;">
+            <input type="radio" name="ac_type" value="additional" id="ac_additional" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;" onchange="highlightACType()"> 👤 Additional
+          </label>
+        </div>
+        <div class="ferr" id="e_ac_type">Please select a contact type</div>
+      </div>
+
+      <!-- CONTACT FIELDS -->
+      <div class="fg2">
+        <div class="ff">
+          <label>First name <span class="req">*</span></label>
+          <input type="text" id="ac_fname" placeholder="First name"
+            oninput="this.style.borderColor=this.value.trim()?'var(--border2)':'var(--danger)'"
+            onblur="reqAC('ac_fname','e_ac_fname')">
+          <div class="ferr" id="e_ac_fname">Required</div>
+        </div>
+        <div class="ff">
+          <label>Last name <span class="req">*</span></label>
+          <input type="text" id="ac_lname" placeholder="Last name"
+            oninput="this.style.borderColor=this.value.trim()?'var(--border2)':'var(--danger)'"
+            onblur="reqAC('ac_lname','e_ac_lname')">
+          <div class="ferr" id="e_ac_lname">Required</div>
+        </div>
+        <div class="ff">
+          <label>Phone number</label>
+          <input type="tel" id="ac_phone" placeholder="(619) 555-0000">
+        </div>
+        <div class="ff">
+          <label>Email address <span class="req">*</span></label>
+          <input type="email" id="ac_email" placeholder="email@company.com"
+            oninput="this.style.borderColor=this.value.trim()?'var(--border2)':'var(--danger)'"
+            onblur="reqAC('ac_email','e_ac_email')">
+          <div class="ferr" id="e_ac_email">Required</div>
+        </div>
+        <div class="ff" id="ac_title_wrap">
+          <label>Title / position <span id="ac_title_req" style="color:var(--muted2);font-weight:400;font-size:11px;">(optional)</span></label>
+          <input type="text" id="ac_title" placeholder="e.g. Site Supervisor">
+        </div>
+      </div>
+
+      <!-- BILLING SECTION — only visible when Project Manager selected -->
+      <div id="pm_billing_section" style="display:none;margin-top:20px;padding-top:18px;border-top:2px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span id="pm_billing_section_title">Billing information</span>
+        </div>
+
+        <!-- Question -->
+        <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">
+            Is the billing information the same as primary contact information?
+          </div>
+          <div style="display:flex;gap:10px;">
+            <label id="pm_bill_yes_lbl" style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);font-weight:500;transition:all .15s;">
+              <input type="radio" name="pm_billing" value="yes" id="pm_bill_yes"
+                onchange="togglePMBillingSame(true)"
+                style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer;">
+              ✓ Yes — add as billing contact
+            </label>
+            <label id="pm_bill_no_lbl" style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:var(--surface);font-weight:500;transition:all .15s;">
+              <input type="radio" name="pm_billing" value="no" id="pm_bill_no"
+                onchange="togglePMBillingSame(false)"
+                style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer;">
+              No
+            </label>
+          </div>
+        </div>
+
+        <!-- Additional billing contacts linked to this PM -->
+        <div id="pm_extra_billing_wrap">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="21" y1="11" x2="21" y2="17"/><line x1="18" y1="14" x2="24" y2="14"/></svg>
+            Additional billing contacts linked to this PM
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">These contacts will be included when sending estimates or invoices to this PM.</div>
+
+          <!-- Added billing contacts list -->
+          <div id="pm_extra_billing_list" style="margin-bottom:12px;"></div>
+
+          <!-- Add new billing contact form -->
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Add billing contact</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+              <input type="text" id="pb_fname" placeholder="First name *"
+                style="background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;">
+              <input type="text" id="pb_lname" placeholder="Last name *"
+                style="background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <input type="email" id="pb_email" placeholder="Email address *"
+                style="background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;">
+              <input type="tel" id="pb_phone" placeholder="Phone (optional)"
+                style="background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;">
+            </div>
+            <button type="button" onclick="addExtraBillingContact()"
+              style="font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;border:1.5px solid var(--gold);background:rgba(184,146,42,.08);color:var(--gold);cursor:pointer;font-family:'Barlow',sans-serif;display:flex;align-items:center;gap:6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add billing contact
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);">*</span> required</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeAddContactModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="saveAddContact()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save contact
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ STAT DETAIL POPUP ══ -->
+<div class="stat-popup-bg" id="statPopupBg">
+  <div class="stat-popup">
+    <div class="stat-popup-head">
+      <div>
+        <div class="stat-popup-title" id="spTitle"></div>
+        <div class="stat-popup-summary" id="spSummary"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="closeStatPopup()">✕</button>
+    </div>
+    <div class="stat-popup-body" id="spBody"></div>
+    <div class="stat-popup-foot">
+      <div style="font-size:12px;color:var(--muted);" id="spFootNote"></div>
+      <button class="btn btn-ghost btn-sm" id="spNavBtn" onclick="closeStatPopup()">Go to module →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ ESTIMATE TYPE SELECTOR ══ -->
 <div class="type-sel-bg" id="typeSelectorBg">
@@ -589,61 +905,38 @@ function renderList(){
 
 // ══ RENDER DETAIL ══
 function openEditCustomer(id){
-  const c = CUSTOMERS.find(x=>x.id===parseInt(id));
-  if(!c) return;
-  const g = (eid, val) => { const el=document.getElementById(eid); if(el) el.value=val||''; };
-  const pm = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
-  const nameParts = (pm.name||'').split(' ');
-
-  // Fill step 1 fields
-  g('nc_company', c.name);
-  g('nc_phone', pm.phone||c.phone||'');
-  g('nc_email', pm.email||'');
-  g('nc_fname', nameParts[0]||'');
-  g('nc_lname', nameParts.slice(1).join(' ')||'');
-
-  // Address
-  const addrParts = (c.address||'').split(',');
-  const streetParts = (addrParts[0]||'').trim().split(' ');
-  g('nc_snum', streetParts[0]||'');
-  const streetTypes = ['Ave','Blvd','Cir','Ct','Dr','Hwy','Ln','Pkwy','Pl','Rd','St','Way'];
-  const streetWords = streetParts.slice(1);
-  const lastWord = streetWords[streetWords.length-1]||'';
-  let sname='', stype='';
-  if(streetTypes.includes(lastWord)){ stype=lastWord; sname=streetWords.slice(0,-1).join(' '); }
-  else { sname=streetWords.join(' '); }
-  g('nc_sname', sname);
-  const stEl=document.getElementById('nc_stype'); if(stEl) stEl.value=stype;
-  const cityStateZip = addrParts.slice(1).join(',').trim();
-  const cityMatch = cityStateZip.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/);
-  if(cityMatch){
-    g('nc_city', (cityMatch[1]||'').trim());
-    const st2=document.getElementById('nc_state'); if(st2) st2.value=cityMatch[2]||'CA';
-    g('nc_zip', cityMatch[3]||'');
-  } else {
-    g('nc_city', (c.city||'').split(',')[0].trim());
-  }
-
-  // Type radio
-  const commEl=document.getElementById('nc_commercial'), resEl=document.getElementById('nc_residential');
-  const lblC=document.getElementById('nc_lbl_comm'), lblR=document.getElementById('nc_lbl_res');
-  if(c.type==='residential'){
-    if(resEl)resEl.checked=true; if(lblR)lblR.style.borderColor='var(--gold)'; if(lblC)lblC.style.borderColor='var(--border2)';
-  } else {
-    if(commEl)commEl.checked=true; if(lblC)lblC.style.borderColor='var(--gold)'; if(lblR)lblR.style.borderColor='var(--border2)';
-  }
-
-  // Clear errors, set edit mode, open modal
+  const c=CUSTOMERS.find(x=>x.id===parseInt(id)); if(!c) return;
+  const g=(eid,val)=>{const el=document.getElementById(eid);if(el)el.value=val||'';};
+  const pm=c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
+  const parts=(pm.name||'').split(' ');
+  g('f_company',c.name); g('f_phone',pm.phone||c.phone||''); g('f_email',pm.email||'');
+  g('f_fname',parts[0]||''); g('f_lname',parts.slice(1).join(' ')||'');
+  const addr=(c.address||'').split(',');
+  const sp=(addr[0]||'').trim().split(' ');
+  g('f_snum',sp[0]||'');
+  const types=['Ave','Blvd','Cir','Ct','Dr','Hwy','Ln','Pkwy','Pl','Rd','St','Way'];
+  const ws=sp.slice(1); const lw=ws[ws.length-1]||'';
+  let sn='',st=''; if(types.includes(lw)){st=lw;sn=ws.slice(0,-1).join(' ');}else sn=ws.join(' ');
+  g('f_sname',sn); const stEl=document.getElementById('f_stype');if(stEl)stEl.value=st;
+  const csz=addr.slice(1).join(',').trim();
+  const cm=csz.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/);
+  if(cm){g('f_city',(cm[1]||'').trim());const s2=document.getElementById('f_state');if(s2)s2.value=cm[2]||'CA';g('f_zip',cm[3]||'');}
+  else g('f_city',(c.city||'').split(',')[0].trim());
+  const ce=document.getElementById('f_commercial'),re=document.getElementById('f_residential');
+  const lc=document.getElementById('lbl_commercial'),lr=document.getElementById('lbl_residential');
+  if(c.type==='residential'){if(re)re.checked=true;if(lr)lr.style.borderColor='var(--gold)';if(lc)lc.style.borderColor='var(--border2)';}
+  else{if(ce)ce.checked=true;if(lc)lc.style.borderColor='var(--gold)';if(lr)lr.style.borderColor='var(--border2)';}
   document.querySelectorAll('#modalBg .ferr').forEach(e=>{if(e&&e.classList)e.classList.remove('show');});
-  _ncStep=1; _ncCC=[];
-  ncGo(1);
-  window._editingCustomerId = id;
-  // Update modal title
-  const t=document.getElementById('ncTitle'); if(t) t.textContent='Edit customer';
+  // Update modal title for edit mode
+  const ncTitle=document.getElementById('ncModalTitle');
+  if(ncTitle) ncTitle.textContent='Edit customer';
+  window._editingCustomerId=id;
   const mb=document.getElementById('modalBg');
-  if(mb){mb.classList.add('open');mb.style.visibility='visible';mb.style.pointerEvents='all';}
+  if(mb){
+    mb.classList.add('open');
+    mb.style.display='flex';
+  }
 }
-
 
 function renderDetail(id){
   const c = CUSTOMERS.find(x=>x.id===id);
@@ -651,27 +944,6 @@ function renderDetail(id){
   const allJobs = getAllJobs(c);
   const t = getTotals(c);
   const billing = allJobs.filter(j=>j.status==='Ready to bill').length;
-
-  // ── Pre-compute for template ──
-  const pm = c.contacts.find(x=>x.role==='project-manager') || c.contacts[0];
-  const pmRowHTML = pm ? `
-    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-      <strong style="color:var(--text);">${pm.name}</strong>${pm.title ? ' &nbsp;·&nbsp; '+pm.title : ''}${pm.phone ? ' &nbsp;&nbsp;📞 '+pm.phone : ''}${pm.email ? ' &nbsp;&nbsp;✉ '+pm.email : ''}
-    </div>` : '';
-
-  const hasBilling = c.contacts.some(x=>x.role==='billing');
-  const hasJob = allJobs.length > 0;
-  const bannerHTML = [
-    !hasJob ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(200,130,42,.08);border-bottom:1px solid rgba(200,130,42,.2);">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--warning);">⚠ No jobs added yet — add job and project manager info</div>
-      <button class="btn btn-ghost btn-sm" style="border-color:var(--warning);color:var(--warning);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Add job</button>
-    </div>` : '',
-    !hasBilling ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(217,79,79,.06);border-bottom:1px solid rgba(217,79,79,.15);">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--danger);">⚠ Billing information pending — no billing contacts added</div>
-      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Complete billing</button>
-    </div>` : ''
-  ].filter(Boolean).join('');
 
   const jobCardsHTML = allJobs.length ? allJobs.map(j=>`
     <div class="job-card" onclick="goToEstimate('${j.est}')">
@@ -717,11 +989,30 @@ function renderDetail(id){
       </div>
     </div>`).join('');
 
+  // Pre-compute vars for template
+  const pm = c.contacts.find(x=>x.role==='project-manager') || c.contacts[0];
+  const pmRowHTML = pm ? `
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <strong style="color:var(--text);">${pm.name}</strong>${pm.title ? ' &nbsp;·&nbsp; '+pm.title : ''}${pm.phone ? ' &nbsp;&nbsp;📞 '+pm.phone : ''}${pm.email ? ' &nbsp;&nbsp;✉ '+pm.email : ''}
+    </div>` : '';
+  const hasBilling = c.contacts.some(x=>x.role==='billing');
+  const hasJob = getAllJobs(c).length > 0;
+  const bannerHTML = [
+    !hasJob ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(200,130,42,.08);border-bottom:1px solid rgba(200,130,42,.2);">
+      <div style="font-size:13px;font-weight:600;color:var(--warning);">⚠ No jobs added yet</div>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--warning);color:var(--warning);font-size:11px;white-space:nowrap;" onclick="openAddJobModal(${c.id})">+ Add job</button>
+    </div>` : '',
+    !hasBilling ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(217,79,79,.06);border-bottom:1px solid rgba(217,79,79,.15);">
+      <div style="font-size:13px;font-weight:600;color:var(--danger);">⚠ Billing information pending</div>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Complete billing</button>
+    </div>` : ''
+  ].filter(Boolean).join('');
+
   document.getElementById('panelRight').innerHTML = `
   <div class="detail-wrap">
     <div class="card" style="padding:0;overflow:hidden;">
-      <div style="padding:0;overflow:hidden;">
-      <div style="padding:16px 24px 20px 24px;">
+      <div style="padding:16px 24px 0 24px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
           <button class="btn btn-ghost btn-sm" onclick="openEditCustomer(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -732,16 +1023,18 @@ function renderDetail(id){
             Add New Job
           </button>
         </div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'} · Since ${c.since}</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${c.name}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
-          <span>📍 ${c.address}</span>
-          <span>📞 ${c.phone}</span>
+        <div style="padding-bottom:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'} · Since ${c.since}</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${c.name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
+            <span>📍 ${c.address}</span>
+            <span>📞 ${c.phone}</span>
+          </div>
+          ${pmRowHTML}
         </div>
-        ${pmRowHTML}
       </div>
       ${bannerHTML}
-            <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="stat-box" onclick="navigateFromStat('estimates','${c.id}')" style="cursor:pointer;" title="View approved estimates">
           <div class="stat-label">Approved estimates</div>
           <div class="stat-val" style="color:${t.approvedEstCount>0?'var(--info)':'var(--text)'};">${t.approvedEstCount}</div>
@@ -778,7 +1071,7 @@ function renderDetail(id){
 
     <div class="card">
       <div class="card-title" style="margin-bottom:0;">
-        Project managers &amp; contacts
+        Company contacts &amp; contacts
     
       </div>
 
@@ -787,18 +1080,14 @@ function renderDetail(id){
         <button class="tab-btn active" onclick="showTab('pm','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Project managers
-          <span class="tab-badge">${c.contacts.filter(x=>x.role==='project-manager').length}</span>
+          <span class="tab-badge">${c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional').length}</span>
         </button>
         <button class="tab-btn" onclick="showTab('billing','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           Billing
           <span class="tab-badge">${c.contacts.filter(x=>x.role==='billing').length}</span>
         </button>
-        <button class="tab-btn" onclick="showTab('additional','${c.id}',this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Additional contacts
-          <span class="tab-badge">${c.contacts.filter(x=>x.role==='additional').length}</span>
-        </button>
+
 
         <button class="tab-btn" onclick="showTab('documents','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -1503,139 +1792,192 @@ function deleteUploadedDoc(customerId, idx){
 }
 
 // ══ MODAL ══
-let _ncStep=1,_ncCC=[];
-
 function openModal(){
-  _ncStep=1; _ncCC=[]; window._editingCustomerId=null;
-  ['nc_company','nc_fname','nc_lname','nc_phone','nc_email','nc_snum','nc_sname','nc_city','nc_zip',
-   'nc_po','nc_jobname','nc_jobaddr','nc_pm_fn','nc_pm_ln','nc_pm_ph','nc_pm_em',
-   'nc_bc_fn','nc_bc_ln','nc_bc_em','nc_bc_ph','nc_bc_ti','nc_cc_fn','nc_cc_ln','nc_cc_em','nc_cc_ph','nc_si_text'
-  ].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const st=document.getElementById('nc_stype');if(st)st.value='';
-  ['nc_commercial','nc_residential','nc_bc_pm','nc_bc_pri','nc_bc_oth','nc_si_yes','nc_si_no'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
-  ['nc_lbl_comm','nc_lbl_res','nc_bc_pm_lbl','nc_bc_pri_lbl','nc_bc_oth_lbl','nc_si_y_lbl','nc_si_n_lbl'].forEach(id=>{const el=document.getElementById(id);if(el){el.style.borderColor='var(--border2)';el.style.background='';}});
-  const bco=document.getElementById('nc_bc_other');if(bco)bco.style.display='none';
-  const siw=document.getElementById('nc_si_wrap');if(siw)siw.style.display='none';
-  const ccl=document.getElementById('nc_cc_list');if(ccl)ccl.innerHTML='';
-  document.querySelectorAll('#modalBg .ferr').forEach(e=>{if(e&&e.classList)e.classList.remove('show');});
-  ncGo(1);
-  const mb=document.getElementById('modalBg');
-  if(mb){mb.classList.add('open');mb.style.visibility='visible';mb.style.pointerEvents='all';}
+  // Clear all form fields
+  ['f_company','f_fname','f_lname','f_phone','f_email','f_title',
+   'f_snum','f_sname','f_city','f_zip','f_unum','f_notes'].forEach(id=>{
+    const _el=document.getElementById(id); if(_el) _el.value='';
+  });
+  const _st=document.getElementById('f_stype'); if(_st) _st.value='';
+  const _ut=document.getElementById('f_utype'); if(_ut) _ut.value='';
+  const _ss=document.getElementById('f_state'); if(_ss) _ss.value='CA';
+  const _fw=document.getElementById('f_waiver'); if(_fw) _fw.value='conditional';
+  const _ft=document.getElementById('f_terms'); if(_ft) _ft.selectedIndex=0;
+  const _fb=document.getElementById('f_billing'); if(_fb) _fb.selectedIndex=0;
+  const _fs=document.getElementById('f_since'); if(_fs) _fs.value='2026';
+  // Reset radio buttons — nothing selected by default
+  const _fc=document.getElementById('f_commercial'); if(_fc) _fc.checked=false;
+  const _fr=document.getElementById('f_residential'); if(_fr) _fr.checked=false;
+  const _lc=document.getElementById('lbl_commercial'); if(_lc) _lc.style.borderColor='var(--border2)';
+  const _lr=document.getElementById('lbl_residential'); if(_lr) _lr.style.borderColor='var(--border2)';
+  const _ec=document.getElementById('extraContacts'); if(_ec) _ec.innerHTML='';
+  extraContactCount=0;
+  const si_txt = document.getElementById('f_special_instructions');
+  if(si_txt) si_txt.value='';
+  // Clear errors
+  document.querySelectorAll('#modalBg .ferr').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('#modalBg .err').forEach(e=>e.classList.remove('err'));
+  const _mb=document.getElementById('modalBg');
+  if(_mb){_mb.classList.add('open');_mb.style.display='flex';}
 }
 
 function closeModal(){
   const mb=document.getElementById('modalBg');
-  if(mb){mb.classList.remove('open');mb.style.visibility='hidden';mb.style.pointerEvents='none';}
+  if(mb){mb.classList.remove('open');mb.style.display='';}
+  window._editingCustomerId=null;
 }
 
-function ncGo(step){
-  _ncStep=step;
-  const p1=document.getElementById('ncStep1');if(p1)p1.style.display='block';
-  const t=document.getElementById('ncTitle');if(t)t.textContent='New customer';
-  const back=document.getElementById('ncBtnBack');if(back)back.style.display='none';
-  const skip=document.getElementById('ncBtnSkip');if(skip)skip.style.display='none';
-  const later=document.getElementById('ncBtnLater');if(later)later.style.display='none';
-  const btn=document.getElementById('ncBtnNext');
-  if(btn)btn.textContent='✓ Save customer';
+function addExtraContact(){
+  extraContactCount++;
+  const i = extraContactCount;
+  const div = document.createElement('div');
+  div.className = 'extra-contact';
+  div.id = 'ec-' + i;
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Contact ${i}</div>
+      <button class="ec-remove" type="button" onclick="document.getElementById('ec-${i}').remove()">×</button>
+    </div>
+    <div class="ff" style="margin-bottom:14px;">
+      <label>Contact type <span class="req">*</span></label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:500;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;transition:all .15s;" onclick="this.style.borderColor='var(--gold)';this.style.background='rgba(184,146,42,.06)';this.closest('.extra-contact').querySelectorAll('.ct-radio-lbl').forEach(l=>{if(l!==this){l.style.borderColor='var(--border2)';l.style.background='';}});" class="ct-radio-lbl">
+          <input type="radio" name="ec-type-${i}" value="project-manager" class="ec-type" style="width:15px;height:15px;accent-color:var(--gold);cursor:pointer;"> 👷 Project Manager
+        </label>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:500;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;transition:all .15s;" onclick="this.style.borderColor='var(--gold)';this.style.background='rgba(184,146,42,.06)';this.closest('.extra-contact').querySelectorAll('.ct-radio-lbl').forEach(l=>{if(l!==this){l.style.borderColor='var(--border2)';l.style.background='';}});" class="ct-radio-lbl">
+          <input type="radio" name="ec-type-${i}" value="billing" class="ec-type" style="width:15px;height:15px;accent-color:var(--gold);cursor:pointer;"> 💳 Billing Contact
+        </label>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;font-weight:500;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;transition:all .15s;" onclick="this.style.borderColor='var(--gold)';this.style.background='rgba(184,146,42,.06)';this.closest('.extra-contact').querySelectorAll('.ct-radio-lbl').forEach(l=>{if(l!==this){l.style.borderColor='var(--border2)';l.style.background='';}});" class="ct-radio-lbl">
+          <input type="radio" name="ec-type-${i}" value="additional" class="ec-type" style="width:15px;height:15px;accent-color:var(--gold);cursor:pointer;"> 👤 Additional
+        </label>
+      </div>
+    </div>
+    <div class="fg2">
+      <div class="ff">
+        <label>First name <span class="req">*</span></label>
+        <input type="text" class="ec-fname" placeholder="First name" oninput="this.style.borderColor=this.value?'var(--border2)':'var(--danger)'">
+      </div>
+      <div class="ff">
+        <label>Last name <span class="req">*</span></label>
+        <input type="text" class="ec-lname" placeholder="Last name" oninput="this.style.borderColor=this.value?'var(--border2)':'var(--danger)'">
+      </div>
+      <div class="ff">
+        <label>Phone number <span class="req">*</span></label>
+        <input type="tel" class="ec-phone" placeholder="(619) 555-0000" oninput="this.style.borderColor=this.value?'var(--border2)':'var(--danger)'">
+      </div>
+      <div class="ff">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" class="ec-email" placeholder="email@company.com" oninput="this.style.borderColor=this.value?'var(--border2)':'var(--danger)'">
+      </div>
+      <div class="ff">
+        <label>Title / position</label>
+        <input type="text" class="ec-title" placeholder="e.g. Project Manager">
+      </div>
+    </div>`;
+  document.getElementById('extraContacts').appendChild(div);
 }
 
-function ncNext(){
-  // Only step 1 — validate then save directly
-  let ok=true;
-  const chk=(id,eid)=>{const el=document.getElementById(id);const err=document.getElementById(eid);const v=el?el.value.trim():'';if(!v){if(err)err.classList.add('show');if(el)el.style.borderColor='var(--danger)';return false;}if(err)err.classList.remove('show');if(el)el.style.borderColor='';return true;};
-  ok=chk('nc_company','e_nc_company')&&ok;ok=chk('nc_fname','e_nc_fname')&&ok;ok=chk('nc_lname','e_nc_lname')&&ok;
-  ok=chk('nc_phone','e_nc_phone')&&ok;ok=chk('nc_email','e_nc_email')&&ok;
-  ok=chk('nc_snum','e_nc_snum')&&ok;ok=chk('nc_sname','e_nc_sname')&&ok;ok=chk('nc_stype','e_nc_stype')&&ok;
-  ok=chk('nc_city','e_nc_city')&&ok;ok=chk('nc_zip','e_nc_zip')&&ok;
-  const comm=document.getElementById('nc_commercial')?.checked;const res=document.getElementById('nc_residential')?.checked;
-  const et=document.getElementById('e_nc_type');if(!comm&&!res){if(et)et.classList.add('show');ok=false;}else{if(et)et.classList.remove('show');}
-  if(!ok){const fe=document.querySelector('#ncStep1 .ferr.show');if(fe)fe.scrollIntoView({behavior:'smooth',block:'center'});return;}
-  ncSaveAll();
+function reqFld(id, errId){
+  const el=document.getElementById(id);
+  const ok=el&&el.value.trim()!=='';
+  if(el) el.classList.toggle('err',!ok);
+  const e=document.getElementById(errId);
+  if(e) e.classList.toggle('show',!ok);
+  return ok;
 }
 
-function ncBack(){if(_ncStep>1)ncGo(_ncStep-1);}
-function ncSkip(){if(_ncStep===2)ncGo(3);else ncSaveAll();}
-
-function ncTypeChange(){
-  const c=document.getElementById('nc_commercial')?.checked;const r=document.getElementById('nc_residential')?.checked;
-  const lc=document.getElementById('nc_lbl_comm');if(lc)lc.style.borderColor=c?'var(--gold)':'var(--border2)';
-  const lr=document.getElementById('nc_lbl_res');if(lr)lr.style.borderColor=r?'var(--gold)':'var(--border2)';
-}
-
-function ncBillSame(val){
-  ['pm','pri','oth'].forEach(x=>{const l=document.getElementById('nc_bc_'+x+'_lbl');if(l){l.style.borderColor='var(--border2)';l.style.background='';}});
-  const lbl=document.getElementById('nc_bc_'+val+'_lbl');if(lbl){lbl.style.borderColor='var(--gold)';lbl.style.background='rgba(184,146,42,.07)';}
-  const oth=document.getElementById('nc_bc_other');if(oth)oth.style.display=val==='other'?'block':'none';
-}
-
-function ncSIToggle(yes){
-  const yl=document.getElementById('nc_si_y_lbl');if(yl){yl.style.borderColor=yes?'var(--gold)':'var(--border2)';yl.style.background=yes?'rgba(184,146,42,.07)':'';}
-  const nl=document.getElementById('nc_si_n_lbl');if(nl){nl.style.borderColor=!yes?'var(--gold)':'var(--border2)';nl.style.background=!yes?'rgba(184,146,42,.07)':'';}
-  const w=document.getElementById('nc_si_wrap');if(w)w.style.display=yes?'block':'none';
-}
-
-function ncAddCC(){
-  const g=id=>(document.getElementById(id)||{value:''}).value.trim();
-  const fn=g('nc_cc_fn'),ln=g('nc_cc_ln'),em=g('nc_cc_em'),ph=g('nc_cc_ph');
-  if(!em)return;
-  _ncCC.push({fn,ln,em,ph});
-  ['nc_cc_fn','nc_cc_ln','nc_cc_em','nc_cc_ph'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const list=document.getElementById('nc_cc_list');
-  if(list)list.innerHTML=_ncCC.map((c,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;"><span><strong>${c.fn} ${c.ln}</strong> · ${c.em}${c.ph?' · '+c.ph:''}</span><button onclick="_ncCC.splice(${i},1);ncAddCC()" style="background:none;border:none;cursor:pointer;color:var(--muted);">×</button></div>`).join('');
-}
-
-function ncBuildAndSave(incomplete){
-  // If editing an existing customer, update instead of create
-  if(window._editingCustomerId && !incomplete){
-    const existing = CUSTOMERS.find(x=>x.id===parseInt(window._editingCustomerId));
-    if(existing){
-      const g=id=>(document.getElementById(id)||{value:''}).value.trim();
-      existing.name = g('nc_company');
-      existing.phone = g('nc_phone');
-      existing.address = g('nc_snum')+' '+g('nc_sname')+' '+g('nc_stype')+', '+g('nc_city')+' '+(g('nc_state')||'CA')+' '+g('nc_zip');
-      existing.city = g('nc_city')+', '+(g('nc_state')||'CA');
-      existing.type = document.getElementById('nc_residential')?.checked?'residential':'commercial';
-      const pm = existing.contacts.find(x=>x.role==='project-manager')||existing.contacts[0];
-      if(pm){ pm.name=g('nc_fname')+' '+g('nc_lname'); pm.phone=g('nc_phone'); pm.email=g('nc_email'); pm.initials=((g('nc_fname')[0]||'')+(g('nc_lname')[0]||'')).toUpperCase(); }
-      window._editingCustomerId = null;
-      closeModal();
-      renderList(); renderDetail(existing.id);
-      const fl=document.createElement('div');
-      fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
-      fl.textContent='✓ Customer updated';
-      document.body.appendChild(fl); setTimeout(()=>fl.remove(),3000);
-      return;
+function saveCustomer(){
+  if(window._editingCustomerId){
+    const ex=CUSTOMERS.find(x=>x.id===parseInt(window._editingCustomerId));
+    if(ex){
+      const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+      ex.name=g('f_company');ex.phone=g('f_phone');
+      ex.address=g('f_snum')+' '+g('f_sname')+' '+(g('f_stype')||'')+', '+g('f_city')+' '+(document.getElementById('f_state')||{value:'CA'}).value+' '+g('f_zip');
+      ex.city=g('f_city')+', '+((document.getElementById('f_state')||{value:'CA'}).value);
+      ex.type=document.getElementById('f_residential')?.checked?'residential':'commercial';
+      const pm2=ex.contacts.find(x=>x.role==='project-manager')||ex.contacts[0];
+      if(pm2){pm2.name=g('f_fname')+' '+g('f_lname');pm2.phone=g('f_phone');pm2.email=g('f_email');pm2.initials=((g('f_fname')[0]||'')+(g('f_lname')[0]||'')).toUpperCase();}
+      window._editingCustomerId=null;
+  const _ncT=document.getElementById('ncModalTitle');
+  if(_ncT) _ncT.textContent='New customer';
+      closeModal();renderList();renderDetail(ex.id);
+      const fl=document.createElement('div');fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
+      fl.textContent='✓ Customer updated';document.body.appendChild(fl);setTimeout(()=>fl.remove(),3000);return;
     }
-    window._editingCustomerId = null;
+    window._editingCustomerId=null;
   }
-  const g=id=>(document.getElementById(id)||{value:''}).value.trim();
-  const addr=g('nc_snum')+' '+g('nc_sname')+' '+g('nc_stype')+', '+g('nc_city')+' '+(g('nc_state')||'CA')+' '+g('nc_zip');
-  const fn=g('nc_fname'),ln=g('nc_lname'),init=((fn[0]||'')+(ln[0]||'')).toUpperCase();
-  const newId=Math.max(...CUSTOMERS.map(c=>c.id))+1;
-  const typeVal=document.getElementById('nc_residential')?.checked?'residential':'commercial';
-  const avC=['av-gold','av-info','av-success','av-warning'];
-  const contacts=[{id:'c_'+Date.now(),name:fn+' '+ln,initials:init,color:avC[0],email:g('nc_email'),phone:g('nc_phone'),title:'Primary Contact',role:'project-manager',jobs:[]}];
-  if(!incomplete){
-    const pfn=g('nc_pm_fn'),pln=g('nc_pm_ln'),pem=g('nc_pm_em');
-    if(pfn&&pem)contacts.push({id:'c_'+Date.now()+'p',name:pfn+' '+pln,initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[1],email:pem,phone:g('nc_pm_ph'),title:'Project Manager',role:'project-manager',jobs:[]});
-    const bcVal=document.querySelector('input[name="nc_bc"]:checked')?.value;
-    if(bcVal==='pm'&&g('nc_pm_fn')){const pfn2=g('nc_pm_fn'),pln2=g('nc_pm_ln');contacts.push({id:'b_'+Date.now(),name:pfn2+' '+pln2,initials:((pfn2[0]||'')+(pln2[0]||'')).toUpperCase(),color:avC[2],email:g('nc_pm_em'),phone:g('nc_pm_ph'),title:'',role:'billing',billingTo:true,pmRef:pfn2+' '+pln2,jobs:[]});}
-    else if(bcVal==='primary')contacts.push({id:'b_'+Date.now(),name:fn+' '+ln,initials:init,color:avC[2],email:g('nc_email'),phone:g('nc_phone'),title:'',role:'billing',billingTo:true,pmRef:fn+' '+ln,jobs:[]});
-    else if(bcVal==='other'&&g('nc_bc_em'))contacts.push({id:'b_'+Date.now(),name:g('nc_bc_fn')+' '+g('nc_bc_ln'),initials:((g('nc_bc_fn')[0]||'')+(g('nc_bc_ln')[0]||'')).toUpperCase(),color:avC[2],email:g('nc_bc_em'),phone:g('nc_bc_ph'),title:g('nc_bc_ti'),role:'billing',billingTo:true,pmRef:'',jobs:[]});
-    _ncCC.forEach((cc,i)=>contacts.push({id:'b_'+Date.now()+i,name:cc.fn+' '+cc.ln,initials:((cc.fn[0]||'')+(cc.ln[0]||'')).toUpperCase(),color:avC[i%avC.length],email:cc.em,phone:cc.ph,title:'',role:'billing',billingTo:false,billingCc:true,pmRef:'',jobs:[]}));
-  }
-  const siY=document.getElementById('nc_si_yes')?.checked;
-  CUSTOMERS.unshift({id:newId,name:g('nc_company'),city:g('nc_city')+', '+(g('nc_state')||'CA'),address:addr,phone:g('nc_phone'),since:g('nc_since')||''+new Date().getFullYear(),type:typeVal,waiver:g('nc_waiver')||'conditional',portal:g('nc_bmethod')==='Client portal',notes:'',specialInstructions:!incomplete&&siY,specialInstructionsText:!incomplete&&siY?g('nc_si_text'):'',billingMethod:g('nc_bmethod')||'direct-email',sov:false,sovEstimates:[],incomplete:!!incomplete,contacts});
-  closeModal();activeId=newId;renderList();renderDetail(newId);
-  const fl=document.createElement('div');
-  fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:'+(incomplete?'var(--warning)':'var(--success)')+';';
-  fl.textContent=incomplete?'⚠ Customer saved — billing pending':'✓ Customer created successfully';
-  document.body.appendChild(fl);setTimeout(()=>fl.remove(),3500);
-}
+  let ok=true;
+  ok=reqFld('f_company','e_company')&&ok;
+  ok=reqFld('f_fname','e_fname')&&ok;
+  ok=reqFld('f_lname','e_lname')&&ok;
+  ok=reqFld('f_phone','e_phone')&&ok;
+  ok=reqFld('f_email','e_email')&&ok;
+  ok=reqFld('f_snum','e_snum')&&ok;
+  ok=reqFld('f_sname','e_sname')&&ok;
+  ok=reqFld('f_stype','e_stype')&&ok;
+  ok=reqFld('f_city','e_city')&&ok;
+  ok=reqFld('f_state','e_state')&&ok;
+  ok=reqFld('f_zip','e_zip')&&ok;
+  if(!ok){ const fe=document.querySelector('#modalBg .err'); if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'}); return; }
 
-function ncSaveAll(){ncBuildAndSave(false);}
-function ncSaveLater(){ncBuildAndSave(true);}
-function saveCustomer(){ncSaveAll();}
+  const snum=document.getElementById('f_snum').value.trim();
+  const sname=document.getElementById('f_sname').value.trim();
+  const stype=document.getElementById('f_stype').value;
+  const utype=document.getElementById('f_utype').value;
+  const unum=document.getElementById('f_unum').value.trim();
+  const city=document.getElementById('f_city').value.trim();
+  const state=document.getElementById('f_state').value;
+  const zip=document.getElementById('f_zip').value.trim();
+  let addr=snum+' '+sname+' '+stype;
+  if(utype&&unum) addr+=', '+utype+' '+unum;
+  const fullAddr=addr+', '+city+' '+state+' '+zip;
+
+  const fname=document.getElementById('f_fname').value.trim();
+  const lname=document.getElementById('f_lname').value.trim();
+  const avColors=['av-gold','av-info','av-success','av-warning'];
+  const initials=((fname[0]||'')+(lname[0]||'')).toUpperCase();
+
+  const newId=Math.max(...CUSTOMERS.map(c=>c.id))+1;
+  const comm=document.getElementById('f_commercial').checked;
+  const res=document.getElementById('f_residential').checked;
+  if(!comm&&!res){
+    document.getElementById('e_type').classList.add('show');
+    document.getElementById('e_type').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('e_type').classList.remove('show');
+  const typeVal=res?'residential':'commercial';
+
+  CUSTOMERS.unshift({
+    id:newId,
+    name:document.getElementById('f_company').value.trim(),
+    city:city+', '+state,
+    address:fullAddr,
+    phone:document.getElementById('f_phone').value.trim(),
+    since:(document.getElementById('f_since')||{value:'2026'}).value,
+    type:typeVal,
+    waiver:(document.getElementById('f_waiver')||{value:'conditional'}).value,
+    portal:(document.getElementById('f_billing')||{value:''}).value==='Client portal',
+    notes:((document.getElementById('f_notes')||{value:''}).value||'').trim(),
+    contacts:[{
+      id:'c_'+Date.now(), name:fname+' '+lname, initials,
+      color:avColors[0], email:document.getElementById('f_email').value.trim(),
+      phone:document.getElementById('f_phone').value.trim(),
+      title:document.getElementById('f_title').value.trim(), jobs:[]
+    }]
+  });
+
+  closeModal();
+  activeId=newId;
+  renderList();
+  renderDetail(newId);
+
+  const flash=document.createElement('div');
+  flash.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--success);color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  flash.textContent='✓ Customer created successfully';
+  document.body.appendChild(flash);
+  setTimeout(()=>flash.remove(),3500);
+}
 
 // ══ TYPE SELECTOR ══
 // ── ADD CONTACT MODAL ──
@@ -1984,17 +2326,17 @@ function closeTypeSel(){
 function setFilter(f){
   activeFilter=f;
   ['all','active','billing','incomplete'].forEach(x=>{
-    const _ce=document.getElementById('chip-'+x);if(_ce)_ce.classList.toggle('active',x===f);
+    const _ce=document.getElementById('chip-'+x); if(_ce) _ce.classList.toggle('active',x===f);
   });
   renderList();
 }
 
 // ══ SPECIAL INSTRUCTIONS TOGGLE ══
 function toggleFormSpecial(val){
-  const sf=document.getElementById('special_fields');if(sf)sf.style.display=val?'block':'none';
-  const ws=document.getElementById('waiver_std');if(ws)ws.style.display=val?'none':'block';
-  const sy=document.getElementById('si_yes_lbl');if(sy)sy.classList.toggle('sel',val);
-  const sn=document.getElementById('si_no_lbl');if(sn)sn.classList.toggle('sel',!val);
+  const sf=document.getElementById('special_fields'); if(sf) sf.style.display=val?'block':'none';
+  const ws=document.getElementById('waiver_std'); if(ws) ws.style.display=val?'none':'block';
+  const sy=document.getElementById('si_yes_lbl'); if(sy) sy.classList.toggle('sel',val);
+  const sn=document.getElementById('si_no_lbl'); if(sn) sn.classList.toggle('sel',!val);
 }
 
 // ══ TYPE RADIO HANDLER ══
@@ -2011,6 +2353,8 @@ document.addEventListener('DOMContentLoaded', function(){
   function on(id,ev,fn){const el=document.getElementById(id);if(el)el.addEventListener(ev,fn);}
   on('btnNewCustomer','click',openModal);
   on('btnCloseModal','click',closeModal);
+  on('btnCancelModal','click',closeModal);
+  on('btnSaveCustomer','click',saveCustomer);
   on('modalBg','click',function(e){if(e.target===this)closeModal();});
   on('searchInput','input',renderList);
   on('chip-all','click',()=>setFilter('all'));
@@ -2298,7 +2642,6 @@ function openSOVInvoicePreview(estNum){
     +'<span>SDD Demolition &nbsp;·&nbsp; San Diego, CA &nbsp;·&nbsp; License #1094583</span>'
     +'<span>Thank you for your business</span>'
     +'</div>'
-    +'</div>'
     +'</body></html>');
   w.document.close();
 }
@@ -2354,296 +2697,368 @@ function exportSOVPdf(customerId){
 }
 
 
+// ══ ADD JOB MODAL ══
+let _ajCustomerId=null, _ajDuplicateConfirmed=false, _ajDuplicateJobs=[];
 
-function navigateFromStat(type, customerId){
-  const c = CUSTOMERS.find(x=>x.id===parseInt(customerId));
-  if(!c) return;
-  const jobs = getAllJobs(c);
-  const pa = v=>parseFloat((v||'0').replace(/[$,]/g,'')||0);
-  const fmtAmt = n=>'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
-
-  const STAT_CONFIGS = {
-    estimates:{ title:'Approved — Pending Scheduling', color:'var(--info)', bg:'rgba(58,126,212,.1)',
-      items: jobs.filter(j=>j.status==='Pending scheduled'),
-      navUrl:'/sdd-estimates.html', navLabel:'View in Estimates →', emptyMsg:'No approved estimates pending scheduling.' },
-    active:{ title:'Active Jobs', color:'var(--warning)', bg:'rgba(200,130,42,.1)',
-      items: jobs.filter(j=>j.status==='In progress'),
-      navUrl:'/sdd-jobs.html', navLabel:'View in Jobs →', emptyMsg:'No active jobs.' },
-    billing:{ title:'Ready to Bill', color:'var(--danger)', bg:'rgba(217,79,79,.1)',
-      items: jobs.filter(j=>j.status==='Ready to bill'),
-      navUrl:'/sdd-jobs.html', navLabel:'View in Jobs →', emptyMsg:'No jobs ready to bill.' },
-    ar:{ title:'Accounts Receivable', color:'var(--success)', bg:'rgba(58,158,106,.1)',
-      items: jobs.filter(j=>j.status==='Completed'),
-      navUrl:'/sdd-invoices.html', navLabel:'View in Invoices →', emptyMsg:'No open invoices.' },
-    pastdue:{ title:'Total Past Due', color:'var(--danger)', bg:'rgba(217,79,79,.1)',
-      items: jobs.filter(j=>j.status==='Completed').slice(0,Math.max(0,jobs.filter(j=>j.status==='Completed').length-1)),
-      navUrl:'/sdd-invoices.html', navLabel:'View in Invoices →', emptyMsg:'No past due invoices.' }
-  };
-
-  const cfg = STAT_CONFIGS[type];
-  if(!cfg) return;
-  const totalAmt = cfg.items.reduce((s,j)=>s+pa(j.amount),0);
-  document.getElementById('spTitle').textContent = cfg.title;
-  document.getElementById('spTitle').style.color = cfg.color;
-  document.getElementById('spSummary').textContent =
-    cfg.items.length+' item'+(cfg.items.length!==1?'s':'')+
-    (totalAmt>0?' · '+fmtAmt(totalAmt):'');
-  document.getElementById('spBody').innerHTML = cfg.items.length===0
-    ? '<div style="padding:24px 20px;text-align:center;color:var(--muted2);font-size:14px;">'+cfg.emptyMsg+'</div>'
-    : cfg.items.map(j=>`<div class="sp-row" onclick="goToEstimate('`+`${j.est}')">
-        <div class="sp-icon" style="background:`+`${cfg.bg};"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="`+`${cfg.color}" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-        <div class="sp-info"><div class="sp-name">`+`${j.est} — `+`${j.address}</div><div class="sp-meta">`+`${j.date}</div></div>
-        <div class="sp-right"><div class="sp-amt" style="color:`+`${cfg.color};">`+`${j.amount}</div></div>
-      </div>`).join('');
-  document.getElementById('spFootNote').textContent = 'Total: '+fmtAmt(totalAmt);
-  const btn = document.getElementById('spNavBtn');
-  btn.textContent = cfg.navLabel;
-  btn.onclick = ()=>{ closeStatPopup(); window.location.href=cfg.navUrl; };
-  document.getElementById('statPopupBg').classList.add('open');
+function toRoman(n){
+  const v=[1000,900,500,400,100,90,50,40,10,9,5,4,1],s=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let r=''; v.forEach(function(x,i){while(n>=x){r+=s[i];n-=x;}});return r;
 }
 
-// ── DOCUMENT FUNCTIONS ──
+function getCustomerJobs(c){
+  var jobs=[];
+  (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(j){jobs.push(Object.assign({},j,{pmName:ct.name,pmId:ct.id}));});});
+  return jobs;
+}
 
+function findMatchingJobs(c,q){
+  if(!q||q.length<3)return[];
+  var ql=q.toLowerCase();
+  return getCustomerJobs(c).filter(function(j){return (j.address||'').toLowerCase().includes(ql);});
+}
 
+function findDuplicateJobs(c,addr){
+  var al=addr.toLowerCase().trim();
+  return getCustomerJobs(c).filter(function(j){return (j.address||'').toLowerCase().trim()===al;});
+}
 
-// ══ ADD JOB MODAL ══
-let _ajCustomerId = null;
-
-function openAddJobModal(cid){
-  _ajCustomerId = parseInt(cid);
-  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
-  if(!c) return;
-
-  // Clear fields
-  ['aj_po','aj_name','aj_addr','aj_pm_fn','aj_pm_ln','aj_pm_ph','aj_pm_em'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
+function nextSuffix(c,baseAddr){
+  var jobs=getCustomerJobs(c);
+  var base=baseAddr.replace(/-[IVXLCDM]+$/i,'').trim();
+  var maxN=0;
+  jobs.forEach(function(j){
+    var addr=(j.address||'').trim();
+    var stripped=addr.replace(/-[IVXLCDM]+$/i,'').trim();
+    if(stripped.toLowerCase()===base.toLowerCase()){
+      var suffix=addr.replace(stripped,'').trim();
+      if(suffix.startsWith('-')){
+        var roman=suffix.slice(1),n=0,i=0;
+        var rm={M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+        while(i<roman.length){var two=roman.slice(i,i+2);if(rm[two]){n+=rm[two];i+=2;}else{n+=rm[roman[i]]||0;i++;}}
+        if(n>maxN)maxN=n;
+      }else{if(maxN===0)maxN=1;}
+    }
   });
-  const err=document.getElementById('e_aj_addr'); if(err) err.classList.remove('show');
-  const fields=document.getElementById('aj_pm_fields'); if(fields) fields.style.display='none';
+  return maxN===0?null:toRoman(maxN+1);
+}
 
-  // Fill company info banner
-  const primary = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
-  const coName = document.getElementById('aj_co_name');
-  const coContact = document.getElementById('aj_co_contact');
-  const coPhone = document.getElementById('aj_co_phone');
-  const coEmail = document.getElementById('aj_co_email');
-  const jobClientName = document.getElementById('addJobClientName');
-  if(coName) coName.textContent = c.name;
-  if(coContact) coContact.textContent = primary.name || '';
-  if(coPhone) coPhone.textContent = primary.phone ? '📞 '+primary.phone : '';
-  if(coEmail) coEmail.textContent = primary.email ? '✉ '+primary.email : '';
-  if(jobClientName) jobClientName.textContent = c.name;
+function ajBuildAndCheck(){
+  var snum=(document.getElementById('aj_snum')||{value:''}).value.trim();
+  var sname=(document.getElementById('aj_sname')||{value:''}).value.trim();
+  var stype=(document.getElementById('aj_stype')||{value:''}).value.trim();
+  var city=(document.getElementById('aj_city')||{value:''}).value.trim();
+  var state=(document.getElementById('aj_state')||{value:'CA'}).value.trim();
+  var zip=(document.getElementById('aj_zip')||{value:''}).value.trim();
+  var fullAddr='';
+  if(snum||sname) fullAddr=(snum+' '+sname+(stype?' '+stype:'')).trim();
+  if(city) fullAddr+=(fullAddr?', ':'')+city;
+  if(state) fullAddr+=(fullAddr?' ':'')+state;
+  if(zip) fullAddr+=(fullAddr?' ':'')+zip;
+  var input=document.getElementById('aj_addr');
+  if(input) input.value=fullAddr;
+  _ajDuplicateConfirmed=false;
+  if(fullAddr.length>10) ajCheckDuplicate();
+}
 
-  // Build PM dropdown — primary contact + existing PMs + New PM
-  const sel = document.getElementById('aj_pm_select');
-  if(sel){
-    sel.innerHTML = '<option value="">— Select project manager —</option>';
-    // Add primary contact as first option
-    const primaryOpt = document.createElement('option');
-    primaryOpt.value = 'primary';
-    primaryOpt.textContent = (primary.name||'Primary contact') + ' (Primary contact)';
-    sel.appendChild(primaryOpt);
-    // Add existing PMs (exclude primary if same)
-    const pms = c.contacts.filter(x=>x.role==='project-manager' && x.id !== (primary.id||''));
-    pms.forEach(pm=>{
-      const opt=document.createElement('option');
-      opt.value='pm_'+pm.id;
-      opt.textContent=pm.name+' (Project Manager)';
-      sel.appendChild(opt);
-    });
-    // Add "New Project Manager" option
-    const newOpt=document.createElement('option');
-    newOpt.value='new';
-    newOpt.textContent='+ New Project Manager';
-    sel.appendChild(newOpt);
-    sel.value='';
+function ajCheckDuplicate(){
+  var input=document.getElementById('aj_addr');
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c||!input) return;
+  var addr=(input.value||'').trim();
+  if(!addr) return;
+  var dups=findDuplicateJobs(c,addr);
+  _ajDuplicateJobs=dups;
+  if(dups.length>0&&!_ajDuplicateConfirmed){
+    var dupJobs=document.getElementById('aj_addr_dup_jobs');
+    if(dupJobs){
+      dupJobs.innerHTML=dups.map(function(j){
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;">'
+          +'<strong style="color:var(--danger);">'+j.est+'</strong>'
+          +' <span style="color:var(--muted);">'+j.address+'</span>'
+          +' <span style="margin-left:auto;font-size:11px;">'+j.status+' · '+j.pmName+'</span>'
+          +'</div>';
+      }).join('');
+    }
+    var popup=document.getElementById('ajDupPopup');
+    if(popup) popup.style.cssText='display:flex;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;padding:24px;';
   }
+}
 
-  const mb=document.getElementById('addJobModal');
-  if(mb){mb.style.display='flex';mb.style.visibility='visible';}
+function closeDupPopup(){
+  var p=document.getElementById('ajDupPopup');
+  if(p) p.style.display='none';
+}
+
+function ajConfirmDuplicate(){
+  closeDupPopup();
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;}); if(!c) return;
+  var snum=(document.getElementById('aj_snum')||{value:''}).value.trim();
+  var sname=(document.getElementById('aj_sname')||{value:''}).value.trim().replace(/-[IVXLCDM]+$/i,'');
+  var stype=(document.getElementById('aj_stype')||{value:''}).value.trim();
+  var city=(document.getElementById('aj_city')||{value:''}).value.trim();
+  var state=(document.getElementById('aj_state')||{value:'CA'}).value.trim();
+  var zip=(document.getElementById('aj_zip')||{value:''}).value.trim();
+  var baseAddr=(snum+' '+sname+' '+stype+', '+city+' '+state+' '+zip).trim();
+  var suffix=nextSuffix(c,baseAddr)||'II';
+  var newSname=sname+'-'+suffix;
+  var snEl=document.getElementById('aj_sname'); if(snEl) snEl.value=newSname;
+  var newAddr=(snum+' '+newSname+' '+stype+', '+city+' '+state+' '+zip).trim();
+  var addrEl=document.getElementById('aj_addr'); if(addrEl) addrEl.value=newAddr;
+  _ajDuplicateConfirmed=true;
+}
+
+function ajCancelDuplicate(){
+  closeDupPopup();
+  ['aj_snum','aj_sname','aj_stype','aj_city','aj_zip'].forEach(function(id){
+    var el=document.getElementById(id); if(el){el.value='';if(el.tagName==='SELECT')el.selectedIndex=0;}
+  });
+  var addrEl=document.getElementById('aj_addr'); if(addrEl) addrEl.value='';
+  _ajDuplicateConfirmed=false;
+  var el=document.getElementById('aj_snum'); if(el) el.focus();
 }
 
 function ajPMSelect(val){
-  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
-  if(!c) return;
-  const fields = document.getElementById('aj_pm_fields');
-  const g = (id, v) => { const el=document.getElementById(id); if(el){el.value=v||'';el.readOnly=(val!=='new');el.style.background=val!=='new'?'var(--surface3)':'';} };
-
-  if(!val){
-    if(fields) fields.style.display='none';
-    return;
-  }
-
-  if(fields) fields.style.display='block';
-
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;}); if(!c) return;
+  var fields=document.getElementById('aj_pm_fields');
+  var lbl=document.getElementById('aj_pm_fields_label');
+  function fill(id,v,ro){var el=document.getElementById(id);if(el){el.value=v||'';el.readOnly=!!ro;el.style.background=ro?'var(--surface3)':'';}}
+  if(!val){if(fields)fields.style.display='none';return;}
+  if(fields)fields.style.display='block';
   if(val==='primary'){
-    const p = c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
-    const parts=(p.name||'').split(' ');
-    g('aj_pm_fn', parts[0]||'');
-    g('aj_pm_ln', parts.slice(1).join(' ')||'');
-    g('aj_pm_ph', p.phone||'');
-    g('aj_pm_em', p.email||'');
-  } else if(val.startsWith('pm_')){
-    const pmId = val.replace('pm_','');
-    const pm = c.contacts.find(x=>x.id===pmId)||{};
-    const parts=(pm.name||'').split(' ');
-    g('aj_pm_fn', parts[0]||'');
-    g('aj_pm_ln', parts.slice(1).join(' ')||'');
-    g('aj_pm_ph', pm.phone||'');
-    g('aj_pm_em', pm.email||'');
-  } else if(val==='new'){
-    // Clear for new entry — editable
-    ['aj_pm_fn','aj_pm_ln','aj_pm_ph','aj_pm_em'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){el.value='';el.readOnly=false;el.style.background='';}
-    });
+    var p=c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{};
+    var pts=(p.name||'').split(' ');
+    fill('aj_pm_fn',pts[0]||'',true);fill('aj_pm_ln',pts.slice(1).join(' ')||'',true);
+    fill('aj_pm_ph',p.phone||'',true);fill('aj_pm_em',p.email||'',true);
+    if(lbl)lbl.textContent='Primary contact (read-only)';
+  }else if(val.startsWith('pm_')){
+    var pm=c.contacts.find(function(x){return x.id===val.replace('pm_','');})||{};
+    var pts2=(pm.name||'').split(' ');
+    fill('aj_pm_fn',pts2[0]||'',true);fill('aj_pm_ln',pts2.slice(1).join(' ')||'',true);
+    fill('aj_pm_ph',pm.phone||'',true);fill('aj_pm_em',pm.email||'',true);
+    if(lbl)lbl.textContent='Project Manager (read-only)';
+  }else if(val==='new'){
+    ['aj_pm_fn','aj_pm_ln','aj_pm_ph','aj_pm_em'].forEach(function(id){fill(id,'',false);});
+    if(lbl)lbl.textContent='New Project Manager';
   }
+}
+
+function openAddJobModal(cid){
+  _ajCustomerId=parseInt(cid);
+  _ajDuplicateConfirmed=false;
+  _ajDuplicateJobs=[];
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c) return;
+
+  // Remove any existing modal overlay
+  var existing=document.getElementById('_ajOverlay');
+  if(existing) existing.parentNode.removeChild(existing);
+
+  // Build PM options
+  var primary=c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{};
+  var pmOpts='<option value="">— Select project manager —</option>';
+  pmOpts+='<option value="primary">'+(primary.name||'Primary contact')+' — Primary contact</option>';
+  c.contacts.filter(function(x){return x.role==='project-manager'&&x!==primary;}).forEach(function(pm){
+    pmOpts+='<option value="pm_'+pm.id+'">'+pm.name+' — Project Manager</option>';
+  });
+  pmOpts+='<option value="new">+ New Project Manager</option>';
+
+  // Build the full modal HTML
+  var html='<div id="_ajOverlay" onclick="if(event.target===this)closeAddJobModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
+    +'<div style="background:var(--surface);border-radius:16px;width:100%;max-width:580px;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:Barlow,sans-serif;">'
+    +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);">'
+    +'<div style="font-size:20px;font-weight:700;">Add New Job</div>'
+    +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">'+c.name+'</div>'
+    +'</div>'
+    +'<div style="padding:20px 24px;max-height:calc(100vh - 220px);overflow-y:auto;">'
+    // Company info
+    +'<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Company &amp; Primary contact</div>'
+    +'<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+c.name+'</div>'
+    +'<div style="font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;">'
+    +(primary.name?'<span>'+primary.name+'</span>':'')
+    +(primary.phone?'<span>📞 '+primary.phone+'</span>':'')
+    +(primary.email?'<span>✉ '+primary.email+'</span>':'')
+    +'</div></div>'
+    // PM section
+    +'<div style="margin-bottom:16px;">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Project Manager</div>'
+    +'<select id="_aj_pm" onchange="ajPMSelectDyn(this.value)" style="width:100%;padding:10px 13px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:var(--surface2);color:var(--text);outline:none;">'+pmOpts+'</select>'
+    +'<div id="_aj_pm_fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:8px;">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;" id="_aj_pm_lbl">PM info</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">First name</label><input id="_aj_fn" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Last name</label><input id="_aj_ln" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Phone</label><input id="_aj_ph" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Email</label><input id="_aj_em" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
+    +'</div></div></div>'
+    // Job site address
+    +'<div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Job site address</div>'
+    +'<div id="_aj_dup_warn" style="display:none;background:rgba(217,79,79,.07);border:1.5px solid rgba(217,79,79,.3);border-radius:10px;padding:12px 14px;margin-bottom:10px;">'
+    +'<div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">⚠ This address already has existing jobs</div>'
+    +'<div id="_aj_dup_list" style="margin-bottom:10px;font-size:12px;color:var(--muted);"></div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Do you want to create a new phase?</div>'
+    +'<div style="display:flex;gap:8px;"><button onclick="ajDynConfirm()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Yes — new phase</button>'
+    +'<button onclick="ajDynCancel()" style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;cursor:pointer;">No — change</button></div>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street number <span style="color:var(--danger);">*</span></label><input id="_aj_snum" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_snum" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street name <span style="color:var(--danger);">*</span></label><input id="_aj_sname" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_sname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Type <span style="color:var(--danger);">*</span></label><select id="_aj_stype" onchange="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><option value="">Select...</option><option>Ave</option><option>Blvd</option><option>Cir</option><option>Ct</option><option>Dr</option><option>Hwy</option><option>Ln</option><option>Pkwy</option><option>Pl</option><option>Rd</option><option>St</option><option>Way</option></select><div id="_e_aj_stype" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">City <span style="color:var(--danger);">*</span></label><input id="_aj_city" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_city" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">State</label><select id="_aj_state" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">ZIP <span style="color:var(--danger);">*</span></label><input id="_aj_zip" oninput="ajDynBuild()" maxlength="10" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_zip" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'</div>'
+    +'</div>'
+    +'</div>'
+    +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
+    +'<div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);">*</span> are required</div>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<button onclick="closeAddJobModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Cancel</button>'
+    +'<button onclick="ajDynSave()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save job</button>'
+    +'</div></div>'
+    +'</div></div>';
+
+  var div=document.createElement('div');
+  div.innerHTML=html;
+  document.body.appendChild(div.firstChild);
 }
 
 function closeAddJobModal(){
-  const mb=document.getElementById('addJobModal');
-  if(mb) mb.style.display='none';
+  var el=document.getElementById('_ajOverlay');
+  if(el) el.parentNode.removeChild(el);
+  closeDupPopup();
 }
 
-function saveNewJob(){
-  const g=id=>(document.getElementById(id)||{value:''}).value.trim();
-  const addr=g('aj_addr');
-  if(!addr){
-    const err=document.getElementById('e_aj_addr'); if(err) err.classList.add('show');
-    return;
-  }
-  const c = CUSTOMERS.find(x=>x.id===_ajCustomerId);
+function ajPMSelectDyn(val){
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   if(!c) return;
-
-  const estNum = 'EST-' + String(Math.floor(Math.random()*900)+100);
-  const newJob = {
-    est: estNum, address: addr, po: g('aj_po'), jobName: g('aj_name'),
-    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-    amount: '$0', status: 'Pending scheduled'
-  };
-
-  const pmVal = (document.getElementById('aj_pm_select')||{value:''}).value;
-  const avC = ['av-gold','av-info','av-success','av-warning'];
-
-  if(pmVal==='new'){
-    const pfn=g('aj_pm_fn'),pln=g('aj_pm_ln'),pem=g('aj_pm_em'),pph=g('aj_pm_ph');
-    if(pfn){
-      c.contacts.push({
-        id:'c_'+Date.now(), name:pfn+' '+pln,
-        initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),
-        color:avC[c.contacts.length%avC.length],
-        email:pem, phone:pph, title:'Project Manager',
-        role:'project-manager', jobs:[newJob]
-      });
-    } else {
-      const first=c.contacts[0]; if(first){if(!first.jobs)first.jobs=[];first.jobs.push(newJob);}
-    }
-  } else if(pmVal==='primary'||pmVal.startsWith('pm_')){
-    const pmId = pmVal==='primary'
-      ? (c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{}).id
-      : pmVal.replace('pm_','');
-    const pm = c.contacts.find(x=>x.id===pmId);
-    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
-  } else {
-    const first=c.contacts[0]; if(first){if(!first.jobs)first.jobs=[];first.jobs.push(newJob);}
+  var fields=document.getElementById('_aj_pm_fields');
+  var lbl=document.getElementById('_aj_pm_lbl');
+  function fill(id,v,ro){var el=document.getElementById(id);if(el){el.value=v||'';el.readOnly=!!ro;el.style.background=ro?'var(--surface3)':'';}};
+  if(!val){if(fields)fields.style.display='none';return;}
+  if(fields)fields.style.display='block';
+  if(val==='primary'){
+    var p=c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{};
+    var pts=(p.name||'').split(' ');
+    fill('_aj_fn',pts[0]||'',true);fill('_aj_ln',pts.slice(1).join(' '),true);fill('_aj_ph',p.phone||'',true);fill('_aj_em',p.email||'',true);
+    if(lbl)lbl.textContent='Primary contact (read-only)';
+  }else if(val.startsWith('pm_')){
+    var pm=c.contacts.find(function(x){return x.id===val.replace('pm_','');})||{};
+    var pts2=(pm.name||'').split(' ');
+    fill('_aj_fn',pts2[0]||'',true);fill('_aj_ln',pts2.slice(1).join(' '),true);fill('_aj_ph',pm.phone||'',true);fill('_aj_em',pm.email||'',true);
+    if(lbl)lbl.textContent='Project Manager (read-only)';
+  }else{
+    ['_aj_fn','_aj_ln','_aj_ph','_aj_em'].forEach(function(id){fill(id,'',false);});
+    if(lbl)lbl.textContent='New Project Manager';
   }
+}
 
-  closeAddJobModal();
-  renderDetail(_ajCustomerId);
-  renderList();
+function ajDynBuild(){
+  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=gv('_aj_state')||'CA',zip=gv('_aj_zip');
+  var addr=(snum+' '+sname+(stype?' '+stype:'')+', '+city+' '+state+' '+zip).trim();
+  if(addr.length>10){
+    var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+    if(c){
+      var dups=findDuplicateJobs(c,addr);
+      var warn=document.getElementById('_aj_dup_warn');
+      var list=document.getElementById('_aj_dup_list');
+      if(dups.length&&!_ajDuplicateConfirmed){
+        if(warn)warn.style.display='block';
+        if(list)list.innerHTML=dups.map(function(j){return '<div style="padding:4px 0;"><strong>'+j.est+'</strong> — '+j.address+' ('+j.status+')</div>';}).join('');
+      }else{if(warn)warn.style.display='none';}
+    }
+  }
+}
 
-  const fl=document.createElement('div');
-  fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
+function ajDynConfirm(){
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c)return;
+  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+  var sname=gv('_aj_sname').replace(/-[IVXLCDM]+$/i,'');
+  var base=gv('_aj_snum')+' '+sname+' '+gv('_aj_stype')+', '+gv('_aj_city')+' '+(gv('_aj_state')||'CA')+' '+gv('_aj_zip');
+  var suffix=nextSuffix(c,base)||'II';
+  var snEl=document.getElementById('_aj_sname');
+  if(snEl)snEl.value=sname+'-'+suffix;
+  _ajDuplicateConfirmed=true;
+  var warn=document.getElementById('_aj_dup_warn');
+  if(warn)warn.style.display='none';
+}
+
+function ajDynCancel(){
+  ['_aj_snum','_aj_sname','_aj_city','_aj_zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var st=document.getElementById('_aj_stype');if(st)st.value='';
+  var warn=document.getElementById('_aj_dup_warn');if(warn)warn.style.display='none';
+  _ajDuplicateConfirmed=false;
+  var el=document.getElementById('_aj_snum');if(el)el.focus();
+}
+
+function ajDynSave(){
+  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=gv('_aj_state')||'CA',zip=gv('_aj_zip');
+  var ok=true;
+  function req(id,eid){if(!gv(id)){var e=document.getElementById(eid);if(e)e.style.display='block';ok=false;}else{var e=document.getElementById(eid);if(e)e.style.display='none';}};
+  req('_aj_snum','_e_aj_snum');req('_aj_sname','_e_aj_sname');req('_aj_stype','_e_aj_stype');req('_aj_city','_e_aj_city');req('_aj_zip','_e_aj_zip');
+  if(!ok)return;
+  var addr=(snum+' '+sname+' '+stype+', '+city+' '+state+' '+zip).trim();
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});if(!c)return;
+  var dups=findDuplicateJobs(c,addr);
+  if(dups.length&&!_ajDuplicateConfirmed){ajDynBuild();return;}
+  var estNum='EST-'+String(Math.floor(Math.random()*900)+100);
+  var newJob={est:estNum,address:addr,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled'};
+  var pmVal=(document.getElementById('_aj_pm')||{value:''}).value;
+  var avC=['av-gold','av-info','av-success','av-warning'];
+  if(pmVal==='new'){
+    var pfn=gv('_aj_fn'),pln=gv('_aj_ln');
+    if(pfn){c.contacts.push({id:'c_'+Date.now(),name:pfn+' '+pln,initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[c.contacts.length%avC.length],email:gv('_aj_em'),phone:gv('_aj_ph'),title:'Project Manager',role:'project-manager',jobs:[newJob]});}
+    else{var f1=c.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
+  }else{
+    var pmId=pmVal==='primary'?(c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{}).id:pmVal.replace('pm_','');
+    var pm=c.contacts.find(function(x){return x.id===pmId;});
+    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
+    else{var f2=c.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
+  }
+  closeAddJobModal();renderDetail(_ajCustomerId);renderList();
+  var fl=document.createElement('div');
+  fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:999999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:#2ecc71;';
   fl.textContent='✓ Job added — '+estNum;
-  document.body.appendChild(fl); setTimeout(()=>fl.remove(),3500);
+  document.body.appendChild(fl);setTimeout(function(){if(fl.parentNode)fl.parentNode.removeChild(fl);},3500);
+}
+
+
+function saveNewJob(){
+  function gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+  var snum=gv('aj_snum'),sname=gv('aj_sname'),stype_v=gv('aj_stype'),city=gv('aj_city'),state_v=(document.getElementById('aj_state')||{value:'CA'}).value,zip=gv('aj_zip');
+  var ok=true;
+  function req(id,eid){var v=(document.getElementById(id)||{value:''}).value.trim();var e=document.getElementById(eid);if(!v){if(e)e.classList.add('show');ok=false;}else{if(e)e.classList.remove('show');}};
+  req('aj_snum','e_aj_snum');req('aj_sname','e_aj_sname');req('aj_stype','e_aj_stype');req('aj_city','e_aj_city');req('aj_zip','e_aj_zip');
+  if(!ok)return;
+  var addr=(snum+' '+sname+' '+stype_v+', '+city+' '+state_v+' '+zip).trim();
+  var addrInput=document.getElementById('aj_addr');if(addrInput)addrInput.value=addr;
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});if(!c)return;
+  var dups=findDuplicateJobs(c,addr);
+  if(dups.length>0&&!_ajDuplicateConfirmed){ajCheckDuplicate();return;}
+  var estNum='EST-'+String(Math.floor(Math.random()*900)+100);
+  var newJob={est:estNum,address:addr,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled'};
+  var pmVal=(document.getElementById('aj_pm_select')||{value:''}).value;
+  var avC=['av-gold','av-info','av-success','av-warning'];
+  if(pmVal==='new'){
+    var pfn=gv('aj_pm_fn'),pln=gv('aj_pm_ln'),pem=gv('aj_pm_em'),pph=gv('aj_pm_ph');
+    if(pfn){c.contacts.push({id:'c_'+Date.now(),name:pfn+' '+pln,initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[c.contacts.length%avC.length],email:pem,phone:pph,title:'Project Manager',role:'project-manager',jobs:[newJob]});}
+    else{var f1=c.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
+  }else{
+    var pmId=pmVal==='primary'?(c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{}).id:pmVal.replace('pm_','');
+    var pm=c.contacts.find(function(x){return x.id===pmId;});
+    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
+    else{var f2=c.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
+  }
+  closeAddJobModal();renderDetail(_ajCustomerId);renderList();
+  var fl=document.createElement('div');fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
+  fl.textContent='✓ Job added — '+estNum;document.body.appendChild(fl);setTimeout(function(){fl.remove();},3500);
 }
 
 </script>
-
-<!-- ══ STAT DETAIL POPUP ══ -->
-<div class="stat-popup-bg" id="statPopupBg">
-  <div class="stat-popup">
-    <div class="stat-popup-head">
-      <div>
-        <div class="stat-popup-title" id="spTitle"></div>
-        <div class="stat-popup-summary" id="spSummary"></div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="closeStatPopup()">✕</button>
-    </div>
-    <div class="stat-popup-body" id="spBody"></div>
-    <div class="stat-popup-foot">
-      <div style="font-size:12px;color:var(--muted);" id="spFootNote"></div>
-      <button class="btn btn-ghost btn-sm" id="spNavBtn" onclick="closeStatPopup()">Go to module →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ADD JOB MODAL ══ -->
-<div id="addJobModal" class="modal-bg" onclick="if(event.target===this)closeAddJobModal()" style="display:none;">
-  <div class="modal-box" style="max-width:580px;">
-    <div class="modal-head">
-      <div>
-        <div class="modal-title" id="addJobTitle">Add New Job</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="addJobClientName"></div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">✕ Cancel</button>
-    </div>
-    <div class="modal-body">
-
-      <!-- Company info banner -->
-      <div id="ajCompanyInfo" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Company &amp; Primary contact</div>
-        <div style="font-size:14px;font-weight:700;" id="aj_co_name"></div>
-        <div style="font-size:13px;color:var(--muted);margin-top:4px;display:flex;gap:16px;flex-wrap:wrap;">
-          <span id="aj_co_contact"></span>
-          <span id="aj_co_phone"></span>
-          <span id="aj_co_email"></span>
-        </div>
-      </div>
-
-      <!-- Job info -->
-      <div class="fsec">
-        <div class="fsec-title">Job information</div>
-        <div class="fg2">
-          <div class="ff"><label>PO Number</label><input type="text" id="aj_po" placeholder="e.g. PO-4891"></div>
-          <div class="ff"><label>Job name</label><input type="text" id="aj_name" placeholder="e.g. Harbor Blvd Demo Phase 1"></div>
-        </div>
-        <div class="ff"><label>Job site address <span class="req">*</span></label><input type="text" id="aj_addr" placeholder="e.g. 1420 Harbor Blvd, San Diego CA 92101"><div class="ferr" id="e_aj_addr">Required</div></div>
-      </div>
-
-      <!-- Project Manager -->
-      <div class="fsec" style="margin-bottom:0;padding-bottom:0;border:none;">
-        <div class="fsec-title">Project Manager</div>
-        <div class="ff">
-          <label>Select project manager</label>
-          <select id="aj_pm_select" onchange="ajPMSelect(this.value)" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;">
-            <option value="">— Select —</option>
-          </select>
-        </div>
-        <!-- PM fields — hidden until selected -->
-        <div id="aj_pm_fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:4px;">
-          <div class="fg2">
-            <div class="ff"><label>First name</label><input type="text" id="aj_pm_fn" placeholder="First name"></div>
-            <div class="ff"><label>Last name</label><input type="text" id="aj_pm_ln" placeholder="Last name"></div>
-            <div class="ff"><label>Phone</label><input type="tel" id="aj_pm_ph" placeholder="(619) 555-0000"></div>
-            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="aj_pm_em" placeholder="email@company.com"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-foot">
-      <div style="font-size:11px;color:var(--muted);">Fields marked <span class="req">*</span> are required</div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">Cancel</button>
-        <button class="btn btn-gold" onclick="saveNewJob()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Save job
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ══ MOBILE NAV ══ -->
 <nav class="mobile-nav">
@@ -2673,144 +3088,93 @@ function saveNewJob(){
   </a>
 </nav>
 
-</body>
-</html><div id="modalBg" class="modal-bg" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box" style="max-width:660px;">
-    <div class="modal-head" style="flex-direction:column;align-items:stretch;gap:10px;padding-bottom:14px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="modal-title" id="ncTitle">New customer</div>
-        <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Cancel</button>
+
+<!-- ══ ADD JOB MODAL ══ -->
+<div id="addJobModal" onclick="if(event.target===this)closeAddJobModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">
+  <div class="modal-box" style="max-width:580px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="addJobTitle">Add New Job</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;" id="addJobClientName"></div>
       </div>
-
     </div>
-
-    <!-- STEP 1: Company -->
-    <div id="ncStep1" class="modal-body">
-      <div class="fsec">
-        <div class="fsec-title">Company information</div>
-        <div class="ff"><label>Company / customer name <span class="req">*</span></label><input type="text" id="nc_company" placeholder="e.g. ABC Construction Corp"><div class="ferr" id="e_nc_company">Required</div></div>
-        <div class="ff" style="margin-bottom:0;"><label>Customer type <span class="req">*</span></label>
-          <div style="display:flex;gap:12px;margin-top:8px;">
-            <label id="nc_lbl_comm" style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 16px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;">
-              <input type="radio" name="nc_type" value="commercial" id="nc_commercial" onchange="ncTypeChange()" style="accent-color:var(--gold);width:16px;height:16px;"> 🏢 Commercial
-            </label>
-            <label id="nc_lbl_res" style="flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;padding:10px 16px;border:1.5px solid var(--border2);border-radius:10px;transition:all .15s;">
-              <input type="radio" name="nc_type" value="residential" id="nc_residential" onchange="ncTypeChange()" style="accent-color:var(--gold);width:16px;height:16px;"> 🏠 Residential
-            </label>
-          </div>
-          <div class="ferr" id="e_nc_type" style="margin-top:6px;">Please select a type</div>
+    <div class="modal-body">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px;">Company &amp; Primary contact</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px;" id="aj_co_name"></div>
+        <div style="font-size:13px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;">
+          <span id="aj_co_contact"></span><span id="aj_co_phone"></span><span id="aj_co_email"></span>
         </div>
       </div>
       <div class="fsec">
-        <div class="fsec-title">Primary contact</div>
-        <div class="fg2">
-          <div class="ff"><label>First name <span class="req">*</span></label><input type="text" id="nc_fname" placeholder="Maria"><div class="ferr" id="e_nc_fname">Required</div></div>
-          <div class="ff"><label>Last name <span class="req">*</span></label><input type="text" id="nc_lname" placeholder="Rodriguez"><div class="ferr" id="e_nc_lname">Required</div></div>
-          <div class="ff"><label>Phone <span class="req">*</span></label><input type="tel" id="nc_phone" placeholder="(619) 555-0000"><div class="ferr" id="e_nc_phone">Required</div></div>
-          <div class="ff"><label>Email <span class="req">*</span></label><input type="email" id="nc_email" placeholder="contact@company.com"><div class="ferr" id="e_nc_email">Required</div></div>
+        <div class="fsec-title">Project Manager</div>
+        <div class="ff">
+          <label>Select project manager</label>
+          <select id="aj_pm_select" onchange="ajPMSelect(this.value)" style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;"><option value="">— Select —</option></select>
+        </div>
+        <div id="aj_pm_fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:8px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;" id="aj_pm_fields_label">PM info</div>
+          <div class="fg2">
+            <div class="ff"><label>First name</label><input type="text" id="aj_pm_fn"></div>
+            <div class="ff"><label>Last name</label><input type="text" id="aj_pm_ln"></div>
+            <div class="ff"><label>Phone</label><input type="tel" id="aj_pm_ph"></div>
+            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="aj_pm_em"></div>
+          </div>
         </div>
       </div>
       <div class="fsec" style="margin-bottom:0;padding-bottom:0;border:none;">
-        <div class="fsec-title">Physical address</div>
+        <div class="fsec-title">Job site address</div>
         <div class="fg2">
-          <div class="ff"><label>Street number <span class="req">*</span></label><input type="text" id="nc_snum" placeholder="4500"><div class="ferr" id="e_nc_snum">Required</div></div>
-          <div class="ff"><label>Street name <span class="req">*</span></label><input type="text" id="nc_sname" placeholder="Main"><div class="ferr" id="e_nc_sname">Required</div></div>
-          <div class="ff"><label>Type <span class="req">*</span></label>
-            <select id="nc_stype"><option value="">Select...</option><option>Ave</option><option>Blvd</option><option>Cir</option><option>Ct</option><option>Dr</option><option>Hwy</option><option>Ln</option><option>Pkwy</option><option>Pl</option><option>Rd</option><option>St</option><option>Way</option></select>
-            <div class="ferr" id="e_nc_stype">Required</div>
+          <div class="ff"><label>Street number <span class="req">*</span></label><input type="text" id="aj_snum" oninput="ajBuildAndCheck()"><div class="ferr" id="e_aj_snum">Required</div></div>
+          <div class="ff"><label>Street name <span class="req">*</span></label><input type="text" id="aj_sname" oninput="ajBuildAndCheck()"><div class="ferr" id="e_aj_sname">Required</div></div>
+          <div class="ff"><label>Street type <span class="req">*</span></label>
+            <select id="aj_stype" onchange="ajBuildAndCheck()"><option value="">Select...</option><option>Ave</option><option>Blvd</option><option>Cir</option><option>Ct</option><option>Dr</option><option>Hwy</option><option>Ln</option><option>Pkwy</option><option>Pl</option><option>Rd</option><option>St</option><option>Way</option></select>
+            <div class="ferr" id="e_aj_stype">Required</div>
           </div>
-          <div class="ff"><label>City <span class="req">*</span></label><input type="text" id="nc_city" placeholder="San Diego"><div class="ferr" id="e_nc_city">Required</div></div>
-          <div class="ff"><label>State</label><select id="nc_state"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>
-          <div class="ff"><label>ZIP <span class="req">*</span></label><input type="text" id="nc_zip" placeholder="92101" maxlength="10"><div class="ferr" id="e_nc_zip">Required</div></div>
+          <div class="ff"><label>City <span class="req">*</span></label><input type="text" id="aj_city" oninput="ajBuildAndCheck()"><div class="ferr" id="e_aj_city">Required</div></div>
+          <div class="ff"><label>State</label><select id="aj_state"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>
+          <div class="ff"><label>ZIP <span class="req">*</span></label><input type="text" id="aj_zip" maxlength="10"><div class="ferr" id="e_aj_zip">Required</div></div>
         </div>
+        <input type="hidden" id="aj_addr">
+        <div class="ferr" id="e_aj_addr" style="margin-top:6px;"></div>
       </div>
     </div>
-
-    <!-- STEP 2: Job -->
-    <div id="ncStep2" class="modal-body" style="display:none;">
-      <div style="background:rgba(184,146,42,.07);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:13px;color:var(--muted);">Optional — you can add jobs later from the customer profile.</div>
-      <div class="fsec">
-        <div class="fsec-title">First job (optional)</div>
-        <div class="fg2">
-          <div class="ff"><label>PO Number</label><input type="text" id="nc_po" placeholder="e.g. PO-4891"></div>
-          <div class="ff"><label>Job name</label><input type="text" id="nc_jobname" placeholder="e.g. Harbor Blvd Demo Phase 1"></div>
-        </div>
-        <div class="ff"><label>Job site address</label><input type="text" id="nc_jobaddr" placeholder="e.g. 1420 Harbor Blvd, San Diego CA 92101"></div>
-      </div>
-      <div class="fsec" style="margin-bottom:0;padding-bottom:0;border:none;">
-        <div class="fsec-title">Project Manager for this job (optional)</div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-          <div class="fg2">
-            <div class="ff"><label>First name</label><input type="text" id="nc_pm_fn" placeholder="James"></div>
-            <div class="ff"><label>Last name</label><input type="text" id="nc_pm_ln" placeholder="Torres"></div>
-            <div class="ff"><label>Phone</label><input type="tel" id="nc_pm_ph" placeholder="(619) 555-0000"></div>
-            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="nc_pm_em" placeholder="j.torres@company.com"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 3: Billing -->
-    <div id="ncStep3" class="modal-body" style="display:none;">
-      <div style="background:rgba(184,146,42,.07);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:11px 15px;margin-bottom:16px;font-size:13px;color:var(--muted);">Optional — you can update billing info later.</div>
-      <div class="fsec">
-        <div class="fsec-title">Billing contact (TO)</div>
-        <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Is the billing contact the same as:</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-          <label id="nc_bc_pm_lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;font-weight:500;transition:all .15s;"><input type="radio" name="nc_bc" value="pm" id="nc_bc_pm" onchange="ncBillSame('pm')" style="accent-color:var(--gold);width:15px;height:15px;"> Project Manager</label>
-          <label id="nc_bc_pri_lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;font-weight:500;transition:all .15s;"><input type="radio" name="nc_bc" value="primary" id="nc_bc_pri" onchange="ncBillSame('primary')" style="accent-color:var(--gold);width:15px;height:15px;"> Primary contact</label>
-          <label id="nc_bc_oth_lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;font-weight:500;transition:all .15s;"><input type="radio" name="nc_bc" value="other" id="nc_bc_oth" onchange="ncBillSame('other')" style="accent-color:var(--gold);width:15px;height:15px;"> Different contact</label>
-        </div>
-        <div id="nc_bc_other" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;">
-          <div class="fg2">
-            <div class="ff"><label>First name</label><input type="text" id="nc_bc_fn" placeholder="First name"></div>
-            <div class="ff"><label>Last name</label><input type="text" id="nc_bc_ln" placeholder="Last name"></div>
-            <div class="ff"><label>Email</label><input type="email" id="nc_bc_em" placeholder="billing@company.com"></div>
-            <div class="ff"><label>Phone</label><input type="tel" id="nc_bc_ph" placeholder="(619) 555-0000"></div>
-            <div class="ff" style="grid-column:span 2;"><label>Title</label><input type="text" id="nc_bc_ti" placeholder="Billing Manager"></div>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Additional billing contacts (CC)</div>
-          <div id="nc_cc_list"></div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;">
-            <div class="fg2" style="margin-bottom:8px;">
-              <input type="text" id="nc_cc_fn" placeholder="First name" style="background:#fff;border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;">
-              <input type="text" id="nc_cc_ln" placeholder="Last name" style="background:#fff;border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;">
-              <input type="email" id="nc_cc_em" placeholder="Email" style="background:#fff;border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;">
-              <input type="tel" id="nc_cc_ph" placeholder="Phone" style="background:#fff;border:1.5px solid var(--border2);border-radius:7px;padding:8px 11px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;">
-            </div>
-            <button type="button" onclick="ncAddCC()" style="font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;border:1.5px solid var(--gold);background:rgba(184,146,42,.08);color:var(--gold);cursor:pointer;font-family:'Barlow',sans-serif;">+ Add billing contact</button>
-          </div>
-        </div>
-      </div>
-      <div class="fsec">
-        <div class="fsec-title">Company billing settings</div>
-        <div class="fg2">
-          <div class="ff"><label>Conditional waiver</label><select id="nc_waiver"><option value="conditional">Conditional waiver</option><option value="unconditional">Unconditional waiver</option><option value="none">No waiver required</option></select></div>
-          <div class="ff"><label>Payment terms</label><select id="nc_terms"><option value="Net 30">Net 30</option><option value="Net 15">Net 15</option><option value="Net 45">Net 45</option><option value="Due on completion">Due on completion</option></select></div>
-          <div class="ff"><label>Customer since</label><input type="number" id="nc_since" value="2026" min="2000" max="2100"></div>
-          <div class="ff"><label>Billing method</label><select id="nc_bmethod"><option>Direct email</option><option>Client portal</option></select></div>
-        </div>
-      </div>
-      <div class="fsec" style="border:none;padding-bottom:0;margin-bottom:0;">
-        <div class="fsec-title">Special instructions</div>
-        <div style="display:flex;gap:10px;margin-bottom:10px;">
-          <label id="nc_si_y_lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;padding:8px 18px;border:1.5px solid var(--border2);border-radius:8px;font-weight:500;transition:all .15s;"><input type="radio" name="nc_si" value="yes" id="nc_si_yes" onchange="ncSIToggle(true)" style="accent-color:var(--gold);width:15px;height:15px;"> Yes</label>
-          <label id="nc_si_n_lbl" style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13px;padding:8px 18px;border:1.5px solid var(--border2);border-radius:8px;font-weight:500;transition:all .15s;"><input type="radio" name="nc_si" value="no" id="nc_si_no" onchange="ncSIToggle(false)" style="accent-color:var(--gold);width:15px;height:15px;"> No</label>
-        </div>
-        <div id="nc_si_wrap" style="display:none;"><textarea id="nc_si_text" rows="3" placeholder="Special billing instructions..." style="width:100%;background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;resize:vertical;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border2)'"></textarea></div>
-      </div>
-    </div>
-
     <div class="modal-foot">
       <div style="font-size:11px;color:var(--muted);">Fields marked <span class="req">*</span> are required</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" id="ncBtnBack" style="display:none;" onclick="ncBack()">← Back</button>
-        <button class="btn btn-ghost btn-sm" id="ncBtnSkip" style="display:none;" onclick="ncSkip()">Skip</button>
-        <button class="btn btn-ghost btn-sm" id="ncBtnLater" style="display:none;" onclick="ncSaveLater()">Save &amp; complete later</button>
-        <button class="btn btn-gold" id="ncBtnNext" onclick="ncNext()">Continue → Job info</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="saveNewJob()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Save job
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- ══ DUPLICATE JOB POPUP ══ -->
+<div id="ajDupPopup" onclick="if(event.target===this)closeDupPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;padding:24px;">
+  <div class="modal-box" style="max-width:460px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" style="color:var(--danger);">⚠ Address already exists</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">This client already has jobs at this address</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="aj_addr_dup_jobs" style="margin-bottom:14px;"></div>
+      <div style="background:rgba(184,146,42,.07);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);">
+        Do you want to create a <strong style="color:var(--text);">new phase</strong>? The existing job keeps its own estimates and invoices.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="ajCancelDuplicate()">No — change address</button>
+      <button class="btn btn-gold" onclick="ajConfirmDuplicate()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Yes — new phase
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
