@@ -422,42 +422,10 @@ svg{display:block;}
         <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Physical address</div>
         <div class="addr-box">
           <div class="addr-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Street address</div>
-          <div class="fg3" style="margin-bottom:10px;">
-            <div class="ff">
-              <label>Street number <span class="req">*</span></label>
-              <input type="text" id="f_snum" placeholder="1420">
-              <div class="ferr" id="e_snum">Required</div>
-            </div>
-            <div class="ff">
-              <label>Street name <span class="req">*</span></label>
-              <input type="text" id="f_sname" placeholder="Harbor">
-              <div class="ferr" id="e_sname">Required</div>
-            </div>
-            <div class="ff">
-              <label>Street type <span class="req">*</span></label>
-              <select id="f_stype">
-                <option value="">Select…</option>
-                <option>Street</option><option>Avenue</option><option>Boulevard</option>
-                <option>Circle</option><option>Court</option><option>Drive</option>
-                <option>Lane</option><option>Place</option><option>Road</option>
-                <option>Trail</option><option>Way</option><option>Highway</option>
-                <option>Parkway</option><option>Terrace</option><option>Loop</option>
-              </select>
-              <div class="ferr" id="e_stype">Required</div>
-            </div>
-          </div>
-          <div class="fg2" style="margin-bottom:10px;">
-            <div class="ff">
-              <label>Unit type <span class="opt-tag">(if applicable)</span></label>
-              <select id="f_utype">
-                <option value="">None</option><option>Suite</option><option>Unit</option>
-                <option>Apartment</option><option>Number</option><option>Floor</option>
-              </select>
-            </div>
-            <div class="ff">
-              <label>Unit number <span class="opt-tag">(if applicable)</span></label>
-              <input type="text" id="f_unum" placeholder="e.g. 200, A">
-            </div>
+          <div class="ff" style="margin-bottom:10px;">
+            <label>Street address <span class="req">*</span></label>
+            <input type="text" id="f_address" placeholder="e.g. 4500 Main St" autocomplete="street-address">
+            <div class="ferr" id="e_address">Required</div>
           </div>
           <div class="fg3">
             <div class="ff">
@@ -466,41 +434,22 @@ svg{display:block;}
               <div class="ferr" id="e_city">Required</div>
             </div>
             <div class="ff">
-              <label>State <span class="req">*</span></label>
+              <label>State</label>
               <select id="f_state">
-                <option value="">Select…</option>
-                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
-                <option selected>CA</option><option>CO</option><option>CT</option><option>DE</option>
-                <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
-                <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
-                <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
-                <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
-                <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
-                <option>NH</option><option>NJ</option><option>NM</option><option>NY</option>
-                <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
-                <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
-                <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
-                <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
-                <option>WI</option><option>WY</option>
+                <option selected>CA</option><option>AZ</option><option>NV</option>
+                <option>TX</option><option>FL</option><option>NY</option>
+                <option>OR</option><option>WA</option><option>CO</option>
               </select>
-              <div class="ferr" id="e_state">Required</div>
             </div>
             <div class="ff">
-              <label>ZIP code <span class="req">*</span></label>
-              <input type="text" id="f_zip" placeholder="92101" maxlength="10">
+              <label>ZIP <span class="req">*</span></label>
+              <input type="text" id="f_zip" placeholder="92103" maxlength="10">
               <div class="ferr" id="e_zip">Required</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="fsec">
-        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Additional contacts <span style="font-size:10px;font-weight:400;color:var(--muted2);text-transform:none;letter-spacing:0;margin-left:4px;">optional</span></div>
-
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Use the button below to add project managers, billing contacts, or additional contacts.</div>
-        <div id="extraContacts"></div>
-        <button class="add-contact-btn" id="btnAddContact">+ Add contact</button>
-      </div>
 
     
     <div class="modal-foot">
@@ -717,8 +666,8 @@ const CUSTOMERS = [
      {id:'c2', name:'James Torres', initials:'JT', color:'av-gold', role:'project-manager',
       email:'j.torres@abcconstruction.com', phone:'(619) 555-0102', title:'Project Manager',
       jobs:[
-        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026'},
-        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', amount:'$9,850', date:'May 8, 2026'},
+        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026', projectName:'Harbor Blvd Demolition'},
+        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', amount:'$9,850', date:'May 8, 2026', projectName:'5th Ave Demo'},
       ]},
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
       email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
@@ -911,17 +860,17 @@ function openEditCustomer(id){
   const parts=(pm.name||'').split(' ');
   g('f_company',c.name); g('f_phone',pm.phone||c.phone||''); g('f_email',pm.email||'');
   g('f_fname',parts[0]||''); g('f_lname',parts.slice(1).join(' ')||'');
-  const addr=(c.address||'').split(',');
-  const sp=(addr[0]||'').trim().split(' ');
-  g('f_snum',sp[0]||'');
-  const types=['Ave','Blvd','Cir','Ct','Dr','Hwy','Ln','Pkwy','Pl','Rd','St','Way'];
-  const ws=sp.slice(1); const lw=ws[ws.length-1]||'';
-  let sn='',st=''; if(types.includes(lw)){st=lw;sn=ws.slice(0,-1).join(' ');}else sn=ws.join(' ');
-  g('f_sname',sn); const stEl=document.getElementById('f_stype');if(stEl)stEl.value=st;
-  const csz=addr.slice(1).join(',').trim();
-  const cm=csz.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/);
-  if(cm){g('f_city',(cm[1]||'').trim());const s2=document.getElementById('f_state');if(s2)s2.value=cm[2]||'CA';g('f_zip',cm[3]||'');}
-  else g('f_city',(c.city||'').split(',')[0].trim());
+  // Parse address into street + city/state/zip
+  var _addr = c.address||'';
+  var _commaIdx = _addr.indexOf(',');
+  var _street = _commaIdx>0 ? _addr.slice(0,_commaIdx).trim() : _addr;
+  var _rest   = _commaIdx>0 ? _addr.slice(_commaIdx+1).trim() : '';
+  var _csMatch = _rest.match(/^(.+?)\s+([A-Z]{2})\s*(\d{5})?$/);
+  g('f_address', _street);
+  g('f_city', _csMatch ? _csMatch[1].trim() : (c.city||'').split(',')[0].trim());
+  g('f_zip',  _csMatch ? (_csMatch[3]||'') : '');
+  const _stEl=document.getElementById('f_state');
+  if(_stEl) _stEl.value = _csMatch ? _csMatch[2] : 'CA';
   const ce=document.getElementById('f_commercial'),re=document.getElementById('f_residential');
   const lc=document.getElementById('lbl_commercial'),lr=document.getElementById('lbl_residential');
   if(c.type==='residential'){if(re)re.checked=true;if(lr)lr.style.borderColor='var(--gold)';if(lc)lc.style.borderColor='var(--border2)';}
@@ -1751,8 +1700,7 @@ function deleteUploadedDoc(customerId, idx){
 // ══ MODAL ══
 function openModal(){
   // Clear all form fields
-  ['f_company','f_fname','f_lname','f_phone','f_email','f_title',
-   'f_snum','f_sname','f_city','f_zip','f_unum','f_notes'].forEach(id=>{
+  ['f_company','f_fname','f_lname','f_phone','f_email','f_title','f_address','f_city','f_zip','f_notes'].forEach(id=>{
     const _el=document.getElementById(id); if(_el) _el.value='';
   });
   const _st=document.getElementById('f_stype'); if(_st) _st.value='';
@@ -1849,8 +1797,9 @@ function saveCustomer(){
     if(ex){
       const g=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
       ex.name=g('f_company');ex.phone=g('f_phone');
-      ex.address=g('f_snum')+' '+g('f_sname')+' '+(g('f_stype')||'')+', '+g('f_city')+' '+(document.getElementById('f_state')||{value:'CA'}).value+' '+g('f_zip');
-      ex.city=g('f_city')+', '+((document.getElementById('f_state')||{value:'CA'}).value);
+      const _st=g('f_address'), _ci=g('f_city'), _stt=(document.getElementById('f_state')||{value:'CA'}).value, _zp=g('f_zip');
+      ex.address=_st+', '+_ci+' '+_stt+' '+_zp;
+      ex.city=_ci+', '+_stt;
       ex.type=document.getElementById('f_residential')?.checked?'residential':'commercial';
       const pm2=ex.contacts.find(x=>x.role==='project-manager')||ex.contacts[0];
       if(pm2){pm2.name=g('f_fname')+' '+g('f_lname');pm2.phone=g('f_phone');pm2.email=g('f_email');pm2.initials=((g('f_fname')[0]||'')+(g('f_lname')[0]||'')).toUpperCase();}
@@ -1869,25 +1818,16 @@ function saveCustomer(){
   ok=reqFld('f_lname','e_lname')&&ok;
   ok=reqFld('f_phone','e_phone')&&ok;
   ok=reqFld('f_email','e_email')&&ok;
-  ok=reqFld('f_snum','e_snum')&&ok;
-  ok=reqFld('f_sname','e_sname')&&ok;
-  ok=reqFld('f_stype','e_stype')&&ok;
+  ok=reqFld('f_address','e_address')&&ok;
   ok=reqFld('f_city','e_city')&&ok;
-  ok=reqFld('f_state','e_state')&&ok;
   ok=reqFld('f_zip','e_zip')&&ok;
   if(!ok){ const fe=document.querySelector('#modalBg .err'); if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'}); return; }
 
-  const snum=document.getElementById('f_snum').value.trim();
-  const sname=document.getElementById('f_sname').value.trim();
-  const stype=document.getElementById('f_stype').value;
-  const utype=document.getElementById('f_utype').value;
-  const unum=document.getElementById('f_unum').value.trim();
+  const streetAddr=document.getElementById('f_address').value.trim();
   const city=document.getElementById('f_city').value.trim();
-  const state=document.getElementById('f_state').value;
+  const state=(document.getElementById('f_state')||{value:'CA'}).value;
   const zip=document.getElementById('f_zip').value.trim();
-  let addr=snum+' '+sname+' '+stype;
-  if(utype&&unum) addr+=', '+utype+' '+unum;
-  const fullAddr=addr+', '+city+' '+state+' '+zip;
+  const fullAddr=streetAddr+', '+city+' '+state+' '+zip;
 
   const fname=document.getElementById('f_fname').value.trim();
   const lname=document.getElementById('f_lname').value.trim();
@@ -2817,6 +2757,8 @@ function openAddJobModal(cid){
 
   // Remove any existing modal overlay
   var existing=document.getElementById('_ajOverlay');
+  // Clear PO and job name
+  ['_aj_po','_aj_jobname'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   if(existing) existing.parentNode.removeChild(existing);
 
   // Build PM options
@@ -2831,12 +2773,13 @@ function openAddJobModal(cid){
   // Build the full modal HTML
   var html='<div id="_ajOverlay" onclick="if(event.target===this)closeAddJobModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
     +'<div style="background:var(--surface);border-radius:16px;width:100%;max-width:580px;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:Barlow,sans-serif;">'
+    // Header
     +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);">'
     +'<div style="font-size:20px;font-weight:700;">Add New Job</div>'
     +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">'+c.name+'</div>'
     +'</div>'
     +'<div style="padding:20px 24px;max-height:calc(100vh - 220px);overflow-y:auto;">'
-    // Company info
+    // 1. Company & Primary Contact
     +'<div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;">'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Company &amp; Primary contact</div>'
     +'<div style="font-size:15px;font-weight:700;margin-bottom:4px;">'+c.name+'</div>'
@@ -2845,7 +2788,25 @@ function openAddJobModal(cid){
     +(primary.phone?'<span>📞 '+primary.phone+'</span>':'')
     +(primary.email?'<span>✉ '+primary.email+'</span>':'')
     +'</div></div>'
-    // PM section
+    // 2. PO + Project Name
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">PO Number</label>'
+    +'<input id="_aj_po" placeholder="e.g. PO-4891" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Project Name <span style="color:var(--danger);">*</span></label>'
+    +'<input id="_aj_jobname" oninput="ajDynCheckName()" placeholder="e.g. Harbor Blvd Demolition" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div id="_e_aj_jobname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'</div>'
+    // Duplicate warning — right after project name
+    +'<div id="_aj_dup_warn" style="display:none;background:rgba(217,79,79,.07);border:1.5px solid rgba(217,79,79,.3);border-radius:10px;padding:12px 14px;margin-bottom:12px;margin-top:4px;">'
+    +'<div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">⚠ A project with this name already exists</div>'
+    +'<div id="_aj_dup_list" style="margin-bottom:10px;font-size:12px;color:var(--muted);"></div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Do you want to create a new phase?</div>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<button onclick="ajDynConfirm()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Yes — create as new phase</button>'
+    +'<button onclick="ajDynCancel()" style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;cursor:pointer;">No — use different name</button>'
+    +'</div></div>'
+    +'<div id="_aj_confirm_msg" style="display:none;margin-bottom:12px;"></div>'
+    // 3. Project Manager
     +'<div style="margin-bottom:16px;">'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Project Manager</div>'
     +'<select id="_aj_pm" onchange="ajPMSelectDyn(this.value)" style="width:100%;padding:10px 13px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:var(--surface2);color:var(--text);outline:none;">'+pmOpts+'</select>'
@@ -2857,26 +2818,25 @@ function openAddJobModal(cid){
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Phone</label><input id="_aj_ph" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Email</label><input id="_aj_em" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
     +'</div></div></div>'
-    // Job site address
+    // 4. Job Site Address
     +'<div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Job site address</div>'
-    +'<div id="_aj_dup_warn" style="display:none;background:rgba(217,79,79,.07);border:1.5px solid rgba(217,79,79,.3);border-radius:10px;padding:12px 14px;margin-bottom:10px;">'
-    +'<div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">⚠ This address already has existing jobs</div>'
-    +'<div id="_aj_dup_list" style="margin-bottom:10px;font-size:12px;color:var(--muted);"></div>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Do you want to create a new phase?</div>'
-    +'<div style="display:flex;gap:8px;"><button onclick="ajDynConfirm()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Yes — new phase</button>'
-    +'<button onclick="ajDynCancel()" style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;cursor:pointer;">No — change</button></div>'
+    +'<div style="margin-bottom:12px;position:relative;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street address <span style="color:var(--danger);">*</span></label>'
+    +'<input id="_aj_street" oninput="ajDynBuild()" autocomplete="off" placeholder="e.g. 4500 Main St" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div id="_aj_autocomplete" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--gold);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);"></div>'
+    +'<div id="_e_aj_street" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;">'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">City <span style="color:var(--danger);">*</span></label>'
+    +'<input id="_aj_city" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div id="_e_aj_city" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">State</label>'
+    +'<select id="_aj_state" style="padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">ZIP <span style="color:var(--danger);">*</span></label>'
+    +'<input id="_aj_zip" oninput="ajDynBuild()" maxlength="10" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div id="_e_aj_zip" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'</div></div>'
     +'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
-    +'<div style="position:relative;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street number <span style="color:var(--danger);">*</span></label><input id="_aj_snum" oninput="ajDynBuild()" autocomplete="off" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_aj_autocomplete" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--gold);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);"></div><div id="_e_aj_snum" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street name <span style="color:var(--danger);">*</span></label><input id="_aj_sname" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_sname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Type <span style="color:var(--danger);">*</span></label><select id="_aj_stype" onchange="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><option value="">Select...</option><option>Ave</option><option>Blvd</option><option>Cir</option><option>Ct</option><option>Dr</option><option>Hwy</option><option>Ln</option><option>Pkwy</option><option>Pl</option><option>Rd</option><option>St</option><option>Way</option></select><div id="_e_aj_stype" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">City <span style="color:var(--danger);">*</span></label><input id="_aj_city" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_city" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">State</label><select id="_aj_state" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">ZIP <span style="color:var(--danger);">*</span></label><input id="_aj_zip" oninput="ajDynBuild()" maxlength="10" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_zip" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
-    +'</div>'
-    +'</div>'
-    +'</div>'
+    // Footer
     +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
     +'<div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);">*</span> are required</div>'
     +'<div style="display:flex;gap:8px;">'
@@ -2884,7 +2844,6 @@ function openAddJobModal(cid){
     +'<button onclick="ajDynSave()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save job</button>'
     +'</div></div>'
     +'</div></div>';
-
   var div=document.createElement('div');
   div.innerHTML=html;
   document.body.appendChild(div.firstChild);
@@ -2922,9 +2881,9 @@ function ajPMSelectDyn(val){
 
 function ajDynBuild(){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=(document.getElementById('_aj_state')||{value:'CA'}).value,zip=gv('_aj_zip');
-  var streetQ=(snum+' '+sname).trim();
-  var fullAddr=(snum+' '+sname+(stype?' '+stype:'')+', '+city+' '+state+' '+zip).trim();
+  var street=gv('_aj_street'),city=gv('_aj_city'),state=(document.getElementById('_aj_state')||{value:'CA'}).value,zip=gv('_aj_zip');
+  var streetQ=street;
+  var fullAddr=(street+(city?', '+city:'')+(state?' '+state:'')+(zip?' '+zip:'')).trim();
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   if(!c) return;
 
@@ -2947,15 +2906,8 @@ function ajDynBuild(){
           +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+j.est+' · '+j.status+' · PM: '+j.pmName+'</div>';
         (function(job){div.onclick=function(){
           // Fill street fields from existing job
-          var parts=(job.address||'').split(' ');
-          var snumEl=document.getElementById('_aj_snum');if(snumEl)snumEl.value=parts[0]||'';
-          // Find street type
-          var stTypes=['Ave','Blvd','Cir','Ct','Dr','Hwy','Ln','Pkwy','Pl','Rd','St','Way'];
-          var lastW=parts[parts.length-1]||'';
-          var stEl=document.getElementById('_aj_stype');
-          if(stTypes.includes(lastW)&&stEl){stEl.value=lastW; var snEl=document.getElementById('_aj_sname');if(snEl)snEl.value=parts.slice(1,-1).join(' ');}
-          else{var snEl=document.getElementById('_aj_sname');if(snEl)snEl.value=parts.slice(1).join(' ');}
-          // Fill city/zip from job.city field
+          // Fill street from job.address, city/zip from job.city
+          var stEl2=document.getElementById('_aj_street');if(stEl2)stEl2.value=job.address||'';
           var cityZip=(job.city||'').split(' ');
           var cityEl=document.getElementById('_aj_city');if(cityEl)cityEl.value=cityZip[0]||'';
           var zipEl=document.getElementById('_aj_zip');if(zipEl)zipEl.value=cityZip[cityZip.length-1]||'';
@@ -2967,26 +2919,42 @@ function ajDynBuild(){
     } else { acBox.style.display='none'; }
   } else if(acBox){ acBox.style.display='none'; }
 
-  // ── Duplicate detection on full address ──
-  if(fullAddr.length>10){
-    _ajDuplicateConfirmed=false;
-    var dups=findDuplicateJobs(c,fullAddr);
-    var warn=document.getElementById('_aj_dup_warn');
-    var list=document.getElementById('_aj_dup_list');
-    var confirmMsg=document.getElementById('_aj_confirm_msg');
-    if(dups.length&&!_ajDuplicateConfirmed){
-      if(warn)warn.style.display='block';
-      if(confirmMsg)confirmMsg.style.display='none';
-      if(list)list.innerHTML=dups.map(function(j){
-        return '<div style="display:flex;gap:10px;align-items:center;padding:6px 10px;background:rgba(255,255,255,.6);border-radius:6px;margin-bottom:4px;font-size:12px;">'
-          +'<strong style="color:#c0392b;">'+j.est+'</strong>'
-          +' <span style="color:var(--muted);">'+(j.address+(j.city?', '+j.city:''))+'</span>'
-          +' <span style="margin-left:auto;">'+j.status+'</span>'
-          +'</div>';
-      }).join('');
-    } else {
-      if(warn)warn.style.display='none';
-    }
+}
+
+
+function ajDynCheckName(){
+  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+  var name=gv('_aj_jobname');
+  var warn=document.getElementById('_aj_dup_warn');
+  var list=document.getElementById('_aj_dup_list');
+  var confirmMsg=document.getElementById('_aj_confirm_msg');
+  var errEl=document.getElementById('_e_aj_jobname');
+  if(errEl) errEl.style.display='none';
+  if(warn) warn.style.display='none';
+  if(confirmMsg) confirmMsg.style.display='none';
+  if(!name||name.length<2){ _ajDuplicateConfirmed=false; _ajDuplicateJobs=[]; return; }
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c) return;
+  // Strip any existing phase suffix from what user typed to get base name
+  var baseName=name.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+  // Find existing jobs whose project name matches the base name
+  var dups=getCustomerJobs(c).filter(function(j){
+    var jName=(j.projectName||j.jobName||'');
+    var jBase=jName.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+    return jBase.toLowerCase()===baseName.toLowerCase() && jBase.length>0;
+  });
+  _ajDuplicateJobs=dups;
+  _ajDuplicateConfirmed=false;
+  if(dups.length){
+    if(warn) warn.style.display='block';
+    if(list) list.innerHTML=dups.map(function(j){
+      var jn=j.projectName||j.jobName||j.est;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(255,255,255,.7);border-radius:6px;margin-bottom:4px;font-size:12px;">'
+        +'<strong style="color:#c0392b;">'+jn+'</strong>'
+        +' <span style="color:var(--muted);">'+j.address+'</span>'
+        +' <span style="margin-left:auto;color:var(--muted);">'+j.status+'</span>'
+        +'</div>';
+    }).join('');
   }
 }
 
@@ -2994,36 +2962,43 @@ function ajDynConfirm(){
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   if(!c)return;
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var sname=gv('_aj_sname').replace(/-[IVXLCDM]+$/i,'');
-  var snum=gv('_aj_snum'), stype=gv('_aj_stype'), city=gv('_aj_city');
-  var state=(document.getElementById('_aj_state')||{value:'CA'}).value, zip=gv('_aj_zip');
-  // Pass just the street for suffix calculation
-  var streetBase=snum+' '+sname+' '+stype;
-  var suffix=nextSuffix(c,streetBase)||'II';
-  var newSname=sname+'-'+suffix;
-  // Update street name field visually
-  var snEl=document.getElementById('_aj_sname');
-  if(snEl)snEl.value=newSname;
-  var newAddr=(snum+' '+newSname+' '+stype+', '+city+' '+state+' '+zip).trim();
+  var name=gv('_aj_jobname');
+  // Strip any existing suffix to get clean base name
+  var baseName=name.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+  // Count ALL jobs (including previous phases) with this base name
+  var allPhases=getCustomerJobs(c).filter(function(j){
+    var jBase=(j.projectName||j.jobName||'').replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+    return jBase.toLowerCase()===baseName.toLowerCase()&&jBase.length>0;
+  });
+  // Next phase = existing count + 1 (existing has I, next is II; or II exists, next is III)
+  var nextN=allPhases.length+1;
+  var suffix=toRoman(nextN);
+  var newName=baseName+'-'+suffix;
+  // Update the field
+  var nameEl=document.getElementById('_aj_jobname');
+  if(nameEl) nameEl.value=newName;
   _ajDuplicateConfirmed=true;
-  // Hide dup warning
+  // Hide warning
   var warn=document.getElementById('_aj_dup_warn');
-  if(warn)warn.style.display='none';
-  // Show green confirmation message
+  if(warn) warn.style.display='none';
+  // Show green confirmation
+  var pWrap=warn?warn.parentNode:null;
   var confirmMsg=document.getElementById('_aj_confirm_msg');
   if(!confirmMsg){
     confirmMsg=document.createElement('div');
     confirmMsg.id='_aj_confirm_msg';
-    confirmMsg.style.cssText='margin-top:10px;background:rgba(46,204,113,.09);border:1.5px solid rgba(46,204,113,.35);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#1a8a47;';
-    if(warn&&warn.parentNode) warn.parentNode.insertBefore(confirmMsg, warn.nextSibling);
+    confirmMsg.style.cssText='margin-top:8px;background:rgba(46,204,113,.09);border:1.5px solid rgba(46,204,113,.3);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#1a8a47;';
+    if(pWrap) pWrap.insertBefore(confirmMsg, warn?warn.nextSibling:null);
   }
   confirmMsg.style.display='block';
-  confirmMsg.textContent='✓ New job will be created as Phase '+suffix+' — '+newAddr;
+  confirmMsg.textContent='\u2713 Project name set to: '+newName;
 }
 
 function ajDynCancel(){
-  ['_aj_snum','_aj_sname','_aj_city','_aj_zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  var st=document.getElementById('_aj_stype');if(st)st.value='';
+  ['_aj_street','_aj_city','_aj_zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';}); 
+  _ajDuplicateConfirmed=false;
+  var msg2=document.getElementById('_aj_confirm_msg');if(msg2)msg2.style.display='none';
+  var nameEl=document.getElementById('_aj_jobname');if(nameEl){nameEl.value='';}
   var warn=document.getElementById('_aj_dup_warn');if(warn)warn.style.display='none';
   var msg=document.getElementById('_aj_confirm_msg');if(msg)msg.style.display='none';
   _ajDuplicateConfirmed=false;
@@ -3032,17 +3007,21 @@ function ajDynCancel(){
 
 function ajDynSave(){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=gv('_aj_state')||'CA',zip=gv('_aj_zip');
+  var street=gv('_aj_street'),city=gv('_aj_city'),state=(document.getElementById('_aj_state')||{value:'CA'}).value,zip=gv('_aj_zip');
   var ok=true;
   function req(id,eid){if(!gv(id)){var e=document.getElementById(eid);if(e)e.style.display='block';ok=false;}else{var e=document.getElementById(eid);if(e)e.style.display='none';}};
-  req('_aj_snum','_e_aj_snum');req('_aj_sname','_e_aj_sname');req('_aj_stype','_e_aj_stype');req('_aj_city','_e_aj_city');req('_aj_zip','_e_aj_zip');
+  req('_aj_street','_e_aj_street');req('_aj_city','_e_aj_city');req('_aj_zip','_e_aj_zip');req('_aj_jobname','_e_aj_jobname');
   if(!ok)return;
-  var addr=(snum+' '+sname+' '+stype+', '+city+' '+state+' '+zip).trim();
+  // Check duplicate not confirmed
+  var jobNameVal=gv('_aj_jobname');
+  if(_ajDuplicateJobs&&_ajDuplicateJobs.length&&!_ajDuplicateConfirmed){ajDynCheckName();return;}
+  var addr=(street+(city?', '+city:'')+(state?' '+state:'')+(zip?' '+zip:'')).trim();
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});if(!c)return;
   var dups=findDuplicateJobs(c,addr);
   if(dups.length&&!_ajDuplicateConfirmed){ajDynBuild();return;}
   var estNum='EST-'+String(Math.floor(Math.random()*900)+100);
-  var newJob={est:estNum,address:addr,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled'};
+  var poNum=gv('_aj_po'), jobName=gv('_aj_jobname');
+  var newJob={est:estNum,address:addr,po:poNum,jobName:jobName,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled'};
   var pmVal=(document.getElementById('_aj_pm')||{value:''}).value;
   var avC=['av-gold','av-info','av-success','av-warning'];
   if(pmVal==='new'){
@@ -3093,7 +3072,6 @@ function saveNewJob(){
   var fl=document.createElement('div');fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
   fl.textContent='✓ Job added — '+estNum;document.body.appendChild(fl);setTimeout(function(){fl.remove();},3500);
 }
-
 </script>
 
 <!-- ══ MOBILE NAV ══ -->
