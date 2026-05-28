@@ -1079,7 +1079,7 @@ function renderDetail(id){
       <div class="tab-bar" style="margin-top:16px;">
         <button class="tab-btn active" onclick="showTab('pm','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Project managers
+          Company contacts
           <span class="tab-badge">${c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional').length}</span>
         </button>
         <button class="tab-btn" onclick="showTab('billing','${c.id}',this)">
@@ -1099,7 +1099,7 @@ function renderDetail(id){
         </button>
       </div>
 
-      <!-- TAB: PROJECT MANAGERS -->
+      <!-- TAB: COMPANY CONTACTS -->
       <div class="tab-panel active" id="tab-pm-${c.id}">
         <div style="display:flex;justify-content:flex-start;margin-bottom:12px;">
           <button class="btn btn-ghost btn-sm" onclick="openAddContactModal(${c.id},'project-manager')">
@@ -1107,77 +1107,34 @@ function renderDetail(id){
             + Add contact
           </button>
         </div>
-        ${c.contacts.filter(x=>x.role==='project-manager').length ? c.contacts.filter(x=>x.role==='project-manager').map(ct=>`
-        <div class="contact-card">
-          <div class="cc-header" onclick="toggleContact('${ct.id}')">
-            <div class="avatar ${ct.color}">${ct.initials}</div>
-            <div class="cc-info">
-              <div class="cc-name">${ct.name}</div>
-              <div class="cc-sub">${ct.title||''} ${ct.title&&ct.email?'·':''} ${ct.email} · ${ct.phone||''}</div>
-            </div>
-            <div class="cc-right" style="display:flex;align-items:center;gap:10px;">
-              <div style="text-align:right;">
-                <div>${ct.jobs.length} job${ct.jobs.length!==1?'s':''}</div>
-                <div id="exp-${ct.id}" style="margin-top:2px;font-size:11px;color:var(--muted);">${ct.jobs.length?'▾ show':''}</div>
-              </div>
-              <div style="display:flex;gap:6px;" onclick="event.stopPropagation()">
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;"
-                  onclick="openEditContact(${c.id},'${ct.id}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Edit
-                </button>
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;color:var(--danger);border-color:rgba(217,79,79,.25);"
-                  onclick="deleteContact(${c.id},'${ct.id}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-          <div id="jobs-${ct.id}" style="display:none;" class="cc-jobs-wrap">
-            ${ct.jobs.length ? ct.jobs.map(j=>`
-              <div class="cc-job-row" onclick="goToEstimate('${j.est}')">
-                <div class="ccj-dot" style="background:${STATUS_COLOR[j.status]||'var(--gold)'}"></div>
-                <div class="ccj-info"><div class="ccj-street">${j.address}</div><div class="ccj-city">${j.city}</div></div>
-                <span class="sp ${STATUS_CLASS[j.status]||'sp-pending'}" style="flex-shrink:0;">${j.status}</span>
-                <div class="ccj-right"><div class="ccj-amt">${j.amount}</div><div class="ccj-date">${j.date}</div></div>
-              </div>`).join('') : '<div style="padding:12px 16px;color:var(--muted2);font-size:13px;">No jobs assigned</div>'}
-          </div>
-        </div>`).join('') : '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No project managers assigned</div>'}
-      </div>
-
-      <!-- TAB: ADDITIONAL CONTACTS -->
-      <div class="tab-panel" id="tab-additional-${c.id}">
-        <div style="display:flex;justify-content:flex-start;margin-bottom:12px;">
-          <button class="btn btn-ghost btn-sm" onclick="openAddContactModal(${c.id},'additional')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            + Add contact
-          </button>
-        </div>
-        ${c.contacts.filter(ct=>ct.role==='additional').length
-          ? c.contacts.filter(ct=>ct.role==='additional').map(ct=>`
+        ${(()=>{
+          const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
+          if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
+          return allC.map(ct=>`
             <div class="contact-simple" style="justify-content:space-between;">
               <div style="display:flex;align-items:center;gap:12px;">
                 <div class="cs-av ${ct.color}">${ct.initials}</div>
                 <div class="cs-info">
-                  <div class="cs-name">${ct.name}</div>
-                  <div class="cs-sub">${ct.title||''} · ${ct.email} · ${ct.phone||''}</div>
+                  <div class="cs-name">${ct.name}
+                    ${ct.role==='project-manager'
+                      ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);margin-left:6px;">PM</span>'
+                      : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>'}
+                  </div>
+                  <div class="cs-sub">${ct.title||''} · ${ct.email} ${ct.phone?'· '+ct.phone:''}</div>
                 </div>
               </div>
               <div style="display:flex;gap:6px;flex-shrink:0;">
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;"
-                  onclick="openEditContact(${c.id},'${ct.id}')">
+                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;" onclick="openEditContact(${c.id},'${ct.id}')">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   Edit
                 </button>
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;color:var(--danger);border-color:rgba(217,79,79,.25);"
-                  onclick="deleteContact(${c.id},'${ct.id}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;color:var(--danger);border-color:rgba(217,79,79,.25);" onclick="deleteContact(${c.id},'${ct.id}')">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                   Delete
                 </button>
               </div>
-            </div>`).join('')
-          : '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No additional contacts</div>'}
+            </div>`).join('');
+        })()}
       </div>
 
       <!-- TAB: BILLING CONTACTS -->
@@ -2718,16 +2675,25 @@ function findMatchingJobs(c,q){
 }
 
 function findDuplicateJobs(c,addr){
-  var al=addr.toLowerCase().trim();
-  return getCustomerJobs(c).filter(function(j){return (j.address||'').toLowerCase().trim()===al;});
+  // Extract just the street part (before first comma) for comparison
+  var streetOnly=function(a){return (a||'').split(',')[0].toLowerCase().trim();};
+  var inputStreet=streetOnly(addr);
+  return getCustomerJobs(c).filter(function(j){
+    // Match against full address OR just the street part
+    var jAddr=(j.address||'').toLowerCase().trim();
+    var jFull=jAddr+((j.city?', '+j.city.toLowerCase():'')); // combine address+city
+    return jAddr===inputStreet || jFull===addr.toLowerCase().trim() || streetOnly(jAddr)===inputStreet;
+  });
 }
 
 function nextSuffix(c,baseAddr){
   var jobs=getCustomerJobs(c);
-  var base=baseAddr.replace(/-[IVXLCDM]+$/i,'').trim();
+  // Compare only the street part
+  var streetOnly=function(a){return (a||'').split(',')[0].trim();};
+  var base=streetOnly(baseAddr).replace(/-[IVXLCDM]+$/i,'').trim();
   var maxN=0;
   jobs.forEach(function(j){
-    var addr=(j.address||'').trim();
+    var addr=streetOnly(j.address||'').trim();
     var stripped=addr.replace(/-[IVXLCDM]+$/i,'').trim();
     if(stripped.toLowerCase()===base.toLowerCase()){
       var suffix=addr.replace(stripped,'').trim();
@@ -2902,7 +2868,7 @@ function openAddJobModal(cid){
     +'<button onclick="ajDynCancel()" style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;cursor:pointer;">No — change</button></div>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street number <span style="color:var(--danger);">*</span></label><input id="_aj_snum" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_snum" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
+    +'<div style="position:relative;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street number <span style="color:var(--danger);">*</span></label><input id="_aj_snum" oninput="ajDynBuild()" autocomplete="off" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_aj_autocomplete" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--gold);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);"></div><div id="_e_aj_snum" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street name <span style="color:var(--danger);">*</span></label><input id="_aj_sname" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_sname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Type <span style="color:var(--danger);">*</span></label><select id="_aj_stype" onchange="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><option value="">Select...</option><option>Ave</option><option>Blvd</option><option>Cir</option><option>Ct</option><option>Dr</option><option>Hwy</option><option>Ln</option><option>Pkwy</option><option>Pl</option><option>Rd</option><option>St</option><option>Way</option></select><div id="_e_aj_stype" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">City <span style="color:var(--danger);">*</span></label><input id="_aj_city" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"><div id="_e_aj_city" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
@@ -2956,18 +2922,70 @@ function ajPMSelectDyn(val){
 
 function ajDynBuild(){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=gv('_aj_state')||'CA',zip=gv('_aj_zip');
-  var addr=(snum+' '+sname+(stype?' '+stype:'')+', '+city+' '+state+' '+zip).trim();
-  if(addr.length>10){
-    var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
-    if(c){
-      var dups=findDuplicateJobs(c,addr);
-      var warn=document.getElementById('_aj_dup_warn');
-      var list=document.getElementById('_aj_dup_list');
-      if(dups.length&&!_ajDuplicateConfirmed){
-        if(warn)warn.style.display='block';
-        if(list)list.innerHTML=dups.map(function(j){return '<div style="padding:4px 0;"><strong>'+j.est+'</strong> — '+j.address+' ('+j.status+')</div>';}).join('');
-      }else{if(warn)warn.style.display='none';}
+  var snum=gv('_aj_snum'),sname=gv('_aj_sname'),stype=gv('_aj_stype'),city=gv('_aj_city'),state=(document.getElementById('_aj_state')||{value:'CA'}).value,zip=gv('_aj_zip');
+  var streetQ=(snum+' '+sname).trim();
+  var fullAddr=(snum+' '+sname+(stype?' '+stype:'')+', '+city+' '+state+' '+zip).trim();
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c) return;
+
+  // ── Autocomplete: search as user types street ──
+  var acBox=document.getElementById('_aj_autocomplete');
+  if(acBox && streetQ.length>=3){
+    var matches=getCustomerJobs(c).filter(function(j){
+      var a=((j.address||'')+' '+(j.city||'')).toLowerCase();
+      return a.includes(streetQ.toLowerCase());
+    });
+    if(matches.length){
+      acBox.style.display='block';
+      acBox.innerHTML='';
+      matches.forEach(function(j){
+        var div=document.createElement('div');
+        div.style.cssText='padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px;';
+        div.onmouseover=function(){this.style.background='var(--surface2)';};
+        div.onmouseout=function(){this.style.background='';};
+        div.innerHTML='<div style="font-weight:600;">'+(j.address+(j.city?', '+j.city:''))+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+j.est+' · '+j.status+' · PM: '+j.pmName+'</div>';
+        (function(job){div.onclick=function(){
+          // Fill street fields from existing job
+          var parts=(job.address||'').split(' ');
+          var snumEl=document.getElementById('_aj_snum');if(snumEl)snumEl.value=parts[0]||'';
+          // Find street type
+          var stTypes=['Ave','Blvd','Cir','Ct','Dr','Hwy','Ln','Pkwy','Pl','Rd','St','Way'];
+          var lastW=parts[parts.length-1]||'';
+          var stEl=document.getElementById('_aj_stype');
+          if(stTypes.includes(lastW)&&stEl){stEl.value=lastW; var snEl=document.getElementById('_aj_sname');if(snEl)snEl.value=parts.slice(1,-1).join(' ');}
+          else{var snEl=document.getElementById('_aj_sname');if(snEl)snEl.value=parts.slice(1).join(' ');}
+          // Fill city/zip from job.city field
+          var cityZip=(job.city||'').split(' ');
+          var cityEl=document.getElementById('_aj_city');if(cityEl)cityEl.value=cityZip[0]||'';
+          var zipEl=document.getElementById('_aj_zip');if(zipEl)zipEl.value=cityZip[cityZip.length-1]||'';
+          if(acBox)acBox.style.display='none';
+          ajDynBuild();
+        };})(j);
+        acBox.appendChild(div);
+      });
+    } else { acBox.style.display='none'; }
+  } else if(acBox){ acBox.style.display='none'; }
+
+  // ── Duplicate detection on full address ──
+  if(fullAddr.length>10){
+    _ajDuplicateConfirmed=false;
+    var dups=findDuplicateJobs(c,fullAddr);
+    var warn=document.getElementById('_aj_dup_warn');
+    var list=document.getElementById('_aj_dup_list');
+    var confirmMsg=document.getElementById('_aj_confirm_msg');
+    if(dups.length&&!_ajDuplicateConfirmed){
+      if(warn)warn.style.display='block';
+      if(confirmMsg)confirmMsg.style.display='none';
+      if(list)list.innerHTML=dups.map(function(j){
+        return '<div style="display:flex;gap:10px;align-items:center;padding:6px 10px;background:rgba(255,255,255,.6);border-radius:6px;margin-bottom:4px;font-size:12px;">'
+          +'<strong style="color:#c0392b;">'+j.est+'</strong>'
+          +' <span style="color:var(--muted);">'+(j.address+(j.city?', '+j.city:''))+'</span>'
+          +' <span style="margin-left:auto;">'+j.status+'</span>'
+          +'</div>';
+      }).join('');
+    } else {
+      if(warn)warn.style.display='none';
     }
   }
 }
@@ -2977,19 +2995,37 @@ function ajDynConfirm(){
   if(!c)return;
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   var sname=gv('_aj_sname').replace(/-[IVXLCDM]+$/i,'');
-  var base=gv('_aj_snum')+' '+sname+' '+gv('_aj_stype')+', '+gv('_aj_city')+' '+(gv('_aj_state')||'CA')+' '+gv('_aj_zip');
-  var suffix=nextSuffix(c,base)||'II';
+  var snum=gv('_aj_snum'), stype=gv('_aj_stype'), city=gv('_aj_city');
+  var state=(document.getElementById('_aj_state')||{value:'CA'}).value, zip=gv('_aj_zip');
+  // Pass just the street for suffix calculation
+  var streetBase=snum+' '+sname+' '+stype;
+  var suffix=nextSuffix(c,streetBase)||'II';
+  var newSname=sname+'-'+suffix;
+  // Update street name field visually
   var snEl=document.getElementById('_aj_sname');
-  if(snEl)snEl.value=sname+'-'+suffix;
+  if(snEl)snEl.value=newSname;
+  var newAddr=(snum+' '+newSname+' '+stype+', '+city+' '+state+' '+zip).trim();
   _ajDuplicateConfirmed=true;
+  // Hide dup warning
   var warn=document.getElementById('_aj_dup_warn');
   if(warn)warn.style.display='none';
+  // Show green confirmation message
+  var confirmMsg=document.getElementById('_aj_confirm_msg');
+  if(!confirmMsg){
+    confirmMsg=document.createElement('div');
+    confirmMsg.id='_aj_confirm_msg';
+    confirmMsg.style.cssText='margin-top:10px;background:rgba(46,204,113,.09);border:1.5px solid rgba(46,204,113,.35);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#1a8a47;';
+    if(warn&&warn.parentNode) warn.parentNode.insertBefore(confirmMsg, warn.nextSibling);
+  }
+  confirmMsg.style.display='block';
+  confirmMsg.textContent='✓ New job will be created as Phase '+suffix+' — '+newAddr;
 }
 
 function ajDynCancel(){
   ['_aj_snum','_aj_sname','_aj_city','_aj_zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   var st=document.getElementById('_aj_stype');if(st)st.value='';
   var warn=document.getElementById('_aj_dup_warn');if(warn)warn.style.display='none';
+  var msg=document.getElementById('_aj_confirm_msg');if(msg)msg.style.display='none';
   _ajDuplicateConfirmed=false;
   var el=document.getElementById('_aj_snum');if(el)el.focus();
 }
