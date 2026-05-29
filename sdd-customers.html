@@ -424,13 +424,13 @@ svg{display:block;}
           <div class="addr-lbl"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Street address</div>
           <div class="ff" style="margin-bottom:10px;">
             <label>Street address <span class="req">*</span></label>
-            <input type="text" id="f_address" placeholder="e.g. 4500 Main St" autocomplete="street-address">
+            <input type="text" id="f_address" placeholder="e.g. 4500 Main St" autocomplete="street-address" oninput="tcInput(this)">
             <div class="ferr" id="e_address">Required</div>
           </div>
           <div class="fg3">
             <div class="ff">
               <label>City <span class="req">*</span></label>
-              <input type="text" id="f_city" placeholder="San Diego">
+              <input type="text" id="f_city" placeholder="San Diego" oninput="tcInput(this)">
               <div class="ferr" id="e_city">Required</div>
             </div>
             <div class="ff">
@@ -885,6 +885,15 @@ function openEditCustomer(id){
     mb.classList.add('open');
     mb.style.display='flex';
   }
+}
+
+function toTitleCase(str){
+  return str.replace(/\w\S*/g,function(w){return w.charAt(0).toUpperCase()+w.slice(1);});
+}
+function tcInput(el){
+  var pos=el.selectionStart;
+  el.value=toTitleCase(el.value);
+  try{el.setSelectionRange(pos,pos);}catch(e){}
 }
 
 function renderDetail(id){
@@ -2790,22 +2799,12 @@ function openAddJobModal(cid){
     +'</div></div>'
     // 2. PO + Project Name
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">'
+    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Project Name <span style="color:var(--danger);">*</span></label>'
+    +'<input id="_aj_jobname" placeholder="e.g. Harbor Blvd Demolition" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div id="_e_aj_jobname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">PO Number</label>'
     +'<input id="_aj_po" placeholder="e.g. PO-4891" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;"></div>'
-    +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Project Name <span style="color:var(--danger);">*</span></label>'
-    +'<input id="_aj_jobname" oninput="ajDynCheckName()" placeholder="e.g. Harbor Blvd Demolition" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<div id="_e_aj_jobname" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'</div>'
-    // Duplicate warning — right after project name
-    +'<div id="_aj_dup_warn" style="display:none;background:rgba(217,79,79,.07);border:1.5px solid rgba(217,79,79,.3);border-radius:10px;padding:12px 14px;margin-bottom:12px;margin-top:4px;">'
-    +'<div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:6px;">⚠ A project with this name already exists</div>'
-    +'<div id="_aj_dup_list" style="margin-bottom:10px;font-size:12px;color:var(--muted);"></div>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Do you want to create a new phase?</div>'
-    +'<div style="display:flex;gap:8px;">'
-    +'<button onclick="ajDynConfirm()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">Yes — create as new phase</button>'
-    +'<button onclick="ajDynCancel()" style="padding:6px 14px;border-radius:6px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;cursor:pointer;">No — use different name</button>'
-    +'</div></div>'
-    +'<div id="_aj_confirm_msg" style="display:none;margin-bottom:12px;"></div>'
     // 3. Project Manager
     +'<div style="margin-bottom:16px;">'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Project Manager</div>'
@@ -2822,12 +2821,12 @@ function openAddJobModal(cid){
     +'<div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">Job site address</div>'
     +'<div style="margin-bottom:12px;position:relative;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">Street address <span style="color:var(--danger);">*</span></label>'
-    +'<input id="_aj_street" oninput="ajDynBuild()" autocomplete="off" placeholder="e.g. 4500 Main St" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<div id="_aj_autocomplete" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1.5px solid var(--gold);border-radius:0 0 8px 8px;z-index:999;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);"></div>'
+    +'<input id="_aj_street" oninput="ajDynBuild();tcInput(this)" autocomplete="off" placeholder="e.g. 4500 Main St" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    
     +'<div id="_e_aj_street" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;">'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">City <span style="color:var(--danger);">*</span></label>'
-    +'<input id="_aj_city" oninput="ajDynBuild()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_city" oninput="ajDynBuild();tcInput(this)" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
     +'<div id="_e_aj_city" style="display:none;color:var(--danger);font-size:11px;margin-top:3px;">Required</div></div>'
     +'<div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:4px;">State</label>'
     +'<select id="_aj_state" style="padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;"><option>CA</option><option>AZ</option><option>NV</option><option>TX</option><option>FL</option><option>NY</option><option>OR</option><option>WA</option></select></div>'
@@ -2922,103 +2921,87 @@ function ajDynBuild(){
 }
 
 
-function ajDynCheckName(){
-  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var name=gv('_aj_jobname');
-  var warn=document.getElementById('_aj_dup_warn');
-  var list=document.getElementById('_aj_dup_list');
-  var confirmMsg=document.getElementById('_aj_confirm_msg');
-  var errEl=document.getElementById('_e_aj_jobname');
-  if(errEl) errEl.style.display='none';
-  if(warn) warn.style.display='none';
-  if(confirmMsg) confirmMsg.style.display='none';
-  if(!name||name.length<2){ _ajDuplicateConfirmed=false; _ajDuplicateJobs=[]; return; }
-  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
-  if(!c) return;
-  // Strip any existing phase suffix from what user typed to get base name
-  var baseName=name.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
-  // Find existing jobs whose project name matches the base name
-  var dups=getCustomerJobs(c).filter(function(j){
-    var jName=(j.projectName||j.jobName||'');
-    var jBase=jName.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
-    return jBase.toLowerCase()===baseName.toLowerCase() && jBase.length>0;
-  });
-  _ajDuplicateJobs=dups;
-  _ajDuplicateConfirmed=false;
-  if(dups.length){
-    if(warn) warn.style.display='block';
-    if(list) list.innerHTML=dups.map(function(j){
-      var jn=j.projectName||j.jobName||j.est;
-      return '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(255,255,255,.7);border-radius:6px;margin-bottom:4px;font-size:12px;">'
-        +'<strong style="color:#c0392b;">'+jn+'</strong>'
-        +' <span style="color:var(--muted);">'+j.address+'</span>'
-        +' <span style="margin-left:auto;color:var(--muted);">'+j.status+'</span>'
-        +'</div>';
-    }).join('');
-  }
-}
 
 function ajDynConfirm(){
-  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
-  if(!c)return;
-  var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
-  var name=gv('_aj_jobname');
-  // Strip any existing suffix to get clean base name
-  var baseName=name.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
-  // Count ALL jobs (including previous phases) with this base name
-  var allPhases=getCustomerJobs(c).filter(function(j){
-    var jBase=(j.projectName||j.jobName||'').replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
-    return jBase.toLowerCase()===baseName.toLowerCase()&&jBase.length>0;
-  });
-  // Next phase = existing count + 1 (existing has I, next is II; or II exists, next is III)
-  var nextN=allPhases.length+1;
-  var suffix=toRoman(nextN);
-  var newName=baseName+'-'+suffix;
-  // Update the field
-  var nameEl=document.getElementById('_aj_jobname');
-  if(nameEl) nameEl.value=newName;
   _ajDuplicateConfirmed=true;
-  // Hide warning
-  var warn=document.getElementById('_aj_dup_warn');
-  if(warn) warn.style.display='none';
-  // Show green confirmation
-  var pWrap=warn?warn.parentNode:null;
-  var confirmMsg=document.getElementById('_aj_confirm_msg');
-  if(!confirmMsg){
-    confirmMsg=document.createElement('div');
-    confirmMsg.id='_aj_confirm_msg';
-    confirmMsg.style.cssText='margin-top:8px;background:rgba(46,204,113,.09);border:1.5px solid rgba(46,204,113,.3);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;color:#1a8a47;';
-    if(pWrap) pWrap.insertBefore(confirmMsg, warn?warn.nextSibling:null);
+  ajDynSave();
+}
+
+function ajDupYes(){
+  var p=document.getElementById('_ajDupPopup');
+  if(p) p.parentNode.removeChild(p);
+  _ajDuplicateConfirmed=true;
+  ajDynSave();
+}
+
+function ajDupNo(){
+  var p=document.getElementById('_ajDupPopup');
+  if(p) p.parentNode.removeChild(p);
+  closeAddJobModal();
+  // Go to Jobs tab
+  var tabs=document.querySelectorAll('.tab-btn');
+  for(var i=0;i<tabs.length;i++){
+    if(tabs[i].textContent.trim().toLowerCase().indexOf('job')===0){
+      tabs[i].click(); break;
+    }
   }
-  confirmMsg.style.display='block';
-  confirmMsg.textContent='\u2713 Project name set to: '+newName;
+  if(activeId) renderDetail(activeId);
 }
-
 function ajDynCancel(){
-  ['_aj_street','_aj_city','_aj_zip'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';}); 
   _ajDuplicateConfirmed=false;
-  var msg2=document.getElementById('_aj_confirm_msg');if(msg2)msg2.style.display='none';
-  var nameEl=document.getElementById('_aj_jobname');if(nameEl){nameEl.value='';}
-  var warn=document.getElementById('_aj_dup_warn');if(warn)warn.style.display='none';
-  var msg=document.getElementById('_aj_confirm_msg');if(msg)msg.style.display='none';
-  _ajDuplicateConfirmed=false;
-  var el=document.getElementById('_aj_snum');if(el)el.focus();
+  var nameEl=document.getElementById('_aj_jobname');
+  if(nameEl){nameEl.value='';nameEl.focus();}
 }
-
 function ajDynSave(){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   var street=gv('_aj_street'),city=gv('_aj_city'),state=(document.getElementById('_aj_state')||{value:'CA'}).value,zip=gv('_aj_zip');
   var ok=true;
-  function req(id,eid){if(!gv(id)){var e=document.getElementById(eid);if(e)e.style.display='block';ok=false;}else{var e=document.getElementById(eid);if(e)e.style.display='none';}};
+  function req(id,eid){var v=gv(id);var e=document.getElementById(eid);if(!v){if(e)e.style.display='block';ok=false;}else{if(e)e.style.display='none';}}
   req('_aj_street','_e_aj_street');req('_aj_city','_e_aj_city');req('_aj_zip','_e_aj_zip');req('_aj_jobname','_e_aj_jobname');
   if(!ok)return;
-  // Check duplicate not confirmed
-  var jobNameVal=gv('_aj_jobname');
-  if(_ajDuplicateJobs&&_ajDuplicateJobs.length&&!_ajDuplicateConfirmed){ajDynCheckName();return;}
+  var cust=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!cust) return;
+  // Check duplicate project name on save
+  if(!_ajDuplicateConfirmed){
+    var name=gv('_aj_jobname');
+    var baseName=name.replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+    var dups=getCustomerJobs(cust).filter(function(j){
+      var jBase=(j.projectName||j.jobName||'').replace(/\s*-?\s*phase\s+[IVXLCDM]+$/i,'').replace(/-[IVXLCDM]+$/i,'').trim();
+      return jBase.toLowerCase()===baseName.toLowerCase()&&jBase.length>0;
+    });
+    if(dups.length){
+      // Build and show a separate popup
+      var existing=document.getElementById('_ajDupPopup');
+      if(existing) existing.parentNode.removeChild(existing);
+      var dupHtml='<div id="_ajDupPopup" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999999;display:flex;align-items:center;justify-content:center;padding:24px;">'
+        +'<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+        +'<div style="padding:20px 24px;border-bottom:1px solid #eee;">'
+        +'<div style="font-size:18px;font-weight:700;color:#c0392b;margin-bottom:4px;">⚠ Project already exists</div>'
+        +'<div style="font-size:13px;color:#666;">This customer already has a project with this name</div>'
+        +'</div>'
+        +'<div style="padding:16px 24px;">'
+        +dups.map(function(j){
+          var jn=j.projectName||j.jobName||j.est;
+          return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fafafa;border:1px solid #eee;border-radius:8px;margin-bottom:8px;font-size:13px;">'
+            +'<strong style="color:#c0392b;">'+jn+'</strong>'
+            +'<span style="color:#666;margin-left:4px;">'+j.address+'</span>'
+            +'<span style="margin-left:auto;color:#999;font-size:11px;">'+j.status+'</span>'
+            +'</div>';
+        }).join('')
+        +'<div style="font-size:13px;color:#666;margin-top:8px;">Do you want to save anyway?</div>'
+        +'</div>'
+        +'<div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;">'
+        +'<button onclick="ajDupNo()" style="padding:9px 20px;border-radius:8px;border:1.5px solid #ddd;background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">No — view jobs</button>'
+        +'<button onclick="ajDupYes()" style="padding:9px 20px;border-radius:8px;border:none;background:#b8922a;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Yes — save anyway</button>'
+        +'</div>'
+        +'</div></div>';
+      var d=document.createElement('div');
+      d.innerHTML=dupHtml;
+      document.body.appendChild(d.firstChild);
+      return;
+    }
+  }
   var addr=(street+(city?', '+city:'')+(state?' '+state:'')+(zip?' '+zip:'')).trim();
-  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});if(!c)return;
-  var dups=findDuplicateJobs(c,addr);
-  if(dups.length&&!_ajDuplicateConfirmed){ajDynBuild();return;}
   var estNum='EST-'+String(Math.floor(Math.random()*900)+100);
   var poNum=gv('_aj_po'), jobName=gv('_aj_jobname');
   var newJob={est:estNum,address:addr,po:poNum,jobName:jobName,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled'};
@@ -3026,13 +3009,13 @@ function ajDynSave(){
   var avC=['av-gold','av-info','av-success','av-warning'];
   if(pmVal==='new'){
     var pfn=gv('_aj_fn'),pln=gv('_aj_ln');
-    if(pfn){c.contacts.push({id:'c_'+Date.now(),name:pfn+' '+pln,initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[c.contacts.length%avC.length],email:gv('_aj_em'),phone:gv('_aj_ph'),title:'Project Manager',role:'project-manager',jobs:[newJob]});}
-    else{var f1=c.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
+    if(pfn){cust.contacts.push({id:'c_'+Date.now(),name:pfn+' '+pln,initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[cust.contacts.length%avC.length],email:gv('_aj_em'),phone:gv('_aj_ph'),title:'Project Manager',role:'project-manager',jobs:[newJob]});}
+    else{var f1=cust.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
   }else{
-    var pmId=pmVal==='primary'?(c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{}).id:pmVal.replace('pm_','');
-    var pm=c.contacts.find(function(x){return x.id===pmId;});
+    var pmId=pmVal==='primary'?(cust.contacts.find(function(x){return x.role==='project-manager';})||cust.contacts[0]||{}).id:pmVal.replace('pm_','');
+    var pm=cust.contacts.find(function(x){return x.id===pmId;});
     if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
-    else{var f2=c.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
+    else{var f2=cust.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
   }
   closeAddJobModal();renderDetail(_ajCustomerId);renderList();
   var fl=document.createElement('div');
