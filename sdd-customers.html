@@ -709,6 +709,19 @@ const CUSTOMERS = [
             {est:'EST-CO051-1',originalEst:'EST-051',amount:'$1,400',status:'Pending',date:'May 14, 2026',description:'Underground pipe removal'}
           ],
           invoices:[]},
+        {est:'EST-044', address:'210 Market St', city:'San Diego CA 92101', status:'Completed', amount:'$18,750', date:'Mar 12, 2026', projectName:'Market St Teardown',
+          billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101'},{id:'c4',name:'Robert Park',email:'r.park@abcconstruction.com',phone:'(619) 555-0104'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 12, 2026',scope:'Full Structure Demolition'}
+          ],
+          changeOrders:[
+            {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved',date:'Mar 20, 2026',description:'Concrete slab breakout'}
+          ],
+          invoices:[
+            {est:'INV-044-1',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026'},
+            {est:'INV-044-2',originalEst:'EST-044',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026'}
+          ]},
       ]},
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
       email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
@@ -816,6 +829,10 @@ const CUSTOMER_ESTIMATES = {
 };
 
 function getAllJobs(c){ return c.contacts.flatMap(ct=>ct.jobs.map(j=>({...j,contactName:ct.name,contactId:ct.id}))); }
+// Global cycle-line helpers (also used outside renderDetail)
+function gLineInvoices(j, estId){ return (j.invoices||[]).filter(function(iv){return (iv.originalEst||iv.est)===estId;}); }
+function gIsLinePaid(j, estId){ var iv=gLineInvoices(j,estId); if(!iv.length) return false; return iv.every(function(x){return (x.status||'').toLowerCase()==='paid';}); }
+function gIsJobFullyArchived(j){ if(!(j.estimates&&j.estimates.length)) return false; return (j.estimates||[]).every(function(e){return gIsLinePaid(j,e.est);}); }
 function parseMoney(v){ return parseFloat((v||'0').replace(/[$,]/g,'')||0); }
 
 function getTotals(c){
@@ -946,6 +963,22 @@ function tcInput(el){
 }
 
 
+function toggleBillingArchived(cid){
+  var body=document.getElementById('billarch-body-'+cid);
+  var chev=document.getElementById('billarch-chev-'+cid);
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function toggleContactJobs(ccid){
+  var body=document.getElementById('ccpm-body-'+ccid);
+  var chev=document.getElementById('ccpm-chev-'+ccid);
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
 function toggleBillingJob(bid){
   var body=document.getElementById('billjob-body-'+bid);
   var chev=document.getElementById('billjob-chev-'+bid);
@@ -1157,7 +1190,7 @@ function renderDetail(id){
             <div class="ccj-dot" style="background:${STATUS_COLOR[j.status]||'var(--gold)'}"></div>
             <div class="ccj-info">
               <div class="ccj-street">${j.address}</div>
-              <div class="ccj-city">${j.city||''}${(j.pendingBilling||!(j.billing&&j.billing.length))?' <span style="color:var(--warning);font-weight:700;font-size:11px;">· ⚠ Pending billing information</span>':''}</div>
+              <div class="ccj-city">${j.city||''}${(j.pendingBilling||!(j.billing&&j.billing.length))?' <span style="color:var(--danger);font-weight:700;font-size:11px;">· ⚠ Pending billing information</span>':''}</div>
             </div>
             <span class="sp ${STATUS_CLASS[j.status]||'sp-pending'}" style="flex-shrink:0;">${j.status}</span>
             <div class="ccj-right">
@@ -1218,7 +1251,7 @@ function renderDetail(id){
     var billCount = (j.billing&&j.billing.length)?j.billing.length:0;
     var pendBill  = j.pendingBilling || billCount===0;
     var billCell = pendBill
-      ? '<span title="No billing contacts assigned" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--warning);background:rgba(217,164,65,.15);border:1px solid var(--warning);border-radius:20px;padding:2px 8px;white-space:nowrap;">⚠ Pending billing</span>'
+      ? '<span title="No billing contacts assigned" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--danger);background:none;border:1px solid var(--danger);border-radius:20px;padding:2px 8px;white-space:nowrap;">⚠ Pending billing</span>'
       : '<span title="'+billCount+' billing contact'+(billCount===1?'':'s')+'" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#16a34a;background:rgba(46,204,113,.12);border:1px solid #16a34a;border-radius:20px;padding:2px 8px;white-space:nowrap;">✓ '+billCount+' set</span>';
     return '<tr style="border-bottom:1px solid var(--border);">'
       +'<td style="padding:10px 12px;font-weight:600;cursor:pointer;" onclick="goToEstimate(\'' +jid+ '\')">'+(j.projectName||j.jobName||j.address||'—')+'</td>'
@@ -1438,12 +1471,13 @@ function renderDetail(id){
         ${(()=>{
           const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
           if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
-          return allC.map(ct=>{
+          return allC.map((ct,cIdx)=>{
             var ctJobs=(ct.jobs||[]);
-            var jobsHTML = (ct.role==='project-manager')
+            var isPM=(ct.role==='project-manager');
+            var ccid=c.id+'_'+cIdx;
+            var jobsInner = isPM
               ? (ctJobs.length
-                ? '<div style="margin:8px 0 0 56px;padding-left:12px;border-left:2px solid var(--border);">'
-                  + ctJobs.map(function(j){
+                ? ctJobs.map(function(j){
                       var pn=j.projectName||j.jobName||j.address||'—';
                       return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--muted);">'
                         +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
@@ -1451,18 +1485,23 @@ function renderDetail(id){
                         +(j.date?'<span style="color:var(--muted2);">· '+j.date+'</span>':'')
                         +'</div>';
                     }).join('')
-                  + '</div>'
-                : '<div style="margin:6px 0 0 56px;font-size:11px;color:var(--muted2);font-style:italic;">No jobs assigned</div>')
+                : '<div style="font-size:11px;color:var(--muted2);font-style:italic;">No jobs assigned</div>')
               : '';
+            var jobsHTML = isPM
+              ? '<div id="ccpm-body-'+ccid+'" style="display:none;margin:8px 0 0 56px;padding-left:12px;border-left:2px solid var(--border);">'+jobsInner+'</div>'
+              : '';
+            var nameClick = isPM ? ' style="cursor:pointer;" onclick="toggleContactJobs(\''+ccid+'\')"' : '';
+            var chev = isPM ? '<span id="ccpm-chev-'+ccid+'" style="font-size:11px;color:var(--muted);transition:transform .15s;display:inline-block;margin-right:4px;">▸</span>' : '';
             return `
             <div class="contact-simple" style="justify-content:space-between;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:12px;">
                 <div class="cs-av ${ct.color}">${ct.initials}</div>
                 <div class="cs-info">
-                  <div class="cs-name">${ct.name}
+                  <div class="cs-name"${nameClick}>${chev}${ct.name}
                     ${ct.role==='project-manager'
                       ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);margin-left:6px;">PM</span>'
                       : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>'}
+                    ${isPM&&ctJobs.length?'<span style="font-size:10px;color:var(--muted2);margin-left:4px;">('+ctJobs.length+' job'+(ctJobs.length===1?'':'s')+')</span>':''}
                   </div>
                   <div class="cs-sub">${ct.title||''} · ${ct.email} ${ct.phone?'· '+ct.phone:''}</div>
                 </div>
@@ -1496,7 +1535,7 @@ function renderDetail(id){
           ${(()=>{
             const allJ = getAllJobs(c);
             if(!allJ.length) return '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px;font-style:italic;border:1px solid var(--border);border-radius:10px;">No jobs yet. Add a job to manage its billing recipients.</div>';
-            return allJ.map((j,jIdx)=>{
+            function billCard(j,jIdx){
               const pn = j.projectName||j.jobName||j.address||'—';
               const pm = c.contacts.find(x=>x.id===j.contactId);
               const billing = j.billing||[];
@@ -1525,7 +1564,7 @@ function renderDetail(id){
                   </div>
                   <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--surface3);color:var(--muted);">CC</span>
                 </div>`).join('')
-                : '<div style="padding:9px 16px 9px 32px;font-size:12px;color:var(--warning);font-style:italic;">⚠ No billing contacts — pending billing information</div>';
+                : '<div style="padding:9px 16px 9px 32px;font-size:12px;color:var(--danger);font-style:italic;">⚠ No billing contacts — pending billing information</div>';
               return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">
                 <div onclick="toggleBillingJob('${bid}')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);cursor:pointer;user-select:none;">
                   <div style="display:flex;align-items:center;gap:8px;min-width:0;">
@@ -1545,7 +1584,25 @@ function renderDetail(id){
                   ${billRows}
                 </div>
               </div>`;
-            }).join('');
+            }
+            // Split by cycle lines: active = job has pending lines; archived = job fully paid (all lines paid)
+            const activeJ = allJ.filter(j=>!isJobFullyArchived(j));
+            const archivedJ = allJ.filter(j=>isJobFullyArchived(j));
+            let out = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Active <span style="color:var(--text);">('+activeJ.length+')</span></div>';
+            out += activeJ.length ? activeJ.map((j,i)=>billCard(j,'a'+i)).join('') : '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs</div>';
+            if(archivedJ.length){
+              out += '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:18px;">'
+                +'<div onclick="toggleBillingArchived('+c.id+')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);cursor:pointer;user-select:none;">'
+                  +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">'
+                    +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
+                    +'Archived <span style="color:var(--text);">('+archivedJ.length+')</span>'
+                  +'</div>'
+                  +'<span id="billarch-chev-'+c.id+'" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
+                +'</div>'
+                +'<div id="billarch-body-'+c.id+'" style="display:none;padding:12px 14px 4px;">'+archivedJ.map((j,i)=>billCard(j,'z'+i)).join('')+'</div>'
+              +'</div>';
+            }
+            return out;
           })()}
 
           <div style="font-size:11px;color:var(--muted);margin-top:4px;display:flex;gap:14px;">
@@ -2413,7 +2470,7 @@ function openJobAssignPanel(customerId, contactId, estFilter){
     });
     return o;
   }
-  var jobsHTML = jobs.length ? jobs.map(function(j,idx){
+  function jobCard(j,idx,hidden,extraClass){
     var pn=j.projectName||j.jobName||j.address||'Job '+(idx+1);
     var billing=(j.billing||[]);
     var billRows=billing.map(function(b){
@@ -2426,7 +2483,7 @@ function openJobAssignPanel(customerId, contactId, estFilter){
     c.contacts.forEach(function(x){
       if(!billing.some(function(b){return String(b.id)===String(x.id);})) billDrop+='<option value="'+x.id+'">'+x.name+'</option>';
     });
-    return '<div style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;background:var(--surface2);">'
+    return '<div id="_jap_jobwrap_'+idx+'"'+(extraClass?' class="'+extraClass+'"':'')+' style="display:'+(hidden?'none':'block')+';border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;background:var(--surface2);">'
       +'<div style="font-weight:700;font-size:14px;margin-bottom:10px;">'+pn+'<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">'+(j.est||'')+'</span></div>'
       +'<div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:5px;">Project Manager</label>'
         +'<select id="_jap_pm_'+idx+'" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;">'+pmOptsFor(j.__pmId||contactId)+'</select></div>'
@@ -2435,7 +2492,40 @@ function openJobAssignPanel(customerId, contactId, estFilter){
         +'<select id="_jap_billdrop_'+idx+'" onchange="japBillAdd('+idx+',this.value)" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;cursor:pointer;margin-top:6px;">'+billDrop+'</select>'
       +'</div>'
       +'</div>';
-  }).join('') : '<div style="padding:16px;font-size:13px;color:var(--muted2);font-style:italic;">This contact has no jobs assigned.</div>';
+  }
+  var jobsHTML;
+  if(!jobs.length){
+    jobsHTML='<div style="padding:16px;font-size:13px;color:var(--muted2);font-style:italic;">This contact has no jobs assigned.</div>';
+  } else if(estFilter){
+    // Single job (came from a specific job's Edit button) — show it directly
+    jobsHTML=jobs.map(function(j,idx){return jobCard(j,idx,false);}).join('');
+  } else {
+    // Multiple jobs — dropdown selector for active, hidden archived section
+    var activeIdx=[], archivedIdx=[];
+    jobs.forEach(function(j,idx){ (gIsJobFullyArchived(j)?archivedIdx:activeIdx).push(idx); });
+    var selOpts='<option value="">— Select a job to edit —</option>';
+    activeIdx.forEach(function(idx){
+      var j=jobs[idx];var pn=j.projectName||j.jobName||j.address||'Job '+(idx+1);
+      selOpts+='<option value="'+idx+'">'+pn+(j.est?' ('+j.est+')':'')+'</option>';
+    });
+    jobsHTML='<div style="margin-bottom:14px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:5px;">Active jobs</label>'
+      +'<select id="_jap_jobsel" onchange="japSelectJob(this.value)" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;cursor:pointer;">'+selOpts+'</select></div>';
+    // All active job cards (hidden until selected)
+    jobsHTML+=activeIdx.map(function(idx){return jobCard(jobs[idx],idx,true,'_jap_active_card');}).join('');
+    if(!activeIdx.length) jobsHTML+='<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs.</div>';
+    // Archived section (collapsible, hidden)
+    if(archivedIdx.length){
+      jobsHTML+='<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:8px;">'
+        +'<div onclick="japToggleArchived()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);cursor:pointer;user-select:none;">'
+          +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">'
+            +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
+            +'Archived <span style="color:var(--text);">('+archivedIdx.length+')</span>'
+          +'</div><span id="_jap_arch_chev" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
+        +'</div>'
+        +'<div id="_jap_arch_body" style="display:none;padding:12px 14px 2px;">'+archivedIdx.map(function(idx){return jobCard(jobs[idx],idx,false);}).join('')+'</div>'
+      +'</div>';
+    }
+  }
 
   const modal=document.createElement('div');
   modal.id='_japModal';
@@ -2457,6 +2547,22 @@ function openJobAssignPanel(customerId, contactId, estFilter){
 function closeJobAssignPanel(){
   var m=document.getElementById('_japModal');
   if(m) m.parentNode.removeChild(m);
+}
+function japSelectJob(idx){
+  // Hide all active job cards, show the selected one
+  Array.prototype.forEach.call(document.querySelectorAll('._jap_active_card'),function(el){el.style.display='none';});
+  if(idx!=='') {
+    var el=document.getElementById('_jap_jobwrap_'+idx);
+    if(el) el.style.display='block';
+  }
+}
+function japToggleArchived(){
+  var body=document.getElementById('_jap_arch_body');
+  var chev=document.getElementById('_jap_arch_chev');
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
 }
 function japBillAdd(idx, cid){
   if(!cid) return;

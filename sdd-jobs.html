@@ -27,6 +27,8 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .btn{padding:8px 18px;border-radius:6px;font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;}
 .btn-gold{background:var(--gold);color:#fff;font-weight:600;}
 .btn-gold:hover{background:var(--gold-light);}
+.btn-warning{background:var(--warning);color:#fff;font-weight:600;}
+.btn-warning:hover{filter:brightness(1.08);}
 .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2);}
 .btn-ghost:hover{background:var(--surface2);color:var(--text);}
 .btn-success{background:rgba(58,158,106,.12);color:var(--success);border:1px solid rgba(58,158,106,.25);}
@@ -78,7 +80,7 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .ji-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
 .ji-num{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--muted);}
 .ji-amt{font-size:14px;font-weight:700;color:var(--gold);}
-.ji-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.ji-name{font-size:14px;font-weight:400;color:var(--text);margin-bottom:2px;}
 .ji-addr{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .ji-bottom{display:flex;justify-content:space-between;margin-top:6px;}
 .ji-date{font-size:11px;color:var(--muted2);}
@@ -382,6 +384,10 @@ const PIPE_STAGES = [
 // ══ JOBS DATA ══
 const JOBS = [
   {id:1, est:'EST-047', so:'SO-031', name:'Harbor Blvd Demo Phase 1',
+   invoices:[
+     {est:'INV-047-1',originalEst:'EST-047',amount:14301,status:'Sent',date:'May 15, 2026'},
+     {est:'INV-047-2',originalEst:'EST-047',amount:2100,status:'Paid',date:'May 18, 2026'}
+   ],
    customer:'ABC Construction Corp', contact:'James Torres', foreman:'Carlos Mendez',
    address:'1420 Harbor Blvd, San Diego CA 92101', status:'in-progress',
    changeOrders:[
@@ -390,6 +396,15 @@ const JOBS = [
    ],
    startDate:'May 13, 2026', endDate:'May 17, 2026', duration:'5 days', time:'07:00',
    amount:14301, costs:{labor:4200,equipment:2100,disposal:1800,subcontract:0,permits:350},
+   vendors:[
+     {vendor:'West Coast Hauling',account:'5010 · Disposal',amount:1800,status:'Paid',invoiceNo:'WCH-2231'},
+     {vendor:'Pacific Equipment Rental',account:'5020 · Equipment',amount:2100,status:'Paid',invoiceNo:'PER-0455'},
+     {vendor:'City Permits Office',account:'5040 · Permits',amount:350,status:'Pending',invoiceNo:'CPO-1180'}
+   ],
+   billing:[
+     {name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101'},
+     {name:'James Torres',email:'j.torres@abcconstruction.com',phone:'(619) 555-0102'}
+   ],
    crew:[
      {name:'Carlos Mendez',role:'Foreman',initials:'CM'},
      {name:'Juan Reyes',role:'Operator',initials:'JR'},
@@ -404,10 +419,18 @@ const JOBS = [
      {action:'Job started — In Progress', by:'System', date:'May 13, 2026', color:'#C8822A'},
    ]},
   {id:2, est:'EST-062', so:'SO-034', name:'Broadway Interior',
+   invoices:[],
    customer:'Horizon Builders LLC', contact:'David Chen', foreman:'Carlos Mendez',
    address:'450 Broadway, Chula Vista CA 91910', status:'in-progress',
    startDate:'May 12, 2026', endDate:'May 14, 2026', duration:'3 days', time:'07:00',
    amount:11400, costs:{labor:3200,equipment:1400,disposal:1200,subcontract:0,permits:0},
+   vendors:[
+     {vendor:'Green Demo Subs',account:'5030 · Subcontract',amount:1200,status:'Pending',invoiceNo:'GDS-7741'},
+     {vendor:'Pacific Equipment Rental',account:'5020 · Equipment',amount:1400,status:'Paid',invoiceNo:'PER-0461'}
+   ],
+   billing:[
+     {name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101'}
+   ],
    crew:[
      {name:'Carlos Mendez',role:'Foreman',initials:'CM'},
      {name:'Ana Rivera',role:'Supervisor',initials:'AR'},
@@ -421,10 +444,19 @@ const JOBS = [
      {action:'Job started — In Progress', by:'System', date:'May 12, 2026', color:'#C8822A'},
    ]},
   {id:3, est:'EST-055', so:'SO-028', name:'Chula Vista Interior Demo',
+   invoices:[],
    customer:'ABC Construction Corp', contact:'Sandra Lee', foreman:'Ana Rivera',
    address:'342 Third Ave, Chula Vista CA 91910', status:'scheduled',
    startDate:'May 20, 2026', endDate:'May 24, 2026', duration:'5 days', time:'07:00',
    amount:22500, costs:{labor:6000,equipment:2800,disposal:2200,subcontract:0,permits:500},
+   vendors:[
+     {vendor:'West Coast Hauling',account:'5010 · Disposal',amount:2200,status:'Pending',invoiceNo:'WCH-2240'},
+     {vendor:'SoCal Crane Co',account:'5020 · Equipment',amount:2800,status:'Pending',invoiceNo:'SCC-0099'},
+     {vendor:'City Permits Office',account:'5040 · Permits',amount:500,status:'Paid',invoiceNo:'CPO-1192'}
+   ],
+   billing:[
+     {name:'Sandra Lee',email:'s.lee@abcconstruction.com',phone:'(619) 555-0103'}
+   ],
    crew:[
      {name:'Ana Rivera',role:'Foreman',initials:'AR'},
      {name:'Crew TBD',role:'To be assigned',initials:'??'},
@@ -436,10 +468,19 @@ const JOBS = [
      {action:'📧 Admin notified: job on calendar', by:'System', date:'May 1, 2026', color:'#3A7ED4'},
    ]},
   {id:4, est:'EST-060', so:'SO-021', name:'Mission Valley Commercial Demo',
+   invoices:[
+     {est:'INV-060-1',originalEst:'EST-060',amount:31200,status:'Sent',date:'Apr 12, 2026'}
+   ],
    customer:'ABC Construction Corp', contact:'Robert Park', foreman:'Ana Rivera',
    address:'7700 Mission Valley Rd, San Diego CA 92108', status:'ready-to-bill',
    startDate:'Apr 14, 2026', endDate:'Apr 30, 2026', duration:'12 days', time:'07:00',
    amount:31200, costs:{labor:9000,equipment:4500,disposal:3800,subcontract:2000,permits:650},
+   vendors:[
+     {vendor:'Apex Subcontracting',account:'5030 · Subcontract',amount:2000,status:'Paid',invoiceNo:'APX-3310'},
+     {vendor:'SoCal Crane Co',account:'5020 · Equipment',amount:4500,status:'Paid',invoiceNo:'SCC-0102'},
+     {vendor:'West Coast Hauling',account:'5010 · Disposal',amount:3800,status:'Pending',invoiceNo:'WCH-2255'}
+   ],
+   billing:[],
    crew:[
      {name:'Ana Rivera',role:'Foreman',initials:'AR'},
      {name:'Carlos Mendez',role:'Operator',initials:'CM'},
@@ -456,10 +497,21 @@ const JOBS = [
      {action:'Status → Ready to Bill', by:'System', date:'Apr 30, 2026', color:'#D94F4F'},
    ]},
   {id:5, est:'EST-038', so:'SO-015', name:'National City Full Demo',
+   invoices:[
+     {est:'INV-038-1',originalEst:'EST-038',amount:12000,status:'Paid',date:'Mar 28, 2026'},
+     {est:'INV-038-2',originalEst:'EST-038',amount:6700,status:'Paid',date:'Apr 02, 2026'}
+   ],
    customer:'Horizon Builders LLC', contact:'David Chen', foreman:'Carlos Mendez',
    address:'901 National City Blvd, National City CA 91950', status:'completed',
    startDate:'Mar 18, 2026', endDate:'Mar 30, 2026', duration:'10 days', time:'07:00',
    amount:18700, costs:{labor:5400,equipment:2800,disposal:2400,subcontract:1200,permits:400},
+   vendors:[
+     {vendor:'Green Demo Subs',account:'5030 · Subcontract',amount:1200,status:'Pending',invoiceNo:'GDS-7760'},
+     {vendor:'Pacific Equipment Rental',account:'5020 · Equipment',amount:2800,status:'Paid',invoiceNo:'PER-0470'}
+   ],
+   billing:[
+     {name:'Robert Park',email:'r.park@abcconstruction.com',phone:'(619) 555-0104'}
+   ],
    crew:[
      {name:'Carlos Mendez',role:'Foreman',initials:'CM'},
      {name:'Marco Torres',role:'Operator',initials:'MT'},
@@ -565,53 +617,91 @@ document.addEventListener('click',function(e){
 });
 
 // ══ RENDER LIST ══
+function jobIsArchived(j){
+  var invs=j.invoices||[];
+  if(!invs.length) return false;
+  return invs.every(function(iv){return (iv.status||'').toLowerCase()==='paid';});
+}
 function renderList(){
   const q=getQ();
   const list=document.getElementById('jobList');
-  
-  // Group JOBS by customer
-  const byCustomer={};
-  JOBS.forEach(function(j){
-    if(q && !j.name.toLowerCase().includes(q) && !j.customer.toLowerCase().includes(q) && !j.est.toLowerCase().includes(q) && !j.address.toLowerCase().includes(q)) return;
-    if(activeFilter!=='all'){
-      const grp=JOB_GROUPS.find(g=>g.key===activeFilter);
-      if(grp && j.status!==activeFilter) return;
-    }
-    if(!byCustomer[j.customer]) byCustomer[j.customer]=[];
-    byCustomer[j.customer].push(j);
-  });
 
-  const customerNames=Object.keys(byCustomer).sort();
-  if(!customerNames.length){list.innerHTML='<div class="empty-state"><span>No jobs found</span></div>';return;}
+  // Effective status filter: pipeline KPI selection takes priority, else dropdown filter
+  const effFilter = activePipe || activeFilter;
 
-  list.innerHTML=customerNames.map(function(cname){
-    const jobs=byCustomer[cname];
-    const isActive=jobs.some(function(j){return j.id===activeId;});
-    return '<div class="customer-group" data-customer="'+encodeURIComponent(cname)+'">'
-      +'<div class="customer-group-header"+(isActive?" active":"")+" data-cname="+encodeURIComponent(cname)+"" onclick="toggleCustomerGroup(this,this.dataset.cname)">'
-      +'<div style="display:flex;align-items:center;gap:8px;">'
-      +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg>'
-      +'<span style="font-weight:700;font-size:13px;">'+cname+'</span>'
+  function passesFilter(j){
+    if(q && !j.name.toLowerCase().includes(q) && !j.customer.toLowerCase().includes(q) && !j.est.toLowerCase().includes(q) && !j.address.toLowerCase().includes(q)) return false;
+    if(effFilter && effFilter!=='all' && j.status!==effFilter) return false;
+    return true;
+  }
+
+  function jobItemHTML(j){
+    const sc=JOB_STATUS[j.status]||{label:j.status,color:'var(--muted)'};
+    const coCount=j.changeOrders?j.changeOrders.length:0;
+    return '<div class="job-item'+(j.id===activeId?' active':'')+'" onclick="selectJob('+j.id+')" data-id="'+j.id+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">'
+      +'<div style="flex:1;min-width:0;">'
+      +'<div style="font-weight:400;font-size:13px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+j.name+'</div>'
+      +'<div style="font-size:11px;color:var(--muted2);margin-top:2px;">'+j.est+(coCount?' · '+coCount+' CO':'')+'</div>'
       +'</div>'
-      +'<span style="font-size:11px;font-weight:700;color:var(--muted);background:var(--surface3);padding:2px 8px;border-radius:20px;">'+jobs.length+' job'+(jobs.length!==1?'s':'')+'</span>'
-      +'</div>'
-      +'<div class="customer-group-jobs'+(isActive?' open':'open')+'" id="cg-'+encodeURIComponent(cname)+'">'
-      +jobs.map(function(j){
-        const sc=JOB_STATUS[j.status]||{label:j.status,cls:'sp-pending'};
-        const coCount=j.changeOrders?j.changeOrders.length:0;
-        return '<div class="job-item'+(j.id===activeId?' active':'')+'" onclick="selectJob('+j.id+')" data-id="'+j.id+'">'
-          +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">'
-          +'<div style="flex:1;min-width:0;">'
-          +'<div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+j.name+'</div>'
-          +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+j.est+(coCount?' · '+coCount+' CO':'')+'</div>'
-          +'</div>'
-          +'<span class="sp '+sc.cls+'" style="font-size:10px;flex-shrink:0;">'+sc.label+'</span>'
-          +'</div>'
-          +'</div>';
-      }).join('')
+      +'<span style="font-size:10px;font-weight:700;flex-shrink:0;color:'+sc.color+';white-space:nowrap;">'+sc.label+'</span>'
       +'</div>'
       +'</div>';
-  }).join('');
+  }
+
+  function groupsHTML(jobsArr, idPrefix){
+    const byCustomer={};
+    jobsArr.forEach(function(j){ (byCustomer[j.customer]=byCustomer[j.customer]||[]).push(j); });
+    const names=Object.keys(byCustomer).sort();
+    return names.map(function(cname){
+      const jobs=byCustomer[cname];
+      const isAct=jobs.some(function(j){return j.id===activeId;});
+      const gid=idPrefix+'-'+encodeURIComponent(cname);
+      return '<div class="customer-group" data-customer="'+encodeURIComponent(cname)+'">'
+        +'<div class="customer-group-header" data-cname="'+gid+'" onclick="toggleCustomerGroup(this,this.dataset.cname)">'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+        +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/></svg>'
+        +'<span style="font-weight:700;font-size:13px;">'+cname+'</span>'
+        +'</div>'
+        +'<span style="font-size:11px;font-weight:700;color:var(--muted);background:var(--surface3);padding:2px 8px;border-radius:20px;">'+jobs.length+' job'+(jobs.length!==1?'s':'')+'</span>'
+        +'</div>'
+        +'<div class="customer-group-jobs open" id="cg-'+gid+'">'
+        +jobs.map(jobItemHTML).join('')
+        +'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  const activeJobs=JOBS.filter(function(j){return passesFilter(j) && !jobIsArchived(j);});
+  const archivedJobs=JOBS.filter(function(j){return passesFilter(j) && jobIsArchived(j);});
+
+  let html='';
+  if(activeJobs.length){
+    html+=groupsHTML(activeJobs,'act');
+  } else {
+    html+='<div class="empty-state"><span>No active jobs</span></div>';
+  }
+  if(archivedJobs.length){
+    html+='<div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">'
+      +'<div onclick="toggleArchivedList()" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:8px;cursor:pointer;user-select:none;">'
+        +'<div style="display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">'
+          +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
+          +'Archived <span style="color:var(--text);">('+archivedJobs.length+')</span>'
+        +'</div>'
+        +'<span id="archlist-chev" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
+      +'</div>'
+      +'<div id="archlist-body" style="display:none;margin-top:10px;">'+groupsHTML(archivedJobs,'arch')+'</div>'
+    +'</div>';
+  }
+  list.innerHTML=html || '<div class="empty-state"><span>No jobs found</span></div>';
+}
+function toggleArchivedList(){
+  var body=document.getElementById('archlist-body');
+  var chev=document.getElementById('archlist-chev');
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
 }
 
 function toggleCustomerGroup(hdr,cname){
@@ -641,9 +731,8 @@ function renderDetail(id){
     actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit schedule</button>
     <button class="btn btn-warning btn-sm" onclick="startJob(${j.id})">Start job → In Progress</button>`;
   } else if(j.status==='in-progress'){
-    actionHTML=`<button class="btn btn-success btn-sm" onclick="openCompleteModal(${j.id})">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      Job completed → Ready to Bill
+    actionHTML=`<button class="btn btn-warning btn-sm" onclick="openCompleteModal(${j.id})">
+      JOB is ready to bill
     </button>`;
   } else if(j.status==='ready-to-bill'){
     actionHTML=`<button class="btn btn-gold btn-sm" onclick="window.location.href='/sdd-invoices.html?create='+encodeURIComponent(j.est)+'&customer='+encodeURIComponent(j.customer)+'&amount='+j.amount+'&job='+encodeURIComponent(j.name)">
@@ -679,7 +768,10 @@ function renderDetail(id){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
         <div>
           <div class="tb-num">${j.est} · ${j.so}</div>
-          <div class="tb-name">${j.name}</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="tb-name">${j.name}</div>
+            <span class="pill ${sc.pill}" style="font-size:12px;padding:4px 12px;">${sc.label}</span>
+          </div>
           <div class="tb-meta">
             <span style="background:rgba(184,146,42,.1);border:1px solid rgba(184,146,42,.2);border-radius:6px;padding:3px 9px;display:flex;align-items:center;gap:4px;">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -688,9 +780,14 @@ function renderDetail(id){
             <span>${j.customer} · ${j.contact}</span>
             <span>Foreman: ${j.foreman}</span>
           </div>
+          <div style="margin-top:10px;">
+            <button class="btn btn-ghost btn-sm" onclick="openJobBillingModal(${j.id})">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit billing
+            </button>
+          </div>
         </div>
         <div class="tb-actions">
-          <span class="pill ${sc.pill}" style="font-size:12px;padding:4px 12px;">${sc.label}</span>
           ${actionHTML}
         </div>
       </div>
@@ -703,7 +800,7 @@ function renderDetail(id){
       <div><div class="sched-lbl">Time</div><div class="sched-val">${j.time||'—'}</div></div>
     </div>
 
-    <div class="kpi-row">
+    <div class="kpi-row" style="grid-template-columns:repeat(2,1fr);">
       <div class="kpi-box">
         <div class="kpi-lbl">Estimated value</div>
         <div class="kpi-val">${fmt(j.amount)}</div>
@@ -711,48 +808,59 @@ function renderDetail(id){
       </div>
       <div class="kpi-box">
         <div class="kpi-lbl">Job costs</div>
-        <div class="kpi-val" style="color:var(--danger);">${fmt(totalCosts)}</div>
-        <div class="kpi-sub">Total expenses</div>
-      </div>
-      <div class="kpi-box">
-        <div class="kpi-lbl">Gross margin</div>
-        <div class="kpi-val" style="color:${marginColor};">${margin}%</div>
-        <div class="margin-bar"><div class="margin-fill" style="width:${margin}%;background:${marginColor};"></div></div>
-      </div>
-      <div class="kpi-box">
-        <div class="kpi-lbl">Crew size</div>
-        <div class="kpi-val">${j.crew.length}</div>
-        <div class="kpi-sub">${j.foreman}</div>
+        <div class="kpi-val" style="color:var(--danger);">${fmt((j.vendors||[]).reduce((s,v)=>s+(v.amount||0),0))}</div>
+        <div class="kpi-sub">Total billing (vendors)</div>
       </div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
       <div>
         <div class="card">
-          <div class="card-title">Job costs by category</div>
-          ${Object.entries(j.costs).map(([k,v])=>`
-            <div class="cost-row">
-              <span class="cost-lbl" style="text-transform:capitalize;">${k}</span>
-              <span class="cost-amt">${fmt(v)}</span>
-            </div>`).join('')}
-          <div class="cost-row" style="border-top:2px solid var(--border2);margin-top:4px;padding-top:12px;">
-            <span style="font-weight:700;font-size:15px;">Total costs</span>
-            <span style="font-weight:700;font-size:15px;color:var(--danger);">${fmt(totalCosts)}</span>
-          </div>
+          <div class="card-title">Billing — Vendors (Accounts Payable)</div>
+          ${(() => {
+            const vs = j.vendors || [];
+            if(!vs.length) return '<div style="padding:14px 0;font-size:13px;color:var(--muted2);font-style:italic;">No vendors associated with this job.</div>';
+            const rows = vs.map(v=>{
+              const paid = (v.status||'').toLowerCase()==='paid';
+              const pill = paid
+                ? '<span class="pill" style="color:#16a34a;background:rgba(46,204,113,.12);">✓ Paid</span>'
+                : '<span class="pill" style="color:var(--danger);background:none;border:1px solid var(--danger);">Pending</span>';
+              return `<div style="display:grid;grid-template-columns:1.4fr 1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+                <div>
+                  <div style="font-size:14px;font-weight:600;">${v.vendor}</div>
+                  ${v.invoiceNo?`<div style="font-size:11px;color:var(--muted2);">Inv ${v.invoiceNo}</div>`:''}
+                </div>
+                <div style="font-size:12px;color:var(--muted);">${v.account||'—'}</div>
+                <div style="font-size:14px;font-weight:600;text-align:right;">${fmt(v.amount)}</div>
+                <div style="text-align:right;">${pill}</div>
+              </div>`;
+            }).join('');
+            const totalPay = vs.reduce((s,v)=>s+(v.amount||0),0);
+            const totalPending = vs.filter(v=>(v.status||'').toLowerCase()!=='paid').reduce((s,v)=>s+(v.amount||0),0);
+            return rows + `
+              <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--border2);margin-top:4px;padding-top:12px;">
+                <span style="font-weight:700;font-size:13px;">Total payable</span>
+                <span style="font-weight:700;font-size:15px;">${fmt(totalPay)}</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;">
+                <span style="font-size:12px;color:var(--danger);font-weight:600;">Pending to pay</span>
+                <span style="font-size:13px;color:var(--danger);font-weight:700;">${fmt(totalPending)}</span>
+              </div>`;
+          })()}
         </div>
         <div class="card">
           <div class="card-title">Equipment & notes</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:10px;">Equipment</div>
           <div style="font-size:14px;margin-bottom:14px;">${j.equipment||'—'}</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:10px;">Notes</div>
-          <div style="font-size:14px;color:var(--muted);">${j.notes||'—'}</div>
+          <textarea rows="4" placeholder="Write notes about this job..."
+            onblur="saveJobNotes(${j.id}, this.value)"
+            style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);line-height:1.6;outline:none;resize:vertical;transition:border .15s;"
+            onfocus="this.style.borderColor='var(--gold)';"
+          >${j.notes||''}</textarea>
         </div>
       </div>
       <div>
-        <div class="card">
-          <div class="card-title">Crew (${j.crew.length})</div>
-          ${crewHTML}
-        </div>
         <div class="card">
           <div class="card-title">Activity log</div>
           ${tlHTML}
@@ -769,6 +877,99 @@ function selectJob(id){
 }
 
 // ══ ACTIONS ══
+function saveJobNotes(id, val){
+  const j=JOBS.find(x=>x.id===id);
+  if(j) j.notes=val;
+}
+
+// ── Job billing contacts editor ──
+let _jbmJobId=null;
+function openJobBillingModal(id){
+  _jbmJobId=id;
+  const j=JOBS.find(x=>x.id===id);
+  if(!j) return;
+  if(!j.billing) j.billing=[];
+  const existing=document.getElementById('_jbmOverlay');
+  if(existing) existing.parentNode.removeChild(existing);
+  const rows=j.billing.map((b,i)=>`
+    <div id="_jbm_row_${i}" data-idx="${i}" style="display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:#fff;">
+      <span style="flex:1;font-size:13px;"><span style="font-weight:600;">${b.name}</span>${b.email?`<span style="font-size:11px;color:var(--muted);"> · ${b.email}</span>`:''}</span>
+      <button type="button" onclick="jbmRemove(${i})" style="border:none;background:none;color:var(--danger);font-size:16px;cursor:pointer;line-height:1;">×</button>
+    </div>`).join('') || '<div style="font-size:12px;color:var(--danger);font-style:italic;padding:4px 0;">⚠ No billing contacts — pending billing information</div>';
+  const modal=document.createElement('div');
+  modal.id='_jbmOverlay';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;';
+  modal.onclick=function(ev){if(ev.target===modal)closeJobBillingModal();};
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:'Barlow',sans-serif;overflow:hidden;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);">
+        <div style="font-size:20px;font-weight:700;">Billing contacts</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${j.name} · ${j.customer}</div>
+      </div>
+      <div style="padding:20px 24px;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Estimates, change orders & invoices for this job are sent to everyone here.</div>
+        <div id="_jbm_list">${rows}</div>
+        <div id="_jbm_addwrap" style="margin-top:8px;"></div>
+        <button type="button" onclick="jbmAddNew()" style="margin-top:6px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add billing contact</button>
+      </div>
+      <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--surface2);">
+        <button onclick="closeJobBillingModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;">Cancel</button>
+        <button onclick="saveJobBilling()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+function closeJobBillingModal(){
+  const el=document.getElementById('_jbmOverlay');
+  if(el) el.parentNode.removeChild(el);
+}
+function jbmRemove(i){
+  const r=document.getElementById('_jbm_row_'+i);
+  if(r) r.parentNode.removeChild(r);
+}
+let _jbmNewSeq=0;
+function jbmAddNew(){
+  const wrap=document.getElementById('_jbm_addwrap');
+  if(!wrap) return;
+  const k=++_jbmNewSeq;
+  const row=document.createElement('div');
+  row.id='_jbm_new_'+k;
+  row.className='_jbm_new';
+  row.style.cssText='border:1px solid var(--gold);border-radius:8px;padding:10px;margin-bottom:6px;background:var(--surface2);';
+  row.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">New billing contact</span>
+      <button type="button" onclick="this.closest('._jbm_new').remove()" style="border:none;background:none;color:var(--danger);font-size:15px;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <input class="_jbm_n_name" placeholder="Name" style="padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;">
+      <input class="_jbm_n_phone" placeholder="Phone" style="padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;">
+      <input class="_jbm_n_email" placeholder="Email" style="grid-column:1/3;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;">
+    </div>`;
+  wrap.appendChild(row);
+}
+function saveJobBilling(){
+  const j=JOBS.find(x=>x.id===_jbmJobId);
+  if(!j) return;
+  const result=[];
+  // Keep remaining existing rows (by data-idx)
+  document.querySelectorAll('#_jbm_list [id^="_jbm_row_"]').forEach(r=>{
+    const idx=parseInt(r.getAttribute('data-idx'));
+    if(j.billing[idx]) result.push(j.billing[idx]);
+  });
+  // Add new ones
+  document.querySelectorAll('._jbm_new').forEach(r=>{
+    const nm=(r.querySelector('._jbm_n_name')||{}).value?.trim()||'';
+    const ph=(r.querySelector('._jbm_n_phone')||{}).value?.trim()||'';
+    const em=(r.querySelector('._jbm_n_email')||{}).value?.trim()||'';
+    if(nm||em) result.push({name:nm,email:em,phone:ph});
+  });
+  j.billing=result;
+  closeJobBillingModal();
+  renderDetail(j.id);
+  flash('✓ Billing contacts updated'+(result.length?'':' — pending billing'), result.length?'var(--success)':'var(--warning)');
+}
+
 function flash(msg,color){
   const el=document.createElement('div');
   el.style.cssText=`position:fixed;bottom:24px;right:24px;background:${color||'var(--success)'};color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);max-width:400px;line-height:1.4;`;
