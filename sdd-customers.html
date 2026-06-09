@@ -828,7 +828,7 @@ const CUSTOMER_ESTIMATES = {
   ],
 };
 
-function getAllJobs(c){ return c.contacts.flatMap(ct=>ct.jobs.map(j=>({...j,contactName:ct.name,contactId:ct.id}))); }
+function getAllJobs(c){ return c.contacts.flatMap(ct=>(ct.jobs||[]).map(j=>({...j,contactName:ct.name,contactId:ct.id}))); }
 // Global cycle-line helpers (also used outside renderDetail)
 function gLineInvoices(j, estId){ return (j.invoices||[]).filter(function(iv){return (iv.originalEst||iv.est)===estId;}); }
 function gIsLinePaid(j, estId){ var iv=gLineInvoices(j,estId); if(!iv.length) return false; return iv.every(function(x){return (x.status||'').toLowerCase()==='paid';}); }
@@ -1257,7 +1257,7 @@ function renderDetail(id){
     var billCount = (j.billing&&j.billing.length)?j.billing.length:0;
     var pendBill  = j.pendingBilling || billCount===0;
     var billCell = pendBill
-      ? '<span title="No billing contacts assigned" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--danger);background:none;border:1px solid var(--danger);border-radius:20px;padding:2px 8px;white-space:nowrap;">⚠ Pending billing</span>'
+      ? '<span title="No billing contacts assigned" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--danger);background:none;border:1px solid var(--danger);border-radius:20px;padding:2px 8px;white-space:nowrap;">⚠ Billing Info Needed</span>'
       : '<span title="'+billCount+' billing contact'+(billCount===1?'':'s')+'" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#16a34a;background:rgba(46,204,113,.12);border:1px solid #16a34a;border-radius:20px;padding:2px 8px;white-space:nowrap;">✓ '+billCount+' set</span>';
     return '<tr style="border-bottom:1px solid var(--border);">'
       +'<td style="padding:10px 12px;font-weight:600;cursor:pointer;" onclick="goToEstimate(\'' +jid+ '\')">'+(j.projectName||j.jobName||j.address||'—')+'</td>'
@@ -1345,15 +1345,15 @@ function renderDetail(id){
       : '<div style="padding:16px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs</div>';
     // Archived block — its own separate card below; lists PAID cycle lines
     if(archivedLines.length){
-      archivedBlockHTML = '<div class="card" style="margin-bottom:16px;">'
+      archivedBlockHTML = '<div class="card" style="margin-bottom:16px;background:rgba(58,158,106,.07);border:1px solid rgba(58,158,106,.2);">'
         +'<div onclick="toggleArchivedJobs('+c.id+')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">'
-          +'<div class="card-title" style="display:flex;align-items:center;gap:8px;margin:0;">'
+          +'<div class="card-title" style="display:flex;align-items:center;gap:8px;margin:0;color:var(--success);">'
             +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
-            +'Archived <span style="color:var(--muted);font-weight:600;">('+archivedLines.length+')</span>'
+            +'Archived <span style="color:var(--success);font-weight:600;opacity:.8;">('+archivedLines.length+')</span>'
           +'</div>'
-          +'<span id="arch-chev-'+c.id+'" style="font-size:14px;color:var(--muted);transition:transform .15s;">▸</span>'
+          +'<span id="arch-chev-'+c.id+'" style="font-size:14px;color:var(--success);transition:transform .15s;">▸</span>'
         +'</div>'
-        +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">Estimates fully invoiced and paid — each line completed its cycle.</div>'
+        +'<div style="font-size:11px;color:var(--success);opacity:.85;margin-top:2px;">Estimates fully invoiced and paid — each line completed its cycle.</div>'
         +'<div id="arch-body-'+c.id+'" style="display:none;margin-top:12px;">'+archivedTableHTML(archivedLines)+'</div>'
       +'</div>';
     }
@@ -2978,160 +2978,56 @@ function fmtSOV(n){
 
 function buildSOVHtml(c){
   const jobs = getAllJobs(c);
-  const baseEsts = jobs.filter(j=>!(j.est||'').includes('-CO'));
-  const coEsts   = jobs.filter(j=>(j.est||'').includes('-CO'));
-
-  const mkBase = (j,i)=>{
-    const amt    = parseMoney(j.amount);
-    const ret    = Math.round(amt*0.1);
-    const paid   = j.status==='Completed'?amt-ret : j.status==='In progress'?Math.round(amt*0.6):0;
-    const retRec = j.status==='Completed'?ret:0;
-    const bal    = amt-paid;
-    const ck     = j.status==='Completed'?'338'+String(441+i):'';
-    const invNum = 'INV-'+(21492+i*128);
-    const status = j.status==='Completed'?'PAID / RET':'OPEN';
-    return {invNum, estNum:j.est||'', desc:j.address||j.est, amt, ret, paid, ck, retRec, status, totalPaid:paid, bal};
-  };
-  const mkCO = (j,i)=>{
-    const amt = parseMoney(j.amount);
-    const ret = Math.round(amt*0.1);
-    const ccoRef = '5/6/2026 CCO #00'+(i+1);
-    return {coNum:j.est||('CO EST '+(2805+i*76)), estNum:j.est||'', desc:j.address||'Change order', ccoRef, amt, ret, paid:0, retRec:0, status:'OPEN', totalPaid:0, bal:amt};
-  };
-
-  const rows   = baseEsts.map(mkBase);
-  const coRows = coEsts.map(mkCO);
-
-  const bTotAmt  = rows.reduce((s,r)=>s+r.amt,0);
-  const bTotRet  = rows.reduce((s,r)=>s+r.ret,0);
-  const bTotPaid = rows.reduce((s,r)=>s+r.paid,0);
-  const bTotRetRec = rows.reduce((s,r)=>s+r.retRec,0);
-  const bTotBal  = rows.reduce((s,r)=>s+r.bal,0);
-  const coTotAmt = coRows.reduce((s,r)=>s+r.amt,0);
-  const coTotBal = coRows.reduce((s,r)=>s+r.bal,0);
-  const grandTotal = bTotAmt + coTotAmt;
-
-  const sc = s=>s==='PAID / RET'?'color:var(--success);font-weight:700;':'color:var(--warning);font-weight:700;';
-  const tdN = (v,extra)=>`<td style="text-align:right;font-size:13px;padding:10px 10px;border-bottom:1px solid var(--border);font-weight:600;${extra||''}">${fmtSOV(v)}</td>`;
-  const tdS = (v,extra)=>`<td style="padding:10px 10px;border-bottom:1px solid var(--border);font-size:12px;${extra||''}">${v}</td>`;
-
-  // Base rows — Description includes EST link
-  const baseRowsHtml = rows.map(r=>`<tr>
-    ${tdS(`<div style="font-size:11px;color:var(--muted);margin-bottom:2px;">${r.invNum}</div>
-           <button onclick="openSOVInvoicePreview('${r.estNum||''}')" style="background:none;border:none;font-size:13px;font-weight:600;color:var(--info);cursor:pointer;padding:0;text-align:left;text-decoration:underline;">${r.desc}</button>
-           ${r.estNum?`<div style="font-size:10px;color:var(--muted);margin-top:2px;">${r.estNum}</div>`:''}`)}
-    ${tdN(r.amt)}
-    ${tdN(r.ret,'color:var(--danger);')}
-    ${tdN(r.paid)}
-    ${tdS(r.ck,'color:var(--muted);')}
-    ${tdN(r.retRec)}
-    ${tdS(r.status, sc(r.status))}
-    ${tdN(r.totalPaid)}
-    ${tdN(r.bal, r.bal>0?'color:var(--danger);':'color:var(--success);')}
-  </tr>`).join('');
-
-  // Totals row — exact column alignment
-  const totRowBase = `<tr style="background:var(--surface2);font-weight:700;font-size:13px;">
-    <td style="padding:10px 10px;font-weight:700;">Totals</td>
-    <td style="text-align:right;padding:10px 10px;">${fmtSOV(bTotAmt)}</td>
-    <td style="text-align:right;padding:10px 10px;color:var(--danger);">${fmtSOV(bTotRet)}</td>
-    <td style="text-align:right;padding:10px 10px;">${fmtSOV(bTotPaid)}</td>
-    <td style="padding:10px 10px;"></td>
-    <td style="text-align:right;padding:10px 10px;">${fmtSOV(bTotRetRec)}</td>
-    <td style="padding:10px 10px;"></td>
-    <td style="text-align:right;padding:10px 10px;">${fmtSOV(bTotPaid)}</td>
-    <td style="text-align:right;padding:10px 10px;${bTotBal>0?'color:var(--danger);':'color:var(--success);'}">${fmtSOV(bTotBal)}</td>
-  </tr>`;
-
-  // CO rows
-  const coRowsHtml = coRows.length ? coRows.map(r=>`<tr>
-    ${tdS(`<div style="font-size:11px;color:var(--warning);font-weight:600;margin-bottom:2px;">${r.coNum}</div>
-           <div style="font-size:12px;">${r.desc}</div>
-           <div style="font-size:10px;color:var(--muted);margin-top:2px;">${r.ccoRef}</div>`)}
-    ${tdN(r.amt,'color:var(--warning);')}
-    <td style="text-align:right;padding:10px 10px;border-bottom:1px solid var(--border);color:var(--muted);">—</td>
-    ${tdN(r.ret,'color:var(--danger);')}
-    ${tdN(r.paid)}
-    ${tdS('—','color:var(--muted);')}
-    ${tdS(r.status, sc(r.status))}
-    ${tdN(r.totalPaid)}
-    ${tdN(r.bal,'color:var(--danger);')}
-  </tr>`).join('')
-  : `<tr><td colspan="9" style="text-align:center;padding:16px;color:var(--muted2);font-style:italic;">No change orders</td></tr>`;
-
-  const totRowCO = coRows.length ? `<tr style="background:var(--surface2);font-weight:700;font-size:13px;">
-    <td style="padding:10px 10px;font-weight:700;">Totals</td>
-    <td style="text-align:right;padding:10px 10px;color:var(--warning);">${fmtSOV(coTotAmt)}</td>
-    <td colspan="5" style="padding:10px 10px;"></td>
-    <td style="text-align:right;padding:10px 10px;">$0.00</td>
-    <td style="text-align:right;padding:10px 10px;color:var(--danger);">${fmtSOV(coTotBal)}</td>
-  </tr>` : '';
-
-  return `
-  <!-- Summary header -->
-  <div style="background:rgba(184,146,42,.06);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-    <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total Base Bid</div>
-      <div style="font-size:18px;font-weight:700;color:var(--gold);">${fmtSOV(bTotAmt)}</div></div>
-    <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Total Change Orders</div>
-      <div style="font-size:18px;font-weight:700;color:var(--warning);">${fmtSOV(coTotAmt)}</div></div>
-    <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Job Total with COs</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text);">${fmtSOV(grandTotal)}</div></div>
-  </div>
-
-  <!-- BASE ESTIMATE -->
-  <div class="sov-section">
-    <div class="sov-section-title">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Base Estimate
-    </div>
-    <div style="border:1px solid var(--border);border-radius:10px;overflow:auto;">
-      <table class="sov-table" style="min-width:820px;">
-        <thead><tr>
-          <th style="width:24%;min-width:160px;">Item # / Description</th>
-          <th class="num">Amount</th>
-          <th class="num" style="color:var(--danger);">Retention Held</th>
-          <th class="num">Pymt Received</th>
-          <th>CK #</th>
-          <th class="num">Ret. Received</th>
-          <th>Status</th>
-          <th class="num">Total Paid</th>
-          <th class="num">Balance</th>
+  if(!jobs.length) return '<div style="text-align:center;padding:24px;color:var(--muted2);font-style:italic;">No jobs for this client.</div>';
+  // Group transactions by job (estimate line). Each job = its estimate + change orders + invoices.
+  const fmtN = v=>'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:2});
+  // Only base jobs (not the CO pseudo-jobs) anchor a SOV block
+  const baseJobs = jobs.filter(j=>!(j.est||'').includes('-CO'));
+  return baseJobs.map(j=>{
+    const estAmt = parseMoney(j.amount);
+    const cos = (j.changeOrders||[]);
+    const invs = (j.invoices||[]);
+    const coTotal = cos.reduce((s,co)=>s+parseMoney(co.amount),0);
+    const invTotal = invs.reduce((s,iv)=>s+parseMoney(iv.amount),0);
+    const contractTotal = estAmt + coTotal;
+    const stColor = st => {st=(st||'').toLowerCase(); return st==='paid'?'color:var(--success);font-weight:700;':st.indexOf('pending')!==-1?'color:var(--warning);font-weight:700;':'color:var(--info);font-weight:700;';};
+    const rowHtml = (type, ref, desc, amt, status, color)=>`<tr>
+      <td style="padding:9px 10px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:${color};">${type}</td>
+      <td style="padding:9px 10px;border-bottom:1px solid var(--border);font-size:12px;font-family:monospace;color:var(--muted);">${ref||''}</td>
+      <td style="padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;">${desc||''}</td>
+      <td style="padding:9px 10px;border-bottom:1px solid var(--border);font-size:13px;text-align:right;font-weight:600;">${fmtN(amt)}</td>
+      <td style="padding:9px 10px;border-bottom:1px solid var(--border);font-size:11px;text-align:center;${stColor(status)}">${status||''}</td>
+    </tr>`;
+    let body = rowHtml('Estimate', j.est, j.projectName||j.jobName||j.address||'Base contract', estAmt, j.status||'', 'var(--info)');
+    cos.forEach(co=>{ body += rowHtml('Change Order', co.est||co.num, co.description||'Change order', parseMoney(co.amount), co.status||'', 'var(--gold)'); });
+    invs.forEach(iv=>{ body += rowHtml('Invoice', iv.est||iv.num, 'Invoice', parseMoney(iv.amount), iv.status||'Sent', 'var(--success)'); });
+    const pn = j.projectName||j.jobName||j.address||'Job';
+    return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span style="font-size:13px;font-weight:700;">${pn}</span>
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;">${j.est||''}</span>
+        </div>
+        <span style="font-size:11px;color:var(--muted);">Contract: <strong style="color:var(--text);">${fmtN(contractTotal)}</strong></span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:var(--surface2);">
+          <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 10px;text-align:left;border-bottom:2px solid var(--border);">Type</th>
+          <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 10px;text-align:left;border-bottom:2px solid var(--border);">Reference</th>
+          <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 10px;text-align:left;border-bottom:2px solid var(--border);">Description</th>
+          <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 10px;text-align:right;border-bottom:2px solid var(--border);">Amount</th>
+          <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:7px 10px;text-align:center;border-bottom:2px solid var(--border);">Status</th>
         </tr></thead>
-        <tbody>${baseRowsHtml}${totRowBase}</tbody>
+        <tbody>${body}</tbody>
       </table>
-    </div>
-  </div>
-
-  <!-- CHANGE ORDERS -->
-  <div class="sov-section">
-    <div class="sov-section-title">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Change Orders
-    </div>
-    <div style="border:1px solid var(--border);border-radius:10px;overflow:auto;">
-      <table class="sov-table" style="min-width:820px;">
-        <thead><tr>
-          <th style="width:28%;min-width:180px;">CO / Description</th>
-          <th class="num">Estimate</th>
-          <th class="num">Amount</th>
-          <th class="num" style="color:var(--danger);">Retention Held</th>
-          <th class="num">Pymt Received</th>
-          <th>CK #</th>
-          <th>Status</th>
-          <th class="num">Total Paid</th>
-          <th class="num">Balance</th>
-        </tr></thead>
-        <tbody>${coRowsHtml}${totRowCO}</tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- FOOTER TOTALS -->
-  <div style="background:var(--surface2);border-radius:10px;padding:14px 16px;margin-top:4px;">
-    <div class="sov-tot-row"><span>Total Change Orders</span><span>${fmtSOV(coTotAmt)}</span></div>
-    <div class="sov-tot-row grand"><span>Job Total with Change Orders</span><span>${fmtSOV(grandTotal)}</span></div>
-    <div class="sov-tot-row highlight" style="margin-top:4px;"><span>Pending Balance</span><span>${fmtSOV(bTotBal+coTotBal)}</span></div>
-  </div>`;
+      <div style="display:flex;justify-content:flex-end;gap:24px;padding:10px 14px;background:var(--surface2);border-top:1px solid var(--border);font-size:12px;">
+        <span>Contract: <strong>${fmtN(contractTotal)}</strong></span>
+        <span style="color:var(--success);">Invoiced: <strong>${fmtN(invTotal)}</strong></span>
+        <span style="color:var(--warning);">Remaining: <strong>${fmtN(contractTotal-invTotal)}</strong></span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function openSOVInvoicePreview(estNum){
@@ -3536,6 +3432,23 @@ function closeAddJobModal(){
 }
 
 // Pick a contact from the billing dropdown → add to the selected list, remove from dropdown
+function ajBillLineHTML(key, name, sub){
+  return '<div id="_aj_bill_sel_'+key+'" class="_aj_bill_sel" data-cid="'+key+'" data-name="'+(name||'').replace(/"/g,'&quot;')+'" style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:#fff;">'
+    +'<span class="_aj_bill_role" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:20px;flex-shrink:0;"></span>'
+    +'<span style="font-size:13px;line-height:1.3;flex:1;"><span style="font-weight:600;">'+name+'</span>'
+    +(sub?'<br><span style="font-size:11px;color:var(--muted);">'+sub+'</span>':'')+'</span>'
+    +'<button type="button" onclick="ajBillRemove(\''+key+'\')" style="border:none;background:none;color:var(--danger);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;">×</button>'
+    +'</div>';
+}
+function ajRelabelBilling(){
+  var rows=document.querySelectorAll('#_aj_bill_list ._aj_bill_sel');
+  rows.forEach(function(r,i){
+    var badge=r.querySelector('._aj_bill_role');
+    if(!badge) return;
+    if(i===0){ badge.textContent='Main contact'; badge.style.background='rgba(58,126,212,.12)'; badge.style.color='var(--info)'; }
+    else { badge.textContent='Additional contact (CC\'d)'; badge.style.background='var(--surface3)'; badge.style.color='var(--muted)'; }
+  });
+}
 function ajBillPick(id){
   if(!id) return;
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
@@ -3545,22 +3458,13 @@ function ajBillPick(id){
   var list=document.getElementById('_aj_bill_list');
   var drop=document.getElementById('_aj_bill_drop');
   if(!list||!drop) return;
-  // Guard against duplicates
   if(document.getElementById('_aj_bill_sel_'+id)){drop.value='';return;}
   var sub=[ct.title,ct.email].filter(Boolean).join(' · ');
-  var row=document.createElement('div');
-  row.id='_aj_bill_sel_'+id;
-  row.className='_aj_bill_sel';
-  row.setAttribute('data-cid',id);
-  row.style.cssText='display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:#fff;';
-  row.innerHTML='<span style="font-size:13px;line-height:1.3;flex:1;"><span style="font-weight:600;">'+ct.name+'</span>'
-    +(sub?'<br><span style="font-size:11px;color:var(--muted);">'+sub+'</span>':'')+'</span>'
-    +'<button type="button" onclick="ajBillRemove(\''+id+'\')" style="border:none;background:none;color:var(--danger);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;">×</button>';
-  list.appendChild(row);
-  // Remove the option from the dropdown so it can't be picked twice
+  list.insertAdjacentHTML('beforeend', ajBillLineHTML(id, ct.name, sub));
   var opt=drop.querySelector('option[value="'+id+'"]');
   if(opt) opt.parentNode.removeChild(opt);
   drop.value='';
+  ajRelabelBilling();
   ajBillWarnCheck();
 }
 function ajBillRemove(id){
@@ -3568,16 +3472,16 @@ function ajBillRemove(id){
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   var drop=document.getElementById('_aj_bill_drop');
   if(row)row.parentNode.removeChild(row);
-  // Put the contact back into the dropdown
+  // Put the contact back into the dropdown only if it's an existing customer contact
   if(c&&drop){
     var ct=c.contacts.find(function(x){return String(x.id)===String(id);});
     if(ct&&!drop.querySelector('option[value="'+id+'"]')){
-      var first=(ct.name||'').trim()||'Contact';
       var opt=document.createElement('option');
-      opt.value=id;opt.textContent=first;
+      opt.value=id;opt.textContent=(ct.name||'').trim()||'Contact';
       drop.appendChild(opt);
     }
   }
+  ajRelabelBilling();
   ajBillWarnCheck();
 }
 
@@ -3585,23 +3489,107 @@ var _ajBillNewSeq=0;
 function ajAddBillingContact(){
   var wrap=document.getElementById('_aj_bill_new');
   if(!wrap) return;
-  var i=++_ajBillNewSeq;
+  // Only one open form at a time
+  if(document.getElementById('_aj_bill_form')) { var f=document.getElementById('_aj_bn_fn_form'); if(f) f.focus(); return; }
+  var existingCount=document.querySelectorAll('#_aj_bill_list ._aj_bill_sel').length;
+  var roleTitle = existingCount===0 ? 'Main contact' : 'Additional contact (CC\'d)';
   var row=document.createElement('div');
-  row.id='_aj_bill_row_'+i;
+  row.id='_aj_bill_form';
   row.style.cssText='border:1px solid var(--gold);border-radius:8px;padding:11px;margin-bottom:6px;background:var(--surface2);';
   row.innerHTML=
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">New billing contact</span>'
-    +'<button type="button" onclick="ajRemoveBillingContact('+i+')" style="border:none;background:none;color:var(--danger);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;">×</button>'
+    +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:'+(existingCount===0?'var(--info)':'var(--muted)')+';">'+roleTitle+'</span>'
+    +'<button type="button" onclick="ajCancelNewContact()" style="border:none;background:none;color:var(--danger);font-size:16px;line-height:1;cursor:pointer;padding:0 2px;">×</button>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
-    +'<input id="_aj_bn_fn_'+i+'" class="_aj_bill_newfn" oninput="tcInput(this);ajBillWarnCheck()" placeholder="First name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_ln_'+i+'" class="_aj_bill_newln" oninput="tcInput(this)" placeholder="Last name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_ph_'+i+'" class="_aj_bill_newph" placeholder="Phone" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_em_'+i+'" class="_aj_bill_newem" placeholder="Email" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<div style="position:relative;">'
+      +'<input id="_aj_bn_fn_form" autocomplete="off" oninput="tcInput(this);ajAutofill(\'form\',this.value)" placeholder="First name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+      +'<div id="_aj_bn_sugg_form" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:5;background:#fff;border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);margin-top:2px;max-height:160px;overflow-y:auto;"></div>'
+    +'</div>'
+    +'<input id="_aj_bn_ln_form" oninput="tcInput(this)" placeholder="Last name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_ph_form" placeholder="Phone" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_em_form" placeholder="Email" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'</div>'
+    +'<div id="_aj_bn_err" style="display:none;color:var(--danger);font-size:11px;margin-top:6px;">Enter at least a name or email.</div>'
+    +'<div style="display:flex;justify-content:flex-end;margin-top:10px;">'
+    +'<button type="button" onclick="ajSaveNewContact()" style="padding:7px 16px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✓ Save contact</button>'
     +'</div>';
   wrap.appendChild(row);
+  var fn=document.getElementById('_aj_bn_fn_form'); if(fn) fn.focus();
+}
+function ajCancelNewContact(){
+  var f=document.getElementById('_aj_bill_form');
+  if(f) f.parentNode.removeChild(f);
+}
+function ajSaveNewContact(){
+  var fn=(document.getElementById('_aj_bn_fn_form')||{value:''}).value.trim();
+  var ln=(document.getElementById('_aj_bn_ln_form')||{value:''}).value.trim();
+  var ph=(document.getElementById('_aj_bn_ph_form')||{value:''}).value.trim();
+  var em=(document.getElementById('_aj_bn_em_form')||{value:''}).value.trim();
+  // Do not allow empty
+  if(!fn && !ln && !em){
+    var err=document.getElementById('_aj_bn_err'); if(err) err.style.display='block';
+    return;
+  }
+  var name=(fn+' '+ln).trim();
+  var key='new_'+(++_ajBillNewSeq);
+  var sub=em||ph||'';
+  var list=document.getElementById('_aj_bill_list');
+  // store the new contact's data on the line for commit
+  var lineHTML=ajBillLineHTML(key, name, sub);
+  list.insertAdjacentHTML('beforeend', lineHTML);
+  var lineEl=document.getElementById('_aj_bill_sel_'+key);
+  if(lineEl){
+    lineEl.setAttribute('data-new','1');
+    lineEl.setAttribute('data-fn',fn);
+    lineEl.setAttribute('data-ln',ln);
+    lineEl.setAttribute('data-ph',ph);
+    lineEl.setAttribute('data-em',em);
+  }
+  ajCancelNewContact();
+  ajRelabelBilling();
   ajBillWarnCheck();
+}
+// Autofill: suggest existing customer contacts as the user types a name
+function ajAutofill(i, q){
+  var box=document.getElementById('_aj_bn_sugg_'+i);
+  if(!box) return;
+  q=(q||'').trim().toLowerCase();
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+  if(!c||!q){ box.style.display='none'; box.innerHTML=''; return; }
+  var matches=c.contacts.filter(function(ct){return (ct.name||'').toLowerCase().indexOf(q)!==-1;}).slice(0,6);
+  if(!matches.length){ box.style.display='none'; box.innerHTML=''; return; }
+  box.innerHTML=matches.map(function(ct){
+    var sub=[ct.title,ct.email].filter(Boolean).join(' · ');
+    var data=encodeURIComponent(JSON.stringify({name:ct.name,email:ct.email||'',phone:ct.phone||''}));
+    return '<div onclick="ajPickAutofill(\''+i+'\',\''+data+'\')" style="padding:8px 11px;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+      +'<div style="font-weight:600;">'+ct.name+'</div>'
+      +(sub?'<div style="font-size:11px;color:var(--muted);">'+sub+'</div>':'')
+      +'</div>';
+  }).join('');
+  box.style.display='block';
+}
+function ajPickAutofill(i, data){
+  var d=JSON.parse(decodeURIComponent(data));
+  var parts=(d.name||'').trim().split(' ');
+  var fn=parts.shift()||'';
+  var ln=parts.join(' ');
+  var fnEl=document.getElementById('_aj_bn_fn_'+i);
+  var lnEl=document.getElementById('_aj_bn_ln_'+i);
+  var phEl=document.getElementById('_aj_bn_ph_'+i);
+  var emEl=document.getElementById('_aj_bn_em_'+i);
+  if(fnEl) fnEl.value=fn;
+  if(lnEl) lnEl.value=ln;
+  if(phEl) phEl.value=d.phone||'';
+  if(emEl) emEl.value=d.email||'';
+  var box=document.getElementById('_aj_bn_sugg_'+i);
+  if(box){ box.style.display='none'; box.innerHTML=''; }
+  ajBillWarnCheck();
+}
+// Special instructions toggle
+function ajToggleSI(show){
+  var t=document.getElementById('_aj_si_text');
+  if(t) t.style.display=show?'block':'none';
 }
 function ajRemoveBillingContact(i){
   var r=document.getElementById('_aj_bill_row_'+i);
@@ -3795,11 +3783,29 @@ function openBillingPopup(){
     +'<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+(_ajPendingJobData?_ajPendingJobData.jobName:'')+' · '+c.name+'</div>'
     +'</div>'
     +'<div style="padding:20px 24px;">'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Estimates, change orders & invoices for this job are sent to everyone selected here.</div>'
-    +'<select id="_aj_bill_drop" onchange="ajBillPick(this.value)" style="width:100%;padding:10px 13px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:var(--surface2);color:var(--text);outline:none;cursor:pointer;margin-bottom:10px;">'+dropOpts+'</select>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job have special instructions?</div>'
+    +'<div style="display:flex;gap:18px;margin-bottom:6px;">'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="yes" onchange="ajToggleSI(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="no" checked onchange="ajToggleSI(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'</div>'
+    +'<textarea id="_aj_si_text" placeholder="Write the special instructions for this job..." style="display:none;width:100%;min-height:70px;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;resize:vertical;box-sizing:border-box;margin-bottom:6px;"></textarea>'
+    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require a Schedule of Values (SOV)?</div>'
+    +'<div style="display:flex;gap:18px;margin-bottom:14px;">'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_sov" value="yes" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_sov" value="no" checked style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'</div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require waivers?</div>'
+    +'<div style="display:flex;gap:18px;margin-bottom:4px;">'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="yes" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="no" checked style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>'
+    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>'
     +'<div id="_aj_bill_list"></div>'
     +'<div id="_aj_bill_new"></div>'
-    +'<button type="button" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add billing contact</button>'
+    +'<button type="button" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>'
     +'</div>'
     +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
     +'<button onclick="ajCommitJob(true)" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>'
@@ -3822,30 +3828,38 @@ function ajCommitJob(skipLater){
   var avC=['av-gold','av-info','av-success','av-warning'];
   var billing=[];
   if(!skipLater){
-    // 1. New billing contacts → save to customer AND to job
-    Array.prototype.forEach.call(document.querySelectorAll('[id^="_aj_bill_row_"]'),function(row){
-      var sfx=row.id.replace('_aj_bill_row_','');
-      var bfn=(document.getElementById('_aj_bn_fn_'+sfx)||{value:''}).value.trim();
-      var bln=(document.getElementById('_aj_bn_ln_'+sfx)||{value:''}).value.trim();
-      var bph=(document.getElementById('_aj_bn_ph_'+sfx)||{value:''}).value.trim();
-      var bem=(document.getElementById('_aj_bn_em_'+sfx)||{value:''}).value.trim();
-      if(!bfn&&!bln&&!bem) return;
-      var nm=(bfn+' '+bln).trim();
-      var newId='c_'+Date.now()+'_'+sfx;
-      cust.contacts.push({id:newId,name:nm,initials:((bfn[0]||'')+(bln[0]||'')).toUpperCase(),color:avC[cust.contacts.length%avC.length],email:bem,phone:bph,title:'Billing Contact',role:'billing',jobs:[]});
-      billing.push({id:newId,name:nm,email:bem,phone:bph});
-    });
-    // 2. Selected existing contacts (from dropdown) → to job
-    Array.prototype.forEach.call(document.querySelectorAll('._aj_bill_sel'),function(row){
-      var cid=row.getAttribute('data-cid');
-      var ct=cust.contacts.find(function(x){return String(x.id)===String(cid);});
-      if(ct&&!billing.some(function(b){return String(b.id)===String(ct.id);})) billing.push({id:ct.id,name:ct.name,email:ct.email,phone:ct.phone});
+    // Walk the lines in display order: first = main contact, rest = CC
+    Array.prototype.forEach.call(document.querySelectorAll('#_aj_bill_list ._aj_bill_sel'),function(row, idx){
+      var role = idx===0 ? 'main' : 'cc';
+      if(row.getAttribute('data-new')==='1'){
+        var bfn=row.getAttribute('data-fn')||'';
+        var bln=row.getAttribute('data-ln')||'';
+        var bph=row.getAttribute('data-ph')||'';
+        var bem=row.getAttribute('data-em')||'';
+        var nm=(bfn+' '+bln).trim()||row.getAttribute('data-name')||'Contact';
+        var newId='c_'+Date.now()+'_'+idx;
+        cust.contacts.push({id:newId,name:nm,initials:((bfn[0]||nm[0]||'')+(bln[0]||'')).toUpperCase(),color:avC[cust.contacts.length%avC.length],email:bem,phone:bph,title:'Billing Contact',role:'billing',jobs:[]});
+        billing.push({id:newId,name:nm,email:bem,phone:bph,role:role});
+      } else {
+        var cid=row.getAttribute('data-cid');
+        var ct=cust.contacts.find(function(x){return String(x.id)===String(cid);});
+        if(ct&&!billing.some(function(b){return String(b.id)===String(ct.id);})) billing.push({id:ct.id,name:ct.name,email:ct.email,phone:ct.phone,role:role});
+      }
     });
   }
   var pendingBilling=billing.length===0;
+  // Special instructions
+  var siRadio=document.querySelector('input[name="_aj_si"]:checked');
+  var siOn=siRadio&&siRadio.value==='yes';
+  var siText=siOn?((document.getElementById('_aj_si_text')||{value:''}).value.trim()):'';
+  // SOV & waivers flags
+  var sovRadio=document.querySelector('input[name="_aj_sov"]:checked');
+  var requiresSOV=sovRadio&&sovRadio.value==='yes';
+  var waiverRadio=document.querySelector('input[name="_aj_waiver"]:checked');
+  var requiresWaivers=waiverRadio&&waiverRadio.value==='yes';
   var estNum='EST-'+String(Math.floor(Math.random()*900)+100);
   var pd=_ajPendingJobData;
-  var newJob={est:estNum,address:pd.addr,po:pd.po,jobName:pd.jobName,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled',billing:billing,pendingBilling:pendingBilling};
+  var newJob={est:estNum,address:pd.addr,po:pd.po,jobName:pd.jobName,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'Pending scheduled',billing:billing,pendingBilling:pendingBilling,hasSpecialInstructions:siOn,specialInstructions:siText,requiresSOV:requiresSOV,requiresWaivers:requiresWaivers};
   var pmVal=(document.getElementById('_aj_pm')||{value:''}).value;
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   if(pmVal==='new'){

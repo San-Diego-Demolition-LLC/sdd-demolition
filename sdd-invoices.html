@@ -982,6 +982,12 @@ function confirmPayment(){
     if(inv.balance===0){
       inv.status='paid';
       inv.timeline.push({action:'Invoice marked paid in full',date:new Date(date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),color:'#3A9E6A'});
+      // Waiver flow: if this invoice requires waivers and the unconditional hasn't been sent, flag it pending
+      if((inv.waiver==='conditional'||inv.waiver==='unconditional'||inv.requiresWaivers) && !inv.unconditionalSent){
+        inv.unconditionalPending=true;
+        inv.timeline.push({action:'⚠ Unconditional waiver pending — send now that payment is received',date:new Date(date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),color:'#D94F4F'});
+        setTimeout(function(){ if(typeof flash==='function') flash('⚠ '+inv.num+': payment received — unconditional waiver is now PENDING. Send it to close the job.','#D94F4F'); },150);
+      }
     } else {
       inv.status='partial';
     }

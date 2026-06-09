@@ -86,6 +86,10 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 /* DETAIL */
 .detail-wrap{padding:24px 28px;}
 .card{background:var(--surface);border-radius:12px;padding:20px 22px;margin-bottom:16px;}
+/* ── INTEGRATED SHEET: cards joined into one continuous document ── */
+.sheet{background:var(--surface);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.sheet .card{margin-bottom:0;border-radius:0;box-shadow:none;border-bottom:1px solid var(--border);}
+.sheet .card:last-child{border-bottom:none;}
 .card-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
 .topbar{background:var(--surface);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
 .tb-num{font-size:12px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -158,7 +162,7 @@ tr:last-child td{border-bottom:none;}
 .form-modal{background:var(--surface);border-radius:16px;width:100%;max-width:820px;overflow:hidden;}
 .form-hd{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .form-body{padding:24px;max-height:calc(100vh-180px);overflow-y:auto;}
-.form-sec{margin-bottom:22px;}
+.form-sec{margin-bottom:16px;}
 .form-sec-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
 .form-ft{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface2);}
 .line-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -241,6 +245,16 @@ svg{display:block;}
 .pdf-tot-row{display:flex;justify-content:space-between;padding:6px 10px;font-size:13px;color:#555;}
 .pdf-tot-grand{display:flex;justify-content:space-between;padding:10px 10px;font-size:16px;font-weight:700;color:#1A1A1A;background:#F8F6F2;border-top:2px solid #B8922A;margin-top:4px;}
 .pdf-terms-box{background:#F8F8F8;border:1px solid #E0E0E0;border-radius:6px;padding:14px 16px;margin-top:20px;font-size:12px;color:#555;line-height:1.7;}
+/* ── EDITABLE PDF SHEET FIELDS ── */
+.es-edit{border:1px solid transparent;border-radius:4px;background:transparent;font-family:inherit;font-size:inherit;color:inherit;font-weight:inherit;padding:2px 4px;transition:all .12s;outline:none;width:100%;box-sizing:border-box;}
+.es-edit:hover{background:#FAF8F3;border-color:#EFE6D0;}
+.es-edit:focus{background:#fff;border-color:#B8922A;box-shadow:0 0 0 2px rgba(184,146,42,.12);}
+.es-edit.es-num{text-align:right;}
+.es-edit.es-inline{width:auto;display:inline-block;min-width:60px;}
+.es-sheet-tools{display:flex;justify-content:space-between;align-items:center;background:#3C3C3C;padding:10px 18px;border-radius:12px 12px 0 0;}
+.es-sheet-tools .ttl{color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.es-addline{margin-top:8px;padding:6px 12px;border:1.5px dashed #D8C9A0;border-radius:8px;background:none;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:#B8922A;cursor:pointer;}
+.es-delrow{border:none;background:none;color:#D94F4F;font-size:15px;cursor:pointer;line-height:1;padding:0 4px;}
 .pdf-terms-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#777;margin-bottom:6px;}
 .pdf-footer{margin-top:32px;padding-top:16px;border-top:1px solid #E0E0E0;display:flex;justify-content:space-between;font-size:11px;color:#AAA;}
 
@@ -962,7 +976,7 @@ const ESTIMATES = [
    contact:'James Torres', createdBy:'Carlos Mendez',
    address:'1420 Harbor Blvd, San Diego', jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
    companyAddress:'4500 Main St, San Diego CA 92103',
-   jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', requiresSOV:true, requiresWaivers:true, termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
    status:'in-progress', amount:13150, date:'May 2, 2026',
    lines:[
      {desc:'Interior demolition — 2nd floor',    qty:1800, unit:'sq ft', unitPrice:5.00,  total:9000},
@@ -1394,6 +1408,192 @@ function renderList(){
 }
 
 // ══ RENDER DETAIL ══
+// ── Editable PDF-format estimate sheet ──
+function esField(id, value, opts){
+  opts=opts||{};
+  const cls='es-edit'+(opts.num?' es-num':'')+(opts.inline?' es-inline':'');
+  const ph=opts.ph?` placeholder="${opts.ph}"`:'';
+  return `<input class="${cls}" value="${(value==null?'':String(value)).replace(/"/g,'&quot;')}"${ph} onchange="esSave(${opts.eid},'${id}',this.value)" oninput="${opts.recalc?'esRecalcFromInput(this)':''}">`;
+}
+function editableEstimateSheet(e){
+  const lines = e.lines||[];
+  const total = lines.reduce((s,l)=>s+(Number(l.total)||0),0);
+  const lineRows = lines.map((l,i)=>`
+    <tr data-line="${i}">
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;"><input class="es-edit" value="${(l.desc||'').replace(/"/g,'&quot;')}" onchange="esLineSave(${e.id},${i},'desc',this.value)"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:80px;"><input class="es-edit es-num" value="${l.qty||''}" onchange="esLineSave(${e.id},${i},'qty',this.value)"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:70px;"><input class="es-edit" value="${l.unit||''}" onchange="esLineSave(${e.id},${i},'unit',this.value)"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:100px;"><input class="es-edit es-num" value="${l.unitPrice||''}" onchange="esLineSave(${e.id},${i},'unitPrice',this.value)"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:100px;text-align:right;font-weight:600;" id="es-lt-${e.id}-${i}">$${Number(l.total||0).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td style="padding:6px 4px;border-bottom:1px solid #F0F0F0;width:24px;"><button class="es-delrow" onclick="esDeleteLine(${e.id},${i})">×</button></td>
+    </tr>`).join('');
+  return `
+  <div class="es-sheet-tools">
+    <div class="ttl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Estimate document — editable</div>
+    <span style="color:#aaa;font-size:11px;">Changes save automatically</span>
+  </div>
+  <div class="pdf-page" style="width:100%;min-height:auto;margin:0;border-radius:0 0 12px 12px;padding:40px 44px;">
+    <!-- HEADER -->
+    <div class="pdf-header">
+      <div>
+        <div class="pdf-logo-txt">SDD Demolition</div>
+        <div class="pdf-logo-sub">San Diego Deconstruction &amp; Demolition<br>License #1094583 &nbsp;·&nbsp; (619) 555-0100<br>info@sddemo.com</div>
+      </div>
+      <div class="pdf-doc-type">
+        <div class="pdf-doc-label">ESTIMATE</div>
+        <div class="pdf-doc-num">#${e.num}</div>
+        <div class="pdf-doc-date">${esField('date', e.date, {eid:e.id, inline:true, ph:'Date'})}</div>
+        <div style="margin-top:6px;font-size:12px;color:#777;"><strong>PO:</strong> ${esField('poNumber', e.poNumber, {eid:e.id, inline:true, ph:'PO'})}</div>
+      </div>
+    </div>
+
+    <!-- BILL TO / JOB SITE -->
+    <div class="pdf-bill-row">
+      <div class="pdf-bill-box">
+        <div class="pdf-bill-lbl">Bill to</div>
+        <div class="pdf-bill-val">${esField('customer', e.customer, {eid:e.id})}${esField('companyAddress', e.companyAddress, {eid:e.id, ph:'Company address'})}</div>
+      </div>
+      <div class="pdf-bill-box">
+        <div class="pdf-bill-lbl">Contact &amp; Terms</div>
+        <div class="pdf-bill-val">${esField('contact', e.contact, {eid:e.id, ph:'Contact'})}${esField('payment', e.payment, {eid:e.id, ph:'Payment terms'})}</div>
+      </div>
+    </div>
+    <div class="pdf-address-box">
+      <div class="pdf-address-label">Job site address</div>
+      ${esField('jobAddress', e.jobAddress||e.address, {eid:e.id, ph:'Job site address'})}
+    </div>
+
+    <!-- DURATION / SCHEDULE -->
+    <div class="pdf-bill-row">
+      <div class="pdf-bill-box">
+        <div class="pdf-bill-lbl">Start date</div>
+        <div class="pdf-bill-val">${esField('schedStart', e.schedStart, {eid:e.id, ph:'Start date'})}</div>
+      </div>
+      <div class="pdf-bill-box">
+        <div class="pdf-bill-lbl">End date · Duration</div>
+        <div class="pdf-bill-val">${esField('schedEnd', e.schedEnd, {eid:e.id, ph:'End date'})}${esField('schedDays', e.schedDays, {eid:e.id, ph:'Duration'})}</div>
+      </div>
+    </div>
+
+    <!-- SCOPE / LINE ITEMS -->
+    <div class="pdf-section">
+      <div class="pdf-section-title">Scope of work</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Description</th>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Qty</th>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;">Unit</th>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Unit price</th>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Total</th>
+          <th style="border-bottom:2px solid #E0E0E0;"></th>
+        </tr></thead>
+        <tbody id="es-lines-${e.id}">${lineRows}</tbody>
+      </table>
+      <button class="es-addline" onclick="esAddLine(${e.id})">+ Add line item</button>
+      <div style="margin-top:10px;border-top:2px solid #B8922A;display:flex;justify-content:space-between;padding:12px 10px;font-size:17px;font-weight:700;background:#F8F6F2;">
+        <span>Total</span>
+        <span style="color:#B8922A;" id="es-total-${e.id}">$${total.toLocaleString('en-US',{minimumFractionDigits:2})}</span>
+      </div>
+    </div>
+
+    <!-- TERMS -->
+    <div class="pdf-section" style="margin-top:20px;">
+      <div class="pdf-section-title">Terms &amp; Conditions</div>
+      <textarea class="es-edit" style="min-height:90px;line-height:1.6;resize:vertical;" onchange="esSave(${e.id},'termsText',this.value)" placeholder="Terms and conditions...">${e.termsText||''}</textarea>
+    </div>
+    ${e.requiresSOV ? sovSectionHTML(e) : ''}
+  </div>`;
+}
+// Schedule of Values: all transactions (estimate + change orders + invoices) for THIS job
+function sovSectionHTML(e){
+  const cos = ESTIMATES.filter(x=>x.isChangeOrder && (x.originalId===e.id || x.originalNum===e.num));
+  const baseTotal = (e.lines||[]).reduce((s,l)=>s+(Number(l.total)||0),0) || e.amount || 0;
+  const rows = [];
+  rows.push({type:'Estimate', num:e.num, desc:e.jobName||'Base contract', amount:baseTotal, status:e.status});
+  cos.forEach(co=>{
+    const t=(co.lines||[]).reduce((s,l)=>s+(Number(l.total)||0),0) || co.netChange || co.amount || 0;
+    rows.push({type:'Change Order', num:co.num, desc:co.description||'Change order', amount:t, status:co.status});
+  });
+  (e.invoices||[]).forEach(iv=>{
+    rows.push({type:'Invoice', num:iv.num||iv.est, desc:'Invoice', amount:iv.amount||0, status:iv.status||'Sent'});
+  });
+  const contractTotal = rows.filter(r=>r.type!=='Invoice').reduce((s,r)=>s+(Number(r.amount)||0),0);
+  const invoicedTotal = rows.filter(r=>r.type==='Invoice').reduce((s,r)=>s+(Number(r.amount)||0),0);
+  const typeColor = t=> t==='Estimate'?'#2563eb' : t==='Change Order'?'#B8922A' : '#16a34a';
+  return `
+  <div class="pdf-section" style="margin-top:24px;border-top:2px solid #B8922A;padding-top:18px;">
+    <div class="pdf-section-title">Schedule of Values (SOV) — all transactions for this job</div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Type</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Reference</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Description</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Amount</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:center;">Status</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r=>`<tr>
+          <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;font-weight:700;color:${typeColor(r.type)};">${r.type}</td>
+          <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;font-family:monospace;color:#555;">${r.num}</td>
+          <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#333;">${r.desc}</td>
+          <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;text-align:right;font-weight:600;">$${Number(r.amount).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+          <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:11px;text-align:center;color:#777;">${r.status||''}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <div style="margin-top:8px;display:flex;justify-content:space-between;padding:8px 8px;font-size:13px;">
+      <span style="color:#555;">Contract value (estimate + change orders)</span>
+      <span style="font-weight:700;">$${contractTotal.toLocaleString('en-US',{minimumFractionDigits:2})}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;font-size:13px;">
+      <span style="color:#555;">Invoiced to date</span>
+      <span style="font-weight:700;color:#16a34a;">$${invoicedTotal.toLocaleString('en-US',{minimumFractionDigits:2})}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;font-size:13px;border-top:1px solid #E0E0E0;margin-top:4px;">
+      <span style="color:#555;font-weight:700;">Remaining to invoice</span>
+      <span style="font-weight:700;color:#B8922A;">$${(contractTotal-invoicedTotal).toLocaleString('en-US',{minimumFractionDigits:2})}</span>
+    </div>
+  </div>`;
+}
+function esSave(eid, field, val){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  e[field]=val;
+}
+function esLineSave(eid, idx, field, val){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e||!e.lines||!e.lines[idx]) return;
+  if(field==='qty'||field==='unitPrice'){
+    e.lines[idx][field]=parseFloat(String(val).replace(/[$,]/g,''))||0;
+    e.lines[idx].total=(Number(e.lines[idx].qty)||0)*(Number(e.lines[idx].unitPrice)||0);
+    const cell=document.getElementById('es-lt-'+eid+'-'+idx);
+    if(cell) cell.textContent='$'+Number(e.lines[idx].total).toLocaleString('en-US',{minimumFractionDigits:2});
+    esRecalcTotal(eid);
+  } else {
+    e.lines[idx][field]=val;
+  }
+}
+function esRecalcTotal(eid){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  const total=(e.lines||[]).reduce((s,l)=>s+(Number(l.total)||0),0);
+  e.amount=total;
+  const el=document.getElementById('es-total-'+eid);
+  if(el) el.textContent='$'+total.toLocaleString('en-US',{minimumFractionDigits:2});
+}
+function esAddLine(eid){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  if(!e.lines) e.lines=[];
+  e.lines.push({desc:'',qty:0,unit:'',unitPrice:0,total:0});
+  renderDetail(eid);
+}
+function esDeleteLine(eid, idx){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e||!e.lines) return;
+  e.lines.splice(idx,1);
+  renderDetail(eid);
+}
 function renderDetail(id){
   const e = ESTIMATES.find(x=>x.id===id);
   if(!e) return;
@@ -1557,76 +1757,11 @@ function renderDetail(id){
 
     <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;">
       <div>
-        <div class="card">
-          <div class="card-title">Scope of work</div>
-          <div style="background:rgba(184,146,42,.07);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:8px 14px;margin-bottom:14px;">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);">Job site address</div>
-            <div style="font-size:14px;font-weight:600;margin-top:2px;">${e.jobAddress||e.address}</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:1px;">Company: ${e.companyAddress||'—'}</div>
-          </div>
-          <table>
-            <thead><tr>
-              <th class="col-desc">Description</th>
-              <th class="col-qty">Qty</th>
-              <th class="col-unit">Unit</th>
-              <th class="col-price">Unit price</th>
-              <th class="col-total">Total</th>
-            </tr></thead>
-            <tbody>
-              ${(e.lines||[
-                {desc:'Interior demolition — 2nd floor', qty:1800, unit:'sq ft', unitPrice:5.00, total:9000},
-                {desc:'Debris removal & hauling',        qty:3,    unit:'loads', unitPrice:900,  total:2700},
-                {desc:'Dumpster rental (7 days)',        qty:1,    unit:'unit',  unitPrice:850,  total:850},
-                {desc:'Dust protection & containment',  qty:1,    unit:'job',   unitPrice:600,  total:600},
-              ]).map(l=>`<tr>
-                <td class="col-desc">${l.desc}</td>
-                <td class="col-qty">${l.qty?Number(l.qty).toLocaleString('en-US'):''}</td>
-                <td class="col-unit">${l.unit||''}</td>
-                <td class="col-price">${l.unitPrice?'$'+Number(l.unitPrice).toLocaleString('en-US',{minimumFractionDigits:2}):''}</td>
-                <td class="col-total">$${Number(l.total||0).toLocaleString('en-US',{minimumFractionDigits:0})}</td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-          <div class="totals-box">
-            <div class="tot-row grand"><span>Total</span><span style="color:${e.isChangeOrder?'var(--warning)':'var(--gold)'};">${fmt((e.lines||[]).reduce((s,l)=>s+(l.total||0),0)||(e.isChangeOrder?(e.netChange||0):e.amount))}</span></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Billing & terms</div>
-          <div class="info-grid">
-            <div class="info-box"><div class="info-label">Waiver type</div><div class="info-val">${e.waiver==='conditional'?'Conditional waiver':e.waiver==='unconditional'?'Unconditional waiver':'No waiver'}</div></div>
-            <div class="info-box"><div class="info-label">Payment terms</div><div class="info-val">${e.payment}</div></div>
-            <div class="info-box"><div class="info-label">Created by</div><div class="info-val">${e.createdBy}</div></div>
-            <div class="info-box"><div class="info-label">Project contact</div><div class="info-val">${e.contact}</div></div>
-          </div>
-        </div>
-        ${e.termsType ? `
-        <div class="card" style="border-left:3px solid var(--info);">
-          <div class="card-title">
-            <span style="display:flex;align-items:center;gap:7px;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
-              Terms & Conditions
-            </span>
-          </div>
-          <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;">
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted2);white-space:nowrap;margin-top:2px;">Type</div>
-            <div style="font-size:14px;font-weight:600;color:var(--text);">${e.termsLabel||e.termsType}</div>
-          </div>
-          <div style="background:var(--surface2);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--text);line-height:1.7;">${e.termsText||''}</div>
-        </div>` : `
-        <div class="card" style="border-left:3px solid var(--danger);background:rgba(217,79,79,.03);">
-          <div style="display:flex;align-items:center;gap:10px;color:var(--danger);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <div>
-              <div style="font-size:14px;font-weight:700;">Terms & Conditions not selected</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:2px;">Required before sending to client. Edit this estimate to add.</div>
-            </div>
-          </div>
-        </div>`}
+        ${e.isChangeOrder ? `<div class="sheet"><div class="card"><div class="card-title">Change Order</div><div style="font-size:13px;color:var(--muted);">${e.description||''}</div><div class="totals-box"><div class="tot-row grand"><span>Net change</span><span style="color:var(--warning);">${fmt(e.netChange||e.amount)}</span></div></div></div></div>` : editableEstimateSheet(e)}
       </div>
 
       <div>
+        <div class="sheet">
         <div class="card">
           <div class="card-title">Notifications sent</div>
           ${notifHTML}
@@ -1634,6 +1769,7 @@ function renderDetail(id){
         <div class="card">
           <div class="card-title">Activity log</div>
           ${tlHTML}
+        </div>
         </div>
       </div>
     </div>
