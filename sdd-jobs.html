@@ -626,8 +626,194 @@ function renderList(){
   const q=getQ();
   const list=document.getElementById('jobList');
 
-  // Effective status filter: pipeline KPI selection takes priority, else dropdown filter
-  const effFilter = activePipe || activeFilter;
+  // Map job status → work block
+  function jobBlock(j){
+    if(j.status==='scheduled') return 'pending-sched';
+    if(j.status==='in-progress') return 'in-progress';
+    if(j.status==='ready-to-bill') return 'ready-to-bill';
+    if(j.status==='completed') return 'completed';
+    return 'completed';
+  }
+  // Status of a change order → block
+  function coBlock(co){
+    var s=(co.status||'').toLowerCase();
+    if(s==='pending') return 'pending-sched';
+    if(s==='approved'||s==='in progress') return 'in-progress';
+    if(s==='completed'||s==='ready') return 'ready-to-bill';
+    if(s==='invoiced'||s==='paid') return 'completed';
+    return 'in-progress';
+  }
+  function passesQ(j){
+    if(!q) return true;
+    return j.name.toLowerCase().includes(q)||j.customer.toLowerCase().includes(q)||j.est.toLowerCase().includes(q)||(j.address||'').toLowerCase().includes(q);
+  }
+
+  // Build lines per block. Each line = {jobId, jobName, customer, ref, kind, desc, amount, statusLabel, statusColor}
+  const BLOCKS=[
+    {key:'pending-sched', label:'Pending Scheduling', color:'#7C5CBF'},
+    {key:'in-progress',   label:'In Progress',        color:'#C8822A'},
+    {key:'ready-to-bill', label:'Ready to Bill',      color:'#D94F4F'},
+    {key:'completed',     label:'Completed',          color:'#3A9E6A'},
+  ];
+  const data={}; BLOCKS.forEach(function(b){data[b.key]={};});
+  function push(blockKey, j, line){
+    if(!data[blockKey][j.id]) data[blockKey][j.id]={job:j, lines:[]};
+    data[blockKey][j.id].lines.push(line);
+  }
+  JOBS.filter(passesQ).forEach(function(j){
+    // Base estimate line → block from job status
+    push(jobBlock(j), j, {ref:j.est, kind:'Estimate', desc:j.name, amount:j.amount, statusLabel:(JOB_STATUS[j.status]||{label:j.status}).label, statusColor:(JOB_STATUS[j.status]||{color:'var(--muted)'}).color});
+    // Each change order → block from its status
+    (j.changeOrders||[]).forEach(function(co){
+      push(coBlock(co), j, {ref:co.est, kind:'Change Order', desc:co.description||'Change order', amount:co.amount, statusLabel:co.status||'', statusColor:'#C8822A'});
+    });
+  });
+
+  function lineRow(j, ln){
+    return '<div onclick="selectJob('+j.id+')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+      +'<div style="min-width:0;">'
+        +'<div style="font-size:12px;font-weight:600;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+ln.ref+' <span style="font-size:10px;font-weight:700;color:'+(ln.kind==='Change Order'?'var(--warning)':'var(--info)')+';">'+(ln.kind==='Change Order'?'CO':'EST')+'</span></div>'
+        +'<div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+ln.desc+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;"><div style="font-size:12px;font-weight:700;">'+fmtMoney(ln.amount)+'</div><div style="font-size:9px;font-weight:700;color:'+ln.statusColor+';">'+ln.statusLabel+'</div></div>'
+      +'</div>';
+  }
+  function jobGroup(entry){
+    var j=entry.job, lines=entry.lines;
+    var total=lines.reduce(function(s,l){return s+(l.amount||0);},0);
+    return '<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--surface2);">'
+        +'<div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+j.name+'</div>'
+        +'<div style="font-size:10px;color:var(--muted);flex-shrink:0;">'+j.customer+'</div>'
+      +'</div>'
+      +'<div style="padding:4px 6px;">'+lines.map(function(l){return lineRow(j,l);}).join('')+'</div>'
+      +'</div>';
+  }
+  function blockHTML(b){
+    var jobsObj=data[b.key];
+    var jobIds=Object.keys(jobsObj);
+    var lineCount=0, total=0;
+    jobIds.forEach(function(id){ jobsObj[id].lines.forEach(function(l){lineCount++; total+=l.amount||0;}); });
+    var open = b.key==='in-progress'; // in-progress open by default
+    var bodyId='wblock-'+b.key;
+    return '<div style="margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
+      +'<div onclick="toggleWorkBlock(\''+b.key+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;cursor:pointer;user-select:none;border-left:4px solid '+b.color+';background:#fff;">'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+          +'<span style="width:9px;height:9px;border-radius:50%;background:'+b.color+';"></span>'
+          +'<span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+b.color+';">'+b.label+'</span>'
+          +'<span style="font-size:11px;font-weight:700;color:var(--muted);background:var(--surface3);padding:1px 8px;border-radius:20px;">'+lineCount+'</span>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+          +'<span style="font-size:11px;font-weight:700;color:var(--text);">'+fmtMoney(total)+'</span>'
+          +'<span id="wchev-'+b.key+'" style="font-size:12px;color:var(--muted);transition:transform .15s;'+(open?'transform:rotate(90deg);':'')+'">▸</span>'
+        +'</div>'
+      +'</div>'
+      +'<div id="'+bodyId+'" style="display:'+(open?'block':'none')+';padding:8px;background:var(--surface);">'
+        +(jobIds.length?jobIds.map(function(id){return jobGroup(jobsObj[id]);}).join(''):'<div style="padding:14px;text-align:center;color:var(--muted2);font-style:italic;font-size:12px;">No work in this stage.</div>')
+      +'</div>'
+    +'</div>';
+  }
+  list.innerHTML=BLOCKS.map(blockHTML).join('');
+}
+function toggleWorkBlock(key){
+  var body=document.getElementById('wblock-'+key);
+  var chev=document.getElementById('wchev-'+key);
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function fmtMoney(v){ return '$'+Number(v||0).toLocaleString('en-US'); }
+
+var calMonth = 4; // May 2026 (0-indexed)
+var calYear = 2026;
+function renderOverview(){
+  var panel=document.getElementById('detailPanel'); if(!panel) return;
+  // Build the same blocks but for the right panel
+  function jobBlock(j){ if(j.status==='scheduled')return'pending-sched'; if(j.status==='in-progress')return'in-progress'; if(j.status==='ready-to-bill')return'ready-to-bill'; return'completed'; }
+  function coBlock(co){ var s=(co.status||'').toLowerCase(); if(s==='pending')return'pending-sched'; if(s==='approved'||s==='in progress')return'in-progress'; if(s==='completed'||s==='ready')return'ready-to-bill'; if(s==='invoiced'||s==='paid')return'completed'; return'in-progress'; }
+  var BLOCKS=[{key:'pending-sched',label:'Pending Scheduling',color:'#7C5CBF'},{key:'in-progress',label:'In Progress',color:'#C8822A'},{key:'ready-to-bill',label:'Ready to Bill',color:'#D94F4F'},{key:'completed',label:'Completed',color:'#3A9E6A'}];
+  var data={}; BLOCKS.forEach(function(b){data[b.key]={};});
+  function push(k,j,line){ if(!data[k][j.id])data[k][j.id]={job:j,lines:[]}; data[k][j.id].lines.push(line); }
+  JOBS.forEach(function(j){
+    push(jobBlock(j),j,{ref:j.est,kind:'Estimate',desc:j.name,amount:j.amount,statusLabel:(JOB_STATUS[j.status]||{label:j.status}).label,statusColor:(JOB_STATUS[j.status]||{color:'var(--muted)'}).color});
+    (j.changeOrders||[]).forEach(function(co){ push(coBlock(co),j,{ref:co.est,kind:'Change Order',desc:co.description||'',amount:co.amount,statusLabel:co.status||'',statusColor:'#C8822A'}); });
+  });
+  function lineRow(j,ln){ return '<div onclick="selectJob('+j.id+')" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+    +'<div style="min-width:0;"><div style="font-size:12px;font-weight:600;color:#444;">'+ln.ref+' <span style="font-size:10px;font-weight:700;color:'+(ln.kind==='Change Order'?'var(--warning)':'var(--info)')+';">'+(ln.kind==='Change Order'?'CO':'EST')+'</span></div>'
+    +'<div style="font-size:11px;color:var(--muted);">'+ln.desc+'</div></div>'
+    +'<div style="text-align:right;flex-shrink:0;"><div style="font-size:12px;font-weight:700;">'+fmtMoney(ln.amount)+'</div><div style="font-size:9px;font-weight:700;color:'+ln.statusColor+';">'+ln.statusLabel+'</div></div></div>'; }
+  function jobGroup(entry){ var j=entry.job; return '<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;"><div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--surface2);"><div style="font-size:12px;font-weight:700;">'+j.name+'</div><div style="font-size:10px;color:var(--muted);">'+j.customer+'</div></div><div style="padding:4px 6px;">'+entry.lines.map(function(l){return lineRow(j,l);}).join('')+'</div></div>'; }
+  function blockHTML(b){
+    var jobsObj=data[b.key]; var ids=Object.keys(jobsObj); var cnt=0,total=0;
+    ids.forEach(function(id){ jobsObj[id].lines.forEach(function(l){cnt++;total+=l.amount||0;}); });
+    var open=b.key==='in-progress';
+    return '<div style="margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">'
+      +'<div onclick="toggleOvBlock(\''+b.key+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;cursor:pointer;border-left:4px solid '+b.color+';">'
+        +'<div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:'+b.color+';"></span>'
+        +'<span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+b.color+';">'+b.label+'</span>'
+        +'<span style="font-size:11px;font-weight:700;color:var(--muted);background:var(--surface3);padding:1px 8px;border-radius:20px;">'+cnt+'</span></div>'
+        +'<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;">'+fmtMoney(total)+'</span><span id="ovchev-'+b.key+'" style="font-size:12px;color:var(--muted);'+(open?'transform:rotate(90deg);':'')+'">▸</span></div>'
+      +'</div>'
+      +'<div id="ovblock-'+b.key+'" style="display:'+(open?'block':'none')+';padding:8px;background:var(--surface);">'
+      +(ids.length?ids.map(function(id){return jobGroup(jobsObj[id]);}).join(''):'<div style="padding:14px;text-align:center;color:var(--muted2);font-style:italic;font-size:12px;">No work in this stage.</div>')
+      +'</div></div>';
+  }
+  var blocksHTML=BLOCKS.map(blockHTML).join('');
+  panel.innerHTML='<div style="padding:20px;">'
+    +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:26px;font-weight:700;margin-bottom:4px;">Jobs overview</div>'
+    +'<div style="font-size:13px;color:var(--muted);margin-bottom:18px;">Work by stage and the scheduling calendar. Select any line to open its job.</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">'
+      +'<div>'+blocksHTML+'</div>'
+      +'<div>'+renderJobCalendar()+'</div>'
+    +'</div></div>';
+}
+function toggleOvBlock(key){ var b=document.getElementById('ovblock-'+key); var c=document.getElementById('ovchev-'+key); if(!b)return; var open=b.style.display!=='none'; b.style.display=open?'none':'block'; if(c)c.style.transform=open?'rotate(0deg)':'rotate(90deg)'; }
+function parseJobDate(s){ if(!s)return null; var d=new Date(s); return isNaN(d)?null:d; }
+function calShift(delta){ calMonth+=delta; if(calMonth>11){calMonth=0;calYear++;} if(calMonth<0){calMonth=11;calYear--;} renderOverview(); }
+function renderJobCalendar(){
+  var monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var first=new Date(calYear,calMonth,1);
+  var startDay=first.getDay();
+  var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  // Scheduled jobs spanning this month
+  var sched=JOBS.filter(function(j){return j.startDate;}).map(function(j){ return {job:j, s:parseJobDate(j.startDate), e:parseJobDate(j.endDate||j.startDate)}; }).filter(function(o){return o.s;});
+  var palette=['#7C5CBF','#C8822A','#3A9E6A','#3A7ED4','#D94F4F'];
+  function dayJobs(day){
+    var d=new Date(calYear,calMonth,day);
+    return sched.filter(function(o){ var s=new Date(o.s.getFullYear(),o.s.getMonth(),o.s.getDate()); var e=new Date(o.e.getFullYear(),o.e.getMonth(),o.e.getDate()); return d>=s&&d<=e; });
+  }
+  var cells='';
+  ['S','M','T','W','T','F','S'].forEach(function(d){ cells+='<div style="text-align:center;font-size:10px;font-weight:700;color:var(--muted2);padding:4px 0;">'+d+'</div>'; });
+  for(var i=0;i<startDay;i++){ cells+='<div></div>'; }
+  for(var day=1;day<=daysInMonth;day++){
+    var djs=dayJobs(day);
+    var dots=djs.slice(0,3).map(function(o){var idx=o.job.id%palette.length;return '<span style="width:6px;height:6px;border-radius:50%;background:'+palette[idx]+';display:inline-block;margin:0 1px;"></span>';}).join('');
+    var title=djs.map(function(o){return o.job.name;}).join(', ');
+    cells+='<div title="'+title+'" '+(djs.length?'onclick="selectJob('+djs[0].job.id+')" style="cursor:pointer;"':'style=""')+' >'
+      +'<div style="min-height:42px;border:1px solid var(--border);border-radius:6px;padding:3px 4px;background:'+(djs.length?'rgba(124,92,191,.04)':'#fff')+';">'
+      +'<div style="font-size:11px;font-weight:600;color:#444;">'+day+'</div>'
+      +'<div style="margin-top:2px;">'+dots+'</div>'
+      +'</div></div>';
+  }
+  // Legend of scheduled jobs this month
+  var monthJobs={};
+  for(var dd=1;dd<=daysInMonth;dd++){ dayJobs(dd).forEach(function(o){ monthJobs[o.job.id]=o.job; }); }
+  var legend=Object.keys(monthJobs).map(function(id){var j=monthJobs[id];var idx=j.id%palette.length;return '<div onclick="selectJob('+j.id+')" style="display:flex;align-items:center;gap:6px;padding:5px 4px;cursor:pointer;font-size:11px;"><span style="width:8px;height:8px;border-radius:50%;background:'+palette[idx]+';flex-shrink:0;"></span><span style="font-weight:600;color:#444;">'+j.name+'</span><span style="color:var(--muted2);margin-left:auto;">'+(j.startDate||'')+'</span></div>';}).join('');
+  return '<div style="border:1px solid var(--border);border-radius:10px;background:#fff;padding:14px;">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+      +'<button onclick="calShift(-1)" style="border:1px solid var(--border2);background:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:14px;">‹</button>'
+      +'<div style="font-size:14px;font-weight:700;">'+monthNames[calMonth]+' '+calYear+'</div>'
+      +'<button onclick="calShift(1)" style="border:1px solid var(--border2);background:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:14px;">›</button>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">'+cells+'</div>'
+    +(legend?'<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted2);margin-bottom:4px;">Scheduled this month</div>'+legend+'</div>':'')
+  +'</div>';
+}
+
+function renderListOLD(){
+  const q=getQ();
+  const list=document.getElementById('jobList');
 
   function passesFilter(j){
     if(q && !j.name.toLowerCase().includes(q) && !j.customer.toLowerCase().includes(q) && !j.est.toLowerCase().includes(q) && !j.address.toLowerCase().includes(q)) return false;
@@ -731,9 +917,7 @@ function renderDetail(id){
     actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit schedule</button>
     <button class="btn btn-warning btn-sm" onclick="startJob(${j.id})">Start job → In Progress</button>`;
   } else if(j.status==='in-progress'){
-    actionHTML=`<button class="btn btn-warning btn-sm" onclick="openCompleteModal(${j.id})">
-      JOB is ready to bill
-    </button>`;
+    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit schedule</button>`;
   } else if(j.status==='ready-to-bill'){
     actionHTML=`<button class="btn btn-gold btn-sm" onclick="window.location.href='/sdd-invoices.html?create='+encodeURIComponent(j.est)+'&customer='+encodeURIComponent(j.customer)+'&amount='+j.amount+'&job='+encodeURIComponent(j.name)">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -764,6 +948,7 @@ function renderDetail(id){
 
   document.getElementById('detailPanel').innerHTML=`
   <div class="detail-wrap">
+    <div style="padding:14px 0 0 4px;"><button onclick="showOverview()" style="border:none;background:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;">← Back to jobs overview</button></div>
     <div class="topbar">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
         <div>
@@ -875,6 +1060,7 @@ function selectJob(id){
   renderList();
   renderDetail(id);
 }
+function showOverview(){ activeId=null; renderList(); renderOverview(); }
 
 // ══ ACTIONS ══
 function saveJobNotes(id, val){
@@ -1070,7 +1256,7 @@ document.addEventListener('DOMContentLoaded',function(){
   renderPipeline();
   renderList();
   updateCounts();
-  selectJob(1);
+  renderOverview();
 });
 </script>
 </body>
