@@ -654,6 +654,7 @@ svg{display:block;}
   </div>
 </div>
 
+<script src="sdd-data.js"></script>
 <script>
 // ══ EMAIL HOOK (placeholder — backend not connected yet) ══
 // When the backend/API is ready, replace the body with a real fetch() call.
@@ -678,7 +679,7 @@ function sendBillingEmail(job, type, payload){
 }
 
 // ══ DATA ══
-const CUSTOMERS = [
+var CUSTOMERS_SEED = [
   {id:1, name:'ABC Construction Corp', city:'San Diego, CA',
    address:'4500 Main St, San Diego CA 92103', phone:'(619) 555-0142',
    since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, billingMethod:'direct-email', sov:true, sovEstimates:[],
@@ -770,6 +771,9 @@ const CUSTOMERS = [
       ]},
    ]},
 ];
+// Use shared data layer if present (sdd-data.js); otherwise fall back to the seed above.
+var CUSTOMERS = (window.SDD && window.SDD.customers) ? window.SDD.customers : CUSTOMERS_SEED;
+function saveCustomers(){ if(window.SDD){ window.SDD.save(); } }
 
 const STATUS_COLOR = {
   'In progress':'var(--warning)',
@@ -3938,6 +3942,12 @@ function saveNewJob(){
   closeAddJobModal();renderDetail(_ajCustomerId);renderList();
   var fl=document.createElement('div');fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);background:var(--success);';
   fl.textContent='✓ Job added — '+estNum;document.body.appendChild(fl);setTimeout(function(){fl.remove();},3500);
+}
+// Auto-persist shared data so changes survive reloads / navigation between modules
+if(window.SDD){
+  window.addEventListener('beforeunload', function(){ window.SDD.save(); });
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) window.SDD.save(); });
+  setInterval(function(){ window.SDD.save(); }, 5000);
 }
 </script>
 
