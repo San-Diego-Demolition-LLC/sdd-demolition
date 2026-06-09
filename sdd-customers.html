@@ -3786,19 +3786,19 @@ function openBillingPopup(){
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job have special instructions?</div>'
     +'<div style="display:flex;gap:18px;margin-bottom:6px;">'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="yes" onchange="ajToggleSI(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="no" checked onchange="ajToggleSI(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="no" onchange="ajToggleSI(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
     +'</div>'
     +'<textarea id="_aj_si_text" placeholder="Write the special instructions for this job..." style="display:none;width:100%;min-height:70px;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;resize:vertical;box-sizing:border-box;margin-bottom:6px;"></textarea>'
     +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require a Schedule of Values (SOV)?</div>'
     +'<div style="display:flex;gap:18px;margin-bottom:14px;">'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_sov" value="yes" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_sov" value="no" checked style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_sov" value="no" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
     +'</div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require waivers?</div>'
     +'<div style="display:flex;gap:18px;margin-bottom:4px;">'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="yes" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="no" checked style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="no" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>'
     +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
@@ -3807,7 +3807,7 @@ function openBillingPopup(){
     +'<div id="_aj_bill_new"></div>'
     +'<button type="button" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>'
     +'</div>'
-    +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
+    +'<div id="_aj_bill_foot" style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
     +'<button onclick="ajCommitJob(true)" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>'
     +'<button onclick="ajCommitJob(false)" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save</button>'
     +'</div>'
@@ -3825,6 +3825,28 @@ function closeBillingPopup(){
 function ajCommitJob(skipLater){
   var cust=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   if(!cust||!_ajPendingJobData) return;
+  // Required radios when pressing Save (not "Enter info later")
+  var _si=document.querySelector('input[name="_aj_si"]:checked');
+  var _sov=document.querySelector('input[name="_aj_sov"]:checked');
+  var _wv=document.querySelector('input[name="_aj_waiver"]:checked');
+  if(!skipLater){
+    var missing=[];
+    if(!_si) missing.push('Special instructions');
+    if(!_sov) missing.push('Schedule of Values (SOV)');
+    if(!_wv) missing.push('Waivers');
+    if(missing.length){
+      var warn=document.getElementById('_aj_req_warn');
+      if(!warn){
+        warn=document.createElement('div');
+        warn.id='_aj_req_warn';
+        warn.style.cssText='margin:0 24px 12px;padding:9px 12px;border-radius:8px;background:rgba(217,79,79,.1);border:1px solid var(--danger);color:var(--danger);font-size:12px;font-weight:600;';
+        var foot=document.getElementById('_aj_bill_foot');
+        if(foot&&foot.parentNode) foot.parentNode.insertBefore(warn, foot);
+      }
+      warn.textContent='⚠ Please answer: '+missing.join(', ')+' — or use "Enter info later".';
+      return;
+    }
+  }
   var avC=['av-gold','av-info','av-success','av-warning'];
   var billing=[];
   if(!skipLater){
@@ -3847,7 +3869,8 @@ function ajCommitJob(skipLater){
       }
     });
   }
-  var pendingBilling=billing.length===0;
+  var infoMissing=(!_si||!_sov||!_wv);
+  var pendingBilling=billing.length===0||infoMissing;
   // Special instructions
   var siRadio=document.querySelector('input[name="_aj_si"]:checked');
   var siOn=siRadio&&siRadio.value==='yes';

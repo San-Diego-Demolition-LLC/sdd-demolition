@@ -97,10 +97,10 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .tb-meta{font-size:13px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;margin-top:4px;}
 .tb-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;}
 /* STATUS FLOW BAR */
-.flow-bar{background:var(--surface);border-radius:12px;padding:18px 24px;margin-bottom:16px;overflow-x:auto;}
+.flow-bar{background:var(--surface);border-radius:12px;padding:10px 24px;margin-bottom:16px;overflow-x:auto;}
 .flow-steps{display:flex;align-items:center;min-width:600px;}
 .fs{display:flex;align-items:center;flex:1;}
-.fs-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border:2px solid var(--border2);background:var(--surface2);color:var(--muted);}
+.fs-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:2px solid var(--border2);background:var(--surface2);color:var(--muted);}
 .fs-dot.done{background:var(--success);border-color:var(--success);color:#fff;}
 .fs-dot.current{background:var(--gold);border-color:var(--gold);color:#fff;}
 .fs-dot.rejected{background:var(--danger);border-color:var(--danger);color:#fff;}
@@ -984,6 +984,15 @@ const ESTIMATES = [
      {desc:'Dumpster rental (7 days)',            qty:1,    unit:'unit',  unitPrice:850,   total:850},
      {desc:'Dust protection & containment',      qty:1,    unit:'job',   unitPrice:600,   total:600},
    ],
+   invoices:[
+     {num:'INV-047-1', date:'May 15, 2026', amount:6575, status:'Paid'},
+     {num:'INV-047-2', date:'May 20, 2026', amount:6575, status:'Unpaid'}
+   ],
+   vendorBills:[
+     {vendor:'West Coast Hauling', account:'5010 · Disposal', amount:1800, status:'Paid'},
+     {vendor:'Pacific Equipment Rental', account:'5020 · Equipment', amount:850, status:'Pending'},
+     {vendor:'City Permits Office', account:'5040 · Permits', amount:350, status:'Pending'}
+   ],
    schedStart:'May 13, 2026', schedEnd:'May 17, 2026', schedTime:'07:00', schedDays:'5 days',
    foreman:'Carlos Mendez', waiver:'conditional', payment:'Net 30',
    timeline:[
@@ -1329,7 +1338,7 @@ function renderPipeline(){
     const items = ESTIMATES.filter(e=>e.status===s.key);
     const total = items.reduce((sum,e)=>sum+e.amount,0);
     const isActive = activePipeFilter===s.key;
-    return `<div class="pipe-stage${isActive?' active-pipe':''}${s.key==='rejected'?' rejected-pipe':''}" onclick="setPipeFilter('${s.key}')">
+    return `<div class="pipe-stage${isActive?' active-pipe':''}${s.key==='rejected'?' rejected-pipe':''}" onclick="openPipePopup('${s.key}')">
       <div class="pipe-dot" style="background:${s.color};"></div>
       <div class="pipe-label">${s.label}</div>
       <div class="pipe-count" style="color:${isActive?s.color:'var(--text)'};">${items.length}</div>
@@ -1357,7 +1366,39 @@ function setPipeFilter(key){
   renderList();
 }
 
-// ══ RENDER LIST ══
+function openPipePopup(key){
+  const stage = PIPE_STAGES.find(s=>s.key===key) || {label:key, color:'var(--muted)'};
+  const items = ESTIMATES.filter(e=>e.status===key);
+  const total = items.reduce((sum,e)=>sum+(e.amount||0),0);
+  document.getElementById('pipePopupTitle').textContent = stage.label;
+  document.getElementById('pipePopupTitle').style.color = stage.color;
+  document.getElementById('pipePopupSummary').textContent = items.length+' estimate'+(items.length===1?'':'s')+' · Total '+fmt(total);
+  const body = document.getElementById('pipePopupBody');
+  if(!items.length){
+    body.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted2);font-style:italic;">No estimates in this stage.</div>';
+  } else {
+    body.innerHTML = items.map(e=>`
+      <div onclick="closePipePopup();selectEst(${e.id});" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:background .12s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <div style="min-width:0;">
+          <div style="font-size:13px;font-weight:700;">${e.num}${e.isChangeOrder?' <span style=\"font-size:10px;color:var(--warning);\">(CO)</span>':''}</div>
+          <div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${e.customer} · ${e.jobName||e.address||''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:14px;font-weight:700;color:${stage.color};">${fmt(e.amount||0)}</div>
+          <div style="font-size:11px;color:var(--muted2);">${e.date||''}</div>
+        </div>
+      </div>`).join('') + `
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--border2);margin-top:6px;padding-top:12px;">
+        <span style="font-weight:700;font-size:13px;">Total</span>
+        <span style="font-weight:700;font-size:16px;color:${stage.color};">${fmt(total)}</span>
+      </div>`;
+  }
+  document.getElementById('pipePopupBg').style.display='flex';
+}
+function closePipePopup(){
+  const el=document.getElementById('pipePopupBg');
+  if(el) el.style.display='none';
+}
 function renderList(){
   const q = getQ();
   const list = document.getElementById('estList');
@@ -1420,11 +1461,11 @@ function editableEstimateSheet(e){
   const total = lines.reduce((s,l)=>s+(Number(l.total)||0),0);
   const lineRows = lines.map((l,i)=>`
     <tr data-line="${i}">
-      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;"><input class="es-edit" value="${(l.desc||'').replace(/"/g,'&quot;')}" onchange="esLineSave(${e.id},${i},'desc',this.value)"></td>
-      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:80px;"><input class="es-edit es-num" value="${l.qty||''}" onchange="esLineSave(${e.id},${i},'qty',this.value)"></td>
-      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:70px;"><input class="es-edit" value="${l.unit||''}" onchange="esLineSave(${e.id},${i},'unit',this.value)"></td>
-      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:100px;"><input class="es-edit es-num" value="${l.unitPrice||''}" onchange="esLineSave(${e.id},${i},'unitPrice',this.value)"></td>
-      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:100px;text-align:right;font-weight:600;" id="es-lt-${e.id}-${i}">$${Number(l.total||0).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:48%;"><input class="es-edit" value="${(l.desc||'').replace(/"/g,'&quot;')}" onchange="esLineSave(${e.id},${i},'desc',this.value)"></td>
+      <td style="padding:6px 6px;border-bottom:1px solid #F0F0F0;width:70px;"><input class="es-edit es-num" value="${l.qty||''}" onchange="esLineSave(${e.id},${i},'qty',this.value)"></td>
+      <td style="padding:6px 6px;border-bottom:1px solid #F0F0F0;width:70px;"><input class="es-edit es-num" value="${l.unit||''}" onchange="esLineSave(${e.id},${i},'unit',this.value)"></td>
+      <td style="padding:6px 6px;border-bottom:1px solid #F0F0F0;width:90px;"><input class="es-edit es-num" value="${l.unitPrice||''}" onchange="esLineSave(${e.id},${i},'unitPrice',this.value)"></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #F0F0F0;width:100px;text-align:right;font-weight:600;white-space:nowrap;" id="es-lt-${e.id}-${i}">$${Number(l.total||0).toLocaleString('en-US',{minimumFractionDigits:2})}</td>
       <td style="padding:6px 4px;border-bottom:1px solid #F0F0F0;width:24px;"><button class="es-delrow" onclick="esDeleteLine(${e.id},${i})">×</button></td>
     </tr>`).join('');
   return `
@@ -1478,11 +1519,11 @@ function editableEstimateSheet(e){
     <!-- SCOPE / LINE ITEMS -->
     <div class="pdf-section">
       <div class="pdf-section-title">Scope of work</div>
-      <table style="width:100%;border-collapse:collapse;">
+      <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
         <thead><tr>
-          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Description</th>
+          <th style="width:48%;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:left;">Description</th>
           <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Qty</th>
-          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;">Unit</th>
+          <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Unit</th>
           <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Unit price</th>
           <th style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#777;padding:8px;border-bottom:2px solid #E0E0E0;text-align:right;">Total</th>
           <th style="border-bottom:2px solid #E0E0E0;"></th>
@@ -1499,9 +1540,100 @@ function editableEstimateSheet(e){
     <!-- TERMS -->
     <div class="pdf-section" style="margin-top:20px;">
       <div class="pdf-section-title">Terms &amp; Conditions</div>
-      <textarea class="es-edit" style="min-height:90px;line-height:1.6;resize:vertical;" onchange="esSave(${e.id},'termsText',this.value)" placeholder="Terms and conditions...">${e.termsText||''}</textarea>
+      ${esTermsBlock(e)}
     </div>
-    ${e.requiresSOV ? sovSectionHTML(e) : ''}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid #E0E0E0;">
+      <button onclick="esSaveEstimate(${e.id})" style="padding:11px 28px;border-radius:10px;border:none;background:#B8922A;color:#fff;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(184,146,42,.3);">✓ Save estimate</button>
+    </div>
+  </div>`;
+}
+// Terms & Conditions block: type selector + per-clause checkboxes
+function esTermsBlock(e){
+  const types = Object.keys(TERMS_AND_CONDITIONS);
+  const sel = e.termsType || types[0];
+  const tpl = TERMS_AND_CONDITIONS[sel];
+  if(!e.selectedClauses){ e.selectedClauses = (tpl?tpl.clauses.map(c=>c.id):[]); }
+  const opts = types.map(k=>`<option value="${k}" ${k===sel?'selected':''}>${TERMS_AND_CONDITIONS[k].label}</option>`).join('');
+  const clauses = tpl ? tpl.clauses.map(c=>{
+    const checked = e.selectedClauses.indexOf(c.id)!==-1;
+    return `<label style="display:flex;gap:10px;align-items:flex-start;padding:8px 6px;border-bottom:1px solid #F2F2F2;cursor:pointer;">
+      <input type="checkbox" ${checked?'checked':''} onchange="esToggleClause(${e.id},'${c.id}',this.checked)" style="margin-top:3px;cursor:pointer;accent-color:#B8922A;flex-shrink:0;">
+      <span style="font-size:12px;line-height:1.6;color:${checked?'#333':'#bbb'};"><strong>${c.ltr})</strong> ${c.text}</span>
+    </label>`;
+  }).join('') : '';
+  return `
+    <div style="margin-bottom:12px;">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;display:block;margin-bottom:5px;">Terms type</label>
+      <select onchange="esSetTermsType(${e.id},this.value)" style="width:100%;max-width:340px;padding:9px 12px;border:1.5px solid #D8C9A0;border-radius:8px;font-family:'Barlow',sans-serif;font-size:14px;background:#fff;cursor:pointer;outline:none;">${opts}</select>
+    </div>
+    <div style="font-size:10px;color:#999;margin-bottom:6px;">Check or uncheck each clause to include or exclude it from this estimate.</div>
+    <div id="es-clauses-${e.id}" style="border:1px solid #ECECEC;border-radius:8px;padding:4px 10px;">${clauses}</div>`;
+}
+// Bills for this estimate: invoices billed to client (Paid/Unpaid) + vendor bills (payable)
+function billsSectionHTML(e){
+  const invs = e.invoices||[];
+  const vendorBills = e.vendorBills||[];
+  const fmtN = v=>'$'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:2});
+  const isPaid = s=>(s||'').toLowerCase()==='paid';
+  // Client invoices
+  let invRows = invs.length ? invs.map(iv=>{
+    const paid=isPaid(iv.status);
+    return `<tr>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;font-family:monospace;color:#555;">${iv.num||iv.est||''}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#333;">${iv.date||''}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;text-align:right;font-weight:600;">${fmtN(iv.amount)}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;text-align:center;">
+        <span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;${paid?'background:rgba(46,204,113,.12);color:#16a34a;':'background:rgba(217,79,79,.1);color:#D94F4F;border:1px solid #D94F4F;'}">${paid?'✓ Paid':'Unpaid'}</span>
+      </td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" style="padding:10px 8px;font-size:12px;color:#999;font-style:italic;">No invoices yet for this estimate.</td></tr>';
+  const invPaidTotal = invs.filter(iv=>isPaid(iv.status)).reduce((s,iv)=>s+(Number(iv.amount)||0),0);
+  const invUnpaidTotal = invs.filter(iv=>!isPaid(iv.status)).reduce((s,iv)=>s+(Number(iv.amount)||0),0);
+  // Vendor bills (accounts payable)
+  let vbRows = vendorBills.length ? vendorBills.map(v=>{
+    const paid=isPaid(v.status);
+    return `<tr>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#333;font-weight:600;">${v.vendor||''}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#777;">${v.account||''}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;font-size:12px;text-align:right;font-weight:600;">${fmtN(v.amount)}</td>
+      <td style="padding:8px;border-bottom:1px solid #F0F0F0;text-align:center;">
+        <span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;${paid?'background:rgba(46,204,113,.12);color:#16a34a;':'background:rgba(217,79,79,.1);color:#D94F4F;border:1px solid #D94F4F;'}">${paid?'✓ Paid':'Pending'}</span>
+      </td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="4" style="padding:10px 8px;font-size:12px;color:#999;font-style:italic;">No vendor bills recorded.</td></tr>';
+  const vbPaidTotal = vendorBills.filter(v=>isPaid(v.status)).reduce((s,v)=>s+(Number(v.amount)||0),0);
+  const vbPendingTotal = vendorBills.filter(v=>!isPaid(v.status)).reduce((s,v)=>s+(Number(v.amount)||0),0);
+  return `
+  <div class="pdf-section" style="margin-top:0;">
+    <div class="pdf-section-title">Invoices billed to client</div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:left;">Invoice</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:left;">Date</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:right;">Amount</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:center;">Status</th>
+      </tr></thead>
+      <tbody>${invRows}</tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;gap:24px;padding:8px 8px;font-size:12px;">
+      <span style="color:#16a34a;">Paid: <strong>${fmtN(invPaidTotal)}</strong></span>
+      <span style="color:#D94F4F;">Unpaid: <strong>${fmtN(invUnpaidTotal)}</strong></span>
+    </div>
+
+    <div class="pdf-section-title" style="margin-top:18px;">Vendor bills (accounts payable)</div>
+    <table style="width:100%;border-collapse:collapse;">
+      <thead><tr>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:left;">Vendor</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:left;">Account</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:right;">Amount</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:7px 8px;border-bottom:2px solid #E0E0E0;text-align:center;">Status</th>
+      </tr></thead>
+      <tbody>${vbRows}</tbody>
+    </table>
+    <div style="display:flex;justify-content:flex-end;gap:24px;padding:8px 8px;font-size:12px;">
+      <span style="color:#16a34a;">Paid: <strong>${fmtN(vbPaidTotal)}</strong></span>
+      <span style="color:#D94F4F;">Pending to pay: <strong>${fmtN(vbPendingTotal)}</strong></span>
+    </div>
   </div>`;
 }
 // Schedule of Values: all transactions (estimate + change orders + invoices) for THIS job
@@ -1559,6 +1691,38 @@ function esSave(eid, field, val){
   const e=ESTIMATES.find(x=>x.id===eid);
   if(!e) return;
   e[field]=val;
+}
+function esSetTermsType(eid, type){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  e.termsType=type;
+  const tpl=TERMS_AND_CONDITIONS[type];
+  e.termsLabel = tpl?tpl.label:'';
+  // select all clauses of the new type by default
+  e.selectedClauses = tpl?tpl.clauses.map(c=>c.id):[];
+  renderDetail(eid);
+}
+function esToggleClause(eid, clauseId, checked){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  if(!e.selectedClauses) e.selectedClauses=[];
+  if(checked){ if(e.selectedClauses.indexOf(clauseId)===-1) e.selectedClauses.push(clauseId); }
+  else { e.selectedClauses = e.selectedClauses.filter(id=>id!==clauseId); }
+  // re-render just the clause list to update text color
+  renderDetail(eid);
+}
+function esSaveEstimate(eid){
+  const e=ESTIMATES.find(x=>x.id===eid);
+  if(!e) return;
+  // Build termsText from selected clauses for downstream PDF/use
+  const tpl=TERMS_AND_CONDITIONS[e.termsType];
+  if(tpl){
+    const sel=e.selectedClauses||[];
+    e.termsText = tpl.clauses.filter(c=>sel.indexOf(c.id)!==-1).map(c=>c.ltr+') '+c.text).join('\n');
+    e.termsLabel = tpl.label;
+  }
+  if(typeof flash==='function') flash('✓ Estimate '+e.num+' saved','#3A9E6A');
+  else { try{ var fl=document.createElement('div'); fl.style.cssText='position:fixed;bottom:24px;right:24px;background:#3A9E6A;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:99999;'; fl.textContent='✓ Estimate '+e.num+' saved'; document.body.appendChild(fl); setTimeout(function(){fl.remove();},2500); }catch(err){} }
 }
 function esLineSave(eid, idx, field, val){
   const e=ESTIMATES.find(x=>x.id===eid);
@@ -1696,7 +1860,7 @@ function renderDetail(id){
 
   // Scheduling info
   const schedHTML = e.schedStart ? `
-    <div style="background:rgba(200,130,42,.06);border:1px solid rgba(200,130,42,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+    <div style="background:rgba(200,130,42,.06);border:1px solid rgba(200,130,42,.2);border-radius:10px;padding:14px 16px;margin-top:16px;margin-bottom:0;">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--warning);margin-bottom:8px;">Job scheduled</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;font-size:13px;">
         <div><div style="color:var(--muted);font-size:11px;margin-bottom:3px;">START</div><div style="font-weight:600;">${e.schedStart}</div></div>
@@ -1753,27 +1917,47 @@ function renderDetail(id){
     <div class="flow-bar">${flowHTML}</div>
 
     ${rejHTML}
-    ${schedHTML}
 
-    <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;">
-      <div>
-        ${e.isChangeOrder ? `<div class="sheet"><div class="card"><div class="card-title">Change Order</div><div style="font-size:13px;color:var(--muted);">${e.description||''}</div><div class="totals-box"><div class="tot-row grand"><span>Net change</span><span style="color:var(--warning);">${fmt(e.netChange||e.amount)}</span></div></div></div></div>` : editableEstimateSheet(e)}
+    <div>
+      ${e.isChangeOrder ? `<div class="sheet"><div class="card"><div class="card-title">Change Order</div><div style="font-size:13px;color:var(--muted);">${e.description||''}</div><div class="totals-box"><div class="tot-row grand"><span>Net change</span><span style="color:var(--warning);">${fmt(e.netChange||e.amount)}</span></div></div></div></div>` : editableEstimateSheet(e)}
+
+      ${schedHTML}
+
+      ${!e.isChangeOrder ? `<div class="sheet" style="margin-top:16px;"><div class="card"><div style="padding:8px 4px 20px;">${billsSectionHTML(e)}</div></div></div>` : ''}
+
+      ${e.requiresSOV && !e.isChangeOrder ? `<div class="sheet" style="margin-top:16px;"><div class="card">${sovSectionHTML(e)}</div></div>` : ''}
+
+      <!-- Collapsible: Notifications -->
+      <div class="sheet" style="margin-top:16px;">
+        <div class="card" style="padding:0;">
+          <div onclick="toggleEstSection('notif-${e.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;">
+            <div class="card-title" style="margin:0;">Notifications sent</div>
+            <span id="chev-notif-${e.id}" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>
+          </div>
+          <div id="sec-notif-${e.id}" style="display:none;padding:0 18px 16px;">${notifHTML}</div>
+        </div>
       </div>
 
-      <div>
-        <div class="sheet">
-        <div class="card">
-          <div class="card-title">Notifications sent</div>
-          ${notifHTML}
-        </div>
-        <div class="card">
-          <div class="card-title">Activity log</div>
-          ${tlHTML}
-        </div>
+      <!-- Collapsible: Activity log -->
+      <div class="sheet" style="margin-top:16px;">
+        <div class="card" style="padding:0;">
+          <div onclick="toggleEstSection('activity-${e.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;user-select:none;">
+            <div class="card-title" style="margin:0;">Activity log</div>
+            <span id="chev-activity-${e.id}" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>
+          </div>
+          <div id="sec-activity-${e.id}" style="display:none;padding:0 18px 16px;">${tlHTML}</div>
         </div>
       </div>
     </div>
   </div>`;
+}
+function toggleEstSection(key){
+  var body=document.getElementById('sec-'+key);
+  var chev=document.getElementById('chev-'+key);
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
 }
 
 function selectEst(id){
@@ -3091,6 +3275,19 @@ function executeSend(){
 </script>
 
 <!-- ══ PDF PREVIEW + SEND MODAL ══ -->
+<div id="pipePopupBg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:'Barlow',sans-serif;overflow:hidden;">
+    <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div id="pipePopupTitle" style="font-size:18px;font-weight:700;"></div>
+        <div id="pipePopupSummary" style="font-size:12px;color:var(--muted);margin-top:2px;"></div>
+      </div>
+      <button onclick="closePipePopup()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <div id="pipePopupBody" style="padding:14px 22px;overflow-y:auto;"></div>
+  </div>
+</div>
+
 <div class="pdf-overlay" id="pdfOverlay">
   <div class="pdf-modal">
     <div class="pdf-toolbar">
