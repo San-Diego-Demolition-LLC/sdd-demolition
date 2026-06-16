@@ -112,6 +112,10 @@ svg{display:block;}
 .mobile-nav a.active{color:var(--gold);}
 .mobile-nav svg{width:22px;height:22px;}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  if(window['pdfjsLib']){ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }
+</script>
 </head>
 <body>
 
@@ -278,12 +282,6 @@ var BANK_ACCOUNTS = [
 // Bank feed transactions. status: review | categorized | matched
 // dir: in (deposit) | out (payment/charge). account=BANK_ACCOUNTS id.
 var BANK_TXNS = [
-  {id:1, account:'chk7522', date:'May 6, 2026',  payee:'ABC Construction Corp', memo:'Incoming payment', amount:12500, dir:'in',  status:'review', ledger:'', matchType:'', matchRef:''},
-  {id:2, account:'chk7522', date:'May 10, 2026', payee:'West Coast Hauling',     memo:'ACH debit',        amount:1800,  dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
-  {id:3, account:'chk7522', date:'May 11, 2026', payee:'Shell Fleet',            memo:'Card purchase',    amount:240,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
-  {id:4, account:'chk7522', date:'May 12, 2026', payee:'Pacific Equipment Rental',memo:'Rental',          amount:850,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
-  {id:5, account:'chk7522', date:'May 14, 2026', payee:'City of San Diego',      memo:'Permit fee',       amount:350,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
-  {id:6, account:'chk7522', date:'Apr 28, 2026', payee:'Horizon Builders LLC',   memo:'ACH deposit',      amount:9353,  dir:'in',  status:'matched', ledger:'Accounts Receivable', matchType:'invoice', matchRef:'INV-2026-014'},
   {id:7, account:'cc4821',  date:'May 9, 2026',  payee:'Home Depot',             memo:'Materials',        amount:512,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
   {id:8, account:'cc4821',  date:'May 13, 2026', payee:'Chevron',                memo:'Fuel',             amount:96,    dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
   {id:9, account:'cc4821',  date:'May 1, 2026',  payee:'Chase Checking 7522',    memo:'Card payment',     amount:3000,  dir:'in',  status:'categorized', ledger:'Transfer · Chase Checking', matchType:'transfer', matchRef:''},
@@ -744,6 +742,172 @@ function refreshCOATable(){
 
 var bankActiveAcct = 'chk7522';
 var bankFilter = 'review'; // review | all | categorized
+// ── Import bank/card statement modal ──
+function openImportModal(){
+  var ex=document.getElementById('_importBg'); if(ex) ex.remove();
+  var acctOpts=BANK_ACCOUNTS.map(function(a){return '<option value="'+a.id+'"'+(a.id===bankActiveAcct?' selected':'')+'>'+a.name+' · '+(a.type==='card'?'Card':'Bank')+' ····'+a.last4+'</option>';}).join('');
+  var bg=document.createElement('div');
+  bg.id='_importBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px;';
+  bg.onclick=function(ev){if(ev.target===bg)bg.remove();};
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:600px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:\'Barlow\',sans-serif;overflow:hidden;max-height:88vh;display:flex;flex-direction:column;">'
+    +'<div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">'
+      +'<div><div style="font-size:18px;font-weight:700;">Import statement transactions</div><div style="font-size:12px;color:var(--muted);">Bring in the lines from your bank or card statement.</div></div>'
+      +'<button onclick="document.getElementById(\'_importBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:18px 22px;overflow-y:auto;">'
+      +'<div style="margin-bottom:16px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Account</label>'
+        +'<select id="_imp_acct" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'+acctOpts+'</select></div>'
+      +'<div style="margin-bottom:14px;padding:14px;border:1.5px dashed var(--border2);border-radius:10px;background:var(--surface);text-align:center;">'
+        +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Have a PDF statement? Upload it and we\'ll try to read the transactions into the box below.</div>'
+        +'<input type="file" id="_imp_pdf" accept="application/pdf" style="display:none;" onchange="importPdfFile(this)">'
+        +'<button onclick="document.getElementById(\'_imp_pdf\').click()" style="padding:9px 16px;border:1px solid var(--gold);border-radius:8px;background:var(--gold-dim);color:var(--gold);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">📄 Upload PDF statement</button>'
+        +'<div id="_imp_pdf_status" style="font-size:12px;color:var(--muted);margin-top:8px;"></div>'
+      +'</div>'
+      +'<div style="margin-bottom:8px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Paste or review statement lines</label>'
+        +'<div style="font-size:11px;color:var(--muted2);margin-bottom:6px;">One per line: <strong>date, description, amount</strong> &nbsp;(negative for money out). Example:<br>May 18 2026, Home Depot, -312.40</div>'
+        +'<textarea id="_imp_text" rows="7" placeholder="May 18 2026, Home Depot, -312.40&#10;May 19 2026, Client deposit ABC, 8500&#10;May 20 2026, Chevron fuel, -88.10" style="width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:monospace;font-size:13px;resize:vertical;box-sizing:border-box;"></textarea></div>'
+      +'<div id="_imp_preview" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;background:var(--surface2);">'
+      +'<button onclick="document.getElementById(\'_importBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="doImportStatement()" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Import transactions</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  var ta=document.getElementById('_imp_text');
+  ta.addEventListener('input',function(){
+    var lines=ta.value.split('\n').filter(function(l){return l.trim();});
+    document.getElementById('_imp_preview').textContent=lines.length?(lines.length+' transaction'+(lines.length>1?'s':'')+' ready to import'):'';
+  });
+}
+function importPdfFile(input){
+  var file=input.files&&input.files[0];
+  if(!file) return;
+  var status=document.getElementById('_imp_pdf_status');
+  if(!window['pdfjsLib']){ status.innerHTML='<span style="color:var(--danger);">PDF reader not loaded. Check your internet and reopen.</span>'; return; }
+  status.textContent='Reading "'+file.name+'"...';
+  var reader=new FileReader();
+  reader.onload=function(){
+    var typed=new Uint8Array(reader.result);
+    pdfjsLib.getDocument({data:typed}).promise.then(function(pdf){
+      var pages=[]; for(var i=1;i<=pdf.numPages;i++) pages.push(i);
+      return Promise.all(pages.map(function(n){
+        return pdf.getPage(n).then(function(page){
+          return page.getTextContent().then(function(tc){
+            // Reconstruct lines using Y positions
+            var rows={};
+            tc.items.forEach(function(it){
+              var y=Math.round(it.transform[5]);
+              (rows[y]=rows[y]||[]).push({x:it.transform[4], s:it.str});
+            });
+            var ys=Object.keys(rows).map(Number).sort(function(a,b){return b-a;});
+            return ys.map(function(y){
+              return rows[y].sort(function(a,b){return a.x-b.x;}).map(function(o){return o.s;}).join(' ');
+            }).join('\n');
+          });
+        });
+      }));
+    }).then(function(pageTexts){
+      var fullText=pageTexts.join('\n');
+      var parsed=parseChaseStatement(fullText);
+      if(parsed.length){
+        document.getElementById('_imp_text').value=parsed.join('\n');
+        document.getElementById('_imp_preview').textContent=parsed.length+' transaction'+(parsed.length>1?'s':'')+' detected — review them below, then Import.';
+        status.innerHTML='<span style="color:#16a34a;">✓ '+parsed.length+' transactions read from PDF. Please review before importing.</span>';
+      } else {
+        status.innerHTML='<span style="color:var(--warning);">Could not detect transactions automatically. You can paste them manually below.</span>';
+      }
+    }).catch(function(err){
+      status.innerHTML='<span style="color:var(--danger);">Could not read the PDF. You can paste lines manually.</span>';
+      console.warn('PDF parse error',err);
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+// Parse a Chase Business Checking statement text into "date, description, amount" lines
+function parseChaseStatement(text){
+  var out=[];
+  var lines=text.split('\n');
+  var year='2026';
+  // Try to detect the statement year from the header (e.g., "through March 31, 2026")
+  var ym=text.match(/through\s+\w+\s+\d{1,2},\s+(\d{4})/i);
+  if(ym) year=ym[1];
+  // Section detection
+  var section='';
+  var monthMap={jan:'Jan',feb:'Feb',mar:'Mar',apr:'Apr',may:'May',jun:'Jun',jul:'Jul',aug:'Aug',sep:'Sep',oct:'Oct',nov:'Nov',dec:'Dec'};
+  for(var i=0;i<lines.length;i++){
+    var L=lines[i].trim();
+    var up=L.toUpperCase();
+    if(up.indexOf('DEPOSITS AND ADDITIONS')!==-1){ section='in'; continue; }
+    if(up.indexOf('ELECTRONIC WITHDRAWALS')!==-1){ section='out'; continue; }
+    if(up.indexOf('CHECKS PAID')!==-1){ section='checks'; continue; }
+    if(up.indexOf('FEES')!==-1 && up.length<30){ section='fees'; continue; }
+    if(up.indexOf('DAILY ENDING BALANCE')!==-1){ section=''; continue; }
+    if(!section) continue;
+    // A transaction line starts with MM/DD and ends with an amount
+    // e.g. "03/03 Deposit 2174320055 106,670.55"
+    var m=L.match(/^(\d{2})\/(\d{2})\s+(.*?)\s+([\d,]+\.\d{2})\s*$/);
+    if(m){
+      var mm=parseInt(m[1],10), dd=parseInt(m[2],10);
+      var desc=m[3].replace(/\s+/g,' ').trim();
+      desc=cleanChaseDesc(desc);
+      var amt=parseFloat(m[4].replace(/,/g,''));
+      if(isNaN(amt)) continue;
+      var monAbbr=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mm]||'';
+      var dateStr=monAbbr+' '+dd+' '+year;
+      var signed=(section==='out'||section==='checks'||section==='fees')?(-amt):amt;
+      out.push(dateStr+', '+desc+', '+signed.toFixed(2));
+      continue;
+    }
+    // Checks Paid format: "1037 ^ 03/20 1,300.00"  (check# ... MM/DD amount)
+    if(section==='checks'){
+      var cm=L.match(/^(\d{3,5})\b.*?(\d{2})\/(\d{2})\s+\$?([\d,]+\.\d{2})\s*$/);
+      if(cm){
+        var cmm=parseInt(cm[2],10), cdd=parseInt(cm[3],10);
+        var camt=parseFloat(cm[4].replace(/,/g,''));
+        if(!isNaN(camt)){
+          var cAbbr=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][cmm]||'';
+          out.push(cAbbr+' '+cdd+' '+year+', Check #'+cm[1]+', '+(-camt).toFixed(2));
+        }
+      }
+    }
+  }
+  return out;
+}
+function cleanChaseDesc(desc){
+  // Shorten common Chase verbose patterns
+  desc=desc.replace(/Orig CO Name:/i,'').replace(/Trace#\S+/i,'').replace(/Eed:\S+/i,'').replace(/Ind ID:\S+/i,'').replace(/Trn:\s*\S+/i,'');
+  desc=desc.replace(/Desc Date:\S+/i,'').replace(/Orig ID:\S+/i,'').replace(/Sec:\S+/i,'');
+  desc=desc.replace(/\s{2,}/g,' ').trim();
+  // Cap length
+  if(desc.length>60) desc=desc.slice(0,60).trim();
+  return desc||'Transaction';
+}
+function doImportStatement(){
+  var acct=document.getElementById('_imp_acct').value;
+  var raw=document.getElementById('_imp_text').value.split('\n').filter(function(l){return l.trim();});
+  if(!raw.length){ flash('Paste at least one transaction line','#D94F4F'); return; }
+  var nextId=BANK_TXNS.reduce(function(m,t){return Math.max(m,t.id);},0)+1;
+  var added=0;
+  raw.forEach(function(line){
+    var parts=line.split(',').map(function(s){return s.trim();});
+    if(parts.length<3) return;
+    var date=parts[0];
+    var desc=parts.slice(1,parts.length-1).join(', ');
+    var amtRaw=parts[parts.length-1].replace(/[$,]/g,'');
+    var amt=parseFloat(amtRaw);
+    if(isNaN(amt)) return;
+    var dir=amt<0?'out':'in';
+    var d=new Date(date); var dateStr=isNaN(d)?date:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    BANK_TXNS.push({id:nextId++, account:acct, date:dateStr, payee:desc, memo:'Imported', amount:Math.abs(amt), dir:dir, status:'review', ledger:'', matchType:'', matchRef:'', vendorId:null});
+    added++;
+  });
+  document.getElementById('_importBg').remove();
+  bankActiveAcct=acct; bankFilter='review';
+  renderBankingView();
+  flash(added+' transaction'+(added!==1?'s':'')+' imported');
+}
 function renderBankingView(){
   var pr=document.getElementById('panelRight'); if(!pr) return;
   var accts=BANK_ACCOUNTS;
@@ -756,7 +920,7 @@ function renderBankingView(){
       +'</button>';
   }).join('');
   var txns=BANK_TXNS.filter(function(t){return t.account===bankActiveAcct&&(bankFilter==='all'||t.status===bankFilter||(bankFilter==='categorized'&&(t.status==='categorized'||t.status==='matched')));});
-  var rows=txns.length?txns.map(bankTxnRow).join(''):'<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted2);font-style:italic;">No transactions in this view.</td></tr>';
+  var rows=txns.length?txns.map(bankTxnRow).join(''):'<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted2);font-style:italic;">No transactions in this view.</td></tr>';
   var reviewCount=BANK_TXNS.filter(function(t){return t.account===bankActiveAcct&&t.status==='review';}).length;
   pr.innerHTML='<div class="detail-wrap">'
     +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:26px;font-weight:700;margin-bottom:4px;">Banking — transactions for review</div>'
@@ -768,12 +932,15 @@ function renderBankingView(){
       +bankFilterBtn('all','All')
     +'</div>'
     +'<div class="card" style="padding:0;overflow:hidden;">'
+    +'<datalist id="_acctlist">'+bankAssignableAccounts().map(function(a){return '<option value="'+a.replace(/"/g,'&quot;')+'"></option>';}).join('')+'</datalist>'
+    +'<datalist id="_venlist">'+VENDORS.map(function(v){return '<option value="'+v.name.replace(/"/g,'&quot;')+'"></option>';}).join('')+'</datalist>'
     +'<table style="width:100%;border-collapse:collapse;"><thead><tr>'
       +'<th style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);">Date</th>'
       +'<th style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);">Payee / Memo</th>'
       +'<th style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:right;border-bottom:2px solid var(--border);">Amount</th>'
       +'<th style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);">Category / Match</th>'
       +'<th style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);padding:10px 12px;text-align:center;border-bottom:2px solid var(--border);">Status</th>'
+      +'<th style="border-bottom:2px solid var(--border);"></th>'
       +'<th style="border-bottom:2px solid var(--border);"></th>'
     +'</tr></thead><tbody>'+rows+'</tbody></table>'
     +'</div></div>';
@@ -782,6 +949,13 @@ function bankFilterBtn(key,label){
   var active=bankFilter===key;
   return '<button onclick="bankSetFilter(\''+key+'\')" style="padding:6px 14px;border-radius:20px;border:1px solid '+(active?'var(--gold)':'var(--border2)')+';background:'+(active?'var(--gold-dim)':'#fff')+';color:'+(active?'var(--gold)':'var(--muted)')+';font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">'+label+'</button>';
 }
+function bankAssignableAccounts(){
+  // Real Chart of Accounts entries that can receive a transaction (level 1 = actual accounts)
+  return ACCOUNTS.filter(function(a){return a.level>=1;}).map(function(a){
+    // Build a label like "Account name" (optionally with type). Many already have codes in name.
+    return a.name;
+  });
+}
 function bankTxnRow(t){
   var amtColor=t.dir==='in'?'var(--success)':'var(--text)';
   var amtSign=t.dir==='in'?'+':'−';
@@ -789,21 +963,24 @@ function bankTxnRow(t){
   if(t.status==='matched') statusBadge='<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(58,126,212,.12);color:var(--info);">Matched</span>';
   else if(t.status==='categorized') statusBadge='<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(46,204,113,.12);color:#16a34a;">Categorized</span>';
   else statusBadge='<span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;background:rgba(217,79,79,.1);color:#D94F4F;border:1px solid #D94F4F;">For review</span>';
+  var acctList=bankAssignableAccounts();
+  var dlOpts=acctList.map(function(a){return '<option value="'+a.replace(/"/g,'&quot;')+'"></option>';}).join('');
+  function acctInput(){
+    return '<input list="_acctlist" id="bkacc-'+t.id+'" value="'+(t.ledger?t.ledger.replace(/"/g,'&quot;'):'')+'" placeholder="Search account..." oninput="bankSetLedger('+t.id+',this.value)" autocomplete="off" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box;">';
+  }
   var catCell;
   if(t.status==='review'){
-    var ledOpts='<option value="">— Account —</option>'+BANK_LEDGERS.map(function(l){return '<option value="'+l+'"'+(t.ledger===l?' selected':'')+'>'+l+'</option>';}).join('');
     if(t.dir==='out'){
-      var venOpts='<option value="">— Vendor —</option>'+VENDORS.map(function(v){return '<option value="'+v.id+'"'+(t.vendorId===v.id?' selected':'')+'>'+v.name+'</option>';}).join('');
-      catCell='<div style="display:flex;flex-direction:column;gap:5px;min-width:200px;">'
-        +'<select id="bkven-'+t.id+'" onchange="bankSetVendor('+t.id+',this.value)" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;">'+venOpts+'</select>'
-        +'<select id="bkacc-'+t.id+'" onchange="bankSetLedger('+t.id+',this.value)" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;">'+ledOpts+'</select>'
+      var curVenName=t.vendorId?((VENDORS.find(function(x){return x.id===t.vendorId;})||{}).name||''):'';
+      catCell='<div style="display:flex;flex-direction:column;gap:5px;min-width:210px;">'
+        +'<input list="_venlist" id="bkven-'+t.id+'" value="'+curVenName.replace(/"/g,'&quot;')+'" placeholder="Search vendor..." oninput="bankSetVendorByName('+t.id+',this.value)" autocomplete="off" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box;">'
+        +acctInput()
         +'<button onclick="openMatchPicker('+t.id+')" style="padding:5px 8px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;align-self:flex-start;">Match to bill / estimate…</button>'
         +'</div>';
     } else {
-      // incoming: category + match to invoice
-      catCell='<div style="display:flex;gap:6px;align-items:center;">'
-        +'<select onchange="bankSetLedger('+t.id+',this.value)" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;max-width:170px;">'+ledOpts+'</select>'
-        +'<button onclick="openMatchPicker('+t.id+')" style="padding:6px 10px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">Match…</button>'
+      catCell='<div style="display:flex;gap:6px;align-items:center;min-width:210px;">'
+        +acctInput()
+        +'<button onclick="openMatchPicker('+t.id+')" style="padding:6px 10px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Match…</button>'
         +'</div>';
     }
   } else {
@@ -813,6 +990,8 @@ function bankTxnRow(t){
   var actionCell = t.status==='review'
     ? '<button onclick="bankConfirm('+t.id+')" style="padding:6px 14px;border-radius:7px;border:none;background:var(--gold);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Confirm</button>'
     : '<button onclick="bankUndo('+t.id+')" style="padding:6px 10px;border-radius:7px;border:1px solid var(--border2);background:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit;">Undo</button>';
+  // Delete button (remove a transaction not present in the statement, before reconciling)
+  var delCell='<button onclick="bankDeleteTxn('+t.id+')" title="Delete transaction" style="padding:5px 7px;border:1px solid var(--border2);border-radius:6px;background:none;color:var(--danger);font-size:13px;cursor:pointer;font-family:inherit;line-height:1;">🗑</button>';
   return '<tr>'
     +'<td style="padding:11px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);white-space:nowrap;">'+t.date+'</td>'
     +'<td style="padding:11px 12px;border-bottom:1px solid var(--border);"><div style="font-size:13px;font-weight:600;">'+t.payee+'</div><div style="font-size:11px;color:var(--muted);">'+t.memo+'</div></td>'
@@ -820,11 +999,37 @@ function bankTxnRow(t){
     +'<td style="padding:11px 12px;border-bottom:1px solid var(--border);">'+catCell+'</td>'
     +'<td style="padding:11px 12px;border-bottom:1px solid var(--border);text-align:center;">'+statusBadge+'</td>'
     +'<td style="padding:11px 12px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;">'+actionCell+'</td>'
+    +'<td style="padding:11px 8px;border-bottom:1px solid var(--border);text-align:center;">'+delCell+'</td>'
     +'</tr>';
+}
+function bankDeleteTxn(id){
+  var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
+  if(!confirm('Delete this transaction?\n\n'+t.date+' · '+t.payee+' · '+fmt(t.amount)+'\n\nThis removes it before reconciliation.')) return;
+  var idx=BANK_TXNS.findIndex(function(x){return x.id===id;});
+  if(idx>=0) BANK_TXNS.splice(idx,1);
+  renderBankingView();
+  flash('Transaction deleted');
 }
 function bankSetAcct(id){ bankActiveAcct=id; bankFilter='review'; renderBankingView(); }
 function bankSetFilter(f){ bankFilter=f; renderBankingView(); }
 function bankSetLedger(id,val){ var t=BANK_TXNS.find(function(x){return x.id===id;}); if(t){ t.ledger=val; } }
+function bankSetVendorByName(id,name){
+  var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
+  name=(name||'').trim();
+  // Exact match first, then partial
+  var v=VENDORS.find(function(x){return x.name.toLowerCase()===name.toLowerCase();});
+  if(!v && name) v=VENDORS.find(function(x){return x.name.toLowerCase().indexOf(name.toLowerCase())!==-1;});
+  if(v){
+    t.vendorId=v.id;
+    // Auto-fill the default account from the vendor (only if account still empty)
+    if(v.accountName && !t.ledger){
+      var accIn=document.getElementById('bkacc-'+id);
+      if(accIn){ accIn.value=v.accountName; t.ledger=v.accountName; }
+    }
+  } else {
+    t.vendorId=null;
+  }
+}
 function bankSetVendor(id,vid){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
   vid=parseInt(vid);
@@ -859,11 +1064,35 @@ function openMatchPicker(id){
   var headHTML='<div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:17px;font-weight:700;">Match transaction</div><div style="font-size:12px;color:var(--muted);">'+t.payee+' · '+(t.dir==='in'?'+':'−')+fmt(t.amount)+'</div></div><button onclick="document.getElementById(\'_matchBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button></div>';
   var bodyHTML;
   if(t.dir==='in'){
-    // Money in → match to an invoice
-    var candidates=[{ref:'INV-2026-018',label:'INV-2026-018 · ABC Construction · $12,500'},{ref:'INV-2026-014',label:'INV-2026-014 · Horizon Builders · $9,353'}];
-    bodyHTML='<div style="padding:14px 22px;max-height:50vh;overflow-y:auto;">'
-      +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Match to an invoice (money in)</div>'
-      +candidates.map(function(c){return '<div onclick="bankApplyInvoiceMatch('+id+',\''+c.ref+'\')" style="padding:11px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;font-size:13px;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'+c.label+'</div>';}).join('')
+    // Money in → apply to one or more invoices (with optional partial amounts)
+    var invoices=[
+      {ref:'INV-2026-018', client:'ABC Construction', total:12500},
+      {ref:'INV-2026-014', client:'Horizon Builders', total:9353},
+      {ref:'INV-2026-021', client:'ABC Construction', total:8000},
+      {ref:'INV-2026-022', client:'Sandra Lee', total:4200}
+    ];
+    var rowsHtml=invoices.map(function(c,idx){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;">'
+        +'<input type="checkbox" id="_minv_'+idx+'" data-total="'+c.total+'" onchange="matchInvToggle('+idx+','+t.amount+')" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;">'
+        +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;"><span style="color:var(--info);">'+c.ref+'</span> · '+c.client+'</div><div style="font-size:11px;color:var(--muted);">Invoice total: '+fmt(c.total)+'</div></div>'
+        +'<div style="flex-shrink:0;text-align:right;"><div style="font-size:9px;color:var(--muted2);text-transform:uppercase;">Apply</div>'
+          +'<input type="text" id="_mamt_'+idx+'" value="'+c.total+'" oninput="matchInvSum('+t.amount+')" disabled style="width:90px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:13px;text-align:right;">'
+        +'</div></div>';
+    }).join('');
+    bodyHTML='<div style="padding:16px 22px;max-height:46vh;overflow-y:auto;">'
+      +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Apply this deposit to one or more invoices</div>'
+      +'<div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">Check the invoices this payment covers. You can edit the amount applied for partial payments.</div>'
+      +rowsHtml
+      +'</div>'
+      +'<div style="padding:12px 22px;border-top:1px solid var(--border);background:var(--surface2);">'
+        +'<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Payment received</span><span style="font-weight:700;">'+fmt(t.amount)+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Applied to invoices</span><span id="_m_applied" style="font-weight:700;">$0</span></div>'
+        +'<div style="display:flex;justify-content:space-between;font-size:13px;border-top:1px dashed var(--border2);padding-top:6px;margin-top:6px;"><span style="color:var(--muted);">Difference</span><span id="_m_diff" style="font-weight:700;">'+fmt(t.amount)+'</span></div>'
+        +'<div id="_m_warn" style="font-size:12px;margin-top:8px;"></div>'
+      +'</div>'
+      +'<div style="padding:14px 22px;display:flex;gap:10px;justify-content:flex-end;">'
+        +'<button onclick="document.getElementById(\'_matchBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+        +'<button onclick="bankApplyInvoiceMatch('+id+')" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">✓ Apply payment</button>'
       +'</div>';
   } else {
     // Money out → choose vendor, auto-fill its default account, allow override, optional estimate
@@ -896,11 +1125,57 @@ function matchVendorChanged(){
     hint.textContent='· default: '+v.accountName+' (you can change it)';
   } else { hint.textContent=v?'· no default account set':''; }
 }
-function bankApplyInvoiceMatch(id,ref){
+function matchInvToggle(idx, received){
+  var cb=document.getElementById('_minv_'+idx);
+  var amt=document.getElementById('_mamt_'+idx);
+  if(amt) amt.disabled=!cb.checked;
+  matchInvSum(received);
+}
+function matchInvSum(received){
+  var total=0, anyChecked=false, i=0;
+  while(document.getElementById('_minv_'+i)){
+    var cb=document.getElementById('_minv_'+i);
+    if(cb.checked){
+      anyChecked=true;
+      var v=parseFloat((document.getElementById('_mamt_'+i).value||'').replace(/[$,]/g,''))||0;
+      total+=v;
+    }
+    i++;
+  }
+  var appliedEl=document.getElementById('_m_applied');
+  var diffEl=document.getElementById('_m_diff');
+  var warnEl=document.getElementById('_m_warn');
+  if(appliedEl) appliedEl.textContent=fmt(total);
+  var diff=received-total;
+  if(diffEl){ diffEl.textContent=(diff<0?'-':'')+fmt(Math.abs(diff)); diffEl.style.color=Math.abs(diff)<0.005?'#16a34a':'var(--danger)'; }
+  if(warnEl){
+    if(!anyChecked){ warnEl.innerHTML=''; }
+    else if(Math.abs(diff)<0.005){ warnEl.innerHTML='<span style="color:#16a34a;font-weight:600;">✓ Applied amount matches the payment.</span>'; }
+    else if(diff>0){ warnEl.innerHTML='<span style="color:var(--warning);">'+fmt(diff)+' of the payment is still unapplied.</span>'; }
+    else { warnEl.innerHTML='<span style="color:var(--danger);">Applied amount exceeds the payment by '+fmt(-diff)+'.</span>'; }
+  }
+}
+function bankApplyInvoiceMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
-  t.matchType='invoice'; t.matchRef=ref; t.ledger='Accounts Receivable';
+  var picks=[]; var total=0; var i=0;
+  while(document.getElementById('_minv_'+i)){
+    var cb=document.getElementById('_minv_'+i);
+    if(cb.checked){
+      var label=cb.parentNode.querySelector('div span') ? cb.parentNode.querySelector('div span').textContent : ('Invoice '+(i+1));
+      var amt=parseFloat((document.getElementById('_mamt_'+i).value||'').replace(/[$,]/g,''))||0;
+      picks.push({ref:label, amount:amt});
+      total+=amt;
+    }
+    i++;
+  }
+  if(!picks.length){ flash('Select at least one invoice','#D94F4F'); return; }
+  t.matchType='invoice';
+  t.matchRef=picks.map(function(p){return p.ref;}).join(', ');
+  t.appliedInvoices=picks;
+  t.ledger='Accounts Receivable';
   var bg=document.getElementById('_matchBg'); if(bg) bg.remove();
-  renderBankingView(); flash('Matched to '+ref);
+  renderBankingView();
+  flash('Applied to '+picks.length+' invoice'+(picks.length>1?'s':''));
 }
 function bankApplyVendorMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
@@ -1119,6 +1394,8 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('addBtn').addEventListener('click',function(){
     if(currentView==='coa') openCOAModal(null);
     else if(currentView==='bills') openBillModal();
+    else if(currentView==='banking') openImportModal();
+    else if(currentView==='recon') openImportModal();
     else { populateVendorAccounts(); document.getElementById('vendorModal').classList.add('open'); }
   });
   document.addEventListener('keydown',function(e){

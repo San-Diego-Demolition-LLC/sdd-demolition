@@ -1629,9 +1629,9 @@ function renderDetail(id){
             if(archivedJ.length){
               out += '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:18px;">'
                 +'<div onclick="toggleBillingArchived('+c.id+')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);cursor:pointer;user-select:none;">'
-                  +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">'
+                  +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--success);">'
                     +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
-                    +'Archived <span style="color:var(--text);">('+archivedJ.length+')</span>'
+                    +'Archived <span style="color:var(--success);">('+archivedJ.length+')</span>'
                   +'</div>'
                   +'<span id="billarch-chev-'+c.id+'" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
                 +'</div>'
@@ -2570,9 +2570,9 @@ function openJobAssignPanel(customerId, contactId, estFilter){
     if(archivedIdx.length){
       jobsHTML+='<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:8px;">'
         +'<div onclick="japToggleArchived()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);cursor:pointer;user-select:none;">'
-          +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">'
+          +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--success);">'
             +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
-            +'Archived <span style="color:var(--text);">('+archivedIdx.length+')</span>'
+            +'Archived <span style="color:var(--success);">('+archivedIdx.length+')</span>'
           +'</div><span id="_jap_arch_chev" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
         +'</div>'
         +'<div id="_jap_arch_body" style="display:none;padding:12px 14px 2px;">'+archivedIdx.map(function(idx){return jobCard(jobs[idx],idx,false);}).join('')+'</div>'
