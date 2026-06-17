@@ -617,10 +617,9 @@ svg{display:block;}
         <table class="line-table"><thead><tr><th style="width:9%;">Type</th><th style="width:33%;">Description</th><th style="width:11%;">Qty</th><th style="width:11%;">Unit</th><th style="width:13%;">Unit price</th><th style="width:13%;">Total</th><th style="width:10%;"></th></tr></thead>
         <tbody id="co_lines"></tbody></table>
         <div style="background:var(--surface2);border-radius:8px;padding:14px 16px;margin-top:12px;">
-          <div class="tot-row"><span>Original estimate total</span><span id="co_orig_total">—</span></div>
           <div class="tot-row" style="color:var(--success);"><span>Additions</span><span id="co_adds">+$0</span></div>
           <div class="tot-row" style="color:var(--danger);"><span>Deductions</span><span id="co_deducts">−$0</span></div>
-          <div class="tot-row grand"><span>New contract total</span><span id="co_new_total" style="color:var(--gold);">—</span></div>
+          <div class="tot-row grand"><span>Change order total</span><span id="co_new_total" style="color:var(--gold);">—</span></div>
         </div>
       </div>
     </div>
@@ -2732,7 +2731,7 @@ function openCOForm(){
   document.getElementById('co_info').style.display='none';
   document.getElementById('co_num_preview').textContent='Select original estimate to generate CO number';
   ['co_adds','co_deducts'].forEach(id=>document.getElementById(id).textContent=id.includes('add')?'+$0':'−$0');
-  ['co_new_total','co_orig_total'].forEach(id=>document.getElementById(id).textContent='—');
+  ['co_new_total'].forEach(id=>document.getElementById(id).textContent='—');
   const originals=ESTIMATES.filter(e=>!e.isChangeOrder);
   const sel=document.getElementById('co_orig');
   sel.innerHTML='<option value="">— Select —</option>'+originals.map(e=>`<option value="${e.id}">${e.num} · ${e.customer} · ${e.jobName||e.address} · ${fmt(e.amount)}</option>`).join('');
@@ -2755,7 +2754,7 @@ function onSelectOrig(val){
   document.getElementById('co_next').textContent=next;
   document.getElementById('co_new_num').textContent=newNum;
   document.getElementById('co_num_preview').textContent='Change order number: '+newNum;
-  document.getElementById('co_orig_total').textContent=fmt(est.amount);
+  var _ot=document.getElementById('co_orig_total'); if(_ot) _ot.textContent=fmt(est.amount);
   updateCOTotals(est.amount);
 }
 
@@ -2790,7 +2789,8 @@ function updateCOTotals(origAmt){
   });
   document.getElementById('co_adds').textContent='+'+fmt(adds);
   document.getElementById('co_deducts').textContent='−'+fmt(deducts);
-  document.getElementById('co_new_total').textContent=fmt(origAmt+adds-deducts);
+  // Change order total is ONLY the value of its own items (additions − deductions)
+  document.getElementById('co_new_total').textContent=fmt(adds-deducts);
 }
 
 function saveCO(action){
@@ -2819,7 +2819,7 @@ function saveCO(action){
     jobName:(origEst.jobName||origEst.address)+' — CO #'+next,
     poNumber:document.getElementById('co_po').value.trim()||origEst.poNumber||'',
     status:action==='draft'?'estimate-pending':'pending-approval',
-    amount:origEst.amount+netChange, netChange, reason, description:desc,
+    amount:netChange, netChange, reason, description:desc,
     date:'Today', schedStart:'', schedEnd:'', waiver:origEst.waiver, payment:origEst.payment,
     timeline:[
       {action:'Change order created from '+origEst.num, by, date:'Today', color:'#C8822A'},

@@ -450,32 +450,6 @@ svg{display:block;}
         </div>
       </div>
 
-      <div class="fsec">
-        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Payment terms</div>
-        <div class="ff" style="margin-bottom:0;">
-          <label>Does this customer have payment terms?</label>
-          <div style="display:flex;gap:18px;margin-top:8px;">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;">
-              <input type="radio" name="f_haspt" value="yes" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;" onchange="togglePaymentTerms(true)"> Yes
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;">
-              <input type="radio" name="f_haspt" value="no" checked style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;" onchange="togglePaymentTerms(false)"> No
-            </label>
-          </div>
-          <div id="f_pt_wrap" style="display:none;margin-top:12px;">
-            <label>Terms</label>
-            <select id="f_payment_terms">
-              <option>Net 30</option>
-              <option>Net 15</option>
-              <option>50% deposit / 50% completion</option>
-              <option>Progress billing</option>
-              <option>Due on completion</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-
     
     <div class="modal-foot">
       <div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);font-weight:700;">*</span> are required</div>
@@ -2382,7 +2356,7 @@ function saveCustomer(){
     since:(document.getElementById('f_since')||{value:'2026'}).value,
     type:typeVal,
     waiver:(document.getElementById('f_waiver')||{value:'conditional'}).value,
-    paymentTerms:((document.querySelector('input[name="f_haspt"]:checked')||{value:'no'}).value==='yes')?(document.getElementById('f_payment_terms')||{value:''}).value:'',
+    paymentTerms:'',
     portal:(document.getElementById('f_billing')||{value:''}).value==='Client portal',
     notes:((document.getElementById('f_notes')||{value:''}).value||'').trim(),
     contacts:[{
@@ -3626,6 +3600,10 @@ function ajToggleSI(show){
   var t=document.getElementById('_aj_si_text');
   if(t) t.style.display=show?'block':'none';
 }
+function ajTogglePT(show){
+  var s=document.getElementById('_aj_pt_terms');
+  if(s) s.style.display=show?'block':'none';
+}
 function ajRemoveBillingContact(i){
   var r=document.getElementById('_aj_bill_row_'+i);
   if(r)r.parentNode.removeChild(r);
@@ -3837,6 +3815,13 @@ function openBillingPopup(){
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>'
     +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this customer have payment terms?</div>'
+    +'<div style="display:flex;gap:18px;margin-bottom:6px;">'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_pt" value="yes" onchange="ajTogglePT(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
+    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_pt" value="no" checked onchange="ajTogglePT(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
+    +'</div>'
+    +'<select id="_aj_pt_terms" style="display:none;width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;margin-bottom:4px;"><option>Net 30</option><option>Net 15</option><option>50% deposit / 50% completion</option><option>Progress billing</option><option>Due on completion</option></select>'
+    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>'
     +'<div id="_aj_bill_list"></div>'
     +'<div id="_aj_bill_new"></div>'
@@ -3903,6 +3888,11 @@ function ajCommitJob(skipLater){
         if(ct&&!billing.some(function(b){return String(b.id)===String(ct.id);})) billing.push({id:ct.id,name:ct.name,email:ct.email,phone:ct.phone,role:role});
       }
     });
+  }
+  // Payment terms (from billing popup) → saved on the customer
+  var _pt=document.querySelector('input[name="_aj_pt"]:checked');
+  if(_pt){
+    cust.paymentTerms = (_pt.value==='yes') ? ((document.getElementById('_aj_pt_terms')||{value:''}).value||'') : '';
   }
   var infoMissing=(!_si||!_sov||!_wv);
   var pendingBilling=billing.length===0||infoMissing;
