@@ -470,10 +470,14 @@ svg{display:block;}
       <div class="form-sec">
         <div class="form-sec-title">Customer & job info</div>
         <div class="ff fg2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="ff"><label>Customer</label><select id="f_customer"><option>ABC Construction Corp</option><option>Horizon Builders LLC</option><option>Pacific Coast Development</option><option>Silverstone Group</option></select></div>
+          <div class="ff"><label>Customer</label><select id="f_customer" onchange="onEstCustomerChange()"><option value="">— Select customer —</option></select></div>
           <div class="ff"><label>Project contact</label><select id="f_contact"><option>James Torres</option><option>Sandra Lee</option><option>Robert Park</option><option>David Chen</option></select></div>
           <div class="ff"><label>PO Number</label><input type="text" id="f_po" placeholder="e.g. PO-4891"></div>
-          <div class="ff"><label>Job name</label><input type="text" id="f_jobname" placeholder="e.g. Harbor Blvd Demo Phase 1"></div>
+          <div class="ff"><label>Job</label>
+            <select id="f_jobsel" onchange="onEstJobChange()"><option value="">— Select a job —</option></select>
+            <div id="f_nojob_msg" style="display:none;font-size:11px;color:var(--muted);margin-top:6px;">This customer has no jobs yet. <button type="button" onclick="estCreateNewJob()" style="border:none;background:none;color:var(--gold);font-weight:700;font-family:inherit;font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">+ Create new job</button></div>
+            <input type="hidden" id="f_jobname">
+          </div>
           <div class="ff"><label>Created by</label><select id="f_createdby"><option>Carlos Mendez — Estimator</option><option>Ana Rivera — Estimator</option><option>Leontina Teles — Admin</option><option>Laura Kim — Admin</option></select></div>
           <div class="ff"><label>Date</label><input type="date" id="f_date" value="2026-05-14"></div>
         </div>
@@ -841,13 +845,13 @@ const TAX = 0.0875;
 // ══ STATUS CONFIGURATION ══
 // All statuses aligned across Estimates, Jobs, and Invoices
 const STATUS = {
-  'estimate-pending':  {label:'Estimate Pending',          pill:'pill-pending-est', color:'#7C5CBF', desc:'Draft created — not yet sent to client'},
-  'pending-approval':  {label:'Pending Approval',          pill:'pill-pending-appr',color:'#3A7ED4', desc:'Sent to client — awaiting signature'},
-  'approved':          {label:'Approved · Pending Scheduling', pill:'pill-approved',color:'#B8922A', desc:'Client signed — needs scheduling'},
-  'in-progress':       {label:'In Progress',               pill:'pill-progress',    color:'#C8822A', desc:'Job is being executed'},
-  'ready-to-bill':     {label:'Ready to Bill',             pill:'pill-billing',     color:'#D94F4F', desc:'Job completed — create invoice'},
-  'invoice-sent':      {label:'Invoice Sent · AR',         pill:'pill-invoice-sent',color:'#3A7ED4', desc:'Invoice sent — awaiting payment'},
-  'payment-received':  {label:'Payment Received',          pill:'pill-payment',     color:'#3A9E6A', desc:'Payment confirmed — job closed'},
+  'estimate-pending':  {label:'Incomplete',                  pill:'pill-pending-est', color:'#7C5CBF', desc:'Estimate created — not yet sent to client'},
+  'pending-approval':  {label:'Estimate Sent · Pending Approval', pill:'pill-pending-appr',color:'#3A7ED4', desc:'Sent to client — awaiting approval'},
+  'approved':          {label:'Approved · Pending Scheduled', pill:'pill-approved',color:'#B8922A', desc:'Client approved — needs scheduling'},
+  'in-progress':       {label:'Job in Progress',            pill:'pill-progress',    color:'#C8822A', desc:'Scheduled — job is being executed'},
+  'ready-to-bill':     {label:'Job Completed · Ready to Bill', pill:'pill-billing',  color:'#D94F4F', desc:'Job completed — create invoice'},
+  'invoice-sent':      {label:'Billed · AR',                pill:'pill-invoice-sent',color:'#3A7ED4', desc:'Invoice created — awaiting payment'},
+  'payment-received':  {label:'Billed · Paid',              pill:'pill-payment',     color:'#3A9E6A', desc:'Payment confirmed — job closed'},
   'rejected':          {label:'Estimate Rejected',         pill:'pill-rejected',    color:'#D94F4F', desc:'Client rejected this estimate'},
   'void':              {label:'Void',                        pill:'pill-void',         color:'#AAA',    desc:'Estimate voided — no longer active'},
 };
@@ -2503,7 +2507,69 @@ function openTypeSel(){document.getElementById('typeSel').classList.add('open');
 function closeTypeSel(){document.getElementById('typeSel').classList.remove('open');}
 
 // ══ FORM ══
-function openNewEstForm(){document.getElementById('formOverlay').classList.add('open');}
+function openNewEstForm(){
+  populateEstCustomers();
+  document.getElementById('formOverlay').classList.add('open');
+}
+// Fill the Customer dropdown from the shared data (SDD) customers
+function populateEstCustomers(preselect){
+  var sel=document.getElementById('f_customer'); if(!sel) return;
+  var custs=(window.SDD&&window.SDD.customers)?window.SDD.customers:[];
+  sel.innerHTML='<option value="">— Select customer —</option>'+custs.map(function(c){return '<option value="'+(c.name||'').replace(/"/g,'&quot;')+'">'+(c.name||'')+'</option>';}).join('');
+  if(preselect){ sel.value=preselect; }
+  onEstCustomerChange();
+}
+// Get all jobs (across contacts) for a customer object
+function _estJobsForCustomer(cust){
+  var jobs=[];
+  if(!cust||!cust.contacts) return jobs;
+  cust.contacts.forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ jobs.push(j); }); });
+  return jobs;
+}
+function onEstCustomerChange(){
+  var name=(document.getElementById('f_customer')||{value:''}).value;
+  var jobSel=document.getElementById('f_jobsel');
+  var noMsg=document.getElementById('f_nojob_msg');
+  var cust=(window.SDD&&window.SDD.customers)?window.SDD.customers.find(function(c){return c.name===name;}):null;
+  var jobs=_estJobsForCustomer(cust);
+  if(!jobSel) return;
+  if(!name){
+    jobSel.innerHTML='<option value="">— Select a job —</option>';
+    jobSel.style.display=''; if(noMsg) noMsg.style.display='none';
+    return;
+  }
+  if(jobs.length){
+    jobSel.style.display='';
+    if(noMsg) noMsg.style.display='none';
+    jobSel.innerHTML='<option value="">— Select a job —</option>'+jobs.map(function(j,i){
+      var label=(j.jobName||j.address||'Job '+(i+1))+(j.est?(' · '+j.est):'');
+      return '<option value="'+i+'">'+label.replace(/"/g,'&quot;')+'</option>';
+    }).join('');
+  } else {
+    // No jobs → hide selector, show the create-new-job message
+    jobSel.style.display='none';
+    jobSel.innerHTML='<option value="">— Select a job —</option>';
+    if(noMsg) noMsg.style.display='block';
+  }
+}
+function onEstJobChange(){
+  var name=(document.getElementById('f_customer')||{value:''}).value;
+  var idx=(document.getElementById('f_jobsel')||{value:''}).value;
+  var cust=(window.SDD&&window.SDD.customers)?window.SDD.customers.find(function(c){return c.name===name;}):null;
+  var jobs=_estJobsForCustomer(cust);
+  var j=jobs[parseInt(idx,10)];
+  if(!j) return;
+  var jn=document.getElementById('f_jobname'); if(jn) jn.value=j.jobName||'';
+  var ad=document.getElementById('f_addr'); if(ad) ad.value=(j.address||'').split(',')[0]||'';
+  var po=document.getElementById('f_po'); if(po&&j.po) po.value=j.po;
+}
+// Send the user to the customer module to create a job, then come back to the estimate
+function estCreateNewJob(){
+  var name=(document.getElementById('f_customer')||{value:''}).value;
+  if(!name){ flash('Select a customer first','var(--danger)'); return; }
+  // Pass the customer so the customer module opens the New job flow for them, and returns here
+  window.location.href='/sdd-customers.html?newJobFor='+encodeURIComponent(name)+'&returnTo=estimates';
+}
 function closeNewEstForm(){document.getElementById('formOverlay').classList.remove('open');}
 
 function addLine(tbodyId){
@@ -2926,14 +2992,18 @@ document.addEventListener('DOMContentLoaded',function(){
     var ad=decodeURIComponent(params.get('addr')||'');
     openNewEstForm();
     setTimeout(function(){
-      var cs=document.getElementById('f_customer');
-      if(cs && cstm){ // add the customer if not present, then select it
-        var has=false; for(var i=0;i<cs.options.length;i++){ if(cs.options[i].text===cstm){has=true;cs.selectedIndex=i;break;} }
-        if(!has){ var o=document.createElement('option'); o.text=cstm; cs.add(o,0); cs.selectedIndex=0; }
+      // Select the customer in the dynamic dropdown (this also loads their jobs)
+      populateEstCustomers(cstm);
+      var jobSel=document.getElementById('f_jobsel');
+      if(jobSel && jn){
+        // Find the job option whose label starts with the job name
+        for(var i=0;i<jobSel.options.length;i++){
+          if(jobSel.options[i].text.indexOf(jn)===0){ jobSel.selectedIndex=i; onEstJobChange(); break; }
+        }
       }
       var jnf=document.getElementById('f_jobname'); if(jnf&&jn) jnf.value=jn;
       var af=document.getElementById('f_addr'); if(af&&ad){ af.value=ad.split(',')[0]||ad; }
-    },50);
+    },80);
   }
 });
 
