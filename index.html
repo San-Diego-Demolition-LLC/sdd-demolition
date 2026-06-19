@@ -347,6 +347,15 @@ svg{display:block;}
     </div>
   </div>
 
+  <!-- ACTION NEEDED: estimates over 1 year, not invoiced -->
+  <div class="card" id="oldEstCard" style="margin-bottom:16px;display:none;border:1px solid rgba(217,79,79,.3);background:rgba(217,79,79,.04);">
+    <div class="card-title" style="color:var(--danger);">
+      ⚠ Action Needed — Estimates over 1 year, not invoiced
+      <span style="font-size:11px;color:var(--muted);font-weight:400;" id="oldEstCount"></span>
+    </div>
+    <div id="oldEstList"></div>
+  </div>
+
   <!-- PIPELINE + ACTIVITY -->
   <div class="content-grid">
     <div>
@@ -600,6 +609,7 @@ svg{display:block;}
 
 </div>
 
+<script src="sdd-data.js"></script>
 <script>
 const months = ['Dec','Jan','Feb','Mar','Apr','May'];
 const revenue = [28000, 31000, 22000, 45000, 38000, 67400];
@@ -630,6 +640,61 @@ document.addEventListener('keydown',e=>{
     document.getElementById('apModalBg')?.classList.remove('open');
   }
 });
+
+// ── Action Needed: estimates over 1 year old with no invoice ──
+(function(){
+  try {
+    if(!(window.SDD && window.SDD.customers)) return;
+    var TODAY = new Date('2026-06-18');
+    var ONE_YEAR_MS = 365*24*60*60*1000;
+    var rows = [];
+    window.SDD.customers.forEach(function(c){
+      (c.contacts||[]).forEach(function(ct){
+        (ct.jobs||[]).forEach(function(job){
+          (job.estimates||[]).forEach(function(e){
+            // Invoices tied to this estimate
+            var invs = (job.invoices||[]).filter(function(iv){ return (iv.originalEst||iv.est)===e.est; });
+            if(invs.length>0) return; // already invoiced
+            var d = new Date(e.date||0);
+            if(isNaN(d)) return;
+            var ageMs = TODAY - d;
+            if(ageMs >= ONE_YEAR_MS){
+              var ageYears = (ageMs/ONE_YEAR_MS);
+              rows.push({
+                customer: c.name,
+                job: job.jobName||job.projectName||job.address||'Job',
+                est: e.est,
+                amount: e.amount||'$0',
+                date: e.date||'',
+                ageText: ageYears>=2 ? Math.floor(ageYears)+' years old' : 'over 1 year old'
+              });
+            }
+          });
+        });
+      });
+    });
+    var card = document.getElementById('oldEstCard');
+    var list = document.getElementById('oldEstList');
+    var count = document.getElementById('oldEstCount');
+    if(!card || !list) return;
+    if(rows.length===0){ card.style.display='none'; return; }
+    card.style.display='block';
+    if(count) count.textContent = rows.length+(rows.length===1?' item':' items');
+    list.innerHTML = rows.map(function(r){
+      return '<div class="alert-item alert-danger" style="cursor:default;">'
+        +'<div class="alert-icon ai-danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>'
+        +'<div class="alert-text">'
+          +'<div class="alert-title">'+r.est+' — '+r.job+' · not invoiced</div>'
+          +'<div class="alert-sub">'+r.customer+' · '+r.amount+' · Estimate dated '+r.date+' · '+r.ageText+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:8px;align-items:center;">'
+          +'<div class="alert-amt" style="color:var(--danger);">'+r.amount+'</div>'
+          +'<button class="btn btn-ghost btn-sm" onclick="window.location.href=\'/sdd-invoices.html\'">Create invoice</button>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  } catch(err){ console.error('old estimates check failed', err); }
+})();
 </script>
 
 <!-- ══ ACCOUNTS RECEIVABLE MODAL ══ -->

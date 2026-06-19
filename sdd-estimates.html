@@ -478,6 +478,7 @@ svg{display:block;}
             <div id="f_nojob_msg" style="display:none;font-size:11px;color:var(--muted);margin-top:6px;">This customer has no jobs yet. <button type="button" onclick="estCreateNewJob()" style="border:none;background:none;color:var(--gold);font-weight:700;font-family:inherit;font-size:11px;cursor:pointer;text-decoration:underline;padding:0;">+ Create new job</button></div>
             <input type="hidden" id="f_jobname">
           </div>
+          <div class="ff"><label>Project Name</label><input type="text" id="f_projectname" placeholder="Descriptive project name for this estimate"></div>
           <div class="ff"><label>Created by</label><select id="f_createdby"><option>Carlos Mendez — Estimator</option><option>Ana Rivera — Estimator</option><option>Leontina Teles — Admin</option><option>Laura Kim — Admin</option></select></div>
           <div class="ff"><label>Date</label><input type="date" id="f_date" value="2026-05-14"></div>
         </div>
@@ -2760,7 +2761,7 @@ function saveNewEstimate(action){
     isChangeOrder:false, customer, contact, createdBy,
     address:document.getElementById('f_addr').value,
     jobAddress:document.getElementById('f_addr').value+', '+document.getElementById('f_city').value+' '+document.getElementById('f_zip').value,
-    companyAddress:'', jobName, poNumber:document.getElementById('f_po').value,
+    companyAddress:'', jobName, projectName:(document.getElementById('f_projectname')||{value:''}).value, poNumber:document.getElementById('f_po').value,
     termsType: termsType,
     termsLabel: termsType ? TERMS_AND_CONDITIONS[termsType]?.label : '',
     termsText: termsType ? TERMS_AND_CONDITIONS[termsType]?.text : '',
