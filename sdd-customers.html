@@ -329,7 +329,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v8</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v12</span>
 </div>
 
 <div class="app">
@@ -871,6 +871,7 @@ function _jobLinePaid(j, lineId){
   return invs.every(function(iv){return (iv.status||'').toLowerCase()==='paid';});
 }
 function _isJobArchived(j){
+  if(j.inactive) return true;
   var ests=j.estimates||[]; var cos=j.changeOrders||[];
   if(!ests.length && !cos.length) return false;
   return ests.every(function(e){return _jobLinePaid(j,e.est);}) && cos.every(function(co){return _jobLinePaid(j,co.est);});
@@ -1108,6 +1109,118 @@ function printDocPdf(){
   w.document.close(); w.focus();
   setTimeout(function(){ w.print(); },300);
 }
+function openJobDetailPopup(customerId, estNum){
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
+  if(!c) return;
+  var job=getCustomerJobs(c).find(function(j){return j.est===estNum;});
+  if(!job) return;
+  var pn=job.projectName||job.jobName||job.address||'Job';
+  var fullAddr=(job.address||'')+(job.city?(', '+job.city):'');
+
+  // Helpers (scoped)
+  function _lineInvoices(lineId){ return (job.invoices||[]).filter(function(iv){return (iv.originalEst||iv.est)===lineId;}); }
+  function _unbilled(lineId, amount){
+    var inv=_lineInvoices(lineId).reduce(function(s,iv){return s+(parseFloat((iv.amount||'0').replace(/[$,]/g,''))||0);},0);
+    return ((parseFloat((amount||'0').replace(/[$,]/g,''))||0)-inv)>0.005;
+  }
+  function _stCol(st){ return st==='Approved'||st==='Paid'?'#16a34a':/pending/i.test(st||'')?'#b8922a':'#2563eb'; }
+  function _docJson(item,t){ return encodeURIComponent(JSON.stringify({est:item.est,amount:item.amount,status:item.status,date:item.date,scope:item.scope||item.description||'',type:t,project:pn,customer:c.name,address:job.address||''})); }
+  function _warn(kind){ var w=kind==='co'?'change order':'estimate'; return '<div style="font-size:11px;font-weight:700;color:#D94F4F;margin-top:3px;">⚠ This '+w+' has an unbilled balance</div>'; }
+  function _billed(lineId){ var invs=_lineInvoices(lineId); if(!invs.length)return ''; return invs.map(function(iv){var col=(iv.status||'').toLowerCase()==='paid'?'#16a34a':'#3A7ED4'; return '<div style="font-size:11px;font-weight:600;color:'+col+';margin-top:2px;">Billed '+iv.est+' '+iv.amount+'</div>';}).join(''); }
+
+  // Build estimate rows with nested COs (like the estimates popup)
+  var ests=(job.estimates||[]).slice().sort(function(a,b){return new Date(a.date||0)-new Date(b.date||0);});
+  var rows = ests.length ? ests.map(function(item,i){
+    var childCOs=(job.changeOrders||[]).filter(function(co){return co.originalEst===item.est;});
+    var estUnb=_unbilled(item.est,item.amount);
+    var coToggle = childCOs.length ? '<span onclick="event.stopPropagation();var b=document.getElementById(\'_jd_co_'+i+'\');if(b){var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';}" style="cursor:pointer;color:#b8922a;font-size:11px;font-weight:700;margin-left:8px;">▸ '+childCOs.length+' CO</span>' : '';
+    var estRow='<div onclick="openDocPdf(\''+_docJson(item,'estimates')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;" onmouseover="this.style.background=\'#fafaf8\'" onmouseout="this.style.background=\'\'">'
+      +'<div style="display:flex;align-items:center;flex-wrap:wrap;"><span style="font-weight:700;font-size:14px;color:#2563eb;">'+item.est+'</span><span style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-weight:700;margin-left:8px;">EST</span>'+coToggle+'</div>'
+      +'<div style="text-align:right;flex-shrink:0;margin-left:12px;"><div style="font-weight:700;font-size:15px;color:#222;">'+item.amount+'</div><div style="font-size:11px;font-weight:600;color:'+_stCol(item.status)+';margin-top:1px;">'+item.status+'</div>'+_billed(item.est)+(estUnb?_warn('est'):'')+'</div>'
+      +'</div>';
+    var coRows=childCOs.map(function(co){
+      var coUnb=_unbilled(co.est,co.amount);
+      return '<div onclick="openDocPdf(\''+_docJson(co,'changeOrders')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:6px 16px 6px 34px;border-bottom:1px solid #f5f5f5;background:#fcfbf7;cursor:pointer;">'
+        +'<div style="display:flex;align-items:center;"><span style="color:#b8922a;font-size:11px;margin-right:6px;">↳</span><span style="font-weight:700;font-size:13px;color:#b8922a;">'+co.est+'</span><span style="font-size:9px;padding:2px 7px;border-radius:20px;background:rgba(184,146,42,.12);color:#b8922a;font-weight:700;margin-left:8px;">CO</span></div>'
+        +'<div style="text-align:right;flex-shrink:0;margin-left:12px;"><div style="font-weight:700;font-size:13px;color:#222;">'+co.amount+'</div><div style="font-size:10px;font-weight:600;color:'+_stCol(co.status)+';margin-top:2px;">'+co.status+'</div>'+_billed(co.est)+(coUnb?_warn('co'):'')+'</div>'
+        +'</div>';
+    }).join('');
+    return estRow + (childCOs.length?'<div id="_jd_co_'+i+'" style="display:none;">'+coRows+'</div>':'');
+  }).join('') : '<div style="padding:20px;text-align:center;color:#999;font-style:italic;font-size:13px;">No estimates for this job yet</div>';
+
+  // Invoices section (all invoices for the job)
+  var allInvs=(job.invoices||[]).slice().sort(function(a,b){return new Date(a.date||0)-new Date(b.date||0);});
+  var invRows = allInvs.length ? allInvs.map(function(iv){
+    var paid=(iv.status||'').toLowerCase()==='paid';
+    var col=paid?'#16a34a':'#3A7ED4';
+    return '<div onclick="openDocPdf(\''+_docJson(iv,'invoices')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;" onmouseover="this.style.background=\'#fafaf8\'" onmouseout="this.style.background=\'\'">'
+      +'<div style="display:flex;align-items:center;"><span style="font-weight:700;font-size:14px;color:#16a34a;">'+iv.est+'</span><span style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(46,204,113,.12);color:#16a34a;font-weight:700;margin-left:8px;">INV</span><span style="font-size:11px;color:var(--muted);margin-left:8px;">→ '+(iv.originalEst||'')+'</span></div>'
+      +'<div style="text-align:right;flex-shrink:0;margin-left:12px;"><div style="font-weight:700;font-size:15px;color:#222;">'+iv.amount+'</div><div style="font-size:11px;font-weight:600;color:'+col+';margin-top:2px;">'+(iv.status||'Unpaid')+'</div></div>'
+      +'</div>';
+  }).join('') : '<div style="padding:16px;text-align:center;color:#999;font-style:italic;font-size:13px;">No invoices for this job yet</div>';
+
+  function infoCell(label,val){ return '<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;">'+label+'</div><div style="font-size:13px;font-weight:600;color:var(--text);">'+(val||'—')+'</div></div>'; }
+
+  var ex=document.getElementById('_jobDetailBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_jobDetailBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100000;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;';
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;margin:auto;">'
+    +'<div style="padding:20px 24px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;">'
+      +'<div><div style="font-size:21px;font-weight:800;">'+pn+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">'+c.name+'</div></div>'
+      +'<button onclick="document.getElementById(\'_jobDetailBg\').remove()" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;">✕</button>'
+    +'</div>'
+    +'<div style="padding:14px 24px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:12px 14px;">'
+      +infoCell('Job address', fullAddr)
+      +infoCell('Date created', job.date)
+      +infoCell('Created by', job.createdBy||job.contactName)
+      +infoCell('Project manager', job.contactName||job.pm)
+      +(function(){ var inactive=_isJobArchived(job); var col=inactive?'var(--muted)':'#16a34a'; var lbl=inactive?'Inactive':'Active'; return '<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;">Status</div><div style="font-size:13px;font-weight:700;color:'+col+';">'+lbl+'</div></div>'; })()
+    +'</div>'
+    +'<div style="padding:10px 24px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Estimates &amp; change orders</div>'
+    +'<div style="max-height:30vh;overflow-y:auto;border-top:1px solid #f0f0f0;">'+rows+'</div>'
+    +'<div style="padding:10px 24px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:1px solid var(--border);">Invoices</div>'
+    +'<div style="max-height:24vh;overflow-y:auto;border-top:1px solid #f0f0f0;">'+invRows+'</div>'
+    +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;background:var(--surface2);">'
+      +'<button onclick="jdInactivateJob('+c.id+',\''+job.est+'\')" style="padding:10px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Inactivate job</button>'
+      +'<button onclick="jdNewEstimate(\''+encodeURIComponent(pn)+'\',\''+encodeURIComponent(c.name)+'\',\''+encodeURIComponent(job.address||'')+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">+ New estimate</button>'
+    +'</div>'
+    +'</div>';
+  document.body.appendChild(bg);
+}
+// New estimate from the job popup → go to estimates with the selector (new or change order)
+function jdNewEstimate(pn, customer, addr){
+  window.location.href='/sdd-estimates.html?newFor='+pn+'&customer='+customer+'&addr='+addr;
+}
+// Inactivate the job → move to Archived (mark a flag), with confirmation
+function jdInactivateJob(customerId, estNum){
+  var bg=document.getElementById('_jobDetailBg');
+  var ex=document.getElementById('_jdConfirmBg'); if(ex) ex.remove();
+  var cf=document.createElement('div');
+  cf.id='_jdConfirmBg';
+  cf.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100010;display:flex;align-items:center;justify-content:center;padding:20px;';
+  cf.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Inactivate this job?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">This will move the job to the Archived section. You can still view it there.</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Inactivate</button>'
+    +'</div></div>';
+  document.body.appendChild(cf);
+  document.getElementById('_jdCancel').onclick=function(){ cf.remove(); };
+  document.getElementById('_jdOk').onclick=function(){
+    var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
+    if(c){
+      var job=getCustomerJobs(c).find(function(j){return j.est===estNum;});
+      if(job){ job.inactive=true; }
+      if(window.SDD) window.SDD.save();
+    }
+    cf.remove();
+    if(bg) bg.remove();
+    renderDetail(parseInt(customerId)); renderList();
+  };
+}
 function showJobPopup(e, customerId, estNum, type){
   e.stopPropagation();
   var ex=document.getElementById('_jobListPopup');
@@ -1178,7 +1291,7 @@ function showJobPopup(e, customerId, estNum, type){
       // Nested COs (collapsible block)
       var coRows = childCOs.map(function(co){
         var coUnbilled=_unbilled(co.est, co.amount);
-        return '<div onclick="openDocPdf(\''+_docJson(co,'changeOrders')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:10px 16px 10px 34px;border-bottom:1px solid #f5f5f5;background:#fcfbf7;cursor:pointer;" onmouseover="this.style.background=\'#f7f3e8\'" onmouseout="this.style.background=\'#fcfbf7\'">'
+        return '<div onclick="openDocPdf(\''+_docJson(co,'changeOrders')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:6px 16px 6px 34px;border-bottom:1px solid #f5f5f5;background:#fcfbf7;cursor:pointer;" onmouseover="this.style.background=\'#f7f3e8\'" onmouseout="this.style.background=\'#fcfbf7\'">'
           +'<div style="display:flex;align-items:center;">'
             +'<span style="color:#b8922a;font-size:11px;margin-right:6px;">↳</span>'
             +'<span style="font-weight:700;font-size:13px;color:#b8922a;">'+co.est+'</span>'
@@ -1408,6 +1521,7 @@ function renderDetail(id){
   }
   // A job is fully archived (disappears from Active) when EVERY estimate AND every change order is paid
   function isJobFullyArchived(j){
+    if(j.inactive) return true;
     var ests=j.estimates||[];
     var cos=j.changeOrders||[];
     if(!ests.length && !cos.length) return false;
@@ -1432,7 +1546,7 @@ function renderDetail(id){
       ? '<span onclick="event.stopPropagation();editJobBilling('+c.id+',\'' +jid+ '\')" title="Click to add billing information" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--danger);background:none;border:1px solid var(--danger);border-radius:20px;padding:2px 8px;white-space:nowrap;cursor:pointer;" onmouseover="this.style.background=\'rgba(217,79,79,.08)\'" onmouseout="this.style.background=\'none\'">⚠ Billing Info Needed</span>'
       : '<span onclick="event.stopPropagation();editJobBilling('+c.id+',\'' +jid+ '\')" title="Click to edit billing information" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#16a34a;background:rgba(46,204,113,.12);border:1px solid #16a34a;border-radius:20px;padding:2px 8px;white-space:nowrap;cursor:pointer;">✓ '+billCount+' set</span>';
     return '<tr style="border-bottom:1px solid var(--border);">'
-      +'<td style="padding:10px 12px;font-weight:600;">'+(j.projectName||j.jobName||j.address||'—')+'</td>'
+      +'<td style="padding:10px 12px;font-weight:600;"><span onclick="openJobDetailPopup('+c.id+',\'' +jid+ '\')" style="cursor:pointer;color:var(--text);border-bottom:1px dotted var(--muted2);" onmouseover="this.style.color=\'var(--gold)\'" onmouseout="this.style.color=\'var(--text)\'">'+(j.projectName||j.jobName||j.address||'—')+'</span></td>'
       +'<td style="padding:10px 12px;">'+billCell+'</td>'
       +'<td style="padding:10px 12px;color:var(--muted);">'+(j.date||'—')+'</td>'
       +'<td style="padding:10px 12px;color:var(--muted);">'+(j.contactName||'—')+'</td>'
@@ -4155,19 +4269,30 @@ function _ajBillCurrentState(){
 function closeBillingPopupConfirm(){
   var dirty=false;
   try {
-    // If a contact form is open with data typed, that's an unsaved change
     if(document.getElementById('_aj_bill_form')){
       ['_aj_bn_fn_form','_aj_bn_ln_form','_aj_bn_ph_form','_aj_bn_em_form'].forEach(function(id){
         var el=document.getElementById(id); if(el&&(el.value||'').trim()!=='') dirty=true;
       });
     }
-    // Compare current state to the snapshot taken when the popup opened
     if(!dirty && _ajBillSnapshot!==null && _ajBillCurrentState()!==_ajBillSnapshot){ dirty=true; }
-  } catch(e){ dirty=false; /* if detection fails, just close */ }
-  if(dirty){
-    if(!window.confirm('You have unsaved changes. Are you sure you want to close without saving?')){ return; }
-  }
-  closeBillingPopup();
+  } catch(e){ dirty=false; }
+  if(!dirty){ closeBillingPopup(); return; }
+  // Custom in-page confirmation (more reliable than window.confirm)
+  var ex=document.getElementById('_billConfirmBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_billConfirmBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000050;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Discard unsaved changes?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes in this billing information. Are you sure you want to close without saving?</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_billConfirmCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep editing</button>'
+      +'<button id="_billConfirmOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close without saving</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  document.getElementById('_billConfirmCancel').onclick=function(){ bg.remove(); };
+  document.getElementById('_billConfirmOk').onclick=function(){ bg.remove(); closeBillingPopup(); };
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
 }
 function editJobBilling(customerId, jobEst){
   var c=CUSTOMERS.find(function(x){return x.id===customerId;});
