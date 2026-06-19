@@ -329,6 +329,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset data
   </button>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v8</span>
 </div>
 
 <div class="app">
@@ -358,8 +359,9 @@ svg{display:block;}
 <!-- ══ NEW CUSTOMER MODAL ══ -->
 <div class="modal-bg" id="modalBg">
   <div class="modal-box">
-    <div class="modal-head">
+    <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;">
       <div class="modal-title" id="ncModalTitle">New customer</div>
+      <button type="button" onclick="closeModalConfirm()" title="Close" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:0 4px;">✕</button>
     </div>
     <div class="modal-body">
 
@@ -419,6 +421,23 @@ svg{display:block;}
             <label>Title / position</label>
             <input type="text" id="f_title" placeholder="Project Manager">
           </div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <div class="fsec-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Payment terms</div>
+        <div class="ff">
+          <label>Payment terms <span class="req">*</span></label>
+          <select id="f_payment_terms" onchange="toggleCustomPaymentTerms()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">
+            <option value="">— Select payment terms —</option>
+            <option value="__custom__">Add custom…</option>
+            <option value="Due on receipt">Due on receipt</option>
+            <option value="Net 15">Net 15</option>
+            <option value="Net 30">Net 30</option>
+            <option value="Net 60">Net 60</option>
+          </select>
+          <input type="text" id="f_payment_terms_custom" placeholder="Enter custom terms (e.g. Net 45, 50% deposit)" style="display:none;width:100%;margin-top:8px;padding:10px 12px;border:1.5px solid var(--gold);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fffbe9;outline:none;box-sizing:border-box;">
+          <div class="ferr" id="e_payment_terms">Required</div>
         </div>
       </div>
 
@@ -2368,6 +2387,13 @@ function deleteUploadedDoc(customerId, idx){
 }
 
 // ══ MODAL ══
+function toggleCustomPaymentTerms(){
+  var sel=document.getElementById('f_payment_terms');
+  var custom=document.getElementById('f_payment_terms_custom');
+  if(!sel||!custom) return;
+  if(sel.value==='__custom__'){ custom.style.display='block'; custom.focus(); }
+  else { custom.style.display='none'; custom.value=''; }
+}
 function openModal(){
   // Clear all form fields
   ['f_company','f_fname','f_lname','f_phone','f_email','f_title','f_address','f_city','f_zip','f_notes'].forEach(id=>{
@@ -2400,6 +2426,17 @@ function closeModal(){
   const mb=document.getElementById('modalBg');
   if(mb){mb.classList.remove('open');mb.style.display='';}
   window._editingCustomerId=null;
+}
+// Close with confirmation if the new-customer form has any data entered
+function closeModalConfirm(){
+  var ids=['f_company','f_first','f_last','f_phone','f_email','f_title','f_street','f_city','f_state','f_zip','f_payment_terms_custom'];
+  var dirty=false;
+  ids.forEach(function(id){ var el=document.getElementById(id); if(el && (el.value||'').trim()!==''){ dirty=true; } });
+  var pt=document.getElementById('f_payment_terms'); if(pt && pt.value!=='') dirty=true;
+  if(dirty){
+    if(!confirm('You have unsaved changes. Are you sure you want to close without saving?')) return;
+  }
+  closeModal();
 }
 
 function addExtraContact(){
@@ -2494,6 +2531,17 @@ function saveCustomer(){
   ok=reqFld('f_address','e_address')&&ok;
   ok=reqFld('f_city','e_city')&&ok;
   ok=reqFld('f_zip','e_zip')&&ok;
+  // Payment terms is mandatory
+  var ptSel=document.getElementById('f_payment_terms');
+  var ptErr=document.getElementById('e_payment_terms');
+  var ptOk=true;
+  if(ptSel){
+    var ptVal=ptSel.value;
+    if(ptVal===''){ ptOk=false; }
+    else if(ptVal==='__custom__'){ var cv=(document.getElementById('f_payment_terms_custom')||{value:''}).value.trim(); if(!cv) ptOk=false; }
+  }
+  if(ptErr) ptErr.classList.toggle('show',!ptOk);
+  ok=ptOk&&ok;
   if(!ok){ const fe=document.querySelector('#modalBg .err'); if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'}); return; }
 
   const streetAddr=document.getElementById('f_address').value.trim();
@@ -2527,7 +2575,7 @@ function saveCustomer(){
     since:(document.getElementById('f_since')||{value:'2026'}).value,
     type:typeVal,
     waiver:(document.getElementById('f_waiver')||{value:'conditional'}).value,
-    paymentTerms:'',
+    paymentTerms:(function(){var s=document.getElementById('f_payment_terms');if(!s)return '';if(s.value==='__custom__')return (document.getElementById('f_payment_terms_custom')||{value:''}).value.trim();return s.value;})(),
     portal:(document.getElementById('f_billing')||{value:''}).value==='Client portal',
     notes:((document.getElementById('f_notes')||{value:''}).value||'').trim(),
     contacts:[{
@@ -3585,12 +3633,13 @@ function openAddJobModal(cid){
   });
 
   // Build the full modal HTML
-  var html='<div id="_ajOverlay" onclick="if(event.target===this)closeAddJobModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
+  var html='<div id="_ajOverlay" onclick="if(event.target===this)closeAddJobModalConfirm()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
     +'<div style="background:var(--surface);border-radius:16px;width:100%;max-width:580px;box-shadow:0 20px 60px rgba(0,0,0,.25);font-family:Barlow,sans-serif;">'
     // Header
-    +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);">'
-    +'<div style="font-size:20px;font-weight:700;">Add New Job</div>'
-    +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">'+c.name+'</div>'
+    +'<div style="padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;">'
+    +'<div><div style="font-size:20px;font-weight:700;">Add New Job</div>'
+    +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">'+c.name+'</div></div>'
+    +'<button type="button" onclick="closeAddJobModalConfirm()" title="Close" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:0 4px;">✕</button>'
     +'</div>'
     +'<div style="padding:20px 24px;max-height:calc(100vh - 220px);overflow-y:auto;">'
     // 1. Company & Primary Contact
@@ -3660,6 +3709,15 @@ function closeAddJobModal(){
   if(el) el.parentNode.removeChild(el);
   closeDupPopup();
 }
+// Close Add New Job with confirmation if the form has data
+function closeAddJobModalConfirm(){
+  var dirty=false;
+  ['_aj_jobname','_aj_po','_aj_addr','_aj_city','_aj_state'].forEach(function(id){ var el=document.getElementById(id); if(el && (el.value||'').trim()!==''){ dirty=true; } });
+  if(dirty){
+    if(!confirm('You have unsaved changes. Are you sure you want to close without saving?')) return;
+  }
+  closeAddJobModal();
+}
 
 // Pick a contact from the billing dropdown → add to the selected list, remove from dropdown
 function ajBillLineHTML(key, name, sub){
@@ -3678,6 +3736,9 @@ function ajRelabelBilling(){
     if(i===0){ badge.textContent='Main contact'; badge.style.background='rgba(58,126,212,.12)'; badge.style.color='var(--info)'; }
     else { badge.textContent='Additional contact (CC\'d)'; badge.style.background='var(--surface3)'; badge.style.color='var(--muted)'; }
   });
+  // Once a main contact exists, the button becomes "Add Additional Contact"
+  var btn=document.getElementById('_aj_add_contact_btn');
+  if(btn){ btn.textContent = rows.length>0 ? '+ Add Additional Contact' : '+ Add contact'; }
 }
 function ajBillPick(id){
   if(!id) return;
@@ -3733,34 +3794,50 @@ function ajAddBillingContact(){
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
     +'<div style="position:relative;">'
-      +'<input id="_aj_bn_fn_form" autocomplete="off" oninput="tcInput(this);ajAutofill(\'form\',this.value)" placeholder="First name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+      +'<input id="_aj_bn_fn_form" autocomplete="off" oninput="tcInput(this);ajAutofill(\'form\',this.value)" placeholder="First name *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
       +'<div id="_aj_bn_sugg_form" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:5;background:#fff;border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);margin-top:2px;max-height:160px;overflow-y:auto;"></div>'
     +'</div>'
-    +'<input id="_aj_bn_ln_form" oninput="tcInput(this)" placeholder="Last name" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_ln_form" oninput="tcInput(this)" placeholder="Last name *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
     +'<input id="_aj_bn_ph_form" placeholder="Phone" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_em_form" placeholder="Email" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_em_form" placeholder="Email *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
     +'</div>'
     +'<div id="_aj_bn_err" style="display:none;color:var(--danger);font-size:11px;margin-top:6px;">Enter at least a name or email.</div>'
     +'<div style="display:flex;justify-content:flex-end;margin-top:10px;">'
     +'<button type="button" onclick="ajSaveNewContact()" style="padding:7px 16px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✓ Save contact</button>'
     +'</div>';
   wrap.appendChild(row);
+  // Once the user starts adding a contact, the button becomes "Add Additional Contact"
+  var addBtn=document.getElementById('_aj_add_contact_btn');
+  if(addBtn) addBtn.textContent='+ Add Additional Contact';
   var fn=document.getElementById('_aj_bn_fn_form'); if(fn) fn.focus();
 }
 function ajCancelNewContact(){
   var f=document.getElementById('_aj_bill_form');
   if(f) f.parentNode.removeChild(f);
+  // If no contacts remain, restore the original button label
+  if(typeof ajRelabelBilling==='function') ajRelabelBilling();
 }
 function ajSaveNewContact(){
   var fn=(document.getElementById('_aj_bn_fn_form')||{value:''}).value.trim();
   var ln=(document.getElementById('_aj_bn_ln_form')||{value:''}).value.trim();
   var ph=(document.getElementById('_aj_bn_ph_form')||{value:''}).value.trim();
   var em=(document.getElementById('_aj_bn_em_form')||{value:''}).value.trim();
-  // Do not allow empty
-  if(!fn && !ln && !em){
-    var err=document.getElementById('_aj_bn_err'); if(err) err.style.display='block';
+  // First name, last name and email are mandatory
+  var err=document.getElementById('_aj_bn_err');
+  var missing=[];
+  if(!fn) missing.push('first name');
+  if(!ln) missing.push('last name');
+  if(!em) missing.push('email');
+  if(missing.length){
+    if(err){ err.textContent='Please enter '+missing.join(', ')+'.'; err.style.display='block'; }
     return;
   }
+  // Basic email format check
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
+    if(err){ err.textContent='Please enter a valid email address.'; err.style.display='block'; }
+    return;
+  }
+  if(err) err.style.display='none';
   var name=(fn+' '+ln).trim();
   var key='new_'+(++_ajBillNewSeq);
   var sub=em||ph||'';
@@ -4010,11 +4087,12 @@ function openBillingPopup(){
     var first=(ct.name||'').trim()||'Contact';
     dropOpts+='<option value="'+ct.id+'">'+first+'</option>';
   });
-  var html='<div id="_billOverlay" onclick="if(event.target===this)closeBillingPopup()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999998;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
+  var html='<div id="_billOverlay" onclick="if(event.target===this)closeBillingPopupConfirm()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999998;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;">'
     +'<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
-    +'<div style="padding:20px 24px;border-bottom:1px solid var(--border);">'
-    +'<div style="font-size:20px;font-weight:700;">Billing Information</div>'
-    +'<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+(_ajPendingJobData?_ajPendingJobData.jobName:'')+' · '+c.name+'</div>'
+    +'<div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;">'
+    +'<div><div style="font-size:20px;font-weight:700;">Billing Information</div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+(_ajPendingJobData?_ajPendingJobData.jobName:'')+' · '+c.name+'</div></div>'
+    +'<button type="button" onclick="closeBillingPopupConfirm()" title="Close" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:0 4px;">✕</button>'
     +'</div>'
     +'<div style="padding:20px 24px;">'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job have special instructions?</div>'
@@ -4036,17 +4114,10 @@ function openBillingPopup(){
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>'
     +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
-    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this customer have payment terms?</div>'
-    +'<div style="display:flex;gap:18px;margin-bottom:6px;">'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_pt" value="yes" onchange="ajTogglePT(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
-    +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_pt" value="no" checked onchange="ajTogglePT(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
-    +'</div>'
-    +'<select id="_aj_pt_terms" style="display:none;width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;margin-bottom:4px;"><option>Net 30</option><option>Net 15</option><option>50% deposit / 50% completion</option><option>Progress billing</option><option>Due on completion</option></select>'
-    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>'
     +'<div id="_aj_bill_list"></div>'
     +'<div id="_aj_bill_new"></div>'
-    +'<button type="button" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>'
+    +'<button type="button" id="_aj_add_contact_btn" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>'
     +'</div>'
     +'<div id="_aj_bill_foot" style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
     +'<button onclick="ajCommitJob(true)" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>'
@@ -4056,12 +4127,47 @@ function openBillingPopup(){
   var d=document.createElement('div');
   d.innerHTML=html;
   document.body.appendChild(d.firstChild);
+  // Take a snapshot of the initial state so we can detect real changes on close
+  setTimeout(function(){ _ajBillSnapshot=_ajBillCurrentState(); }, 0);
 }
 // Open the Billing Information popup to EDIT an existing job's billing
 var _ajEditJob=null;
 function closeBillingPopup(){
   var el=document.getElementById('_billOverlay');
-  if(el) el.parentNode.removeChild(el);
+  if(el && el.parentNode){ el.parentNode.removeChild(el); }
+  else if(el){ el.remove(); }
+  _ajBillSnapshot=null;
+}
+// Snapshot of the billing form state when it opens, to detect real changes
+var _ajBillSnapshot=null;
+function _ajBillCurrentState(){
+  function rv(name){ var y=document.querySelector('input[name="'+name+'"][value="yes"]'); return (y&&y.checked)?'yes':'no'; }
+  return JSON.stringify({
+    si: rv('_aj_si'),
+    sov: rv('_aj_sov'),
+    wv: rv('_aj_waiver'),
+    siText: (document.getElementById('_aj_si_text')||{value:''}).value.trim(),
+    contacts: document.querySelectorAll('#_aj_bill_list ._aj_bill_sel').length,
+    formOpen: !!document.getElementById('_aj_bill_form')
+  });
+}
+// Close billing popup with confirmation only if something actually changed
+function closeBillingPopupConfirm(){
+  var dirty=false;
+  try {
+    // If a contact form is open with data typed, that's an unsaved change
+    if(document.getElementById('_aj_bill_form')){
+      ['_aj_bn_fn_form','_aj_bn_ln_form','_aj_bn_ph_form','_aj_bn_em_form'].forEach(function(id){
+        var el=document.getElementById(id); if(el&&(el.value||'').trim()!=='') dirty=true;
+      });
+    }
+    // Compare current state to the snapshot taken when the popup opened
+    if(!dirty && _ajBillSnapshot!==null && _ajBillCurrentState()!==_ajBillSnapshot){ dirty=true; }
+  } catch(e){ dirty=false; /* if detection fails, just close */ }
+  if(dirty){
+    if(!window.confirm('You have unsaved changes. Are you sure you want to close without saving?')){ return; }
+  }
+  closeBillingPopup();
 }
 function editJobBilling(customerId, jobEst){
   var c=CUSTOMERS.find(function(x){return x.id===customerId;});
@@ -4110,6 +4216,8 @@ function editJobBilling(customerId, jobEst){
         if(typeof ajRelabelBilling==='function') ajRelabelBilling();
       }
     }
+    // Snapshot AFTER preloading the existing values, so edits compare correctly
+    _ajBillSnapshot=_ajBillCurrentState();
   },60);
 }
 
