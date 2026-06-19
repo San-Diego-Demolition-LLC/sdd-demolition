@@ -329,7 +329,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v38</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v40</span>
 </div>
 
 <div class="app">
@@ -1508,16 +1508,14 @@ function showLinePopup(e, customerId, estId, type){
 
   var items=[];
   if(type==='estimates'){
-    items=(job.estimates||[]).filter(function(es){return es.est===estId;});
+    // Show ALL estimates of the job (counter behaviour, like active jobs)
+    items=(job.estimates||[]).slice();
   } else if(type==='changeOrders'){
-    items=(job.changeOrders||[]).filter(function(co){return co.originalEst===estId;});
+    // All change orders of the job
+    items=(job.changeOrders||[]).slice();
   } else if(type==='invoices'){
-    // Invoices that pay this estimate OR any of its change orders
-    var childCOIds=(job.changeOrders||[]).filter(function(co){return co.originalEst===estId;}).map(function(co){return co.est;});
-    items=(job.invoices||[]).filter(function(iv){
-      var target=iv.originalEst||iv.est;
-      return target===estId || childCOIds.indexOf(target)!==-1;
-    });
+    // All invoices of the job
+    items=(job.invoices||[]).slice();
   }
 
   var titles={estimates:'Estimate',changeOrders:'Change Orders',invoices:'Invoices'};
@@ -1722,28 +1720,22 @@ function renderDetail(id){
   var archivedJobs=allJobs.filter(function(j){return isJobFullyArchived(j);});
   var archivedLines=[];
   archivedJobs.forEach(function(j){
-    (j.estimates||[]).forEach(function(e){
-      archivedLines.push({job:j, est:e});
-    });
+    // One row per job (the counter shows totals for the whole job)
+    var firstEst=(j.estimates&&j.estimates.length)?j.estimates[0]:{est:j.est,scope:'',amount:j.amount};
+    archivedLines.push({job:j, est:firstEst});
   });
   // Build a row for a single archived cycle line
   function buildArchivedLineRow(item){
     var j=item.job, e=item.est;
-    var cos=lineChangeOrders(j, e.est);
-    // Invoices for the estimate PLUS invoices for each of its change orders
-    var invs=lineInvoices(j, e.est).slice();
-    cos.forEach(function(co){
-      lineInvoices(j, co.est).forEach(function(iv){
-        if(invs.indexOf(iv)===-1) invs.push(iv);
-      });
-    });
+    var cos=(j.changeOrders||[]);
+    var invs=(j.invoices||[]);
     var paidTotal=invs.reduce(function(s,iv){return s+(parseFloat(String(iv.amount).replace(/[^0-9.]/g,''))||0);},0);
     var paidStr='$'+paidTotal.toLocaleString('en-US');
     var lastDate=invs.length?invs[invs.length-1].date:(e.date||'—');
     return '<tr style="border-bottom:1px solid var(--border);">'
       +'<td style="padding:10px 12px;font-weight:600;"><span onclick="openJobDetailPopup('+c.id+',\''+j.est+'\')" style="cursor:pointer;color:var(--text);border-bottom:1px dotted var(--muted2);" onmouseover="this.style.color=\'var(--gold)\'" onmouseout="this.style.color=\'var(--text)\'">'+(j.projectName||j.jobName||j.address||'—')+'</span><div style="font-size:11px;color:var(--muted);font-weight:400;">'+(e.scope||e.est)+'</div></td>'
       +'<td style="padding:10px 12px;text-align:center;">'
-        +'<span onclick="showLinePopup(event,'+c.id+',\''+e.est+'\',\'estimates\')" title="View estimate" style="display:inline-flex;align-items:center;justify-content:center;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-size:11px;font-weight:700;padding:3px 10px;cursor:pointer;font-family:monospace;" onmouseover="this.style.background=\'rgba(59,130,246,.22)\'" onmouseout="this.style.background=\'rgba(59,130,246,.12)\'">'+e.est+'</span>'
+        +'<span onclick="showLinePopup(event,'+c.id+',\''+e.est+'\',\'estimates\')" title="View estimates" style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-size:12px;font-weight:700;padding:0 8px;cursor:pointer;" onmouseover="this.style.background=\'rgba(59,130,246,.22)\'" onmouseout="this.style.background=\'rgba(59,130,246,.12)\'">'+(j.estimates?j.estimates.length:1)+'</span>'
       +'</td>'
       +'<td style="padding:10px 12px;text-align:center;">'
         +'<span onclick="showLinePopup(event,'+c.id+',\''+e.est+'\',\'changeOrders\')" title="View change orders" style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:20px;background:rgba(184,146,42,.12);color:var(--gold);font-size:12px;font-weight:700;padding:0 8px;cursor:pointer;" onmouseover="this.style.background=\'rgba(184,146,42,.22)\'" onmouseout="this.style.background=\'rgba(184,146,42,.12)\'">'+cos.length+'</span>'
@@ -2023,23 +2015,10 @@ function renderDetail(id){
                 </div>
               </div>`;
             }
-            // Split by cycle lines: active = job has pending lines; archived = job fully paid (all lines paid)
+            // Billing tab shows active jobs only (archived not needed here)
             const activeJ = allJ.filter(j=>!isJobFullyArchived(j));
-            const archivedJ = allJ.filter(j=>isJobFullyArchived(j));
             let out = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Active <span style="color:var(--text);">('+activeJ.length+')</span></div>';
             out += activeJ.length ? activeJ.map((j,i)=>billCard(j,'a'+i)).join('') : '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs</div>';
-            if(archivedJ.length){
-              out += '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:18px;">'
-                +'<div onclick="toggleBillingArchived('+c.id+')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);cursor:pointer;user-select:none;">'
-                  +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--success);">'
-                    +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
-                    +'Archived <span style="color:var(--success);">('+archivedJ.length+')</span>'
-                  +'</div>'
-                  +'<span id="billarch-chev-'+c.id+'" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
-                +'</div>'
-                +'<div id="billarch-body-'+c.id+'" style="display:none;padding:12px 14px 4px;">'+archivedJ.map((j,i)=>billCard(j,'z'+i)).join('')+'</div>'
-              +'</div>';
-            }
             return out;
           })()}
 
