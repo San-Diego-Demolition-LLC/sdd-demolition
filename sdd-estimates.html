@@ -3005,6 +3005,11 @@ document.addEventListener('DOMContentLoaded',function(){
       var af=document.getElementById('f_addr'); if(af&&ad){ af.value=ad.split(',')[0]||ad; }
     },80);
   }
+  // If we arrived to create a CHANGE ORDER for a job, open the CO form
+  var coFor=params.get('changeOrderFor');
+  if(coFor!==null){
+    if(typeof openCOForm==='function'){ openCOForm(); }
+  }
 });
 
 // ══ PDF PREVIEW FLOW ══

@@ -329,7 +329,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v12</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v14</span>
 </div>
 
 <div class="app">
@@ -1191,7 +1191,10 @@ function openJobDetailPopup(customerId, estNum){
 }
 // New estimate from the job popup → go to estimates with the selector (new or change order)
 function jdNewEstimate(pn, customer, addr){
-  window.location.href='/sdd-estimates.html?newFor='+pn+'&customer='+customer+'&addr='+addr;
+  // Close the job popup and open the "Create new" type selector, keeping the job context
+  var bg=document.getElementById('_jobDetailBg'); if(bg) bg.remove();
+  window._createForJob={ pn:pn, customer:customer, addr:addr };
+  openTypeSel(decodeURIComponent(customer));
 }
 // Inactivate the job → move to Archived (mark a flag), with confirmation
 function jdInactivateJob(customerId, estNum){
@@ -1201,11 +1204,11 @@ function jdInactivateJob(customerId, estNum){
   cf.id='_jdConfirmBg';
   cf.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100010;display:flex;align-items:center;justify-content:center;padding:20px;';
   cf.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
-    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Inactivate this job?</div>'
-    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">This will move the job to the Archived section. You can still view it there.</div>'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">¿Está seguro de colocarlo inactivo?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">El job se moverá a la sección Archived. Podrá verlo allí cuando lo necesite.</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
-      +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Inactivate</button>'
+      +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancelar</button>'
+      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Sí, inactivar</button>'
     +'</div></div>';
   document.body.appendChild(cf);
   document.getElementById('_jdCancel').onclick=function(){ cf.remove(); };
@@ -3287,8 +3290,16 @@ document.addEventListener('DOMContentLoaded', function(){
   });
   on('btnCloseTypeSel','click',closeTypeSel);
   on('typeSelectorBg','click',function(e){if(e.target===this)closeTypeSel();});
-  on('btnGoNewEst','click',()=>{closeTypeSel();window.location.href='/sdd-estimates.html';});
-  on('btnGoChangOrder','click',()=>{closeTypeSel();window.location.href='/sdd-estimates.html';});
+  on('btnGoNewEst','click',()=>{
+    closeTypeSel();
+    if(window._createForJob){ var j=window._createForJob; window._createForJob=null; window.location.href='/sdd-estimates.html?newFor='+j.pn+'&customer='+j.customer+'&addr='+j.addr; }
+    else { window.location.href='/sdd-estimates.html'; }
+  });
+  on('btnGoChangOrder','click',()=>{
+    closeTypeSel();
+    if(window._createForJob){ var j=window._createForJob; window._createForJob=null; window.location.href='/sdd-estimates.html?changeOrderFor='+j.pn+'&customer='+j.customer+'&addr='+j.addr; }
+    else { window.location.href='/sdd-estimates.html'; }
+  });
   on('statPopupBg','click',function(e){if(e.target===this)closeStatPopup();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTypeSel();closeStatPopup();}});
   renderList();
