@@ -218,8 +218,8 @@ svg{display:block;}
   <nav class="nav">
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item active" href="/sdd-jobs.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Jobs</a>
+    <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
   </nav>
@@ -908,6 +908,42 @@ function selectJob(id){
 }
 
 
+function jobInactivate(id){
+  var j=JOBS.find(function(x){return x.id===id;});
+  if(!j) return;
+  var ex=document.getElementById('_jobConfirmBg'); if(ex) ex.remove();
+  var cf=document.createElement('div');
+  cf.id='_jobConfirmBg';
+  cf.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100010;display:flex;align-items:center;justify-content:center;padding:20px;';
+  cf.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Are you sure you want to make this job inactive?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">The job will be moved to the Archived section. You can view it there whenever you need.</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_jobCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button id="_jobOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, make inactive</button>'
+    +'</div></div>';
+  document.body.appendChild(cf);
+  document.getElementById('_jobCancel').onclick=function(){ cf.remove(); };
+  document.getElementById('_jobOk').onclick=function(){ j.inactive=true; j.reactivated=false; cf.remove(); renderDetail(id); renderList(); };
+}
+function jobActivate(id){
+  var j=JOBS.find(function(x){return x.id===id;});
+  if(!j) return;
+  var ex=document.getElementById('_jobConfirmBg'); if(ex) ex.remove();
+  var cf=document.createElement('div');
+  cf.id='_jobConfirmBg';
+  cf.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100010;display:flex;align-items:center;justify-content:center;padding:20px;';
+  cf.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Are you sure you want to make this job active?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">The job will be moved back to Active Jobs.</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_jobCancel2" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button id="_jobOk2" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, make active</button>'
+    +'</div></div>';
+  document.body.appendChild(cf);
+  document.getElementById('_jobCancel2').onclick=function(){ cf.remove(); };
+  document.getElementById('_jobOk2').onclick=function(){ j.inactive=false; j.reactivated=true; cf.remove(); renderDetail(id); renderList(); };
+}
 function openDocPdf(itemJson){
   var d; try { d=JSON.parse(decodeURIComponent(itemJson)); } catch(e){ return; }
   var ex=document.getElementById('_docPdfBg'); if(ex) ex.remove();
@@ -1058,6 +1094,9 @@ function renderDetail(id){
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
         ${actionHTML}
         <button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="openJobBillingModal(${j.id})">Edit billing</button>
+        ${j.inactive
+          ? `<button class="btn btn-sm" style="background:var(--gold);color:#fff;font-weight:700;" onclick="jobActivate(${j.id})">Activate Job</button>`
+          : `<button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="jobInactivate(${j.id})">Inactivate job</button>`}
       </div>
     </div>
 
@@ -1167,41 +1206,112 @@ function saveJobNotes(id, val){
 
 // ── Job billing contacts editor ──
 let _jbmJobId=null;
+var _jbmSiDocs=[];
 function openJobBillingModal(id){
   _jbmJobId=id;
   const j=JOBS.find(x=>x.id===id);
   if(!j) return;
   if(!j.billing) j.billing=[];
+  _jbmSiDocs=(j.documents||[]).slice();
   const existing=document.getElementById('_jbmOverlay');
   if(existing) existing.parentNode.removeChild(existing);
-  const rows=j.billing.map((b,i)=>`
+  const si = !!j.hasSpecialInstructions;
+  const sov = !!j.requiresSOV;
+  const wv = !!j.requiresWaivers;
+  const billRows = j.billing.length ? j.billing.map((b,i)=>`
     <div id="_jbm_row_${i}" data-idx="${i}" style="display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;background:#fff;">
       <span style="flex:1;font-size:13px;"><span style="font-weight:600;">${b.name}</span>${b.email?`<span style="font-size:11px;color:var(--muted);"> · ${b.email}</span>`:''}</span>
       <button type="button" onclick="jbmRemove(${i})" style="border:none;background:none;color:var(--danger);font-size:16px;cursor:pointer;line-height:1;">×</button>
-    </div>`).join('') || '<div style="font-size:12px;color:var(--danger);font-style:italic;padding:4px 0;">⚠ No billing contacts — pending billing information</div>';
+    </div>`).join('') : '<div style="font-size:12px;color:var(--danger);font-style:italic;padding:4px 0;">⚠ No billing contacts — pending billing information</div>';
   const modal=document.createElement('div');
   modal.id='_jbmOverlay';
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;';
   modal.onclick=function(ev){if(ev.target===modal)closeJobBillingModal();};
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:'Barlow',sans-serif;overflow:hidden;">
-      <div style="padding:20px 24px;border-bottom:1px solid var(--border);">
-        <div style="font-size:20px;font-weight:700;">Billing contacts</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${j.name} · ${j.customer}</div>
+    <div style="background:#fff;border-radius:14px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:'Barlow',sans-serif;overflow:hidden;">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;">
+        <div><div style="font-size:20px;font-weight:700;">Billing Information</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${j.name} · ${j.customer}</div></div>
+        <button type="button" onclick="closeJobBillingModal()" title="Close" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:0 4px;">✕</button>
       </div>
       <div style="padding:20px 24px;">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Estimates, change orders & invoices for this job are sent to everyone here.</div>
-        <div id="_jbm_list">${rows}</div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job have special instructions?</div>
+        <div style="display:flex;gap:18px;margin-bottom:6px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_si" value="yes" ${si?'checked':''} onchange="jbmToggleSI(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_si" value="no" ${!si?'checked':''} onchange="jbmToggleSI(false)" style="cursor:pointer;accent-color:var(--gold);"> No</label>
+        </div>
+        <textarea id="_jbm_si_text" placeholder="Write the special instructions for this job..." style="display:${si?'block':'none'};width:100%;min-height:70px;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;resize:vertical;box-sizing:border-box;margin-bottom:6px;">${j.specialInstructions||''}</textarea>
+        <div id="_jbm_si_docs_wrap" style="display:${si?'block':'none'};background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px;">Attach documents (e.g. contract)</div>
+          <div id="_jbm_si_doclist" style="margin-bottom:8px;"></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="_jbm_si_doctitle" placeholder="Document title" style="flex:1;min-width:140px;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">
+            <input type="file" id="_jbm_si_file" style="display:none;" onchange="jbmSiFilePicked()">
+            <button type="button" onclick="document.getElementById('_jbm_si_file').click()" style="padding:8px 14px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Choose file</button>
+            <button type="button" onclick="jbmSiAddDoc()" style="padding:8px 14px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
+          </div>
+          <div id="_jbm_si_filename" style="font-size:11px;color:var(--muted2);margin-top:6px;"></div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin:14px 0;"></div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require a Schedule of Values (SOV)?</div>
+        <div style="display:flex;gap:18px;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_sov" value="yes" ${sov?'checked':''} style="cursor:pointer;accent-color:var(--gold);"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_sov" value="no" ${!sov?'checked':''} style="cursor:pointer;accent-color:var(--gold);"> No</label>
+        </div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job require waivers?</div>
+        <div style="display:flex;gap:18px;margin-bottom:4px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_waiver" value="yes" ${wv?'checked':''} style="cursor:pointer;accent-color:var(--gold);"> Yes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_jbm_waiver" value="no" ${!wv?'checked':''} style="cursor:pointer;accent-color:var(--gold);"> No</label>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>
+        <div style="border-top:1px solid var(--border);margin:14px 0;"></div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>
+        <div id="_jbm_list">${billRows}</div>
         <div id="_jbm_addwrap" style="margin-top:8px;"></div>
-        <button type="button" onclick="jbmAddNew()" style="margin-top:6px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add billing contact</button>
+        <button type="button" onclick="jbmAddNew()" style="margin-top:6px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>
       </div>
       <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--surface2);">
-        <button onclick="closeJobBillingModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;">Cancel</button>
+        <button onclick="closeJobBillingModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>
         <button onclick="saveJobBilling()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
+  jbmSiRenderDocList();
 }
+function jbmToggleSI(show){
+  var t=document.getElementById('_jbm_si_text'); if(t) t.style.display=show?'block':'none';
+  var w=document.getElementById('_jbm_si_docs_wrap'); if(w) w.style.display=show?'block':'none';
+}
+function jbmSiFilePicked(){
+  var fi=document.getElementById('_jbm_si_file'); var fn=document.getElementById('_jbm_si_filename');
+  if(fi&&fi.files&&fi.files[0]&&fn){ fn.textContent='Selected: '+fi.files[0].name; }
+}
+function jbmSiAddDoc(){
+  var titleEl=document.getElementById('_jbm_si_doctitle');
+  var fi=document.getElementById('_jbm_si_file');
+  var title=(titleEl&&titleEl.value||'').trim();
+  var file=(fi&&fi.files&&fi.files[0])?fi.files[0]:null;
+  if(!title && !file) return;
+  var name=title || (file?file.name.replace(/\.[^.]+$/,''):'Document');
+  if(file && !/\.[a-z0-9]+$/i.test(name)){ var ext=(file.name.match(/\.[^.]+$/)||['.pdf'])[0]; name=name+ext; }
+  else if(!/\.[a-z0-9]+$/i.test(name)){ name=name+'.pdf'; }
+  _jbmSiDocs.push({name:name, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), category:'Special Instructions'});
+  if(titleEl) titleEl.value=''; if(fi) fi.value='';
+  var fn=document.getElementById('_jbm_si_filename'); if(fn) fn.textContent='';
+  jbmSiRenderDocList();
+}
+function jbmSiRemoveDoc(i){ _jbmSiDocs.splice(i,1); jbmSiRenderDocList(); }
+function jbmSiRenderDocList(){
+  var list=document.getElementById('_jbm_si_doclist'); if(!list) return;
+  if(!_jbmSiDocs.length){ list.innerHTML=''; return; }
+  list.innerHTML=_jbmSiDocs.map(function(d,i){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:5px;">'
+      +'<span style="font-size:12px;font-weight:600;">📄 '+d.name+'</span>'
+      +'<span onclick="jbmSiRemoveDoc('+i+')" style="cursor:pointer;color:var(--danger);font-size:13px;font-weight:700;">✕</span>'
+    +'</div>';
+  }).join('');
+}
+
 function closeJobBillingModal(){
   const el=document.getElementById('_jbmOverlay');
   if(el) el.parentNode.removeChild(el);
@@ -1248,9 +1358,17 @@ function saveJobBilling(){
     if(nm||em) result.push({name:nm,email:em,phone:ph});
   });
   j.billing=result;
+  // Special instructions, SOV, waivers
+  var siR=document.querySelector('input[name="_jbm_si"][value="yes"]');
+  var siOn=!!(siR&&siR.checked);
+  j.hasSpecialInstructions=siOn;
+  j.specialInstructions=siOn?((document.getElementById('_jbm_si_text')||{value:''}).value||'').trim():'';
+  j.documents=siOn?_jbmSiDocs.slice():(j.documents||[]);
+  var sovR=document.querySelector('input[name="_jbm_sov"][value="yes"]'); j.requiresSOV=!!(sovR&&sovR.checked);
+  var wvR=document.querySelector('input[name="_jbm_waiver"][value="yes"]'); j.requiresWaivers=!!(wvR&&wvR.checked);
   closeJobBillingModal();
   renderDetail(j.id);
-  flash('✓ Billing contacts updated'+(result.length?'':' — pending billing'), result.length?'var(--success)':'var(--warning)');
+  flash('✓ Billing information updated'+(result.length?'':' — pending billing'), result.length?'var(--success)':'var(--warning)');
 }
 
 function flash(msg,color){
