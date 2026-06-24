@@ -1584,5 +1584,40 @@ renderList();
   </div>
 </div>
 
+<script>
+(function(){
+  function killAutofill(root){
+    var r=root||document;
+    var inputs=r.querySelectorAll?r.querySelectorAll('input,textarea,select'):[];
+    for(var i=0;i<inputs.length;i++){
+      var el=inputs[i];
+      if(el.getAttribute('data-naf')) continue;
+      var type=(el.getAttribute('type')||'').toLowerCase();
+      if(type==='checkbox'||type==='radio'||type==='file'||type==='hidden') continue;
+      el.setAttribute('data-naf','1');
+      el.setAttribute('autocomplete','new-password');
+      el.setAttribute('autocorrect','off');
+      el.setAttribute('autocapitalize','off');
+      el.setAttribute('spellcheck','false');
+      el.setAttribute('aria-autocomplete','none');
+      if(!el.name || /^(name|email|phone|address|fname|lname|title|first|last)/i.test(el.name)){
+        el.setAttribute('name','f_'+Math.random().toString(36).slice(2,9));
+      }
+    }
+  }
+  function start(){
+    killAutofill(document);
+    try{
+      var obs=new MutationObserver(function(muts){
+        for(var i=0;i<muts.length;i++){ var ad=muts[i].addedNodes; if(ad){ for(var j=0;j<ad.length;j++){ if(ad[j].nodeType===1) killAutofill(ad[j]); } } }
+      });
+      obs.observe(document.body,{childList:true,subtree:true});
+    }catch(e){}
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', start); }
+  else { start(); }
+})();
+</script>
+
 </body>
 </html>
