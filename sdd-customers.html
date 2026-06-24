@@ -326,7 +326,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v69</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v70</span>
 </div>
 
 <div class="app">
@@ -345,6 +345,8 @@ svg{display:block;}
         <select id="sortFilter" onchange="setFilter(this.value)" style="flex:1;padding:7px 10px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);cursor:pointer;outline:none;">
           <option value="active" selected>Active customers</option>
           <option value="all">All</option>
+          <option value="az">Name A → Z</option>
+          <option value="za">Name Z → A</option>
           <option value="inactive">Inactive customers</option>
           <option value="collections">Collections</option>
           <option value="billing">Billing due</option>
@@ -1035,8 +1037,15 @@ function renderList(){
       var billCount=(j.billing&&j.billing.length)?j.billing.length:0;
       return j.pendingBilling || billCount===0;
     });
+    // 'all', 'az', 'za' → show every matching customer
     return true;
   });
+  // Alphabetical sort when requested
+  if(activeFilter==='az'){
+    items.sort(function(a,b){ return a.name.localeCompare(b.name,undefined,{sensitivity:'base'}); });
+  } else if(activeFilter==='za'){
+    items.sort(function(a,b){ return b.name.localeCompare(a.name,undefined,{sensitivity:'base'}); });
+  }
   list.innerHTML = items.length ? items.map(c=>{
     const t = getTotals(c);
     const pms = c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
