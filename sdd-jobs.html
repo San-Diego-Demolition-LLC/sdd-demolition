@@ -1054,10 +1054,10 @@ function renderDetail(id){
 
   let actionHTML='';
   if(j.status==='scheduled'){
-    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit schedule</button>
+    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit Schedule</button>
     <button class="btn btn-warning btn-sm" onclick="startJob(${j.id})">Start job → In Progress</button>`;
   } else if(j.status==='in-progress'){
-    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit schedule</button>`;
+    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="openSchedModal(${j.id})">Edit Schedule</button>`;
   } else if(j.status==='ready-to-bill'){
     actionHTML=`<button class="btn btn-gold btn-sm" onclick="window.location.href='/sdd-invoices.html?create='+encodeURIComponent(j.est)+'&customer='+encodeURIComponent(j.customer)+'&amount='+j.amount+'&job='+encodeURIComponent(j.name)">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1068,7 +1068,7 @@ function renderDetail(id){
       Void
     </button>`;
   } else if(j.status==='completed'){
-    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="window.location.href='/sdd-invoices.html'">View invoice</button>`;
+    actionHTML=`<button class="btn btn-ghost btn-sm" onclick="window.location.href='/sdd-invoices.html'">View Invoice</button>`;
   }
 
   const crewHTML=j.crew.map(c=>`
@@ -1133,10 +1133,10 @@ function renderDetail(id){
       <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
         ${actionHTML}
         <button class="btn btn-sm" style="background:var(--gold);color:#fff;font-weight:700;" onclick="jobNewEstimate(${j.id})">+ New Estimate</button>
-        <button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="openJobBillingModal(${j.id})">Edit billing</button>
+        <button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="openJobBillingModal(${j.id})">Edit Billing</button>
         ${j.inactive
-          ? `<button class="btn btn-sm" style="background:var(--gold);color:#fff;font-weight:700;" onclick="jobActivate(${j.id})">Activate Job</button>`
-          : `<button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="jobInactivate(${j.id})">Inactivate job</button>`}
+          ? `<button class="btn btn-sm" style="background:var(--gold);color:#fff;font-weight:700;" onclick="jobActivate(${j.id})">Make Job Active</button>`
+          : `<button class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3);" onclick="jobInactivate(${j.id})">Make Job Inactive</button>`}
       </div>
     </div>
 
@@ -1287,7 +1287,7 @@ function openJobBillingModal(id){
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <input type="text" id="_jbm_si_doctitle" placeholder="Document title" style="flex:1;min-width:140px;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">
             <input type="file" id="_jbm_si_file" style="display:none;" onchange="jbmSiFilePicked()">
-            <button type="button" onclick="document.getElementById('_jbm_si_file').click()" style="padding:8px 14px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Choose file</button>
+            <button type="button" onclick="document.getElementById('_jbm_si_file').click()" style="padding:8px 14px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Choose File</button>
             <button type="button" onclick="jbmSiAddDoc()" style="padding:8px 14px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>
           </div>
           <div id="_jbm_si_filename" style="font-size:11px;color:var(--muted2);margin-top:6px;"></div>
@@ -1311,7 +1311,7 @@ function openJobBillingModal(id){
         <button type="button" onclick="jbmAddNew()" style="margin-top:6px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>
       </div>
       <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--surface2);">
-        <button onclick="closeJobBillingModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>
+        <button onclick="closeJobBillingModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;">Enter Info Later</button>
         <button onclick="saveJobBilling()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save</button>
       </div>
     </div>`;

@@ -322,15 +322,11 @@ svg{display:block;}
     <a class="nav-item" href="/sdd-vendors.html?module=vendors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
     <a class="nav-item" href="/sdd-vendors.html?module=banking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
   </nav>
-  <button class="btn btn-gold" id="btnNewCustomer" onclick="openModal()">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    New customer
-  </button>
   <button onclick="if(confirm('This reloads the sample data and clears anything saved in this browser. Continue?')){ if(window.SDD){ window.SDD.resetAll(); } location.reload(); }" title="Reload sample data" style="margin-left:8px;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-    Reset data
+    Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v46</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v68</span>
 </div>
 
 <div class="app">
@@ -340,11 +336,20 @@ svg{display:block;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0;color:var(--muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search customers, contacts...">
       </div>
-      <div class="filter-row">
-        <div class="filter-chip active" id="chip-all">All</div>
-        <div class="filter-chip" id="chip-active">Active</div>
-        <div class="filter-chip" id="chip-billing" onclick="setFilter('billing')">Billing due</div>
-        <div class="filter-chip" id="chip-incomplete" onclick="setFilter('incomplete')" style="border-color:rgba(200,130,42,.4);color:var(--warning);">⚠ Pending</div>
+      <button class="btn btn-gold" id="btnNewCustomer" onclick="openModal()" style="width:100%;justify-content:center;margin-top:10px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Customer
+      </button>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+        <label for="sortFilter" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap;">Sort by</label>
+        <select id="sortFilter" onchange="setFilter(this.value)" style="flex:1;padding:7px 10px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);cursor:pointer;outline:none;">
+          <option value="active" selected>Active customers</option>
+          <option value="all">All</option>
+          <option value="inactive">Inactive customers</option>
+          <option value="collections">Collections</option>
+          <option value="billing">Billing due</option>
+          <option value="billinfo">Billing info needed</option>
+        </select>
       </div>
     </div>
     <div class="customer-list" id="customerList"></div>
@@ -481,7 +486,7 @@ svg{display:block;}
         <button class="btn btn-ghost" id="btnCancelModal" onclick="closeModalConfirm()">Cancel</button>
         <button class="btn btn-gold" id="btnSaveCustomer">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Save customer
+          Save Customer
         </button>
       </div>
     </div>
@@ -586,7 +591,7 @@ svg{display:block;}
 
           <!-- Add new billing contact form -->
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Add billing contact</div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Add Billing Contact</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
               <input type="text" id="pb_fname" placeholder="First name *"
                 style="background:#fff;border:1.5px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);outline:none;">
@@ -602,7 +607,7 @@ svg{display:block;}
             <button type="button" onclick="addExtraBillingContact()"
               style="font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;border:1.5px solid var(--gold);background:rgba(184,146,42,.08);color:var(--gold);cursor:pointer;font-family:'Barlow',sans-serif;display:flex;align-items:center;gap:6px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add billing contact
+              Add Billing Contact
             </button>
           </div>
         </div>
@@ -615,7 +620,7 @@ svg{display:block;}
         <button class="btn btn-ghost btn-sm" onclick="closeAddContactModal()">Cancel</button>
         <button class="btn btn-gold" onclick="saveAddContact()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Save contact
+          Save Contact
         </button>
       </div>
     </div>
@@ -636,7 +641,7 @@ svg{display:block;}
     <div class="stat-popup-body" id="spBody"></div>
     <div class="stat-popup-foot">
       <div style="font-size:12px;color:var(--muted);" id="spFootNote"></div>
-      <button class="btn btn-ghost btn-sm" id="spNavBtn" onclick="closeStatPopup()">Go to module →</button>
+      <button class="btn btn-ghost btn-sm" id="spNavBtn" onclick="closeStatPopup()">Go to Module →</button>
     </div>
   </div>
 </div>
@@ -712,7 +717,7 @@ var CUSTOMERS_SEED = [
      {id:'c2', name:'James Torres', initials:'JT', color:'av-gold', role:'project-manager',
       email:'j.torres@abcconstruction.com', phone:'(619) 555-0102', title:'Project Manager',
       jobs:[
-        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
+        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
           estimates:[
             {est:'EST-047',amount:'$14,301',status:'Paid',date:'May 2, 2026',scope:'Original Scope - Demolition',projectName:'Harbor District Redevelopment'},
             {est:'EST-052',amount:'$8,200',status:'Approved',date:'May 5, 2026',scope:'Revised Scope - Debris Removal',projectName:'Harbor Phase 2 - Site Cleanup'}
@@ -750,6 +755,16 @@ var CUSTOMERS_SEED = [
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
       email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
       jobs:[
+        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
+          billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101',role:'main'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-058',amount:'$6,400',status:'Approved',date:'May 6, 2026',scope:'Grading & Site Preparation',projectName:'Harbor District Redevelopment'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-058-1',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
+          ]},
         {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
           estimates:[
             {est:'EST-055',amount:'$22,500',status:'Approved',date:'Apr 28, 2026',scope:'Site Demolition & Grading',projectName:'Chula Vista Retail Plaza'}
@@ -811,6 +826,48 @@ var CUSTOMERS_SEED = [
           ]},
       ]},
    ]},
+  {id:3, name:'Pacific Demo Partners', city:'San Diego, CA', customerStatus:'inactive',
+   address:'780 Industrial Way, San Diego CA 92110', phone:'(619) 555-0211',
+   since:'2022', type:'commercial', waiver:'conditional', portal:false, notes:'Account inactive — no active jobs.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   contacts:[
+     {id:'pd1', name:'Greg Holt', initials:'GH', color:'av-info', role:'billing',
+      email:'billing@pacificdemo.com', phone:'(619) 555-0210', title:'Billing Manager', jobs:[]},
+     {id:'pd2', name:'Laura Kim', initials:'LK', color:'av-gold', role:'project-manager',
+      email:'l.kim@pacificdemo.com', phone:'(619) 555-0212', title:'Project Manager',
+      jobs:[
+        {est:'EST-040', address:'780 Industrial Way', city:'San Diego CA 92110', status:'Completed', amount:'$19,200', date:'Nov 3, 2025', jobName:'Industrial Way Demo', projectName:'Pacific Industrial Site', streetOnly:'780 Industrial Way',
+          billing:[{id:'pd1',name:'Greg Holt',email:'billing@pacificdemo.com',phone:'(619) 555-0210'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 3, 2025',scope:'Full Structure Demolition'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-040-1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025'}
+          ]},
+      ]},
+   ]},
+  {id:4, name:'Summit Contractors LLC', city:'El Cajon, CA', customerStatus:'collections',
+   address:'1290 Fletcher Pkwy, El Cajon CA 92020', phone:'(619) 555-0277',
+   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'Sent to collections — overdue balance.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   contacts:[
+     {id:'sc1', name:'Nina Brooks', initials:'NB', color:'av-info', role:'billing',
+      email:'billing@summitcontractors.com', phone:'(619) 555-0276', title:'Billing Manager', jobs:[]},
+     {id:'sc2', name:'Marcus Reed', initials:'MR', color:'av-gold', role:'project-manager',
+      email:'m.reed@summitcontractors.com', phone:'(619) 555-0278', title:'Project Manager',
+      jobs:[
+        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to bill', amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
+          billing:[{id:'sc1',name:'Nina Brooks',email:'billing@summitcontractors.com',phone:'(619) 555-0276'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-038',amount:'$24,800',status:'Approved',date:'Dec 12, 2025',scope:'Commercial Demolition'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-038-1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
+          ]},
+      ]},
+   ]},
 ];
 // Use shared data layer if present (sdd-data.js); otherwise fall back to the seed above.
 var CUSTOMERS = (window.SDD && window.SDD.customers) ? window.SDD.customers : CUSTOMERS_SEED;
@@ -832,7 +889,8 @@ const STATUS_CLASS = {
 };
 
 let activeId = null;
-let activeFilter = 'all';
+let activePM = null;
+let activeFilter = 'active';
 let extraContactCount = 0;
 
 // ══ HELPERS ══
@@ -894,8 +952,10 @@ function _isJobArchived(j){
   if(!ests.length && !cos.length) return false;
   return ests.every(function(e){return _jobLinePaid(j,e.est);}) && cos.every(function(co){return _jobLinePaid(j,co.est);});
 }
-function getTotals(c){
-  const jobs = getAllJobs(c);
+function getTotals(c, pmContact){
+  const jobs = pmContact
+    ? (pmContact.jobs||[]).map(function(j){return Object.assign({},j,{contactName:pmContact.name,contactId:pmContact.id});})
+    : getAllJobs(c);
   const today = new Date('2026-06-18');
 
   // Approved estimates: estimates with status 'Approved' (client approved, not yet fully billed)
@@ -966,23 +1026,42 @@ function renderList(){
     const matchContact = c.contacts.some(ct=>ct.name.toLowerCase().includes(q)||ct.email.toLowerCase().includes(q));
     const match = !q || matchName || matchCity || matchContact;
     if(!match) return false;
-    if(activeFilter==='active') return getAllJobs(c).some(j=>j.status==='In progress');
+    if(activeFilter==='active') return (c.customerStatus||'active')==='active';
+    if(activeFilter==='inactive') return c.customerStatus==='inactive';
+    if(activeFilter==='collections') return c.customerStatus==='collections';
     if(activeFilter==='billing') return getAllJobs(c).some(j=>j.status==='Ready to bill');
-    if(activeFilter==='incomplete') return c.incomplete===true;
+    if(activeFilter==='billinfo') return getAllJobs(c).some(function(j){
+      if(isJobFullyArchived(j)) return false;
+      var billCount=(j.billing&&j.billing.length)?j.billing.length:0;
+      return j.pendingBilling || billCount===0;
+    });
     return true;
   });
   list.innerHTML = items.length ? items.map(c=>{
     const t = getTotals(c);
+    const pms = c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
+    const pmTree = pms.length ? `<div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;">`
+      + pms.map(pm=>{
+          const jn=(pm.jobs||[]).length;
+          const isActivePM=(activeId===c.id && String(activePM)===String(pm.id));
+          const baseBg=isActivePM?'var(--gold-dim2)':'';
+          const lblCol=isActivePM?'var(--gold)':'var(--text)';
+          return `<div class="ci-pm" onclick="event.stopPropagation();selectPM(${c.id},'${pm.id}')" style="display:flex;align-items:center;gap:7px;padding:5px 6px;border-radius:6px;cursor:pointer;background:${baseBg};${isActivePM?'border-left:2px solid var(--gold);':''}" onmouseover="if(!(${isActivePM}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${baseBg}'">`
+            +`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${isActivePM?'var(--gold)':'var(--muted)'}" stroke-width="2" style="flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`
+            +`<span style="font-size:13px;font-weight:600;color:${lblCol};flex:1;">${pm.name}</span>`
+            +`<span style="font-size:11px;color:var(--muted);">${jn} job${jn!==1?'s':''}</span>`
+            +`</div>`;
+        }).join('')
+      + `</div>` : '';
     return `<div class="customer-item${activeId===c.id?' active':''}" data-id="${c.id}">
       <div class="ci-top">
         <div class="ci-name">${c.name}</div>
         <div class="ci-badge${t.active>0?' active':''}">${t.count} job${t.count!==1?'s':''}</div>
       </div>
-      <div class="ci-city">${c.city}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:11px;color:var(--muted);">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'}</span>
+      <div style="display:flex;justify-content:flex-end;align-items:center;margin-top:2px;">
         <div class="ci-total">${fmt(t.total)}</div>
       </div>
+      ${pmTree}
     </div>`;
   }).join('') : '<div style="padding:20px 16px;color:var(--muted2);font-size:13px;text-align:center;">No customers found</div>';
 }
@@ -1179,6 +1258,20 @@ function openJobDetailPopup(customerId, estNum){
 
   function infoCell(label,val){ return '<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;">'+label+'</div><div style="font-size:13px;font-weight:600;color:var(--text);">'+(val||'—')+'</div></div>'; }
 
+  // Same-site banner: other separate jobs (other PMs) at this same address
+  var _origJob=_findOriginalJob(c, job.est)||job;
+  var _siblings=_jobsAtSameSite(c, _origJob);
+  var siteBanner='';
+  if(_siblings.length){
+    var chips=_siblings.map(function(sj){
+      var nm=sj.projectName||sj.jobName||sj.address||sj.est;
+      return '<span onclick="document.getElementById(\'_jobDetailBg\').remove();openJobDetailPopup('+c.id+',\''+sj.est+'\')" style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:#fff;border:1px solid rgba(45,108,93,.3);border-radius:20px;font-size:12px;font-weight:600;color:#2d6c5d;cursor:pointer;margin:2px 4px 2px 0;" title="Open this job">'+nm+' · '+(sj.pmName||'')+'</span>';
+    }).join('');
+    siteBanner='<div style="padding:11px 24px;background:rgba(45,108,93,.06);border-bottom:1px solid rgba(45,108,93,.18);">'
+      +'<div style="font-size:11px;font-weight:700;color:#2d6c5d;margin-bottom:5px;">Same site · '+(_siblings.length+1)+' jobs at this address (one per project manager, billed separately)</div>'
+      +'<div>'+chips+'</div></div>';
+  }
+
   var ex=document.getElementById('_jobDetailBg'); if(ex) ex.remove();
   var bg=document.createElement('div');
   bg.id='_jobDetailBg';
@@ -1186,15 +1279,16 @@ function openJobDetailPopup(customerId, estNum){
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
   bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;margin:auto;">'
     +'<div style="padding:20px 24px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;">'
-      +'<div><div style="font-size:21px;font-weight:800;">'+pn+'</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">'+c.name+'</div></div>'
+      +'<div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:21px;font-weight:800;">'+pn+'</div>'
+        +(function(){ var inactive=_isJobArchived(job); var col=inactive?'var(--muted)':'#16a34a'; var bgc=inactive?'var(--surface3,#f0f0f0)':'rgba(22,163,74,.12)'; var lbl=inactive?'Inactive':'Active'; return '<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:20px;color:'+col+';background:'+bgc+';">'+lbl+'</span>'; })()
+      +'</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">'+c.name+'</div></div>'
       +'<button onclick="document.getElementById(\'_jobDetailBg\').remove()" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;">✕</button>'
     +'</div>'
+    +siteBanner
     +'<div style="padding:14px 24px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:12px 14px;">'
       +infoCell('Job address', fullAddr)
       +infoCell('Date created', job.date)
-      +infoCell('Created by', job.createdBy||job.contactName)
       +infoCell('Project manager', job.contactName||job.pm)
-      +(function(){ var inactive=_isJobArchived(job); var col=inactive?'var(--muted)':'#16a34a'; var lbl=inactive?'Inactive':'Active'; return '<div style="flex:1;min-width:140px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px;">Status</div><div style="font-size:13px;font-weight:700;color:'+col+';">'+lbl+'</div></div>'; })()
     +'</div>'
     +'<div style="padding:10px 24px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Estimates &amp; change orders</div>'
     +'<div style="max-height:30vh;overflow-y:auto;border-top:1px solid #f0f0f0;">'+rows+'</div>'
@@ -1202,9 +1296,9 @@ function openJobDetailPopup(customerId, estNum){
     +'<div style="max-height:24vh;overflow-y:auto;border-top:1px solid #f0f0f0;">'+invRows+'</div>'
     +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;background:var(--surface2);">'
       +(_isJobArchived(job)
-         ? '<button onclick="jdActivateJob('+c.id+',\''+job.est+'\')" style="padding:10px 16px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Activate Job</button>'
-         : '<button onclick="jdInactivateJob('+c.id+',\''+job.est+'\')" style="padding:10px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Inactivate job</button>')
-      +'<button onclick="jdNewEstimate(\''+encodeURIComponent(pn)+'\',\''+encodeURIComponent(c.name)+'\',\''+encodeURIComponent(job.address||'')+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">+ New estimate</button>'
+         ? '<button onclick="jdActivateJob('+c.id+',\''+job.est+'\')" style="padding:10px 16px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Make Job Active</button>'
+         : '<button onclick="jdInactivateJob('+c.id+',\''+job.est+'\')" style="padding:10px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Make Job Inactive</button>')
+      +'<button onclick="jdNewEstimate(\''+encodeURIComponent(pn)+'\',\''+encodeURIComponent(c.name)+'\',\''+encodeURIComponent(job.address||'')+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">+ New Estimate</button>'
     +'</div>'
     +'</div>';
   document.body.appendChild(bg);
@@ -1569,11 +1663,32 @@ function showLinePopup(e, customerId, estId, type){
   document.body.appendChild(d.firstChild);
 }
 
-function renderDetail(id){
+// Select a project manager from the left panel → show their jobs filtered on the right
+function selectPM(customerId, pmId){
+  activeId=customerId;
+  activePM=pmId;
+  renderList();
+  renderDetail(customerId, pmId);
+  var pr=document.getElementById('panelRight'); if(pr) pr.scrollTop=0;
+}
+function clearPMFilter(customerId){
+  activePM=null;
+  renderList();
+  renderDetail(customerId);
+}
+function renderDetail(id, pmFilter){
   const c = CUSTOMERS.find(x=>x.id===id);
   if(!c){ document.getElementById('panelRight').innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;opacity:.25;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Select a customer</span></div>'; return; }
+  // Preserve the selected project manager across re-renders: if no explicit
+  // pmFilter is passed but a PM is selected for THIS customer, keep showing it.
+  if(pmFilter===undefined && activeId===id && activePM){ pmFilter=activePM; }
   const allJobs = getAllJobs(c);
-  const t = getTotals(c);
+  const _pmContact = pmFilter ? c.contacts.find(x=>String(x.id)===String(pmFilter)) : null;
+  // When a PM is selected, the Company Information tabs (Billing, Documents) show
+  // only that PM's jobs. This set holds the est-ids of the PM's jobs for filtering.
+  const _pmJobEsts = _pmContact ? (_pmContact.jobs||[]).map(function(j){return j.est;}) : null;
+  function _tabJobFilter(j){ return _pmJobEsts ? _pmJobEsts.indexOf(j.est)!==-1 : true; }
+  const t = getTotals(c, _pmContact);
   const billing = allJobs.filter(j=>j.status==='Ready to bill').length;
 
   const jobCardsHTML = allJobs.length ? allJobs.map(j=>`
@@ -1588,7 +1703,7 @@ function renderDetail(id){
         <div class="jc-amt">${j.amount}</div>
         <div class="jc-date">${j.date}</div>
       </div>
-      ${j.est?'':`<button class="btn btn-gold btn-sm" style="margin-top:8px;width:100%;" onclick="event.stopPropagation();goCreateEstimate('${encodeURIComponent(j.jobName||'')}','${encodeURIComponent(c.name)}','${encodeURIComponent(j.address||'')}')">+ Create estimate</button>`}
+      ${j.est?'':`<button class="btn btn-gold btn-sm" style="margin-top:8px;width:100%;" onclick="event.stopPropagation();goCreateEstimate('${encodeURIComponent(j.jobName||'')}','${encodeURIComponent(c.name)}','${encodeURIComponent(j.address||'')}')">+ Create Estimate</button>`}
     </div>`).join('') : '<div style="color:var(--muted2);font-size:13px;font-style:italic;">No jobs yet</div>';
 
   const contactCardsHTML = c.contacts.map(ct=>`
@@ -1687,8 +1802,6 @@ function renderDetail(id){
       : '<span onclick="event.stopPropagation();editJobBilling('+c.id+',\'' +jid+ '\')" title="Click to edit billing information" style="display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--surface3,#f0f0f0);border:1px solid var(--border2);border-radius:20px;padding:2px 8px;white-space:nowrap;cursor:pointer;">All actions complete</span>';
     return '<tr style="border-bottom:1px solid var(--border);">'
       +'<td style="padding:10px 12px;font-weight:600;"><span onclick="openJobDetailPopup('+c.id+',\'' +jid+ '\')" style="cursor:pointer;color:var(--text);border-bottom:1px dotted var(--muted2);" onmouseover="this.style.color=\'var(--gold)\'" onmouseout="this.style.color=\'var(--text)\'">'+(j.projectName||j.jobName||j.address||'—')+'</span></td>'
-      +'<td style="padding:10px 12px;color:var(--muted);">'+(j.date||'—')+'</td>'
-      +'<td style="padding:10px 12px;color:var(--muted);">'+(j.contactName||'—')+'</td>'
       +'<td style="padding:10px 12px;">'+billCell+'</td>'
       +'<td style="padding:10px 12px;text-align:center;">'
         +'<span onclick="showJobPopup(event,'+c.id+',\'' +jid+ '\',\'estimates\')" style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-size:12px;font-weight:700;padding:0 8px;cursor:pointer;transition:all .15s;" onmouseover="this.style.background=\'rgba(59,130,246,.22)\'" onmouseout="this.style.background=\'rgba(59,130,246,.12)\'">'+ests+'</span>'
@@ -1705,8 +1818,6 @@ function renderDetail(id){
     return '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
       +'<thead><tr style="border-bottom:2px solid var(--border);">'
       +'<th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Job Name</th>'
-      +'<th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Created</th>'
-      +'<th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Project Manager</th>'
       +'<th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);"><span style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Action Needed</span></th>'
       +'<th style="text-align:center;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Estimates</th>'
       +'<th style="text-align:center;padding:8px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Change Orders</th>'
@@ -1762,6 +1873,41 @@ function renderDetail(id){
       +'</table>';
   }
   var jobsListHTML, archivedBlockHTML='';
+  // PM-filtered block: only the active jobs assigned to the selected project manager
+  var pmBlockHTML='';
+  if(_pmContact){
+    var pmJobsAll=(_pmContact.jobs||[]).map(function(j){return Object.assign({},j,{contactName:_pmContact.name,contactId:_pmContact.id});});
+    var pmActive=pmJobsAll.filter(function(j){return !isJobFullyArchived(j);});
+    var pmArchived=pmJobsAll.filter(function(j){return isJobFullyArchived(j);});
+    var pmArchLines=pmArchived.map(function(j){
+      var firstEst=(j.estimates&&j.estimates.length)?j.estimates[0]:{est:j.est,scope:'',amount:j.amount};
+      return {job:j, est:firstEst};
+    });
+    pmBlockHTML='<div class="card" style="margin-bottom:16px;border:1.5px solid var(--gold);">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">'
+        +'<div class="card-title" style="display:flex;align-items:center;gap:8px;margin:0;">'
+          +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+          +(_pmContact.name)+' · Active Jobs <span style="color:var(--muted);font-weight:600;">('+pmActive.length+')</span>'
+        +'</div>'
+        +'<button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="clearPMFilter('+c.id+')">✕ Clear Filter</button>'
+      +'</div>'
+      +(pmActive.length ? jobsTableHTML(pmActive) : '<div style="padding:16px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs for this project manager</div>')
+    +'</div>';
+    // Archived jobs of this PM — same info as the customer-level archived block
+    pmBlockHTML += '<div class="card" style="margin-bottom:16px;background:rgba(0,0,0,.03);border:1px solid var(--border);">'
+      +'<div onclick="toggleArchivedJobs(\'pm'+c.id+'\')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">'
+        +'<div class="card-title" style="display:flex;align-items:center;gap:8px;margin:0;color:var(--muted);">'
+          +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
+          +'Archived Job <span style="color:var(--muted);font-weight:600;opacity:.8;">('+pmArchLines.length+')</span>'
+        +'</div>'
+        +'<span id="arch-chev-pm'+c.id+'" style="font-size:14px;color:var(--muted);transition:transform .15s;">▸</span>'
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--muted);opacity:.85;margin-top:2px;">Jobs where every estimate and change order is fully invoiced and paid.</div>'
+      +'<div id="arch-body-pm'+c.id+'" style="display:none;margin-top:12px;">'
+        +(pmArchLines.length ? archivedTableHTML(pmArchLines) : '<div style="padding:14px;font-size:12px;color:var(--muted);opacity:.7;font-style:italic;text-align:center;">No archived jobs yet — they will appear here once fully paid.</div>')
+      +'</div>'
+    +'</div>';
+  }
   if(allJobs.length){
     // Active block
     jobsListHTML = '<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Active Jobs <span style="color:var(--text);">('+activeJobs.length+')</span></div>';
@@ -1797,11 +1943,11 @@ function renderDetail(id){
   const bannerHTML = [
     !hasJob ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(200,130,42,.08);border-bottom:1px solid rgba(200,130,42,.2);">
       <div style="font-size:13px;font-weight:600;color:var(--warning);">⚠ No jobs added yet</div>
-      <button class="btn btn-ghost btn-sm" style="border-color:var(--warning);color:var(--warning);font-size:11px;white-space:nowrap;" onclick="openAddJobModal(${c.id})">+ Add job</button>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--warning);color:var(--warning);font-size:11px;white-space:nowrap;" onclick="openAddJobModal(${c.id})">+ Add Job</button>
     </div>` : '',
     !hasBilling ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(217,79,79,.06);border-bottom:1px solid rgba(217,79,79,.15);">
       <div style="font-size:13px;font-weight:600;color:var(--danger);">⚠ Billing information pending</div>
-      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Complete billing</button>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Complete Billing</button>
     </div>` : ''
   ].filter(Boolean).join('');
 
@@ -1810,16 +1956,28 @@ function renderDetail(id){
     <div class="card" style="padding:0;overflow:hidden;">
       <div style="padding:16px 24px 0 24px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <button class="btn btn-ghost btn-sm" onclick="openEditCustomer(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
+          <button class="btn btn-ghost btn-sm" onclick="${_pmContact ? `openEditContact(${c.id},'${_pmContact.id}')` : `openEditCustomer(${c.id})`}" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Edit
+            ${_pmContact ? 'Edit Project Manager' : 'Edit'}
           </button>
-          <button class="btn btn-gold btn-sm" onclick="openAddJobModal(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
+          <button class="btn btn-gold btn-sm" onclick="openAddJobModal(${c.id}${_pmContact ? `,'${_pmContact.id}'` : ''})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add New Job
           </button>
         </div>
         <div style="padding-bottom:20px;">
+        ${_pmContact ? `
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Project Manager · ${c.name}
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${_pmContact.name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
+            ${_pmContact.title ? `<span>${_pmContact.title}</span>` : ''}
+            ${_pmContact.phone ? `<span>📞 ${_pmContact.phone}</span>` : ''}
+            ${_pmContact.email ? `<span>✉ ${_pmContact.email}</span>` : ''}
+          </div>
+        ` : `
           <div style="font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">${c.type==='residential'?'🏠 Residential':'🏢 Commercial'} · Since ${c.since}</div>
           <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;">${c.name}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;">
@@ -1827,6 +1985,7 @@ function renderDetail(id){
             <span>📞 ${c.phone}</span>
           </div>
           ${pmRowHTML}
+        `}
         </div>
       </div>
       ${bannerHTML}
@@ -1860,12 +2019,14 @@ function renderDetail(id){
       </div>
     </div>
 
-<div class="card" style="margin-bottom:16px;">
+    ${pmBlockHTML}
+
+    ${_pmContact ? '' : `<div class="card" style="margin-bottom:16px;">
       <div class="card-title">Jobs — ${c.name}</div>
       ${jobsListHTML}
     </div>
 
-    ${archivedBlockHTML}
+    ${archivedBlockHTML}`}
 
     <div class="card">
       <div class="card-title" style="margin-bottom:0;">
@@ -1875,15 +2036,15 @@ function renderDetail(id){
 
       <!-- TABS -->
       <div class="tab-bar" style="margin-top:16px;">
-        <button class="tab-btn active" onclick="showTab('pm','${c.id}',this)">
+        ${_pmContact ? '' : `<button class="tab-btn active" onclick="showTab('pm','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Company contacts
           <span class="tab-badge">${c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional').length}</span>
-        </button>
-        <button class="tab-btn" onclick="showTab('billing','${c.id}',this)">
+        </button>`}
+        <button class="tab-btn${_pmContact?' active':''}" onclick="showTab('billing','${c.id}',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           Billing
-          <span class="tab-badge">${c.contacts.filter(x=>x.role==='billing').length}</span>
+          ${_pmContact ? '' : `<span class="tab-badge">${c.contacts.filter(x=>x.role==='billing').length}</span>`}
         </button>
 
 
@@ -1891,14 +2052,14 @@ function renderDetail(id){
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           Documents
         </button>
-        <button class="tab-btn" onclick="showTab('sov','${c.id}',this)" style="${c.sov?'':'color:var(--muted2);'}">
+        ${_pmContact ? '' : `<button class="tab-btn" onclick="showTab('sov','${c.id}',this)" style="${c.sov?'':'color:var(--muted2);'}">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
           SOV ${c.sov?'':'<span style="font-size:9px;padding:1px 5px;background:var(--surface3);border-radius:20px;color:var(--muted2);">Off</span>'}
-        </button>
+        </button>`}
       </div>
 
       <!-- TAB: COMPANY CONTACTS -->
-      <div class="tab-panel active" id="tab-pm-${c.id}">
+      <div class="tab-panel${_pmContact?'':' active'}" id="tab-pm-${c.id}" ${_pmContact?'style="display:none;"':''}>
         ${(()=>{
           const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
           if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
@@ -1954,17 +2115,17 @@ function renderDetail(id){
       </div>
 
       <!-- TAB: BILLING CONTACTS -->
-      <div class="tab-panel" id="tab-billing-${c.id}">
+      <div class="tab-panel${_pmContact?' active':''}" id="tab-billing-${c.id}">
 
         <!-- BILLING BY JOB — each job shows its PM + billing contacts, editable -->
         <div style="margin-bottom:24px;">
           <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Billing by Job
+            Billing by Job${_pmContact?' · '+_pmContact.name:''}
           </div>
 
           ${(()=>{
-            const allJ = getAllJobs(c);
+            const allJ = getAllJobs(c).filter(_tabJobFilter);
             if(!allJ.length) return '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px;font-style:italic;border:1px solid var(--border);border-radius:10px;">No jobs yet. Add a job to manage its billing recipients.</div>';
             function billCard(j,jIdx){
               const pn = j.projectName||j.jobName||j.address||'—';
@@ -1972,19 +2133,22 @@ function renderDetail(id){
               const billing = j.billing||[];
               const bid = c.id+'_'+jIdx;
               const billCount = billing.length;
-              const summary = pm
-                ? `${pm.name}${billCount?' · +'+billCount+' CC':' · ⚠ no billing'}`
-                : (billCount?billCount+' billing':'⚠ no billing');
-              const pmRow = pm ? `
-                <div style="display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:${billing.length?'1px solid var(--border)':'none'};">
+              // The PM is only a billing recipient if they were actually added to j.billing
+              const pmInBilling = pm && billing.some(function(b){return String(b.id)===String(pm.id);});
+              const summary = billCount
+                ? billCount+' billing contact'+(billCount>1?'s':'')
+                : '⚠ no billing';
+              const pmRow = pmInBilling ? `
+                <div style="display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:${billing.length>1?'1px solid var(--border)':'none'};">
                   <div class="cs-av ${pm.color}" style="width:30px;height:30px;font-size:11px;flex-shrink:0;">${pm.initials}</div>
                   <div>
                     <div style="font-size:13px;font-weight:700;">${pm.name}</div>
                     <div style="font-size:12px;color:var(--muted);">${pm.email||''}</div>
                   </div>
                   <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(58,126,212,.1);color:var(--info);">PM · TO</span>
-                </div>` : '<div style="padding:10px 16px;font-size:12px;color:var(--muted2);font-style:italic;">No project manager assigned</div>';
-              const billRows = billing.length ? billing.map(bc=>`
+                </div>` : '';
+              const ccContacts = billing.filter(function(b){ return !(pm && String(b.id)===String(pm.id)); });
+              const billRows = billing.length ? ccContacts.map(bc=>`
                 <div style="display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:9px 16px 9px 32px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.01);">
                   <div style="display:flex;align-items:center;gap:8px;">
                     <div style="width:2px;height:26px;background:rgba(184,146,42,.25);border-radius:2px;flex-shrink:0;"></div>
@@ -1993,7 +2157,7 @@ function renderDetail(id){
                     <div style="font-size:13px;font-weight:600;">${bc.name}</div>
                     <div style="font-size:12px;color:var(--muted);">${bc.email||''}</div>
                   </div>
-                  <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--surface3);color:var(--muted);">CC</span>
+                  <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--surface3);color:var(--muted);">${pmInBilling?'CC':'TO'}</span>
                 </div>`).join('')
                 : '<div style="padding:9px 16px 9px 32px;font-size:12px;color:var(--danger);font-style:italic;">⚠ No billing contacts — pending billing information</div>';
               return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">
@@ -2043,7 +2207,7 @@ function renderDetail(id){
         </div>
         <div style="font-size:11px;color:var(--muted2);margin:-6px 0 10px;">Contracts and files attached to specific jobs (e.g. special billing instructions).</div>
         ${(()=>{
-          var jobs=getCustomerJobs(c);
+          var jobs=getCustomerJobs(c).filter(_tabJobFilter);
           if(!jobs.length) return '<div style="color:var(--muted2);font-size:13px;padding:10px 0;font-style:italic;">No jobs yet</div>';
           return jobs.map(function(j){
             var docs=j.documents||[];
@@ -2059,7 +2223,7 @@ function renderDetail(id){
                 +'<div style="font-size:13px;font-weight:700;">'+(j.jobName||j.projectName||j.address||'Job')+'</div>'
                 +'<div>'
                   +'<input type="file" id="jobFileIn_'+c.id+'_'+j.est+'" style="display:none;" onchange="handleJobFileUpload(event,'+c.id+',\''+j.est+'\')">'
-                  +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'jobFileIn_'+c.id+'_'+j.est+'\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add document</button>'
+                  +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'jobFileIn_'+c.id+'_'+j.est+'\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Document</button>'
                 +'</div>'
               +'</div>'
               +'<div style="padding:4px 8px;">'+docsHTML+'</div>'
@@ -2068,7 +2232,7 @@ function renderDetail(id){
         })()}
 
         <!-- CUSTOMER DOCUMENTS -->
-        <div class="doc-section-title" style="margin-top:20px;">
+        ${_pmContact ? '' : `<div class="doc-section-title" style="margin-top:20px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Customer documents
         </div>
@@ -2093,9 +2257,9 @@ function renderDetail(id){
           <input type="file" id="fileIn_${c.id}" style="display:none;" onchange="handleFileUpload(event,${c.id})">
           <button class="btn btn-ghost btn-sm" onclick="document.getElementById('fileIn_${c.id}').click()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload customer document
+            Upload Customer Document
           </button>
-        </div>
+        </div>`}
       </div>
 
       <!-- TAB: SOV -->
@@ -2126,13 +2290,21 @@ function renderDetail(id){
 
     </div>
 
-    <div class="card" style="margin-top:0;">
+    ${_pmContact ? '' : `<div class="card" style="margin-top:0;">
       <div class="card-title">All estimates — ${c.name}</div>
       <div class="jobs-grid">${jobCardsHTML}</div>
-    </div>
+    </div>`}
 
     ${c.notes?`<div class="card"><div class="card-title">Internal notes</div><div style="font-size:13px;color:var(--text);line-height:1.6;">${c.notes}</div></div>`:''}
   </div>`;
+  // When filtering by a PM, make sure only the Billing tab panel is visible
+  if(_pmContact){
+    var _pr=document.getElementById('panelRight');
+    if(_pr){
+      _pr.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      var _bt=document.getElementById('tab-billing-'+c.id); if(_bt) _bt.classList.add('active');
+    }
+  }
 }
 
 function saveContactPref(customerId, contactIdx, docType, checked){
@@ -2264,6 +2436,22 @@ function showTab(key, customerId, btn){
   card.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   const panel = document.getElementById('tab-'+key+'-'+customerId);
+  if(panel) panel.classList.add('active');
+}
+
+// Programmatically activate a tab+panel by key (used after re-render to stay put)
+function activateTab(customerId, key){
+  var btns=document.querySelectorAll('#panelRight .tab-btn');
+  var targetBtn=null;
+  btns.forEach(function(b){
+    if((b.getAttribute('onclick')||'').indexOf("showTab('"+key+"'")!==-1) targetBtn=b;
+  });
+  var card=targetBtn?targetBtn.closest('.card'):document.querySelector('#panelRight .card');
+  if(!card) return;
+  card.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  card.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  if(targetBtn) targetBtn.classList.add('active');
+  var panel=document.getElementById('tab-'+key+'-'+customerId);
   if(panel) panel.classList.add('active');
 }
 
@@ -2422,7 +2610,7 @@ function handleJobFileUpload(event, customerId, jobEst){
     +'</div>'
     +'<div style="padding:14px 22px;border-top:1px solid #eee;display:flex;gap:10px;justify-content:flex-end;">'
       +'<button id="_jdocCancel" style="padding:9px 16px;border:1.5px solid #ddd;border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-      +'<button id="_jdocSave" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Add document</button>'
+      +'<button id="_jdocSave" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Add Document</button>'
     +'</div></div>';
   document.body.appendChild(modal);
   document.getElementById('_jdocCancel').onclick=function(){ modal.remove(); event.target.value=''; };
@@ -2446,7 +2634,7 @@ function handleFileUpload(event, customerId){
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;';
   modal.innerHTML=`
     <div style="background:#fff;border-radius:14px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2);">
-      <div style="padding:16px 22px;border-bottom:1px solid #eee;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;">Upload document</div>
+      <div style="padding:16px 22px;border-bottom:1px solid #eee;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;">Upload Document</div>
       <div style="padding:18px 22px;">
         <div style="margin-bottom:14px;">
           <label style="font-size:11px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Document name *</label>
@@ -2477,7 +2665,7 @@ function handleFileUpload(event, customerId){
       <div style="padding:14px 22px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:8px;background:#F5F4F1;">
         <button onclick="this.closest('[style*=fixed]').remove()" style="padding:8px 16px;border-radius:6px;border:1px solid #ddd;background:#fff;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;">Cancel</button>
         <button onclick="confirmUploadDoc(${customerId},this,'${file.name}')" style="padding:8px 18px;border-radius:6px;border:none;background:#B8922A;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">
-          Upload document
+          Upload Document
         </button>
       </div>
     </div>`;
@@ -2633,8 +2821,8 @@ function closeModalConfirm(){
     +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Discard unsaved changes?</div>'
     +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes in this customer. Are you sure you want to close without saving?</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
-      +'<button id="_ncCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep editing</button>'
-      +'<button id="_ncOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close without saving</button>'
+      +'<button id="_ncCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep Editing</button>'
+      +'<button id="_ncOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close Without Saving</button>'
     +'</div></div>';
   document.body.appendChild(bg);
   document.getElementById('_ncCancel').onclick=function(){ bg.remove(); };
@@ -2928,7 +3116,7 @@ function openJobAssignPanel(customerId, contactId, estFilter){
         +'<button type="button" onclick="japBillRemove('+idx+',\''+b.id+'\')" style="border:none;background:none;color:var(--danger);font-size:15px;cursor:pointer;line-height:1;">×</button>'
         +'</div>';
     }).join('');
-    var billDrop='<option value="">— Add billing contact —</option>';
+    var billDrop='<option value="">— Add Billing Contact —</option>';
     c.contacts.forEach(function(x){
       if(!billing.some(function(b){return String(b.id)===String(x.id);})) billDrop+='<option value="'+x.id+'">'+x.name+'</option>';
     });
@@ -2989,7 +3177,7 @@ function openJobAssignPanel(customerId, contactId, estFilter){
     +'<div style="padding:20px 24px;max-height:60vh;overflow-y:auto;">'+jobsHTML+'</div>'
     +'<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
     +'<button onclick="closeJobAssignPanel()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Cancel</button>'
-    +'<button onclick="saveJobAssignPanel()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save changes</button>'
+    +'<button onclick="saveJobAssignPanel()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save Changes</button>'
     +'</div></div>';
   document.body.appendChild(modal);
 }
@@ -3136,7 +3324,7 @@ function openEditContact(customerId, contactId){
         <button onclick="saveEditContact('${customerId}','${contactId}')"
           style="padding:9px 18px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Save changes
+          Save Changes
         </button>
       </div>
     </div>`;
@@ -3334,9 +3522,7 @@ function closeTypeSel(){
 // ══ FILTERS ══
 function setFilter(f){
   activeFilter=f;
-  ['all','active','billing','incomplete'].forEach(x=>{
-    const _ce=document.getElementById('chip-'+x); if(_ce) _ce.classList.toggle('active',x===f);
-  });
+  var _sel=document.getElementById('sortFilter'); if(_sel && _sel.value!==f) _sel.value=f;
   renderList();
 }
 
@@ -3366,13 +3552,9 @@ document.addEventListener('DOMContentLoaded', function(){
   on('btnSaveCustomer','click',saveCustomer);
   on('modalBg','click',function(e){if(e.target===this)closeModalConfirm();});
   on('searchInput','input',renderList);
-  on('chip-all','click',()=>setFilter('all'));
-  on('chip-active','click',()=>setFilter('active'));
-  on('chip-billing','click',()=>setFilter('billing'));
-  on('chip-incomplete','click',()=>setFilter('incomplete'));
   on('customerList','click',function(e){
     const item=e.target.closest('.customer-item');if(!item)return;
-    const id=parseInt(item.dataset.id);activeId=id;renderList();renderDetail(id);
+    const id=parseInt(item.dataset.id);activeId=id;activePM=null;renderList();renderDetail(id);
   });
   on('btnCloseTypeSel','click',closeTypeSel);
   on('typeSelectorBg','click',function(e){if(e.target===this)closeTypeSel();});
@@ -3661,7 +3843,7 @@ function exportSOVPdf(customerId){
 
 
 // ══ ADD JOB MODAL ══
-let _ajCustomerId=null, _ajDuplicateConfirmed=false, _ajDuplicateJobs=[], _ajNavigateAfterSave=false, _ajPendingJobData=null;
+let _ajCustomerId=null, _ajDuplicateConfirmed=false, _ajDuplicateJobs=[], _ajNavigateAfterSave=false, _ajPendingJobData=null, _ajSameSiteId=null, _ajDefaultPmId=null;
 
 function toRoman(n){
   const v=[1000,900,500,400,100,90,50,40,10,9,5,4,1],s=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
@@ -3690,6 +3872,47 @@ function findDuplicateJobs(c,addr){
     var jFull=jAddr+((j.city?', '+j.city.toLowerCase():'')); // combine address+city
     return jAddr===inputStreet || jFull===addr.toLowerCase().trim() || streetOnly(jAddr)===inputStreet;
   });
+}
+
+// ── Shared-site helpers: two PMs working the same physical address get
+//    SEPARATE jobs (own estimates/invoices/billing) linked by a shared siteId.
+function _makeSiteId(addr){
+  var street=(addr||'').split(',')[0].toUpperCase().replace(/[^A-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return 'SITE-'+(street||'JOB')+'-'+Date.now().toString().slice(-5);
+}
+// Find the ORIGINAL job (live reference, not a copy) matching an address.
+function _findOriginalJobByAddr(c, addr){
+  var streetOnly=function(a){return (a||'').split(',')[0].toLowerCase().trim();};
+  var want=streetOnly(addr); var found=null;
+  (c.contacts||[]).forEach(function(ct){
+    (ct.jobs||[]).forEach(function(j){
+      if(streetOnly(j.address)===want) found=j;
+    });
+  });
+  return found;
+}
+// Ensure the existing job at this address has a siteId, and return it.
+// If it doesn't have one yet, stamp it on the existing job so both share it.
+function _ensureSiteId(c, addr){
+  var orig=_findOriginalJobByAddr(c, addr);
+  if(orig){
+    if(!orig.siteId){ orig.siteId=_makeSiteId(addr); if(window.SDD) window.SDD.save(); }
+    return orig.siteId;
+  }
+  return _makeSiteId(addr);
+}
+// All ORIGINAL jobs that share a given job's siteId (excluding itself).
+function _jobsAtSameSite(c, job){
+  if(!job||!job.siteId) return [];
+  var out=[];
+  (c.contacts||[]).forEach(function(ct){
+    (ct.jobs||[]).forEach(function(j){
+      if(j!==job && j.siteId && j.siteId===job.siteId){
+        out.push(Object.assign({},j,{pmName:ct.name,pmId:ct.id}));
+      }
+    });
+  });
+  return out;
 }
 
 function nextSuffix(c,baseAddr){
@@ -3761,8 +3984,19 @@ function closeDupPopup(){
   if(p) p.style.display='none';
 }
 
+// SAME SITE, DIFFERENT PM: keep the address, link both jobs by a shared siteId.
+// The new job stays separate (own estimates/invoices/billing); siteId joins them.
+function ajConfirmSameSite(){
+  closeDupPopup();
+  var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;}); if(!c) return;
+  var addr=(document.getElementById('aj_addr')||{value:''}).value.trim();
+  _ajSameSiteId=_ensureSiteId(c, addr);
+  _ajDuplicateConfirmed=true;
+}
+
 function ajConfirmDuplicate(){
   closeDupPopup();
+  _ajSameSiteId=null;
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;}); if(!c) return;
   var snum=(document.getElementById('aj_snum')||{value:''}).value.trim();
   var sname=(document.getElementById('aj_sname')||{value:''}).value.trim().replace(/-[IVXLCDM]+$/i,'');
@@ -3781,6 +4015,7 @@ function ajConfirmDuplicate(){
 
 function ajCancelDuplicate(){
   closeDupPopup();
+  _ajSameSiteId=null;
   ['aj_snum','aj_sname','aj_stype','aj_city','aj_zip'].forEach(function(id){
     var el=document.getElementById(id); if(el){el.value='';if(el.tagName==='SELECT')el.selectedIndex=0;}
   });
@@ -3814,8 +4049,9 @@ function ajPMSelect(val){
   }
 }
 
-function openAddJobModal(cid){
+function openAddJobModal(cid, defaultPmId){
   _ajCustomerId=parseInt(cid);
+  _ajDefaultPmId=defaultPmId||null;
   _ajDuplicateConfirmed=false;
   _ajDuplicateJobs=[];
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
@@ -3829,11 +4065,13 @@ function openAddJobModal(cid){
 
   // Build PM options
   var primary=c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{};
-  var pmOpts='<option value="">— Select project manager —</option>';
+  var _defPm=_ajDefaultPmId?c.contacts.find(function(x){return String(x.id)===String(_ajDefaultPmId);}):null;
+  function _selFor(val){ return (_defPm && val==='pm_'+_defPm.id) ? ' selected' : ''; }
+  var pmOpts='<option value=""'+(_defPm?'':' selected')+'>— Select project manager —</option>';
   pmOpts+='<option value="new">+ New Project Manager</option>';
-  pmOpts+='<option value="primary">'+(primary.name||'Primary contact')+'</option>';
+  pmOpts+='<option value="primary"'+((_defPm&&_defPm===primary)?' selected':'')+'>'+(primary.name||'Primary contact')+'</option>';
   c.contacts.filter(function(x){return x.role==='project-manager'&&x!==primary;}).forEach(function(pm){
-    pmOpts+='<option value="pm_'+pm.id+'">'+pm.name+'</option>';
+    pmOpts+='<option value="pm_'+pm.id+'"'+_selFor('pm_'+pm.id)+'>'+pm.name+'</option>';
   });
 
   // Build billing dropdown options (first name only) from all customer contacts
@@ -3906,12 +4144,24 @@ function openAddJobModal(cid){
     +'<div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);">*</span> are required</div>'
     +'<div style="display:flex;gap:8px;">'
     +'<button onclick="closeAddJobModal()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Cancel</button>'
-    +'<button onclick="ajDynSave()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save job</button>'
+    +'<button onclick="ajDynSave()" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save Job</button>'
     +'</div></div>'
     +'</div></div>';
   var div=document.createElement('div');
   div.innerHTML=html;
   document.body.appendChild(div.firstChild);
+  // If a default PM was passed (PM selected on the left), preselect & lock it
+  if(_defPm){
+    var pmSel=document.getElementById('_aj_pm');
+    if(pmSel){
+      pmSel.value=(_defPm===primary)?'primary':'pm_'+_defPm.id;
+      pmSel.style.borderColor='var(--border2)';
+      pmSel.disabled=true;
+      pmSel.title='Project manager is preset from your selection';
+      ajPMSelectDyn(pmSel.value);
+      var er=document.getElementById('_e_aj_pm'); if(er) er.style.display='none';
+    }
+  }
   ajBillWarnCheck();
 }
 
@@ -3944,12 +4194,12 @@ function ajRelabelBilling(){
   rows.forEach(function(r,i){
     var badge=r.querySelector('._aj_bill_role');
     if(!badge) return;
-    if(i===0){ badge.textContent='Main contact'; badge.style.background='rgba(58,126,212,.12)'; badge.style.color='var(--info)'; }
-    else { badge.textContent='Additional contact (CC\'d)'; badge.style.background='var(--surface3)'; badge.style.color='var(--muted)'; }
+    if(i===0){ badge.textContent='Main Billing Contact'; badge.style.background='rgba(58,126,212,.12)'; badge.style.color='var(--info)'; }
+    else { badge.textContent='Additional Contact (CC\'d)'; badge.style.background='var(--surface3)'; badge.style.color='var(--muted)'; }
   });
   // Once a main contact exists, the button becomes "Add Additional Contact"
   var btn=document.getElementById('_aj_add_contact_btn');
-  if(btn){ btn.textContent = rows.length>0 ? '+ Add Additional Contact' : '+ Add contact'; }
+  if(btn){ btn.textContent = rows.length>0 ? '+ Add Additional Contact' : '+ Add Contact'; }
 }
 function ajBillPick(id){
   if(!id) return;
@@ -3970,6 +4220,13 @@ function ajBillPick(id){
   ajBillWarnCheck();
 }
 function ajBillRemove(id){
+  var row=document.getElementById('_aj_bill_sel_'+id);
+  var nm=(row?row.getAttribute('data-name'):'')||'this contact';
+  _ajConfirmPopup('Remove billing contact?', 'Are you sure you want to remove "'+nm+'" from the billing contacts for this job?', 'Yes, remove', function(){
+    _ajBillRemoveDo(id);
+  });
+}
+function _ajBillRemoveDo(id){
   var row=document.getElementById('_aj_bill_sel_'+id);
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   var drop=document.getElementById('_aj_bill_drop');
@@ -3994,7 +4251,7 @@ function ajAddBillingContact(){
   // Only one open form at a time
   if(document.getElementById('_aj_bill_form')) { var f=document.getElementById('_aj_bn_fn_form'); if(f) f.focus(); return; }
   var existingCount=document.querySelectorAll('#_aj_bill_list ._aj_bill_sel').length;
-  var roleTitle = existingCount===0 ? 'Main contact' : 'Additional contact (CC\'d)';
+  var roleTitle = existingCount===0 ? 'Main Billing Contact' : 'Additional Contact (CC\'d)';
   var row=document.createElement('div');
   row.id='_aj_bill_form';
   row.style.cssText='border:1px solid var(--gold);border-radius:8px;padding:11px;margin-bottom:6px;background:var(--surface2);';
@@ -4014,7 +4271,7 @@ function ajAddBillingContact(){
     +'</div>'
     +'<div id="_aj_bn_err" style="display:none;color:var(--danger);font-size:11px;margin-top:6px;">Enter at least a name or email.</div>'
     +'<div style="display:flex;justify-content:flex-end;margin-top:10px;">'
-    +'<button type="button" onclick="ajSaveNewContact()" style="padding:7px 16px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✓ Save contact</button>'
+    +'<button type="button" onclick="ajSaveNewContact()" style="padding:7px 16px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✓ Save Contact</button>'
     +'</div>';
   wrap.appendChild(row);
   // Once the user starts adding a contact, the button becomes "Add Additional Contact"
@@ -4113,6 +4370,47 @@ function ajToggleSI(show){
 }
 // Pending docs collected while the billing popup is open
 var _ajSiPendingDocs=[];
+// Reusable confirm popup (window.confirm is blocked in this environment)
+function _ajConfirmPopup(title, message, okLabel, onOk){
+  var ex=document.getElementById('_ajGenConfirmBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_ajGenConfirmBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000060;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">'+title+'</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">'+message+'</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_ajGenCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button id="_ajGenOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">'+(okLabel||'Yes')+'</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  document.getElementById('_ajGenCancel').onclick=function(){ bg.remove(); };
+  document.getElementById('_ajGenOk').onclick=function(){ bg.remove(); if(typeof onOk==='function') onOk(); };
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+// Reusable prompt popup (window.prompt is blocked too)
+function _ajPromptPopup(title, label, initial, onSave){
+  var ex=document.getElementById('_ajGenPromptBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_ajGenPromptBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000060;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 6px;font-size:17px;font-weight:700;">'+title+'</div>'
+    +'<div style="padding:0 24px 16px;">'
+      +'<label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block;margin-bottom:6px;">'+(label||'Value')+'</label>'
+      +'<input type="text" id="_ajGenPromptInput" value="'+String(initial||'').replace(/"/g,'&quot;')+'" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_ajGenPromptCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button id="_ajGenPromptOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Save</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  var input=document.getElementById('_ajGenPromptInput');
+  if(input){ input.focus(); input.select(); input.onkeydown=function(e){ if(e.key==='Enter'){ document.getElementById('_ajGenPromptOk').click(); } }; }
+  document.getElementById('_ajGenPromptCancel').onclick=function(){ bg.remove(); };
+  document.getElementById('_ajGenPromptOk').onclick=function(){ var v=input?input.value:''; bg.remove(); if(typeof onSave==='function') onSave(v); };
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
 function ajSiFilePicked(){
   var fi=document.getElementById('_aj_si_file');
   var fn=document.getElementById('_aj_si_filename');
@@ -4123,8 +4421,17 @@ function ajSiAddDoc(){
   var fi=document.getElementById('_aj_si_file');
   var title=(titleEl&&titleEl.value||'').trim();
   var file=(fi&&fi.files&&fi.files[0])?fi.files[0]:null;
-  if(!title && !file){ return; }
-  var name=title || (file?file.name.replace(/\.[^.]+$/,''):'Document');
+  // Document title is mandatory
+  if(!title){
+    if(titleEl){
+      titleEl.style.borderColor='var(--danger)';
+      titleEl.placeholder='Document title is required';
+      titleEl.focus();
+    }
+    return;
+  }
+  if(titleEl){ titleEl.style.borderColor='var(--border2)'; titleEl.placeholder='Document title *'; }
+  var name=title;
   if(file && !/\.[a-z0-9]+$/i.test(name)){ var ext=(file.name.match(/\.[^.]+$/)||['.pdf'])[0]; name=name+ext; }
   else if(!/\.[a-z0-9]+$/i.test(name)){ name=name+'.pdf'; }
   _ajSiPendingDocs.push({name:name, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), category:'Special Instructions'});
@@ -4133,15 +4440,38 @@ function ajSiAddDoc(){
   var fn=document.getElementById('_aj_si_filename'); if(fn) fn.textContent='';
   ajSiRenderDocList();
 }
-function ajSiRemoveDoc(idx){ _ajSiPendingDocs.splice(idx,1); ajSiRenderDocList(); }
+function ajSiRemoveDoc(idx){
+  var d=_ajSiPendingDocs[idx];
+  if(!d){ return; }
+  _ajConfirmPopup('Remove document?', 'Are you sure you want to remove "'+(d.name||'this document')+'"? This cannot be undone.', 'Yes, remove', function(){
+    _ajSiPendingDocs.splice(idx,1);
+    ajSiRenderDocList();
+  });
+}
+function ajSiEditDoc(idx){
+  var d=_ajSiPendingDocs[idx];
+  if(!d){ return; }
+  // Strip extension for editing, keep it on save
+  var ext=(d.name.match(/\.[^.]+$/)||[''])[0];
+  var base=d.name.replace(/\.[^.]+$/,'');
+  _ajPromptPopup('Edit document title', 'Document title', base, function(val){
+    var t=(val||'').trim();
+    if(!t){ return; }
+    d.name = /\.[a-z0-9]+$/i.test(t) ? t : (t+ext || t+'.pdf');
+    ajSiRenderDocList();
+  });
+}
 function ajSiRenderDocList(){
   var list=document.getElementById('_aj_si_doclist');
   if(!list) return;
   if(!_ajSiPendingDocs.length){ list.innerHTML=''; return; }
   list.innerHTML=_ajSiPendingDocs.map(function(d,i){
     return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:5px;">'
-      +'<span style="font-size:12px;font-weight:600;">📄 '+d.name+'</span>'
-      +'<span onclick="ajSiRemoveDoc('+i+')" style="cursor:pointer;color:var(--danger);font-size:13px;font-weight:700;">✕</span>'
+      +'<span style="font-size:12px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📄 '+d.name+'</span>'
+      +'<span style="display:flex;align-items:center;gap:10px;flex-shrink:0;">'
+        +'<span onclick="ajSiEditDoc('+i+')" title="Edit title" style="cursor:pointer;color:var(--gold);font-size:12px;font-weight:700;">✎ Edit</span>'
+        +'<span onclick="ajSiRemoveDoc('+i+')" title="Remove" style="cursor:pointer;color:var(--danger);font-size:13px;font-weight:700;">✕</span>'
+      +'</span>'
     +'</div>';
   }).join('');
 }
@@ -4307,7 +4637,7 @@ function ajDynSave(){
         +'</div>'
         +'<div style="padding:16px 24px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;">'
         +'<button onclick="ajDupNo()" style="padding:9px 20px;border-radius:8px;border:1.5px solid #ddd;background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">No — Enter New</button>'
-        +'<button onclick="ajDupYes()" style="padding:9px 20px;border-radius:8px;border:none;background:#b8922a;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Yes — save anyway</button>'
+        +'<button onclick="ajDupYes()" style="padding:9px 20px;border-radius:8px;border:none;background:#b8922a;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Yes — Save Anyway</button>'
         +'</div>'
         +'</div></div>';
       var d=document.createElement('div');
@@ -4323,7 +4653,7 @@ function ajDynSave(){
   openBillingPopup();
 }
 
-// ── Billing Information popup (shown after Save / after "Yes — save anyway") ──
+// ── Billing Information popup (shown after Save / after "Yes — Save Anyway") ──
 function openBillingPopup(){
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
   if(!c) return;
@@ -4343,6 +4673,11 @@ function openBillingPopup(){
     +'<button type="button" onclick="closeBillingPopupConfirm()" title="Close" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:0 4px;">✕</button>'
     +'</div>'
     +'<div style="padding:20px 24px;">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>'
+    +'<div id="_aj_bill_list"></div>'
+    +'<div id="_aj_bill_new"></div>'
+    +'<button type="button" id="_aj_add_contact_btn" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add Contact</button>'
+    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
     +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Does this job have special instructions?</div>'
     +'<div style="display:flex;gap:18px;margin-bottom:6px;">'
     +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_si" value="yes" onchange="ajToggleSI(true)" style="cursor:pointer;accent-color:var(--gold);"> Yes</label>'
@@ -4353,9 +4688,9 @@ function openBillingPopup(){
       +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px;">Attach documents (e.g. contract)</div>'
       +'<div id="_aj_si_doclist" style="margin-bottom:8px;"></div>'
       +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
-        +'<input type="text" id="_aj_si_doctitle" placeholder="Document title" style="flex:1;min-width:140px;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+        +'<input type="text" id="_aj_si_doctitle" placeholder="Document title *" style="flex:1;min-width:140px;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
         +'<input type="file" id="_aj_si_file" style="display:none;" onchange="ajSiFilePicked()">'
-        +'<button type="button" onclick="document.getElementById(\'_aj_si_file\').click()" style="padding:8px 14px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Choose file</button>'
+        +'<button type="button" onclick="document.getElementById(\'_aj_si_file\').click()" style="padding:8px 14px;border:1.5px solid var(--gold);border-radius:8px;background:#fff;color:var(--gold);font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Choose File</button>'
         +'<button type="button" onclick="ajSiAddDoc()" style="padding:8px 14px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>'
       +'</div>'
       +'<div id="_aj_si_filename" style="font-size:11px;color:var(--muted2);margin-top:6px;"></div>'
@@ -4372,14 +4707,9 @@ function openBillingPopup(){
     +'<label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;"><input type="radio" name="_aj_waiver" value="no" style="cursor:pointer;accent-color:var(--gold);"> No</label>'
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">If Yes: a conditional waiver is generated when the invoice is first sent, and an unconditional waiver is flagged as pending once payment is received.</div>'
-    +'<div style="border-top:1px solid var(--border);margin:14px 0;"></div>'
-    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Billing contacts</div>'
-    +'<div id="_aj_bill_list"></div>'
-    +'<div id="_aj_bill_new"></div>'
-    +'<button type="button" id="_aj_add_contact_btn" onclick="ajAddBillingContact()" style="margin-top:4px;padding:7px 12px;border-radius:8px;border:1.5px dashed var(--border2);background:none;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;">+ Add contact</button>'
     +'</div>'
     +'<div id="_aj_bill_foot" style="padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">'
-    +'<button onclick="ajCommitJob(true)" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Enter info later</button>'
+    +'<button onclick="ajCommitJob(true)" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--border2);background:none;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Enter Info Later</button>'
     +'<button onclick="ajCommitJob(false)" style="padding:9px 20px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">✓ Save</button>'
     +'</div>'
     +'</div></div>';
@@ -4431,8 +4761,8 @@ function closeBillingPopupConfirm(){
     +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Discard unsaved changes?</div>'
     +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes in this billing information. Are you sure you want to close without saving?</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
-      +'<button id="_billConfirmCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep editing</button>'
-      +'<button id="_billConfirmOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close without saving</button>'
+      +'<button id="_billConfirmCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep Editing</button>'
+      +'<button id="_billConfirmOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close Without Saving</button>'
     +'</div></div>';
   document.body.appendChild(bg);
   document.getElementById('_billConfirmCancel').onclick=function(){ bg.remove(); };
@@ -4519,6 +4849,29 @@ function ajCommitJob(skipLater){
       warn.textContent='⚠ Please answer: '+missing.join(', ')+' — or use "Enter info later".';
       return;
     }
+    // If a document title or file was entered but not added with "+ Add", require it to be completed
+    var _dtEl=document.getElementById('_aj_si_doctitle');
+    var _dfEl=document.getElementById('_aj_si_file');
+    var _dtVal=(_dtEl&&_dtEl.value||'').trim();
+    var _dfVal=(_dfEl&&_dfEl.files&&_dfEl.files.length)?_dfEl.files[0]:null;
+    if(_dfVal && !_dtVal){
+      // file chosen but no title → block and highlight
+      if(_dtEl){ _dtEl.style.borderColor='var(--danger)'; _dtEl.placeholder='Document title is required'; _dtEl.focus(); }
+      var dwarn=document.getElementById('_aj_req_warn');
+      if(!dwarn){
+        dwarn=document.createElement('div');
+        dwarn.id='_aj_req_warn';
+        dwarn.style.cssText='margin:0 24px 12px;padding:9px 12px;border-radius:8px;background:rgba(217,79,79,.1);border:1px solid var(--danger);color:var(--danger);font-size:12px;font-weight:600;';
+        var foot2=document.getElementById('_aj_bill_foot');
+        if(foot2&&foot2.parentNode) foot2.parentNode.insertBefore(dwarn, foot2);
+      }
+      dwarn.textContent='⚠ Enter a document title and press "+ Add", or remove the selected file.';
+      return;
+    }
+    if(_dtVal && !_dfVal){
+      // title typed but not added → just add it automatically before saving
+      ajSiAddDoc();
+    }
   }
   var avC=['av-gold','av-info','av-success','av-warning'];
   var billing=[];
@@ -4574,12 +4927,13 @@ function ajCommitJob(skipLater){
     _ajEditJob=null; _ajPendingJobData=null;
     if(window.SDD) window.SDD.save();
     closeBillingPopup();renderDetail(_ajCustomerId);renderList();
+    activateTab(_ajCustomerId,'billing');
     var fl=document.createElement('div');
     fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:1000000;box-shadow:0 4px 20px rgba(0,0,0,.2);background:#2ecc71;';
     fl.textContent='✓ Billing information updated';document.body.appendChild(fl);setTimeout(function(){if(fl.parentNode)fl.parentNode.removeChild(fl);},3000);
     return;
   }
-  var newJob={est:'',address:pd.addr,po:pd.po,jobName:pd.jobName,projectName:pd.projectName||'',streetOnly:pd.streetOnly||'',date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'No estimate',billing:billing,pendingBilling:pendingBilling,hasSpecialInstructions:siOn,specialInstructions:siText,documents:(siOn?_ajSiPendingDocs.slice():[]),requiresSOV:requiresSOV,requiresWaivers:requiresWaivers};
+  var newJob={est:'',address:pd.addr,po:pd.po,jobName:pd.jobName,projectName:pd.projectName||'',streetOnly:pd.streetOnly||'',siteId:(_ajSameSiteId||null),date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'No estimate',billing:billing,pendingBilling:pendingBilling,hasSpecialInstructions:siOn,specialInstructions:siText,documents:(siOn?_ajSiPendingDocs.slice():[]),requiresSOV:requiresSOV,requiresWaivers:requiresWaivers};
   var pmVal=(document.getElementById('_aj_pm')||{value:''}).value;
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   if(pmVal==='new'){
@@ -4593,6 +4947,7 @@ function ajCommitJob(skipLater){
     else{var f2=cust.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
   }
   _ajPendingJobData=null;
+  _ajSameSiteId=null;
   if(window.SDD) window.SDD.save();
   closeBillingPopup();closeAddJobModal();renderDetail(_ajCustomerId);renderList();
   // If we came from the estimate form, go straight back with this job selected
@@ -4616,8 +4971,8 @@ function askCreateEstimate(job, cust){
     +'<div style="padding:22px 24px 8px;"><div style="font-size:19px;font-weight:700;">Job created ✓</div>'
     +'<div style="font-size:13px;color:var(--muted);margin-top:6px;">"'+(job.jobName||'New job')+'" was added for '+cust.name+'. Do you want to create an estimate for it now?</div></div>'
     +'<div style="padding:8px 24px 22px;display:flex;gap:10px;justify-content:flex-end;">'
-      +'<button onclick="document.getElementById(\'_estAskBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Not now</button>'
-      +'<button onclick="goCreateEstimate(\''+encodeURIComponent(job.jobName||'')+'\',\''+encodeURIComponent(cust.name)+'\',\''+encodeURIComponent(job.address||'')+'\')" style="padding:10px 16px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create estimate</button>'
+      +'<button onclick="document.getElementById(\'_estAskBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Not Now</button>'
+      +'<button onclick="goCreateEstimate(\''+encodeURIComponent(job.jobName||'')+'\',\''+encodeURIComponent(cust.name)+'\',\''+encodeURIComponent(job.address||'')+'\')" style="padding:10px 16px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create Estimate</button>'
     +'</div></div>';
   document.body.appendChild(bg);
 }
@@ -4637,7 +4992,7 @@ function saveNewJob(){
   var c=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});if(!c)return;
   var dups=findDuplicateJobs(c,addr);
   if(dups.length>0&&!_ajDuplicateConfirmed){ajCheckDuplicate();return;}
-  var newJob={est:'',address:addr,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'No estimate'};
+  var newJob={est:'',address:addr,siteId:(_ajSameSiteId||null),date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),amount:'$0',status:'No estimate'};
   var pmVal=(document.getElementById('aj_pm_select')||{value:''}).value;
   var avC=['av-gold','av-info','av-success','av-warning'];
   if(pmVal==='new'){
@@ -4651,6 +5006,7 @@ function saveNewJob(){
     else{var f2=c.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
   }
   if(window.SDD) window.SDD.save();
+  _ajSameSiteId=null;
   closeAddJobModal();renderDetail(_ajCustomerId);renderList();
   askCreateEstimate(newJob, c);
 }
@@ -4747,7 +5103,7 @@ if(window.SDD){
         <button class="btn btn-ghost btn-sm" onclick="closeAddJobModal()">Cancel</button>
         <button class="btn btn-gold" onclick="saveNewJob()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Save job
+          Save Job
         </button>
       </div>
     </div>
@@ -4756,24 +5112,32 @@ if(window.SDD){
 
 <!-- ══ DUPLICATE JOB POPUP ══ -->
 <div id="ajDupPopup" onclick="if(event.target===this)closeDupPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;align-items:center;justify-content:center;padding:24px;">
-  <div class="modal-box" style="max-width:460px;">
+  <div class="modal-box" style="max-width:500px;">
     <div class="modal-head">
       <div>
-        <div class="modal-title" style="color:var(--danger);">⚠ Address already exists</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">This client already has jobs at this address</div>
+        <div class="modal-title" style="color:var(--gold);">This address already has a job</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">Tell us what's going on so billing stays correct</div>
       </div>
     </div>
     <div class="modal-body">
       <div id="aj_addr_dup_jobs" style="margin-bottom:14px;"></div>
-      <div style="background:rgba(184,146,42,.07);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);">
-        Do you want to create a <strong style="color:var(--text);">new phase</strong>? The existing job keeps its own estimates and invoices.
+
+      <div style="background:rgba(45,108,93,.06);border:1px solid rgba(45,108,93,.25);border-radius:10px;padding:13px 15px;margin-bottom:10px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">Same site, different project manager</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;">Two PMs are working this same address. Each gets a <strong>separate job</strong> with its own estimates, invoices and billing — they're just linked as the same site. <strong>One invoice per PM.</strong></div>
+      </div>
+
+      <div style="background:rgba(184,146,42,.06);border:1px solid rgba(184,146,42,.2);border-radius:10px;padding:13px 15px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">New phase of the existing job</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;">A later stage of the same work. Creates a phased job (address gets a phase suffix). The existing job keeps its own estimates and invoices.</div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost btn-sm" onclick="ajCancelDuplicate()">No — change address</button>
-      <button class="btn btn-gold" onclick="ajConfirmDuplicate()">
+    <div class="modal-foot" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="ajCancelDuplicate()">Cancel — Change Address</button>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--gold);color:var(--gold);" onclick="ajConfirmDuplicate()">New Phase</button>
+      <button class="btn btn-gold" onclick="ajConfirmSameSite()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Yes — new phase
+        Same Site, Different PM
       </button>
     </div>
   </div>
