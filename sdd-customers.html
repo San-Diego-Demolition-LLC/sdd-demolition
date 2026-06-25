@@ -327,7 +327,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v94</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v96</span>
 </div>
 
 <div class="app">
@@ -960,42 +960,52 @@ function _collectTx(c, type, estFilter){
     }
   }
   jobs.forEach(function(j){
-    var jobName=j.projectName||j.jobName||j.address||j.est||'Job';
+    var jobProject=j.projectName||j.jobName||j.address||j.est||'—';
     var pmName=j.contactName||'';
     if(type==='estimates'||type==='all'){
       (j.estimates||[]).forEach(function(e){
-        rows.push({kind:'Estimate', num:e.est, date:e.date, amount:e.amount, status:e.status, scope:e.scope||'', job:jobName, pm:pmName, _sort:_txDate(e.date)});
+        rows.push({kind:'Estimate', num:e.est, date:e.date, amount:e.amount, status:e.status, scope:e.scope||'', project:(e.projectName||jobProject), pm:pmName, _sort:_txDate(e.date)});
       });
     }
     if(type==='changeorders'||type==='all'){
       (j.changeOrders||[]).forEach(function(co){
-        rows.push({kind:'Change Order', num:co.est, date:co.date, amount:co.amount, status:co.status, ref:co.originalEst||'', desc:co.description||'', job:jobName, pm:pmName, _sort:_txDate(co.date)});
+        rows.push({kind:'Change Order', num:co.est, date:co.date, amount:co.amount, status:co.status, ref:co.originalEst||'', desc:co.description||'', project:(co.projectName||jobProject), pm:pmName, _sort:_txDate(co.date)});
       });
     }
     if(type==='invoices'||type==='all'){
       (j.invoices||[]).forEach(function(iv){
-        rows.push({kind:'Invoice', num:iv.est, date:iv.date, amount:iv.amount, status:iv.status, ref:iv.originalEst||'', due:iv.due||'', job:jobName, pm:pmName, _sort:_txDate(iv.date)});
+        rows.push({kind:'Invoice', num:iv.est, date:iv.date, amount:iv.amount, status:iv.status, ref:iv.originalEst||'', due:iv.due||'', project:(iv.projectName||jobProject), pm:pmName, _sort:_txDate(iv.date)});
       });
     }
     if(type==='payments'||type==='all'){
       (j.invoices||[]).forEach(function(iv){
         if((iv.status||'').toLowerCase()==='paid'){
-          rows.push({kind:'Payment', num:iv.est, date:iv.date, amount:iv.amount, status:'Received', ref:iv.originalEst||'', job:jobName, pm:pmName, _sort:_txDate(iv.date)});
+          rows.push({kind:'Payment', num:iv.est, date:iv.date, amount:iv.amount, status:'Received', ref:iv.originalEst||'', project:(iv.projectName||jobProject), pm:pmName, _sort:_txDate(iv.date)});
         }
       });
     }
   });
-  // If there is more than one project manager among the rows, sort grouped by PM
-  // (then by date within each PM). Otherwise sort purely by date (newest first).
+  // Date-range filter using explicit from/to date pickers
+  if(_txDateFrom){
+    var fromT=Date.parse(_txDateFrom);
+    if(!isNaN(fromT)) rows=rows.filter(function(r){ return r._sort>=fromT; });
+  }
+  if(_txDateTo){
+    var toT=Date.parse(_txDateTo);
+    if(!isNaN(toT)){ toT+=86400000-1; rows=rows.filter(function(r){ return r._sort<=toT; }); } // include the whole "to" day
+  }
+  // Sort: newest, oldest, or grouped by project manager
   var pmSet={}; rows.forEach(function(r){ if(r.pm) pmSet[r.pm]=1; });
   var multiPM=Object.keys(pmSet).length>1;
-  if(multiPM){
+  if(_txSortMode==='pm'){
     rows.sort(function(a,b){
       var pa=(a.pm||'').toLowerCase(), pb=(b.pm||'').toLowerCase();
       if(pa<pb) return -1; if(pa>pb) return 1;
       return b._sort-a._sort;
     });
-  } else {
+  } else if(_txSortMode==='oldest'){
+    rows.sort(function(a,b){ return a._sort-b._sort; });
+  } else { // newest (default)
     rows.sort(function(a,b){ return b._sort-a._sort; });
   }
   rows._multiPM=multiPM;
@@ -1023,17 +1033,17 @@ function _txTableHTML(c, type, estFilter){
   function money(v){ return '<span style="font-weight:700;">'+(v||'$0')+'</span>'; }
   function status(s){ return '<span style="font-size:11px;font-weight:600;color:'+_txStatusColor(s)+';">'+(s||'')+'</span>'; }
   if(type==='estimates'){
-    headCells=['Num','Date','Job / Scope','Amount','Status'];
+    headCells=['Num','Date','Project Name / Scope','Amount','Status'];
     rowFn=function(r){ return '<td style="'+td+'"><span style="color:#2563eb;font-weight:700;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
-      +'<td style="'+td+'">'+r.job+(r.scope?'<div style="font-size:11px;color:var(--muted);">'+r.scope+'</div>':'')+'</td>'
+      +'<td style="'+td+'">'+r.project+(r.scope?'<div style="font-size:11px;color:var(--muted);">'+r.scope+'</div>':'')+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else if(type==='changeorders'){
     headCells=['Num','Date','Description','Ref Estimate','Amount','Status'];
     rowFn=function(r){ return '<td style="'+td+'"><span style="color:var(--gold);font-weight:700;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
-      +'<td style="'+td+'">'+(r.desc||r.job)+'</td>'
+      +'<td style="'+td+'">'+(r.desc||r.project)+'</td>'
       +'<td style="'+td+'">'+(r.ref||'—')+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
@@ -1046,18 +1056,18 @@ function _txTableHTML(c, type, estFilter){
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else if(type==='payments'){
-    headCells=['Invoice','Date','Job','Amount','Status'];
+    headCells=['Invoice','Date','Project Name','Amount','Status'];
     rowFn=function(r){ return '<td style="'+td+'"><span style="color:#16a34a;font-weight:700;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
-      +'<td style="'+td+'">'+r.job+'</td>'
+      +'<td style="'+td+'">'+r.project+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else { // all
-    headCells=['Type','Num','Date','Job','Amount','Status'];
+    headCells=['Type','Num','Date','Project Name','Amount','Status'];
     rowFn=function(r){ return '<td style="'+td+'"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--surface3);color:var(--muted);">'+r.kind+'</span></td>'
       +'<td style="'+td+'font-weight:700;">'+r.num+'</td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
-      +'<td style="'+td+'">'+r.job+'</td>'
+      +'<td style="'+td+'">'+r.project+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   }
@@ -1077,28 +1087,62 @@ function _txTableHTML(c, type, estFilter){
   }).join('');
   return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'+head+body+'</table></div>';
 }
-// Re-render only the transactions table when the Show dropdown changes.
+// Re-render only the transactions table when a control changes.
 function setTxFilter(customerId, type, estFilter){
+  _txActiveType=type;
+  _rerenderTx(customerId, estFilter);
+}
+function setTxSortMode(customerId, mode, estFilter){
+  _txSortMode=mode;
+  _rerenderTx(customerId, estFilter);
+}
+function setTxDateFrom(customerId, val, estFilter){ _txDateFrom=val||''; _rerenderTx(customerId, estFilter); }
+function setTxDateTo(customerId, val, estFilter){ _txDateTo=val||''; _rerenderTx(customerId, estFilter); }
+function clearTxDates(customerId, estFilter){
+  _txDateFrom=''; _txDateTo='';
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
+  if(c){ var box=document.getElementById('tx-block-'+customerId); if(box) box.outerHTML=txBlockHTML(c, estFilter||null); }
+}
+function _rerenderTx(customerId, estFilter){
   var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
   if(!c) return;
-  _txActiveType=type;
   var box=document.getElementById('tx-table-'+customerId);
-  if(box) box.innerHTML=_txTableHTML(c, type, estFilter||null);
+  if(box) box.innerHTML=_txTableHTML(c, _txActiveType, estFilter||null);
 }
 var _txActiveType='all';
+var _txDateFrom='';
+var _txDateTo='';
+var _txSortMode='newest';
 function txBlockHTML(c, estFilter){
   var sel=function(v,l){ return '<option value="'+v+'"'+(_txActiveType===v?' selected':'')+'>'+l+'</option>'; };
+  var selS=function(v,l){ return '<option value="'+v+'"'+(_txSortMode===v?' selected':'')+'>'+l+'</option>'; };
   var ef=estFilter?",'"+estFilter+"'":"";
-  return '<div class="card" style="margin-bottom:16px;">'
+  var ctrlStyle='padding:6px 10px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:13px;color:var(--text);cursor:pointer;outline:none;';
+  var dateStyle='padding:5px 8px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:12px;color:var(--text);cursor:pointer;outline:none;';
+  var lblStyle='font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);';
+  var hasDates=(_txDateFrom||_txDateTo);
+  return '<div class="card" id="tx-block-'+c.id+'" style="margin-bottom:16px;">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">'
       +'<div class="card-title" style="margin:0;display:flex;align-items:center;gap:8px;">'
         +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-5"/></svg>Transactions</div>'
-      +'<div style="display:flex;align-items:center;gap:6px;margin-left:auto;">'
-        +'<label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Show</label>'
-        +'<select onchange="setTxFilter('+c.id+',this.value'+ef+')" style="padding:6px 10px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:13px;color:var(--text);cursor:pointer;outline:none;">'
-          +sel('all','All')+sel('invoices','Invoices')+sel('estimates','Estimates')+sel('changeorders','Change Orders')+sel('payments','Payments')
-        +'</select>'
+      +'<div style="display:flex;align-items:center;gap:14px;margin-left:auto;flex-wrap:wrap;">'
+        +'<div style="display:flex;align-items:center;gap:6px;"><label style="'+lblStyle+'">Show</label>'
+          +'<select onchange="setTxFilter('+c.id+',this.value'+ef+')" style="'+ctrlStyle+'">'
+            +sel('all','All')+sel('invoices','Invoices')+sel('estimates','Estimates')+sel('changeorders','Change Orders')+sel('payments','Payments')
+          +'</select></div>'
+        +'<div style="display:flex;align-items:center;gap:6px;"><label style="'+lblStyle+'">Sort</label>'
+          +'<select onchange="setTxSortMode('+c.id+',this.value'+ef+')" style="'+ctrlStyle+'">'
+            +selS('newest','Newest first')+selS('oldest','Oldest first')+selS('pm','Project Manager')
+          +'</select></div>'
       +'</div>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:8px 10px;background:var(--surface2);border-radius:8px;">'
+      +'<label style="'+lblStyle+'">Date range</label>'
+      +'<span style="font-size:12px;color:var(--muted);">From</span>'
+      +'<input type="date" value="'+_txDateFrom+'" onchange="setTxDateFrom('+c.id+',this.value'+ef+')" style="'+dateStyle+'">'
+      +'<span style="font-size:12px;color:var(--muted);">To</span>'
+      +'<input type="date" value="'+_txDateTo+'" onchange="setTxDateTo('+c.id+',this.value'+ef+')" style="'+dateStyle+'">'
+      +(hasDates?'<button onclick="clearTxDates('+c.id+ef+')" style="padding:5px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;">Clear</button>':'')
     +'</div>'
     +'<div id="tx-table-'+c.id+'">'+_txTableHTML(c, _txActiveType, estFilter||null)+'</div>'
   +'</div>';
