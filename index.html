@@ -223,7 +223,6 @@ svg{display:block;}
   <nav class="nav">
     <a class="nav-item active" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-jobs.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Jobs</a>
     <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html?module=vendors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
@@ -243,7 +242,7 @@ svg{display:block;}
   <!-- WELCOME -->
   <div class="welcome-bar">
     <div>
-      <div class="welcome-title">Good morning, Leontina</div>
+      <div class="welcome-title">Good morning, Leontina <span style="font-size:12px;font-weight:600;color:var(--muted2);vertical-align:middle;margin-left:8px;">dash-v2</span></div>
       <div class="welcome-sub">Monday, May 11, 2026 · 3 items need your attention today</div>
     </div>
   </div>
@@ -346,88 +345,13 @@ svg{display:block;}
   <!-- PIPELINE + ACTIVITY -->
   <div class="content-grid">
     <div>
-      <!-- ESTIMATE PIPELINE -->
+      <!-- JOB STAGE PIPELINE (moved from Jobs) -->
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">
-          Estimate pipeline
-          <a class="card-link">View all →</a>
+          Work by stage
         </div>
-        <div class="pipeline-row">
-          <div class="pipe-stage">
-            <div class="pipe-num" style="color:var(--muted);">2</div>
-            <div class="pipe-label">Draft</div>
-            <div class="pipe-amt" style="color:var(--muted);">$21.3K</div>
-          </div>
-          <div class="pipe-stage">
-            <div class="pipe-num" style="color:var(--info);">2</div>
-            <div class="pipe-label">Pending approval</div>
-            <div class="pipe-amt" style="color:var(--info);">$17.5K</div>
-          </div>
-          <div class="pipe-stage">
-            <div class="pipe-num" style="color:var(--gold);">1</div>
-            <div class="pipe-label">Approved</div>
-            <div class="pipe-amt" style="color:var(--gold);">$22.5K</div>
-          </div>
-          <div class="pipe-stage">
-            <div class="pipe-num" style="color:var(--warning);">2</div>
-            <div class="pipe-label">In progress</div>
-            <div class="pipe-amt" style="color:var(--warning);">$25.7K</div>
-          </div>
-          <div class="pipe-stage">
-            <div class="pipe-num" style="color:var(--danger);">1</div>
-            <div class="pipe-label">Ready to bill</div>
-            <div class="pipe-amt" style="color:var(--danger);">$31.2K</div>
-          </div>
-        </div>
-
-        <!-- Active jobs list -->
-        <div style="border-top:1px solid var(--border);padding-top:14px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;">Active jobs right now</div>
-          <div class="job-row">
-            <div class="jr-status" style="background:var(--warning);"></div>
-            <div class="jr-info">
-              <div class="jr-name">Harbor Blvd Demo <span class="pill pill-progress" style="margin-left:6px;">In progress</span></div>
-              <div class="jr-addr">ABC Construction · May 13–17 · Carlos Mendez</div>
-            </div>
-            <div class="jr-right">
-              <div class="jr-amt">$23,901</div>
-              <div class="jr-date">Day 1 of 5</div>
-            </div>
-          </div>
-          <div class="job-row">
-            <div class="jr-status" style="background:var(--warning);"></div>
-            <div class="jr-info">
-              <div class="jr-name">Broadway Interior <span class="pill pill-progress" style="margin-left:6px;">In progress</span></div>
-              <div class="jr-addr">Horizon Builders · May 12–14 · Carlos Mendez</div>
-            </div>
-            <div class="jr-right">
-              <div class="jr-amt">$11,400</div>
-              <div class="jr-date">Day 2 of 3</div>
-            </div>
-          </div>
-          <div class="job-row">
-            <div class="jr-status" style="background:var(--gold);"></div>
-            <div class="jr-info">
-              <div class="jr-name">Chula Vista Interior <span class="pill pill-scheduled" style="margin-left:6px;">Scheduled</span></div>
-              <div class="jr-addr">ABC Construction · Starts May 20 · Ana Rivera</div>
-            </div>
-            <div class="jr-right">
-              <div class="jr-amt">$22,500</div>
-              <div class="jr-date">Starts in 9 days</div>
-            </div>
-          </div>
-          <div class="job-row">
-            <div class="jr-status" style="background:var(--danger);"></div>
-            <div class="jr-info">
-              <div class="jr-name">Mission Valley Demo <span class="pill pill-billing" style="margin-left:6px;">Ready to bill</span></div>
-              <div class="jr-addr">ABC Construction · Completed Apr 30 · Ana Rivera</div>
-            </div>
-            <div class="jr-right">
-              <div class="jr-amt">$31,200</div>
-              <div class="jr-date">Invoice pending</div>
-            </div>
-          </div>
-        </div>
+        <div class="pipeline-row" id="stageHeaderRow" style="margin-bottom:8px;grid-template-columns:repeat(5,1fr);"></div>
+        <div id="stagePipeline" style="margin-top:6px;"></div>
       </div>
 
       <!-- REVENUE CHART -->
@@ -596,7 +520,318 @@ svg{display:block;}
 
 </div>
 
-<script src="sdd-data.js"></script>
+<script>
+/* ===== inlined sdd-data.js (fallback so the dashboard always has data) ===== */
+/* ============================================================
+   SDD Operations System — Shared data layer (sdd-data.js)
+   One single source of truth for all modules.
+   - Seeds default data the first time.
+   - Persists every change to the browser (localStorage).
+   - Each module reads/writes through window.SDD.
+   ============================================================ */
+(function(){
+  var STORAGE_KEY = 'sdd_data_v1';
+
+  // ---- DEFAULT SEED DATA (used the first time, before anything is saved) ----
+  var SEED = {
+    customers: [
+  {id:1, name:'ABC Construction Corp', city:'San Diego, CA',
+   address:'4500 Main St, San Diego CA 92103', phone:'(619) 555-0142',
+   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, billingMethod:'direct-email', sov:true, sovEstimates:[],
+   contacts:[
+     {id:'c1', name:'Maria Rodriguez', initials:'MR', color:'av-info', role:'billing',
+      email:'billing@abcconstruction.com', phone:'(619) 555-0101', title:'Billing Manager', jobs:[]},
+     {id:'c2', name:'James Torres', initials:'JT', color:'av-gold', role:'project-manager',
+      email:'j.torres@abcconstruction.com', phone:'(619) 555-0102', title:'Project Manager',
+      jobs:[
+        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
+          estimates:[
+            {est:'EST-047',amount:'$14,301',status:'Paid',date:'May 2, 2026',scope:'Original Scope - Demolition',projectName:'Harbor District Redevelopment'},
+            {est:'EST-052',amount:'$8,200',status:'Approved',date:'May 5, 2026',scope:'Revised Scope - Debris Removal',projectName:'Harbor Phase 2 - Site Cleanup'}
+          ],
+          changeOrders:[
+            {est:'EST-CO047-1',originalEst:'EST-047',amount:'$2,100',status:'Approved',date:'May 10, 2026',description:'Additional haul-off - 3 loads'},
+            {est:'EST-CO052-1',originalEst:'EST-052',amount:'$950',status:'Pending',date:'May 12, 2026',description:'Hazmat disposal - asbestos tile'}
+          ],
+          invoices:[
+            {est:'INV-047-1',originalEst:'EST-047',amount:'$14,301',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026'},
+            {est:'INV-047-2',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026'}
+          ]},
+        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
+          estimates:[
+            {est:'EST-051',amount:'$9,850',status:'Pending approval',date:'May 8, 2026',scope:'Site Demo - Full Clearance'}
+          ],
+          changeOrders:[
+            {est:'EST-CO051-1',originalEst:'EST-051',amount:'$1,400',status:'Pending',date:'May 14, 2026',description:'Underground pipe removal'}
+          ],
+          invoices:[]},
+        {est:'EST-044', address:'210 Market St', city:'San Diego CA 92101', status:'Completed', amount:'$18,750', date:'Mar 12, 2026', jobName:'Market St Teardown', projectName:'East Village Tower Site', streetOnly:'210 Market St',
+          billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101'},{id:'c4',name:'Robert Park',email:'r.park@abcconstruction.com',phone:'(619) 555-0104'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 12, 2026',scope:'Full Structure Demolition'}
+          ],
+          changeOrders:[
+            {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved',date:'Mar 20, 2026',description:'Concrete slab breakout'}
+          ],
+          invoices:[
+            {est:'INV-044-1',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026'},
+            {est:'INV-044-2',originalEst:'EST-CO044-1',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026'}
+          ]},
+      ]},
+     {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
+      email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
+      jobs:[
+        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
+          billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101',role:'main'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-058',amount:'$6,400',status:'Approved',date:'May 6, 2026',scope:'Grading & Site Preparation',projectName:'Harbor District Redevelopment'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-058-1',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
+          ]},
+        {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
+          estimates:[
+            {est:'EST-055',amount:'$22,500',status:'Approved',date:'Apr 28, 2026',scope:'Site Demolition & Grading',projectName:'Chula Vista Retail Plaza'}
+          ],
+          changeOrders:[],
+          invoices:[]},
+      ]},
+     {id:'c4', name:'Robert Park', initials:'RP', color:'av-success', role:'additional',
+      email:'r.park@abcconstruction.com', phone:'(619) 555-0104', title:'Director',
+      jobs:[
+        {est:'EST-060', address:'7700 Mission Valley Rd', city:'San Diego CA 92108', status:'Ready to bill', amount:'$31,200', date:'Apr 10, 2026', jobName:'Mission Valley Demo', projectName:'Mission Valley Office Park', streetOnly:'7700 Mission Valley Rd',
+          estimates:[
+            {est:'EST-060',amount:'$31,200',status:'Approved',date:'Apr 10, 2026',scope:'Commercial Building Demolition',projectName:'Mission Valley Office Park'}
+          ],
+          changeOrders:[],
+          invoices:[]},
+        {est:'EST-031', address:'915 Broadway', city:'San Diego CA 92101', status:'Approved', amount:'$12,800', date:'Feb 15, 2025', jobName:'Broadway Lot Demo', projectName:'Broadway Parking Structure', streetOnly:'915 Broadway',
+          estimates:[
+            {est:'EST-031',amount:'$12,800',status:'Approved',date:'Feb 15, 2025',scope:'Parking Lot Demolition',projectName:'Broadway Parking Structure'}
+          ],
+          changeOrders:[],
+          invoices:[]},
+      ]},
+   ]},
+  {id:2, name:'Coastal Builders Inc', city:'Carlsbad, CA',
+   address:'2100 Palomar Airport Rd, Carlsbad CA 92011', phone:'(760) 555-0188',
+   since:'2024', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, billingMethod:'direct-email', sov:true, sovEstimates:[],
+   contacts:[
+     {id:'cb1', name:'Elena Marsh', initials:'EM', color:'av-info', role:'billing',
+      email:'billing@coastalbuilders.com', phone:'(760) 555-0181', title:'Billing Manager', jobs:[]},
+     {id:'cb2', name:'Daniel Cruz', initials:'DC', color:'av-gold', role:'project-manager',
+      email:'d.cruz@coastalbuilders.com', phone:'(760) 555-0182', title:'Project Manager',
+      jobs:[
+        {est:'EST-070', address:'650 Grand Ave', city:'Carlsbad CA 92008', status:'In progress', amount:'$26,400', date:'May 4, 2026', jobName:'Grand Ave Commercial Demo', projectName:'Carlsbad Village Center', streetOnly:'650 Grand Ave',
+          billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-070',amount:'$26,400',status:'Paid',date:'May 4, 2026',scope:'Commercial Structure Demolition'}
+          ],
+          changeOrders:[
+            {est:'EST-CO070-1',originalEst:'EST-070',amount:'$4,500',status:'Approved',date:'May 9, 2026',description:'Additional asbestos abatement'}
+          ],
+          invoices:[
+            {est:'INV-070-1',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026'},
+            {est:'INV-070-2',originalEst:'EST-070',amount:'$13,200',status:'Unpaid',date:'May 20, 2026',due:'Jun 19, 2026'}
+          ]},
+        {est:'EST-066', address:'1820 Coast Hwy', city:'Oceanside CA 92054', status:'Completed', amount:'$15,900', date:'Feb 8, 2026', jobName:'Coast Hwy Teardown', projectName:'Coast Hwy Teardown', streetOnly:'1820 Coast Hwy',
+          billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'},{id:'cb2',name:'Daniel Cruz',email:'d.cruz@coastalbuilders.com',phone:'(760) 555-0182'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 8, 2026',scope:'Full Site Teardown & Haul-off'}
+          ],
+          changeOrders:[
+            {est:'EST-CO066-1',originalEst:'EST-066',amount:'$2,800',status:'Paid',date:'Feb 14, 2026',description:'Extra dumpster rentals'}
+          ],
+          invoices:[
+            {est:'INV-066-1',originalEst:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 18, 2026',due:'Mar 20, 2026'},
+            {est:'INV-066-2',originalEst:'EST-CO066-1',amount:'$2,800',status:'Paid',date:'Feb 20, 2026',due:'Mar 22, 2026'}
+          ]},
+      ]},
+   ]},
+  {id:3, name:'Pacific Demo Partners', city:'San Diego, CA', customerStatus:'inactive',
+   address:'780 Industrial Way, San Diego CA 92110', phone:'(619) 555-0211',
+   since:'2022', type:'commercial', waiver:'conditional', portal:false, notes:'Account inactive — no active jobs.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   contacts:[
+     {id:'pd1', name:'Greg Holt', initials:'GH', color:'av-info', role:'billing',
+      email:'billing@pacificdemo.com', phone:'(619) 555-0210', title:'Billing Manager', jobs:[]},
+     {id:'pd2', name:'Laura Kim', initials:'LK', color:'av-gold', role:'project-manager',
+      email:'l.kim@pacificdemo.com', phone:'(619) 555-0212', title:'Project Manager',
+      jobs:[
+        {est:'EST-040', address:'780 Industrial Way', city:'San Diego CA 92110', status:'Completed', amount:'$19,200', date:'Nov 3, 2025', jobName:'Industrial Way Demo', projectName:'Pacific Industrial Site', streetOnly:'780 Industrial Way',
+          billing:[{id:'pd1',name:'Greg Holt',email:'billing@pacificdemo.com',phone:'(619) 555-0210'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 3, 2025',scope:'Full Structure Demolition'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-040-1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025'}
+          ]},
+      ]},
+   ]},
+  {id:4, name:'Summit Contractors LLC', city:'El Cajon, CA', customerStatus:'collections',
+   address:'1290 Fletcher Pkwy, El Cajon CA 92020', phone:'(619) 555-0277',
+   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'Sent to collections — overdue balance.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   contacts:[
+     {id:'sc1', name:'Nina Brooks', initials:'NB', color:'av-info', role:'billing',
+      email:'billing@summitcontractors.com', phone:'(619) 555-0276', title:'Billing Manager', jobs:[]},
+     {id:'sc2', name:'Marcus Reed', initials:'MR', color:'av-gold', role:'project-manager',
+      email:'m.reed@summitcontractors.com', phone:'(619) 555-0278', title:'Project Manager',
+      jobs:[
+        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to bill', amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
+          billing:[{id:'sc1',name:'Nina Brooks',email:'billing@summitcontractors.com',phone:'(619) 555-0276'}],
+          pendingBilling:false,
+          estimates:[
+            {est:'EST-038',amount:'$24,800',status:'Approved',date:'Dec 12, 2025',scope:'Commercial Demolition'}
+          ],
+          changeOrders:[],
+          invoices:[
+            {est:'INV-038-1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
+          ]},
+      ]},
+   ]},
+],
+    estimates: [
+  {id:1, num:'EST-047', isChangeOrder:false, customer:'ABC Construction Corp',
+   contact:'James Torres', createdBy:'Carlos Mendez',
+   address:'1420 Harbor Blvd, San Diego', jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
+   companyAddress:'4500 Main St, San Diego CA 92103',
+   jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', requiresSOV:true, requiresWaivers:true, termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   status:'in-progress', amount:13150, date:'May 2, 2026',
+   lines:[
+     {desc:'Interior demolition — 2nd floor',    qty:1800, unit:'sq ft', unitPrice:5.00,  total:9000},
+     {desc:'Debris removal & hauling',            qty:3,    unit:'loads', unitPrice:900,   total:2700},
+     {desc:'Dumpster rental (7 days)',            qty:1,    unit:'unit',  unitPrice:850,   total:850},
+     {desc:'Dust protection & containment',      qty:1,    unit:'job',   unitPrice:600,   total:600},
+   ],
+   invoices:[
+     {num:'INV-047-1', date:'May 15, 2026', amount:6575, status:'Paid'},
+     {num:'INV-047-2', date:'May 20, 2026', amount:6575, status:'Unpaid'}
+   ],
+   vendorBills:[
+     {vendor:'West Coast Hauling', account:'5010 · Disposal', amount:1800, status:'Paid'},
+     {vendor:'Pacific Equipment Rental', account:'5020 · Equipment', amount:850, status:'Pending'},
+     {vendor:'City Permits Office', account:'5040 · Permits', amount:350, status:'Pending'}
+   ],
+   schedStart:'May 13, 2026', schedEnd:'May 17, 2026', schedTime:'07:00', schedDays:'5 days',
+   foreman:'Carlos Mendez', waiver:'conditional', payment:'Net 30',
+   timeline:[
+     {action:'Estimate created — Estimate Pending', by:'Carlos Mendez', date:'May 2, 2026', color:'#7C5CBF'},
+     {action:'Sent to client → Pending Approval', by:'System', date:'May 2, 2026', color:'#3A7ED4'},
+     {action:'📧 Notification sent to Carlos Mendez: client received estimate', by:'System', date:'May 2, 2026', color:'#AAA'},
+     {action:'Client approved & signed — James Torres', by:'James Torres', date:'May 4, 2026', color:'#3A9E6A'},
+     {action:'📧 Notification sent to Carlos Mendez: client approved EST-047', by:'System', date:'May 4, 2026', color:'#3A9E6A'},
+     {action:'Status → Approved · Pending Scheduling', by:'System', date:'May 4, 2026', color:'#B8922A'},
+     {action:'Job scheduled: May 13–17 · 07:00 · 5 days', by:'Carlos Mendez', date:'May 7, 2026', color:'#C8822A'},
+     {action:'📧 Notification sent to Admin: job scheduled on calendar', by:'System', date:'May 7, 2026', color:'#3A7ED4'},
+     {action:'Status → In Progress', by:'System', date:'May 13, 2026', color:'#C8822A'},
+   ]},
+  {id:2, num:'EST-051', isChangeOrder:false, customer:'ABC Construction Corp',
+   contact:'James Torres', createdBy:'Ana Rivera',
+   address:'880 5th Ave, San Diego', jobAddress:'880 5th Ave, San Diego CA 92103',
+   companyAddress:'4500 Main St, San Diego CA 92103',
+   jobName:'5th Ave Teardown', poNumber:'PO-5102', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Deconstruction & Demolition Is Not Responsible For Obtaining Permits, All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   status:'pending-approval', amount:9850,
+   lines:[
+     {desc:'Selective interior demo — kitchen & bathrooms', qty:1200, unit:'sq ft', unitPrice:4.50, total:5400},
+     {desc:'Debris hauling',                               qty:2,    unit:'loads', unitPrice:900,  total:1800},
+     {desc:'Dumpster rental (5 days)',                    qty:1,    unit:'unit',  unitPrice:750,  total:750},
+     {desc:'Site protection & dust barriers',            qty:1,    unit:'job',   unitPrice:500,  total:500},
+   ], date:'May 8, 2026',
+   schedStart:'', schedEnd:'', waiver:'conditional', payment:'50% deposit',
+   timeline:[
+     {action:'Estimate created — Estimate Pending', by:'Ana Rivera', date:'May 8, 2026', color:'#7C5CBF'},
+     {action:'Sent to client → Pending Approval', by:'System', date:'May 8, 2026', color:'#3A7ED4'},
+     {action:'📧 Notification sent to Ana Rivera: estimate sent to client', by:'System', date:'May 8, 2026', color:'#AAA'},
+   ]},
+  {id:3, num:'EST-055', isChangeOrder:false, customer:'ABC Construction Corp',
+   contact:'Sandra Lee', createdBy:'Carlos Mendez',
+   address:'342 Third Ave, Chula Vista', jobAddress:'342 Third Ave, Chula Vista CA 91910',
+   companyAddress:'4500 Main St, San Diego CA 92103',
+   jobName:'Chula Vista Interior Demo', poNumber:'', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Deconstruction & Demolition Is Not Responsible For Obtaining Permits. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   status:'approved', amount:22500,
+   lines:[
+     {desc:'Full interior demolition — 3 floors',    qty:4500, unit:'sq ft', unitPrice:3.80, total:17100},
+     {desc:'Debris removal & hauling',               qty:4,    unit:'loads', unitPrice:900,  total:3600},
+     {desc:'Dumpster rental (10 days)',              qty:1,    unit:'unit',  unitPrice:1100, total:1100},
+     {desc:'Dust containment',                      qty:1,    unit:'job',   unitPrice:700,  total:700},
+   ], date:'Apr 28, 2026',
+   schedStart:'', schedEnd:'', waiver:'none', payment:'Net 15',
+   timeline:[
+     {action:'Estimate created — Estimate Pending', by:'Carlos Mendez', date:'Apr 28, 2026', color:'#7C5CBF'},
+     {action:'Sent to client → Pending Approval', by:'System', date:'Apr 28, 2026', color:'#3A7ED4'},
+     {action:'Client approved & signed — Sandra Lee', by:'Sandra Lee', date:'Apr 30, 2026', color:'#3A9E6A'},
+     {action:'📧 Notification sent to Carlos Mendez: client approved EST-055 — schedule required', by:'System', date:'Apr 30, 2026', color:'#3A9E6A'},
+     {action:'Status → Approved · Pending Scheduling', by:'System', date:'Apr 30, 2026', color:'#B8922A'},
+   ]},
+  {id:4, num:'EST-060', isChangeOrder:false, customer:'ABC Construction Corp',
+   contact:'Robert Park', createdBy:'Ana Rivera',
+   address:'7700 Mission Valley Rd, San Diego', jobAddress:'7700 Mission Valley Rd, San Diego CA 92108',
+   companyAddress:'4500 Main St, San Diego CA 92103',
+   jobName:'Mission Valley Commercial Demo', poNumber:'PO-6010', termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   status:'ready-to-bill', amount:31200,
+   lines:[
+     {desc:'Full building demolition — Mission Valley',  qty:8000, unit:'sq ft', unitPrice:3.10, total:24800},
+     {desc:'Debris removal & hauling',                  qty:5,    unit:'loads', unitPrice:900,  total:4500},
+     {desc:'Dumpster rental (14 days)',                 qty:1,    unit:'unit',  unitPrice:1200, total:1200},
+     {desc:'Site fencing & protection',                qty:1,    unit:'job',   unitPrice:700,  total:700},
+   ], date:'Apr 10, 2026',
+   schedStart:'Apr 14, 2026', schedEnd:'Apr 30, 2026', schedDays:'12 days',
+   foreman:'Ana Rivera', waiver:'conditional', payment:'Progress billing',
+   timeline:[
+     {action:'Estimate created — Estimate Pending', by:'Ana Rivera', date:'Apr 10, 2026', color:'#7C5CBF'},
+     {action:'Sent to client → Pending Approval', by:'System', date:'Apr 10, 2026', color:'#3A7ED4'},
+     {action:'Client approved & signed — Robert Park', by:'Robert Park', date:'Apr 12, 2026', color:'#3A9E6A'},
+     {action:'📧 Notification sent to Ana Rivera: client approved — schedule required', by:'System', date:'Apr 12, 2026', color:'#3A9E6A'},
+     {action:'Job scheduled: Apr 14–30 · 07:00 · 12 days', by:'Ana Rivera', date:'Apr 13, 2026', color:'#C8822A'},
+     {action:'📧 Notification sent to Admin: EST-060 scheduled on calendar', by:'System', date:'Apr 13, 2026', color:'#3A7ED4'},
+     {action:'Status → In Progress', by:'System', date:'Apr 14, 2026', color:'#C8822A'},
+     {action:'Job completed — marked by Ana Rivera', by:'Ana Rivera', date:'Apr 30, 2026', color:'#3A9E6A'},
+     {action:'📧 Notification sent to Admin: EST-060 job completed — Ready to Bill', by:'System', date:'Apr 30, 2026', color:'#D94F4F'},
+     {action:'Status → Ready to Bill', by:'System', date:'Apr 30, 2026', color:'#D94F4F'},
+   ]},
+]
+  };
+
+  // ---- Load from storage or seed ----
+  function load(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ return JSON.parse(raw); }
+    } catch(e){ console.warn('SDD: could not read storage', e); }
+    return JSON.parse(JSON.stringify(SEED)); // deep copy of seed
+  }
+
+  var _data = load();
+  // Make sure every collection exists even if storage was partial
+  if(!_data.customers) _data.customers = JSON.parse(JSON.stringify(SEED.customers));
+  if(!_data.estimates) _data.estimates = JSON.parse(JSON.stringify(SEED.estimates));
+
+  function save(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); }
+    catch(e){ console.warn('SDD: could not save storage', e); }
+  }
+
+  // ---- Public API ----
+  window.SDD = {
+    // direct access to the live arrays (modules can read & mutate, then call save)
+    get customers(){ return _data.customers; },
+    get estimates(){ return _data.estimates; },
+    save: save,
+    // replace a whole collection
+    setCustomers: function(arr){ _data.customers = arr; save(); },
+    setEstimates: function(arr){ _data.estimates = arr; save(); },
+    // wipe everything back to the original seed (handy for testing)
+    resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); save(); }
+  };
+})();
+
+</script>
 <script>
 const months = ['Dec','Jan','Feb','Mar','Apr','May'];
 const revenue = [28000, 31000, 22000, 45000, 38000, 67400];
@@ -681,6 +916,438 @@ document.addEventListener('keydown',e=>{
       +'</div>';
     }).join('');
   } catch(err){ console.error('old estimates check failed', err); }
+})();
+
+// ── Work by stage pipeline (built from SDD customers' jobs) ──
+function renderStagePipeline(){
+  var el=document.getElementById('stagePipeline');
+  if(!el || !(window.SDD && window.SDD.customers)) return false;
+  function pa(v){ if(typeof v==='number') return v; var n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+  function fmtMoney(n){ n=Math.round(n); if(Math.abs(n)>=1000) return '$'+(n/1000).toFixed(1).replace(/\.0$/,'')+'K'; return '$'+n; }
+  function fmtFull(n){ n=Math.round(n); return '$'+n.toLocaleString('en-US'); }
+  function stageOf(status){
+    var s=(status||'').toLowerCase();
+    if(/pending approval/.test(s)) return 'pending-approval';
+    if(/in progress|active/.test(s)) return 'in-progress';
+    if(/ready to bill|ready/.test(s)) return 'ready-to-bill';
+    if(/schedul|approved/.test(s)) return 'pending-approval';
+    return 'in-progress';
+  }
+  var BLOCKS=[
+    {key:'pending-approval',label:'Pending Approval',color:'#7C5CBF'},
+    {key:'in-progress',label:'In Progress',color:'#C8822A'},
+    {key:'ready-to-bill',label:'Ready to Bill',color:'#3A9E6A'},          // ready to bill → green
+    {key:'completed',label:'Completed/Pending Payment',color:'#D94F4F'},  // completed/pending payment → red
+    {key:'paid',label:'Paid',color:'#3A9E6A'}                             // new Paid block (green)
+  ];
+  var data={}; BLOCKS.forEach(function(b){ data[b.key]=[]; });
+  function push(stage, customerName, job, line){ data[stage].push(line); }
+  // Helper: find the original scope for an invoice (from the job's estimates/COs)
+  function scopeFor(job, originalEst){
+    var found='';
+    (job.estimates||[]).forEach(function(e){ if(e.est===originalEst) found=e.scope||e.projectName||''; });
+    if(!found) (job.changeOrders||[]).forEach(function(co){ if(co.est===originalEst) found=co.description||''; });
+    return found;
+  }
+  window.SDD.customers.forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(job){
+        var jstatus=(job.status||'').toLowerCase();
+        var loc=job.streetOnly||job.address||job.city||'';
+        // Active-stage lines (pending approval / in progress / ready to bill) come from the job itself.
+        if(!/complet|paid|invoiced|archiv/.test(jstatus)){
+          var st=stageOf(job.status);
+          push(st, c.name, job, {ref:job.est, kind:'EST', company:c.name, location:loc, amount:pa(job.amount), status:(job.status||''), stage:st, color:BLOCKS.filter(function(b){return b.key===st;})[0].color});
+          (job.changeOrders||[]).forEach(function(co){
+            var cst=stageOf(co.status);
+            push(cst, c.name, job, {ref:co.est, kind:'CO', company:c.name, location:loc, amount:pa(co.amount), status:(co.status||''), stage:cst, color:BLOCKS.filter(function(b){return b.key===cst;})[0].color});
+          });
+        }
+        // Invoice lines feed the Completed/Pending Payment and Paid blocks.
+        (job.invoices||[]).forEach(function(iv){
+          var ivs=(iv.status||'').toLowerCase();
+          var scope=scopeFor(job, iv.originalEst);
+          var base={ref:iv.est, kind:'INV', company:c.name, location:loc, scope:scope, amount:pa(iv.amount), status:(iv.status||''), invEst:iv.est, color:''};
+          if(/paid/.test(ivs)){
+            base.stage='paid'; base.color='#3A9E6A';
+            push('paid', c.name, job, base);
+          } else if(/unpaid|sent|pending|past due|overdue|open/.test(ivs)){
+            base.stage='completed'; base.color='#D94F4F';
+            push('completed', c.name, job, base);
+          }
+        });
+      });
+    });
+  });
+  // Flat row. Active stages show EST/CO lines; payment stages show INV lines.
+  function lineRow(ln){
+    var estId=(ln.ref||'').replace(/'/g,'');
+    var btnStyle='padding:6px 12px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);font-family:Barlow,sans-serif;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;';
+    var btnHover='onmouseover="this.style.background=\'var(--surface2)\';this.style.color=\'var(--text)\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--muted)\'"';
+    var btn='';
+    if(ln.stage==='pending-approval'){
+      btn='<button onclick="dashSendReminder(\''+estId+'\')" style="'+btnStyle+'" '+btnHover+'>✉ Send Reminder</button>';
+    } else if(ln.stage==='in-progress'){
+      btn='<button onclick="dashCompleteJob(\''+estId+'\')" style="'+btnStyle+'" '+btnHover+'>✓ Completed/Ready to Bill</button>';
+    } else if(ln.stage==='ready-to-bill'){
+      btn='<button onclick="dashCreateInvoice(\''+estId+'\')" style="'+btnStyle+'" '+btnHover+'>🧾 Create Invoice</button>';
+    } else if(ln.stage==='completed'){
+      btn='<button onclick="dashReceivePayment(\''+estId+'\')" style="'+btnStyle+'" '+btnHover+'>💵 Receive Payment</button>';
+    } else if(ln.stage==='paid'){
+      btn='<span style="font-size:11px;font-weight:700;color:#3A9E6A;padding:4px 10px;background:rgba(58,158,106,.1);border-radius:20px;">Paid Invoice</span>';
+    }
+    // Left side: company, address, and (for invoices) scope + ref/status; (for jobs) ref
+    var leftDetail;
+    if(ln.kind==='INV'){
+      leftDetail='<div style="font-size:11px;color:var(--muted);">'+(ln.location||'—')+'</div>'
+        +(ln.scope?'<div style="font-size:11px;color:var(--muted);">'+ln.scope+'</div>':'')
+        +'<div style="font-size:11px;color:var(--muted);margin-top:1px;">'+ln.ref+' <span style="font-size:9px;font-weight:700;color:'+ln.color+';">'+ln.status+'</span></div>';
+    } else {
+      leftDetail='<div style="font-size:11px;color:var(--muted);">'+(ln.location||'—')+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);margin-top:1px;">'+ln.ref+' <span style="font-size:9px;font-weight:700;color:'+(ln.kind==='CO'?'var(--warning)':'var(--info)')+';">'+ln.kind+'</span></div>';
+    }
+    return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 10px;border-bottom:1px solid var(--border);">'
+      +'<div style="min-width:0;">'
+        +'<div style="font-size:13px;font-weight:700;color:var(--text);">'+ln.company+'</div>'
+        +leftDetail
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">'
+        +'<div style="font-size:14px;font-weight:700;text-align:right;">'+fmtFull(ln.amount)+'</div>'
+        +btn
+      +'</div>'
+    +'</div>';
+  }
+  function blockHTML(b){
+    var lines=data[b.key]; var cnt=lines.length; var total=0;
+    lines.forEach(function(l){ total+=l.amount||0; });
+    var open=(b.key==='in-progress');
+    return '<div style="margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;">'
+      +'<div onclick="toggleStageBlock(\''+b.key+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;cursor:pointer;border-left:4px solid '+b.color+';">'
+        +'<div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:'+b.color+';"></span>'
+        +'<span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:'+b.color+';">'+b.label+'</span>'
+        +'<span style="font-size:11px;font-weight:700;color:var(--muted);background:var(--surface3);padding:1px 8px;border-radius:20px;">'+cnt+'</span></div>'
+        +'<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:12px;font-weight:700;">'+fmtFull(total)+'</span><span id="stchev-'+b.key+'" style="font-size:12px;color:var(--muted);'+(open?'transform:rotate(90deg);display:inline-block;':'')+'">▸</span></div>'
+      +'</div>'
+      +'<div id="stblock-'+b.key+'" style="display:'+(open?'block':'none')+';padding:0;background:var(--surface);">'
+      +(cnt?lines.map(lineRow).join('')+'<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border-top:2px solid var(--border2);background:var(--surface2);"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Total · '+cnt+' item'+(cnt!==1?'s':'')+'</span><span style="font-size:15px;font-weight:800;">'+fmtFull(total)+'</span></div>':'<div style="padding:14px;text-align:center;color:var(--muted2);font-style:italic;font-size:12px;">No work in this stage.</div>')
+      +'</div></div>';
+  }
+  el.innerHTML=BLOCKS.map(blockHTML).join('');
+  // Header row above the blocks: one column per Work-by-stage stage, with full amounts
+  var headerEl=document.getElementById('stageHeaderRow');
+  if(headerEl){
+    headerEl.innerHTML=BLOCKS.map(function(b){
+      var lines=data[b.key]; var cnt=lines.length; var total=0;
+      lines.forEach(function(l){ total+=l.amount||0; });
+      return '<div class="pipe-stage">'
+        +'<div class="pipe-num" style="color:'+b.color+';">'+cnt+'</div>'
+        +'<div class="pipe-label">'+b.label+'</div>'
+        +'<div class="pipe-amt" style="color:'+b.color+';">'+fmtFull(total)+'</div>'
+      +'</div>';
+    }).join('');
+  }
+  return true;
+}
+function toggleStageBlock(key){
+  var b=document.getElementById('stblock-'+key);
+  var c=document.getElementById('stchev-'+key);
+  if(!b) return;
+  var open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  if(c){ c.style.transform=open?'rotate(0deg)':'rotate(90deg)'; c.style.display='inline-block'; }
+}
+
+// ── Active Jobs pipeline + list (built live from SDD) ──
+var _dashFilter=null; // null = show all; otherwise a stage key
+function renderEstimatePipeline(){
+  if(!(window.SDD && window.SDD.customers)) return false;
+  function pa(v){ if(typeof v==='number') return v; var n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+  function fmtK(n){ n=Math.round(n); if(Math.abs(n)>=1000) return '$'+(n/1000).toFixed(1).replace(/\.0$/,'')+'K'; return '$'+n; }
+  function fmtFull(n){ n=Math.round(n); return '$'+n.toLocaleString('en-US'); }
+  // Gather all jobs
+  var allJobs=[];
+  window.SDD.customers.forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(job){ allJobs.push({job:job, customer:c.name}); });
+    });
+  });
+  // Pipeline stages (also used as clickable filters)
+  var stages=[
+    {key:'draft', label:'Draft', color:'var(--muted)', match:function(s){return /draft/.test(s);}},
+    {key:'pending', label:'Pending approval', color:'var(--info)', match:function(s){return /pending approval/.test(s);}},
+    {key:'approved', label:'Approved', color:'var(--gold)', match:function(s){return s==='approved';}},
+    {key:'inprogress', label:'In progress', color:'var(--warning)', match:function(s){return /in progress/.test(s);}},
+    {key:'readybill', label:'Ready to bill', color:'var(--danger)', match:function(s){return /ready to bill/.test(s);}}
+  ];
+  function jobStage(o){
+    var s=(o.job.status||'').toLowerCase();
+    if(/draft/.test(s)) return 'draft';
+    if(/pending approval/.test(s)) return 'pending';
+    if(s==='approved'||/schedul/.test(s)) return 'approved';
+    if(/in progress/.test(s)) return 'inprogress';
+    if(/ready to bill/.test(s)) return 'readybill';
+    return null;
+  }
+  var counts={}; stages.forEach(function(st){ counts[st.key]={n:0,amt:0}; });
+  allJobs.forEach(function(o){
+    var st=jobStage(o);
+    if(st){ counts[st].n++; counts[st].amt+=pa(o.job.amount); }
+  });
+  var rowEl=document.getElementById('estPipelineRow');
+  if(rowEl){
+    rowEl.innerHTML=stages.map(function(st){
+      var sel=(_dashFilter===st.key);
+      return '<div class="pipe-stage" onclick="toggleDashFilter(\''+st.key+'\')" style="cursor:pointer;border-radius:8px;'+(sel?'background:var(--surface2);box-shadow:inset 0 0 0 2px '+st.color+';':'')+'">'
+        +'<div class="pipe-num" style="color:'+st.color+';">'+counts[st.key].n+'</div>'
+        +'<div class="pipe-label">'+st.label+'</div>'
+        +'<div class="pipe-amt" style="color:'+st.color+';">'+fmtK(counts[st.key].amt)+'</div>'
+      +'</div>';
+    }).join('');
+  }
+  // Active jobs list
+  var listEl=document.getElementById('activeJobsList');
+  if(listEl){
+    function pill(stage){
+      if(stage==='inprogress') return {cls:'pill-progress', dot:'var(--warning)', lbl:'In progress'};
+      if(stage==='approved') return {cls:'pill-scheduled', dot:'var(--gold)', lbl:'Approved/Pending Schedule'};
+      if(stage==='readybill') return {cls:'pill-billing', dot:'var(--danger)', lbl:'Completed/Ready to Bill'};
+      if(stage==='pending') return {cls:'pill-pending', dot:'var(--info)', lbl:'Pending approval'};
+      if(stage==='draft') return {cls:'pill-scheduled', dot:'var(--muted)', lbl:'Draft'};
+      return {cls:'pill-progress', dot:'var(--muted)', lbl:'Active'};
+    }
+    // active = anything not completed/paid/archived; then apply the optional stage filter
+    var active=allJobs.filter(function(o){ var s=(o.job.status||'').toLowerCase(); return !/completed|paid|archiv/.test(s) && jobStage(o); });
+    if(_dashFilter){ active=active.filter(function(o){ return jobStage(o)===_dashFilter; }); }
+    if(!active.length){
+      listEl.innerHTML='<div style="padding:14px;text-align:center;color:var(--muted2);font-style:italic;font-size:12px;">No jobs'+(_dashFilter?' in this stage':' right now')+'.</div>';
+    } else {
+      var listTotal=0;
+      var rows=active.map(function(o){
+        var j=o.job; var stage=jobStage(o); var p=pill(stage);
+        listTotal+=pa(j.amount);
+        var pmName=j.contactName||'';
+        var meta=[o.customer, j.date||'', pmName].filter(Boolean).join(' · ');
+        var estId=(j.est||'').replace(/'/g,'');
+        // Per-row action button by stage — subtle, placed to the LEFT of the amount
+        var actionBtn='';
+        if(stage==='pending'){
+          actionBtn='<button onclick="dashSendReminder(\''+estId+'\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background=\'var(--surface2)\';this.style.color=\'var(--text)\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--muted)\'">✉ Send reminder</button>';
+        } else if(stage==='approved'){
+          actionBtn='<button onclick="dashOpenSchedule(\''+estId+'\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--muted);font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background=\'var(--surface2)\';this.style.color=\'var(--text)\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--muted)\'">📅 Schedule</button>';
+        }
+        return '<div class="job-row" style="align-items:center;">'
+          +'<div class="jr-status" style="background:'+p.dot+';"></div>'
+          +'<div class="jr-info">'
+            +'<div class="jr-name">'+(j.projectName||j.jobName||j.address||j.est)+' <span class="pill '+p.cls+'" style="margin-left:6px;">'+p.lbl+'</span></div>'
+            +'<div class="jr-addr">'+meta+'</div>'
+          +'</div>'
+          +'<div style="display:flex;align-items:center;gap:10px;">'
+            +actionBtn
+            +'<div class="jr-right">'
+              +'<div class="jr-amt">'+(j.amount||'$0')+'</div>'
+              +'<div class="jr-date">'+p.lbl+'</div>'
+            +'</div>'
+          +'</div>'
+        +'</div>';
+      }).join('');
+      // Total row at the end
+      var totalRow='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0 2px;border-top:2px solid var(--border2);margin-top:6px;">'
+        +'<div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Total'+(_dashFilter?' ('+pill(_dashFilter).lbl+')':'')+' · '+active.length+' job'+(active.length!==1?'s':'')+'</div>'
+        +'<div style="font-size:16px;font-weight:800;color:var(--text);">'+fmtFull(listTotal)+'</div>'
+      +'</div>';
+      var clearBtn=_dashFilter?'<div style="text-align:right;margin-bottom:8px;"><button onclick="toggleDashFilter(null)" style="padding:4px 12px;border:1px solid var(--border2);border-radius:7px;background:#fff;font-family:Barlow,sans-serif;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;">Clear filter ✕</button></div>':'';
+      listEl.innerHTML=clearBtn+rows+totalRow;
+    }
+  }
+  return true;
+}
+function toggleDashFilter(key){
+  _dashFilter=(key===null)?null:(_dashFilter===key?null:key);
+  renderEstimatePipeline();
+}
+// Send-reminder action (stub email to billing recipients)
+function dashSendReminder(est){
+  var info=_dashFindJob(est);
+  var flash=document.createElement('div');
+  flash.style.cssText='position:fixed;bottom:24px;right:24px;background:#3A7ED4;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:1000099;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  flash.textContent='✉ Approval reminder sent'+(info?' for '+(info.job.projectName||info.job.jobName||est):'');
+  document.body.appendChild(flash);
+  setTimeout(function(){flash.remove();},3000);
+}
+// Open a schedule popup (date + time) for an approved job
+function dashOpenSchedule(est){
+  var info=_dashFindJob(est);
+  if(!info) return;
+  var jobName=info.job.projectName||info.job.jobName||est;
+  var ex=document.getElementById('_dashSchedBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_dashSchedBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="display:flex;align-items:center;gap:9px;"><span style="font-size:18px;">📅</span><div style="font-size:18px;font-weight:700;">Schedule Job</div></div>'
+      +'<button onclick="document.getElementById(\'_dashSchedBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:20px 24px;">'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Set the start date and time for <strong>'+jobName+'</strong>.</div>'
+      +'<div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;">Date <span style="color:#d94f4f;">*</span></label>'
+        +'<input id="_dsDate" type="date" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>'
+      +'<div style="display:flex;gap:12px;">'
+        +'<div style="flex:1;"><label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;">Start time</label>'
+          +'<input id="_dsTime" type="time" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>'
+        +'<div style="flex:1;"><label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;">Crew / Notes</label>'
+          +'<input id="_dsNotes" type="text" placeholder="Optional" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>'
+      +'</div>'
+      +'<div id="_dsErr" style="display:none;color:#d94f4f;font-size:12px;margin-top:6px;">Please choose a date.</div>'
+    +'</div>'
+    +'<div style="padding:14px 24px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_dashSchedBg\').remove()" style="padding:10px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="dashConfirmSchedule(\''+est+'\')" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Confirm Schedule</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function dashConfirmSchedule(est){
+  var d=document.getElementById('_dsDate').value;
+  var t=document.getElementById('_dsTime').value;
+  if(!d){ var er=document.getElementById('_dsErr'); if(er) er.style.display='block'; return; }
+  var info=_dashFindJob(est);
+  if(info){
+    info.job.status='In progress';
+    info.job.startDate=d;
+    if(t) info.job.startTime=t;
+    if(window.SDD && window.SDD.save) window.SDD.save();
+  }
+  var bg=document.getElementById('_dashSchedBg'); if(bg) bg.remove();
+  renderEstimatePipeline();
+  if(typeof renderStagePipeline==='function') renderStagePipeline();
+  var flash=document.createElement('div');
+  flash.style.cssText='position:fixed;bottom:24px;right:24px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:1000099;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  flash.textContent='📅 Job scheduled for '+d+(t?(' at '+t):'')+' — now In Progress';
+  document.body.appendChild(flash);
+  setTimeout(function(){flash.remove();},3000);
+}
+function _dashFindJob(est){
+  if(!(window.SDD && window.SDD.customers)) return null;
+  var found=null;
+  window.SDD.customers.forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(job){
+        if(String(job.est)===String(est)) found={job:job, customer:c.name, line:'job'};
+        else {
+          (job.changeOrders||[]).forEach(function(co){ if(String(co.est)===String(est)) found={job:job, customer:c.name, line:'co', co:co}; });
+        }
+      });
+    });
+  });
+  return found;
+}
+// Generic yes/no confirm popup for the dashboard
+function _dashConfirm(title, message, onYes){
+  var ex=document.getElementById('_dashConfirmBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_dashConfirmBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000095;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;"><div style="font-size:18px;font-weight:700;margin-bottom:8px;">'+title+'</div>'
+    +'<div style="font-size:14px;color:var(--muted);line-height:1.5;">'+message+'</div></div>'
+    +'<div style="padding:16px 24px 20px;display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button id="_dashConfirmNo" style="padding:10px 22px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">No</button>'
+      +'<button id="_dashConfirmYes" style="padding:10px 22px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  document.getElementById('_dashConfirmNo').onclick=function(){ bg.remove(); };
+  document.getElementById('_dashConfirmYes').onclick=function(){ bg.remove(); onYes(); };
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _dashFlash(text, color){
+  var flash=document.createElement('div');
+  flash.style.cssText='position:fixed;bottom:24px;right:24px;background:'+(color||'#16a34a')+';color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:1000099;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+  flash.textContent=text;
+  document.body.appendChild(flash);
+  setTimeout(function(){flash.remove();},3000);
+}
+// In Progress → mark completed, line moves to Ready to Bill
+function dashCompleteJob(est){
+  var info=_dashFindJob(est);
+  if(!info) return;
+  var nm=info.job.projectName||info.job.jobName||est;
+  _dashConfirm('Complete this job?', 'Are you sure you want to mark <strong>'+nm+'</strong> as completed? It will move to the Ready to Bill stage.', function(){
+    info.job.status='Ready to bill';
+    if(window.SDD && window.SDD.save) window.SDD.save();
+    renderEstimatePipeline();
+    renderStagePipeline();
+    // keep the ready-to-bill block visible
+    setTimeout(function(){ var b=document.getElementById('stblock-ready-to-bill'); if(b){ b.style.display='block'; var ch=document.getElementById('stchev-ready-to-bill'); if(ch){ch.style.transform='rotate(90deg)';ch.style.display='inline-block';} } },20);
+    _dashFlash('✓ Job completed — now Ready to Bill');
+  });
+}
+// Ready to Bill → confirm, then go to the invoice
+function dashCreateInvoice(est){
+  var info=_dashFindJob(est);
+  if(!info) return;
+  var nm=info.job.projectName||info.job.jobName||est;
+  _dashConfirm('Create an invoice?', 'Are you sure you want to create an invoice for <strong>'+nm+'</strong>? You will be taken to the new invoice.', function(){
+    // Navigate to the invoices module; it auto-creates a draft invoice from these params
+    var amt=(typeof info.job.amount==='number')?info.job.amount:String(info.job.amount||'').replace(/[^0-9.]/g,'');
+    var params='?create='+encodeURIComponent(est)
+      +'&customer='+encodeURIComponent(info.customer||'')
+      +'&job='+encodeURIComponent(nm)
+      +'&amount='+encodeURIComponent(amt);
+    window.location.href='sdd-invoices.html'+params;
+  });
+}
+// Find an invoice across all jobs by its invoice number (est field)
+function _dashFindInvoice(invEst){
+  if(!(window.SDD && window.SDD.customers)) return null;
+  var found=null;
+  window.SDD.customers.forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(job){
+        (job.invoices||[]).forEach(function(iv){ if(String(iv.est)===String(invEst)) found={job:job, customer:c.name, inv:iv}; });
+      });
+    });
+  });
+  return found;
+}
+// Completed/Pending Payment → confirm receipt, invoice becomes Paid and moves to the Paid block
+function dashReceivePayment(invEst){
+  var info=_dashFindInvoice(invEst);
+  if(!info) return;
+  _dashConfirm('Receive payment?', 'Mark invoice <strong>'+invEst+'</strong> ('+(info.inv.amount||'')+') as paid? It will move to the Paid block.', function(){
+    info.inv.status='Paid';
+    if(window.SDD && window.SDD.save) window.SDD.save();
+    renderEstimatePipeline();
+    renderStagePipeline();
+    setTimeout(function(){ var b=document.getElementById('stblock-paid'); if(b){ b.style.display='block'; var ch=document.getElementById('stchev-paid'); if(ch){ch.style.transform='rotate(90deg)';ch.style.display='inline-block';} } },20);
+    _dashFlash('💵 Payment received — invoice '+invEst+' is now Paid');
+  });
+}
+
+// Robust initializer: render the dashboard blocks once SDD data is available.
+// Retries briefly in case sdd-data.js hasn't finished loading yet.
+(function initDashboardBlocks(){
+  var done=false;
+  function attempt(tries){
+    if(done) return;
+    var ready=(window.SDD && window.SDD.customers);
+    if(ready){
+      var ok2=false;
+      try{ ok2=renderStagePipeline(); }catch(e){ console.error('stage pipeline render failed', e); }
+      if(ok2!==false) done=true;
+      return;
+    }
+    if(tries<60){ setTimeout(function(){attempt(tries+1);}, 75); }
+    else {
+      // Data never became available — show a clear message instead of empty blocks.
+      var msg='<div style="padding:14px;text-align:center;color:var(--danger);font-size:12px;">Could not load data (sdd-data.js). Try a hard refresh (Ctrl+Shift+R).</div>';
+      var s=document.getElementById('stagePipeline'); if(s&&!s.children.length) s.innerHTML=msg;
+    }
+  }
+  attempt(0);
+  document.addEventListener('DOMContentLoaded', function(){ attempt(0); });
+  window.addEventListener('load', function(){ done=false; attempt(0); });
 })();
 </script>
 
