@@ -617,12 +617,81 @@ const INVOICES_SEED = [
   },
 ];
 
-// Use shared data layer if present (sdd-data.js); otherwise fall back to the seed above.
-// One source of truth: invoices created/edited here persist via window.SDD.save().
-const INVOICES = (window.SDD && window.SDD.invoices && window.SDD.invoices.length)
-  ? window.SDD.invoices
-  : INVOICES_SEED;
-function saveInvoices(){ if(window.SDD){ window.SDD.save(); } }
+// ===== Connect to the shared data core (sdd-data.js) =====
+// Build the working INVOICES list from the real invoices that live on each
+// job in window.SDD, merging in the rich detail from INVOICES_SEED when the
+// invoice number matches. Anything created/edited here is written back to SDD.
+function _ivNum(v){ if(typeof v==='number') return v; var n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+function _ivStatusFromSDD(s){
+  var l=(s||'').toLowerCase();
+  if(l==='paid') return 'paid';
+  if(l==='partial') return 'partial';
+  if(l==='past due'||l==='overdue') return 'overdue';
+  if(l==='sent') return 'sent';
+  if(l==='draft') return 'draft';
+  if(l==='unpaid') return 'sent';
+  return 'sent';
+}
+function buildInvoicesFromSDD(){
+  if(!(window.SDD && window.SDD.customers)) return INVOICES_SEED.slice();
+  var out=[];
+  var nextId=1;
+  window.SDD.customers.forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(j){
+        (j.invoices||[]).forEach(function(iv){
+          var amt=_ivNum(iv.amount);
+          // Try to find a matching detailed seed by invoice number
+          var seed=INVOICES_SEED.filter(function(s){ return s.num===iv.est || s.est===iv.originalEst; })[0];
+          var base = seed ? JSON.parse(JSON.stringify(seed)) : {
+            lines:[{desc:(j.projectName||j.jobName||'Demolition services'),qty:'1',unit:'job',price:'$'+amt.toLocaleString(),total:'$'+amt.toLocaleString()}],
+            payments:[], vendorBills:[], timeline:[{action:'Invoice created',date:iv.date||'',color:'#AAA'}],
+            terms:'Net 30', waiver:'none', paymentMethod:'portal',
+            billingContact:(ct.name||c.name), billingEmail:'billing@example.com',
+            companyAddress:'4500 Main St, San Diego CA 92103'
+          };
+          base.id = nextId++;
+          base.num = iv.est;
+          base.est = iv.originalEst || base.est || '';
+          base.customer = c.name;
+          base.contact = ct.name || base.contact || '';
+          base.jobName = j.projectName || j.jobName || base.jobName || '';
+          base.jobAddress = j.address || base.jobAddress || '';
+          base.status = _ivStatusFromSDD(iv.status);
+          base.invoiceDate = iv.date || base.invoiceDate || '';
+          base.dueDate = iv.due || base.dueDate || '';
+          base.total = amt;
+          if(base.subtotal==null) base.subtotal = amt;
+          if(base.paid==null) base.paid = (base.status==='paid'?amt:(base.status==='partial'?Math.round(amt/2):0));
+          base.balance = amt - (base.paid||0);
+          base._sddRef = {custId:c.id, contactName:ct.name, est:j.est, invEst:iv.est};
+          out.push(base);
+        });
+      });
+    });
+  });
+  return out.length ? out : INVOICES_SEED.slice();
+}
+var INVOICES = buildInvoicesFromSDD();
+// Persist a status/amount change back to the SDD invoice this row came from.
+function syncInvoiceToSDD(inv){
+  if(!(inv && inv._sddRef && window.SDD)) return;
+  var ref=inv._sddRef;
+  (window.SDD.customers||[]).forEach(function(c){
+    if(c.id!==ref.custId) return;
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(j){
+        (j.invoices||[]).forEach(function(iv){
+          if(iv.est===ref.invEst){
+            var statusMap={paid:'Paid',partial:'Partial',overdue:'Past due',sent:'Sent',draft:'Draft'};
+            iv.status = statusMap[inv.status] || iv.status;
+          }
+        });
+      });
+    });
+  });
+  if(window.SDD.save) window.SDD.save();
+}
 
 const STATUS_CONFIG = {
   draft:   {label:'Draft',           pill:'pill-draft',    color:'#AAA'},
@@ -1005,7 +1074,6 @@ function ivRecalcTotals(id){
   inv.subtotal=sub;
   inv.total=sub+(inv.tax||0);
   inv.balance=inv.total-(inv.paid||0);
-  saveInvoices();
 }
 function ivDeleteLine(id, idx){
   const inv=INVOICES.find(i=>i.id===id);
@@ -1016,7 +1084,6 @@ function ivDeleteLine(id, idx){
 }
 function ivSaveInvoice(id){
   ivRecalcTotals(id);
-  saveInvoices();
   renderDetail();
   if(typeof flash==='function') flash('✓ Invoice saved','#3A9E6A');
 }
@@ -1154,7 +1221,6 @@ function doSendInvoice(id){
   inv.timeline.push({action:'Invoice sent to client', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), color:'#3A7ED4'});
   if(inv.waiverSent) inv.timeline.push({action:'Conditional waiver sent with invoice', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), color:'#C8822A'});
   inv.timeline.push({action:'Status → Sent · open · AR', date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}), color:'#3A7ED4'});
-  saveInvoices();
   renderList();
   renderDetail();
   const flash = document.createElement('div');
@@ -1200,7 +1266,6 @@ function confirmPayment(){
       inv.status='partial';
     }
   }
-  saveInvoices();
   closeModal('payModal');
   renderList();
   renderDetail();
@@ -1535,7 +1600,6 @@ renderList();
   };
 
   INVOICES.unshift(newInv);
-  saveInvoices();
   renderList();
   selectInvoice(newId);
 

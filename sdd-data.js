@@ -486,147 +486,14 @@
   {id:'np1',name:'Estimates',type:'Non-Posting',level:1,parent:'np'},
   {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
   {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
-],
-    invoices: [
-  {
-    id:1, num:'INV-2026-018', est:'EST-2026-047', so:'SO-2026-031',
-    customer:'ABC Construction Corp', contact:'James Torres',
-    billingContact:'Maria Rodriguez', billingEmail:'billing@abcconstruction.com',
-    jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
-    companyAddress:'4500 Main St, San Diego CA 92103',
-    jobName:'Harbor Blvd Demo Phase 1',
-    poNumber:'PO-2026-4891',
-    status:'partial',
-    invoiceDate:'May 2, 2026', dueDate:'Jun 1, 2026',
-    subtotal:23150, tax:2025, total:25175,
-    paid:12500, balance:12675,
-    terms:'Progress billing', waiver:'conditional', waiverSent:true, unconditionalSent:false,
-    paymentMethod:'portal',
-    lines:[
-      {desc:'Interior demolition — 2nd floor',qty:'1,800',unit:'sq ft',price:'$5.00',total:'$9,000'},
-      {desc:'Debris removal & hauling',qty:'3',unit:'loads',price:'$900',total:'$2,700'},
-      {desc:'Dumpster rental (7 days)',qty:'1',unit:'unit',price:'$850',total:'$850'},
-      {desc:'Dust protection & containment',qty:'1',unit:'job',price:'$600',total:'$600'},
-      {desc:'Concrete cutting & breaking',qty:'800',unit:'sq ft',price:'$8.00',total:'$6,400',alt:'Alt A'},
-      {desc:'Concrete debris hauling',qty:'4',unit:'loads',price:'$800',total:'$3,200',alt:'Alt A'},
-      {desc:'Surface grading after removal',qty:'800',unit:'sq ft',price:'$1.50',total:'$1,200',alt:'Alt A (partial)'},
-    ],
-    payments:[
-      {method:'card',label:'Credit card',amt:12500,date:'May 6, 2026',ref:'AUTH-4892',icon:'pi-card'},
-    ],
-    vendorBills:[
-      {vendor:'West Coast Hauling',account:'5010 · Disposal',amount:1800,status:'Paid'},
-      {vendor:'Pacific Equipment Rental',account:'5020 · Equipment',amount:850,status:'Pending'},
-      {vendor:'City Permits Office',account:'5040 · Permits',amount:350,status:'Pending'}
-    ],
-    timeline:[
-      {action:'Invoice created from EST-2026-047',date:'May 2, 2026',color:'#AAA'},
-      {action:'Sent to billing@abcconstruction.com',date:'May 2, 2026',color:'#3A7ED4'},
-      {action:'Conditional waiver sent',date:'May 2, 2026',color:'#C8822A'},
-      {action:'Payment received — $12,500 (credit card)',date:'May 6, 2026',color:'#3A9E6A'},
-    ]
-  },
-  {
-    id:2, num:'INV-2026-014', est:'EST-2026-038', so:'SO-2026-018',
-    customer:'Horizon Builders LLC', contact:'David Chen',
-    billingContact:'David Chen', billingEmail:'d.chen@horizonbuilders.com',
-    jobAddress:'901 National City Blvd, National City CA 91950',
-    companyAddress:'1200 Broadway, Chula Vista CA 91910',
-    jobName:'National City Full Demo',
-    poNumber:'HB-2026-0038',
-    status:'paid',
-    invoiceDate:'Mar 31, 2026', dueDate:'Apr 30, 2026',
-    subtotal:17200, tax:1505, total:18705,
-    paid:18705, balance:0,
-    terms:'Net 30', waiver:'unconditional', waiverSent:true, unconditionalSent:true,
-    paymentMethod:'ach',
-    lines:[
-      {desc:'Interior & exterior demolition',qty:'4,200',unit:'sq ft',price:'$3.00',total:'$12,600'},
-      {desc:'Full debris hauling — 8 loads',qty:'8',unit:'loads',price:'$500',total:'$4,000'},
-      {desc:'Final site cleanup',qty:'1',unit:'job',price:'$600',total:'$600'},
-    ],
-    payments:[
-      {method:'ach',label:'ACH transfer',amt:9352,date:'Apr 15, 2026',ref:'ACH-20260415',icon:'pi-ach'},
-      {method:'ach',label:'ACH transfer',amt:9353,date:'Apr 28, 2026',ref:'ACH-20260428',icon:'pi-ach'},
-    ],
-    timeline:[
-      {action:'Invoice created',date:'Mar 31, 2026',color:'#AAA'},
-      {action:'Sent to d.chen@horizonbuilders.com',date:'Mar 31, 2026',color:'#3A7ED4'},
-      {action:'Payment received — $9,352 (ACH)',date:'Apr 15, 2026',color:'#3A9E6A'},
-      {action:'Payment received — $9,353 (ACH)',date:'Apr 28, 2026',color:'#3A9E6A'},
-      {action:'Invoice marked paid in full',date:'Apr 28, 2026',color:'#3A9E6A'},
-      {action:'Unconditional waiver sent',date:'Apr 29, 2026',color:'#3A9E6A'},
-    ]
-  },
-  {
-    id:3, num:'INV-2026-021', est:'EST-2026-060', so:'SO-2026-021',
-    customer:'ABC Construction Corp', contact:'Robert Park',
-    billingContact:'Maria Rodriguez', billingEmail:'billing@abcconstruction.com',
-    jobAddress:'7700 Mission Valley Rd, San Diego CA 92108',
-    companyAddress:'4500 Main St, San Diego CA 92103',
-    jobName:'Mission Valley Commercial Demo',
-    poNumber:'PO-2026-6010',
-    status:'sent',
-    invoiceDate:'May 1, 2026', dueDate:'May 31, 2026',
-    subtotal:28700, tax:2511, total:31211,
-    paid:0, balance:31211,
-    terms:'Net 30', waiver:'conditional', waiverSent:true, unconditionalSent:false,
-    paymentMethod:'portal',
-    lines:[
-      {desc:'Commercial interior demolition',qty:'8,000',unit:'sq ft',price:'$2.80',total:'$22,400'},
-      {desc:'Structural element removal',qty:'1',unit:'job',price:'$3,800',total:'$3,800'},
-      {desc:'Full debris hauling — 6 loads',qty:'6',unit:'loads',price:'$400',total:'$2,400'},
-      {desc:'Dust & containment systems',qty:'1',unit:'job',price:'$1,100',total:'$1,100'},
-    ],
-    payments:[],
-    timeline:[
-      {action:'Invoice created from EST-2026-060',date:'May 1, 2026',color:'#AAA'},
-      {action:'Sent to billing@abcconstruction.com',date:'May 1, 2026',color:'#3A7ED4'},
-      {action:'Conditional waiver sent',date:'May 1, 2026',color:'#C8822A'},
-    ]
-  },
-  {
-    id:4, num:'INV-2026-022', est:'EST-2026-062', so:'SO-2026-034',
-    customer:'Horizon Builders LLC', contact:'David Chen',
-    billingContact:'Priya Nair', billingEmail:'billing@horizonbuilders.com',
-    jobAddress:'450 Broadway, Chula Vista CA 91910',
-    companyAddress:'1200 Broadway, Chula Vista CA 91910',
-    jobName:'Broadway Interior',
-    poNumber:'HB-2026-0062',
-    status:'draft',
-    invoiceDate:'May 11, 2026', dueDate:'Jun 10, 2026',
-    subtotal:10500, tax:919, total:11419,
-    paid:0, balance:11419,
-    terms:'50% deposit / 50% completion', waiver:'unconditional', waiverSent:false, unconditionalSent:false,
-    paymentMethod:'ach',
-    lines:[
-      {desc:'Interior demolition — full floor',qty:'2,800',unit:'sq ft',price:'$3.00',total:'$8,400'},
-      {desc:'Debris hauling — 3 loads',qty:'3',unit:'loads',price:'$600',total:'$1,800'},
-      {desc:'Site protection & cleanup',qty:'1',unit:'job',price:'$300',total:'$300'},
-    ],
-    payments:[],
-    timeline:[
-      {action:'Draft created from EST-2026-062',date:'May 11, 2026',color:'#AAA'},
-    ]
-  },
-],
+]
   };
 
   // ---- Load from storage or seed ----
   function load(){
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){
-        var saved = JSON.parse(raw);
-        // Backfill any top-level collection added after this browser last saved
-        // (e.g. invoices), so new modules still get their seed data.
-        Object.keys(SEED).forEach(function(k){
-          if(saved[k] === undefined){
-            saved[k] = JSON.parse(JSON.stringify(SEED[k]));
-          }
-        });
-        return saved;
-      }
+      if(raw){ return JSON.parse(raw); }
     } catch(e){ console.warn('SDD: could not read storage', e); }
     return JSON.parse(JSON.stringify(SEED)); // deep copy of seed
   }
@@ -765,7 +632,6 @@
     get estimates(){ return _data.estimates; },
     get bills(){ return _data.bills || []; },
     get accounts(){ return _data.accounts || []; },
-    get invoices(){ return _data.invoices || []; },
     get manualEntries(){ return _data.manualEntries || []; },
     save: save,
     // replace a whole collection
@@ -773,7 +639,6 @@
     setEstimates: function(arr){ _data.estimates = arr; save(); },
     setBills: function(arr){ _data.bills = arr; save(); },
     setAccounts: function(arr){ _data.accounts = arr; save(); },
-    setInvoices: function(arr){ _data.invoices = arr; save(); },
     // ===== General Ledger API =====
     postingAccounts: POST,
     ledger: ledger,                       // all journal entries (auto + manual)
