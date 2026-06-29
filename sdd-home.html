@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#B8922A;--gold-light:#C9A84C;--gold-dim:rgba(184,146,42,0.12);--gold-dim2:rgba(184,146,42,0.07);
+  --black:#1A1A1A;--surface:#FFFFFF;--surface2:#F5F4F1;--surface3:#ECEAE5;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#1A1A1A;--muted:#777;--muted2:#AAA;
+  --danger:#D94F4F;--success:#3A9E6A;--warning:#C8822A;--info:#3A7ED4;
+}
+body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column;}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-svg .s-bar{fill:var(--gold);}.logo-svg .letters{fill:#1A1A1A;}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
+.nav{display:flex;gap:4px;}
+.nav-item{padding:6px 14px;border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;text-decoration:none;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--gold-dim);color:var(--gold);}
+.nav-item svg{width:15px;height:15px;opacity:.7;}
+.user-badge{display:flex;align-items:center;gap:10px;}
+.user-name{font-size:13px;font-weight:600;color:var(--text);text-align:right;}
+.user-role{font-size:11px;color:var(--muted);text-align:right;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+.main{padding:24px;max-width:1400px;margin:0 auto;width:100%;}
+.welcome-bar{margin-bottom:18px;}
+.welcome-title{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;color:var(--text);}
+.welcome-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--text);margin-bottom:4px;}
+/* WORKFLOW MAP (QuickBooks-style) */
+.wf-band{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;}
+.wf-band-hdr{display:flex;align-items:center;gap:8px;padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;}
+.wf-band-body{padding:22px 18px;display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px;position:relative;}
+.wf-node{display:flex;flex-direction:column;align-items:center;gap:7px;width:104px;text-align:center;cursor:default;padding:6px 4px;border-radius:10px;transition:background .15s;}
+.wf-node:hover{background:var(--surface2);}
+.wf-ico{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wf-ico svg{width:24px;height:24px;}
+.wf-label{font-size:11.5px;font-weight:600;color:var(--text);line-height:1.25;}
+.wf-arrow{display:flex;align-items:center;color:var(--muted2);font-size:20px;align-self:center;padding:0 2px;margin-top:-18px;}
+.wf-legend{display:flex;flex-wrap:wrap;gap:16px;margin:4px 0 16px;font-size:12px;color:var(--muted);}
+.wf-legend span{display:inline-flex;align-items:center;gap:6px;}
+.wf-chip{width:13px;height:13px;border-radius:4px;display:inline-block;}
+.wf-note{font-size:12px;color:var(--muted);font-style:italic;margin-top:2px;}
+@media(max-width:900px){.nav-item span,.nav-item{font-size:12px;}.wf-node{width:88px;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg class="logo-svg" viewBox="0 0 120 60" width="56" height="28">
+      <polygon class="s-bar" points="28,8 58,8 42,52 12,52"/>
+      <text x="4" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">S</text>
+      <text x="44" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">DD</text>
+    </svg>
+    <span class="logo-text">Demolition</span>
+  </div>
+  <nav class="nav">
+    <a class="nav-item active" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+    <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
+    <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
+    <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
+    <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
+    <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
+    <a class="nav-item" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
+  </nav>
+  <div class="user-badge">
+    <div>
+      <div class="user-name">Leontina Teles</div>
+      <div class="user-role">Manager · SDD Demolition</div>
+    </div>
+    <div class="user-avatar">LT</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="welcome-bar">
+    <div class="welcome-title">Workflow</div>
+    <div class="welcome-sub">Flujo del sistema — cómo se mueve el trabajo entre los módulos</div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Workflow del sistema</div>
+    <div class="wf-note" style="margin-bottom:10px;">Mapa visual agrupado por área, igual que un sistema contable. Cada paso muestra el flujo del trabajo.</div>
+    <div class="wf-legend">
+      <span><i class="wf-chip" style="background:#7C5CBF;"></i> Vendors / gastos</span>
+      <span><i class="wf-chip" style="background:#3A9E6A;"></i> Customers / ingresos</span>
+      <span><i class="wf-chip" style="background:#C8822A;"></i> Employees</span>
+      <span><i class="wf-chip" style="background:#3A7ED4;"></i> Banking</span>
+      <span><i class="wf-chip" style="background:#6B6B66;"></i> Company</span>
+    </div>
+  </div>
+  <div id="wfMap"></div>
+
+</div>
+
+<script>
+var WF_BANDS = [
+  { key:'vendors', label:'Vendors', color:'#7C5CBF',
+    nodes:[
+      {ico:'cart', label:'Purchase orders'},
+      {ico:'truck', label:'Receive materials', arrow:true},
+      {ico:'bill', label:'Enter bills', arrow:true},
+      {ico:'pay', label:'Pay bills', arrow:true},
+    ]},
+  { key:'customers', label:'Customers', color:'#3A9E6A',
+    nodes:[
+      {ico:'doc', label:'Estimates & change orders'},
+      {ico:'invoice', label:'Invoices', arrow:true},
+      {ico:'send', label:'Send / statements', arrow:true},
+      {ico:'receive', label:'Receive payments', arrow:true},
+      {ico:'deposit', label:'Record deposits', arrow:true},
+    ]},
+  { key:'employees', label:'Employees', color:'#C8822A',
+    nodes:[
+      {ico:'clock', label:'Enter time'},
+      {ico:'people', label:'Crew & roles', arrow:true},
+      {ico:'payroll', label:'Payroll', arrow:true},
+    ]},
+  { key:'banking', label:'Banking', color:'#3A7ED4',
+    nodes:[
+      {ico:'bank', label:'Bank transactions'},
+      {ico:'reconcile', label:'Reconcile', arrow:true},
+      {ico:'card', label:'Credit cards', arrow:true},
+    ]},
+  { key:'company', label:'Company', color:'#6B6B66',
+    nodes:[
+      {ico:'accounts', label:'Chart of accounts'},
+      {ico:'ledger', label:'General ledger', arrow:true},
+      {ico:'reports', label:'Financial statements', arrow:true},
+      {ico:'fleet', label:'Fleet & compliance', arrow:true},
+    ]},
+];
+
+var WF_ICONS = {
+  cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
+  truck:'<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+  bill:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>',
+  pay:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="19"/><path d="M9 13.5h4.5a1.5 1.5 0 0 1 0 3H10"/>',
+  send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  receive:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  deposit:'<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  people:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>',
+  payroll:'<rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8" cy="12" r="2"/><line x1="13" y1="10" x2="18" y2="10"/><line x1="13" y1="14" x2="18" y2="14"/>',
+  bank:'<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  reconcile:'<polyline points="20 6 9 17 4 12"/>',
+  card:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  accounts:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>',
+  ledger:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  reports:'<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  fleet:'<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+};
+
+function _hexToRgba(hex,a){
+  var h=hex.replace('#',''); var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+
+function renderWorkflowMap(){
+  var el=document.getElementById('wfMap');
+  if(!el) return;
+  el.innerHTML = WF_BANDS.map(function(band){
+    var nodes = band.nodes.map(function(n){
+      var arrow = n.arrow ? '<div class="wf-arrow">→</div>' : '';
+      var ico = WF_ICONS[n.ico] || '';
+      return arrow +
+        '<div class="wf-node">'+
+          '<div class="wf-ico" style="background:'+_hexToRgba(band.color,0.14)+';color:'+band.color+';">'+
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ico+'</svg>'+
+          '</div>'+
+          '<div class="wf-label">'+n.label+'</div>'+
+        '</div>';
+    }).join('');
+    return '<div class="wf-band">'+
+      '<div class="wf-band-hdr" style="background:'+band.color+';">'+band.label+'</div>'+
+      '<div class="wf-band-body">'+nodes+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+renderWorkflowMap();
+</script>
+</body>
+</html>

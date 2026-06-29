@@ -45,6 +45,23 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .search-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
 .search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;flex:1;}
 .search-box input::placeholder{color:var(--muted2);}
+.status-filter-wrap{position:relative;}
+.status-filter-btn{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;cursor:pointer;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);transition:all .15s;}
+.status-filter-btn:hover{border-color:var(--gold,#B8922A);}
+.status-filter-btn.active{border-color:var(--gold,#B8922A);}
+.sf-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-right:8px;}
+.sf-label{flex:1;text-align:left;font-weight:500;}
+.sf-count{font-size:11px;font-weight:700;background:var(--surface3);padding:2px 8px;border-radius:20px;color:var(--muted);margin-right:8px;}
+.sf-chevron{transition:transform .2s;flex-shrink:0;}
+.sf-chevron.open{transform:rotate(180deg);}
+.status-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:50;overflow:hidden;display:none;}
+.status-dropdown.open{display:block;}
+.sd-option{display:flex;align-items:center;padding:9px 12px;cursor:pointer;transition:background .12s;}
+.sd-option:hover{background:var(--surface3);}
+.sd-option.selected{background:var(--surface3);}
+.sd-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-right:8px;}
+.sd-lbl{flex:1;font-size:13px;font-weight:500;}
+.sd-cnt{font-size:11px;font-weight:700;color:var(--muted);}
 .inv-list{overflow-y:auto;flex:1;}
 .inv-list::-webkit-scrollbar{width:4px;}
 .inv-list::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
@@ -273,6 +290,7 @@ svg{display:block;}
     <span class="logo-text">Demolition</span>
   </div>
   <nav class="nav">
+    <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
     <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
@@ -293,6 +311,15 @@ svg{display:block;}
       <div class="search-box">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:var(--muted);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" placeholder="Search invoices, PO, customer..." oninput="filterInvoices(this.value)">
+      </div>
+      <div class="status-filter-wrap">
+        <div class="status-filter-btn" id="sfBtn" onclick="toggleStatusDropdown(event)">
+          <div class="sf-dot" id="sfDot" style="background:var(--muted2);"></div>
+          <span class="sf-label" id="sfLabel">All statuses</span>
+          <span class="sf-count" id="sfCount"></span>
+          <svg class="sf-chevron" id="sfChevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="status-dropdown" id="statusDropdown"></div>
       </div>
     </div>
     <div class="inv-list" id="invList"></div>
@@ -706,6 +733,7 @@ const GROUP_LABELS = {draft:'Draft',sent:'Sent · awaiting payment',partial:'Par
 
 let activeId = null;
 let payTargetId = null;
+let activeStatusFilter = 'all';
 
 function fmt(n){return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 
@@ -713,6 +741,7 @@ function renderList(q=''){
   const lq = q.toLowerCase();
   const list = document.getElementById('invList');
   list.innerHTML = GROUPS.map(g=>{
+    if(activeStatusFilter!=='all' && g!==activeStatusFilter) return '';
     const items = INVOICES.filter(i=>i.status===g && (
       !lq || i.customer.toLowerCase().includes(lq) || i.num.toLowerCase().includes(lq) ||
       i.poNumber.toLowerCase().includes(lq) || i.jobAddress.toLowerCase().includes(lq) ||
@@ -1549,6 +1578,65 @@ function openPreview(id){
   document.getElementById('previewOverlay').classList.add('open');
 }
 
+function buildStatusDropdown(){
+  const dd = document.getElementById('statusDropdown');
+  if(!dd) return;
+  const counts = {};
+  GROUPS.forEach(g=>counts[g]=INVOICES.filter(i=>i.status===g).length);
+  const allCount = INVOICES.length;
+  let html = `<div class="sd-option${activeStatusFilter==='all'?' selected':''}" onclick="selectStatusFilter('all')">
+      <div class="sd-dot" style="background:var(--muted2);"></div>
+      <span class="sd-lbl">All statuses</span>
+      <span class="sd-cnt">${allCount}</span>
+    </div>`;
+  html += GROUPS.map(g=>{
+    const sc = STATUS_CONFIG[g];
+    return `<div class="sd-option${activeStatusFilter===g?' selected':''}" onclick="selectStatusFilter('${g}')">
+      <div class="sd-dot" style="background:${sc.color};"></div>
+      <span class="sd-lbl">${sc.label}</span>
+      <span class="sd-cnt">${counts[g]}</span>
+    </div>`;
+  }).join('');
+  dd.innerHTML = html;
+}
+function toggleStatusDropdown(e){
+  if(e) e.stopPropagation();
+  const dd = document.getElementById('statusDropdown');
+  const ch = document.getElementById('sfChevron');
+  buildStatusDropdown();
+  const open = dd.classList.toggle('open');
+  ch.classList.toggle('open', open);
+}
+function selectStatusFilter(key){
+  activeStatusFilter = key;
+  const dd = document.getElementById('statusDropdown');
+  const ch = document.getElementById('sfChevron');
+  const dot = document.getElementById('sfDot');
+  const lbl = document.getElementById('sfLabel');
+  const btn = document.getElementById('sfBtn');
+  if(key==='all'){
+    dot.style.background='var(--muted2)';
+    lbl.textContent='All statuses';
+    btn.classList.remove('active');
+  } else {
+    const sc = STATUS_CONFIG[key];
+    dot.style.background=sc.color;
+    lbl.textContent=sc.label;
+    btn.classList.add('active');
+  }
+  dd.classList.remove('open');
+  ch.classList.remove('open');
+  renderList(document.querySelector('.search-box input').value||'');
+}
+document.addEventListener('click', function(e){
+  const wrap = document.querySelector('.status-filter-wrap');
+  if(wrap && !wrap.contains(e.target)){
+    const dd = document.getElementById('statusDropdown');
+    const ch = document.getElementById('sfChevron');
+    if(dd){ dd.classList.remove('open'); }
+    if(ch){ ch.classList.remove('open'); }
+  }
+});
 function filterInvoices(q){renderList(q);}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
