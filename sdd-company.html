@@ -98,7 +98,10 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
     <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
     <a class="nav-item active" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
   </nav>
-  <div style="font-size:11px;color:var(--muted);">SDD Demolition <span style="font-weight:700;color:var(--gold);">company-v1</span></div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button onclick="if(confirm('This reloads the sample data and clears anything saved in this browser. Continue?')){ if(window.SDD){ window.SDD.resetAll(); } location.reload(); }" title="Reload sample data" style="padding:7px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">↻ Reset Data</button>
+    <div style="font-size:11px;color:var(--muted);">SDD Demolition <span style="font-weight:700;color:var(--gold);">company-v2</span></div>
+  </div>
 </div>
 
 <div class="view-bar">
@@ -106,6 +109,10 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
     <button class="vt-btn active" id="tab-settings" onclick="coShow('settings')">Settings</button>
     <button class="vt-btn" id="tab-coa" onclick="coShow('coa')">Chart of Accounts</button>
     <button class="vt-btn" id="tab-reports" onclick="coShow('reports')">Reports</button>
+    <button class="vt-btn" id="tab-ledger" onclick="coShow('ledger')">General Ledger</button>
+    <button class="vt-btn" id="tab-pnl" onclick="coShow('pnl')">P&amp;L</button>
+    <button class="vt-btn" id="tab-balance" onclick="coShow('balance')">Balance Sheet</button>
+    <button class="vt-btn" id="tab-cashflow" onclick="coShow('cashflow')">Cash Flow</button>
     <button class="vt-btn" id="tab-users" onclick="coShow('users')">Users</button>
     <button class="vt-btn" id="tab-fleet" onclick="coShow('fleet')">Fleet</button>
     <button class="vt-btn" id="tab-compliance" onclick="coShow('compliance')">Compliance</button>
@@ -118,7 +125,7 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
 
 <script src="sdd-data.js"></script>
 <script>
-var ACCOUNTS = [
+var _ACCOUNTS_FALLBACK = [
   {id:'bank',name:'Bank',type:'Bank',level:0,expanded:true},
   {id:'b1',name:'Chase Business Checking - 7522',type:'Bank',level:1,parent:'bank'},
   {id:'b2',name:'Chase Business Savings - 2896',type:'Bank',level:1,parent:'bank'},
@@ -319,6 +326,9 @@ var ACCOUNTS = [
   {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
   {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
 ];
+// Shared Chart of Accounts: read from the central data layer (sdd-data.js).
+// Falls back to the local list if SDD isn't available for any reason.
+var ACCOUNTS = (window.SDD && window.SDD.accounts && window.SDD.accounts.length) ? window.SDD.accounts : _ACCOUNTS_FALLBACK;
 
 
 // ===== Company module data =====
@@ -395,13 +405,17 @@ function coAcctName(id){ var a=ACCOUNTS.filter(function(x){return x.id===id;})[0
 
 // ===== Tab switching =====
 function coShow(tab){
-  ['settings','coa','reports','users','fleet','compliance'].forEach(function(t){
+  ['settings','coa','reports','ledger','pnl','balance','cashflow','users','fleet','compliance'].forEach(function(t){
     var b=document.getElementById('tab-'+t); if(b) b.classList.toggle('active', t===tab);
   });
   var el=document.getElementById('co-content');
   if(tab==='settings') el.innerHTML=renderSettings();
   else if(tab==='coa') el.innerHTML=renderCOA();
   else if(tab==='reports') el.innerHTML=renderReports();
+  else if(tab==='ledger') el.innerHTML=renderLedger();
+  else if(tab==='pnl') el.innerHTML=renderPnL();
+  else if(tab==='balance') el.innerHTML=renderBalanceSheet();
+  else if(tab==='cashflow') el.innerHTML=renderCashFlow();
   else if(tab==='users') el.innerHTML=renderUsers();
   else if(tab==='fleet') el.innerHTML=renderFleet();
   else if(tab==='compliance') el.innerHTML=renderCompliance();
@@ -428,25 +442,146 @@ function renderCOA(){
     if(a.level===0){
       rows+='<tr style="background:var(--surface2);"><td style="font-weight:700;" colspan="2">'+a.name+'</td><td>'+a.type+'</td><td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coAddSub(\''+a.id+'\')">+ Sub-account</button></td></tr>';
     } else {
-      rows+='<tr><td style="padding-left:28px;color:var(--muted);">↳</td><td>'+a.name+'</td><td style="color:var(--muted);">'+a.type+'</td>'
-        +'<td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coEditAcct(\''+a.id+'\')">Edit</button> <button class="co-btn co-btn-sm" onclick="coViewAcctTx(\''+a.id+'\')">View Tx</button></td></tr>';
+      // Whole row is clickable → opens that account's transactions in Reports
+      rows+='<tr onclick="coViewAcctTx(\''+a.id+'\')" style="cursor:pointer;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
+        +'<td style="padding-left:28px;color:var(--muted);">↳</td><td style="font-weight:600;">'+a.name+'</td><td style="color:var(--muted);">'+a.type+'</td>'
+        +'<td style="text-align:right;color:var(--gold);font-size:12px;font-weight:700;">View transactions →</td></tr>';
     }
   });
-  return '<div class="co-card"><h3>Chart of Accounts <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddAcct()">+ New Account</button></h3>'
+  return '<div class="co-card"><h3>Chart of Accounts '
+      +'<span style="float:right;display:flex;gap:8px;">'
+      +'<button class="co-btn co-btn-sm" onclick="coOpenEditPicker()">✎ Edit Account</button>'
+      +'<button class="co-btn co-btn-gold co-btn-sm" onclick="coAddAcct()">+ New Account</button>'
+      +'</span></h3>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Click any account to see its transactions.</div>'
     +'<table class="co-table"><tr><th></th><th>Account</th><th>Type</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>';
 }
 function coAddAcct(){ coFlash('New account form (demo)'); }
 function coAddSub(pid){ coFlash('Add sub-account under '+coAcctName(pid)); }
-function coEditAcct(id){ coFlash('Edit '+coAcctName(id)); }
+// Edit-account picker popup with a search box
+function coOpenEditPicker(){
+  var ex=document.getElementById('_coEditPickBg'); if(ex) ex.remove();
+  window._coEditType=''; window._coEditQuery='';
+  // Distinct account types (from level-1 accounts)
+  var typeSet={}; ACCOUNTS.forEach(function(a){ if(a.level===1 && a.type) typeSet[a.type]=1; });
+  var types=Object.keys(typeSet).sort();
+  var typeOpts='<option value="">All types</option>'+types.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+  var bg=document.createElement('div');
+  bg.id='_coEditPickBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5000;display:flex;align-items:flex-start;justify-content:center;padding:60px 20px 20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;display:flex;flex-direction:column;max-height:80vh;">'
+    +'<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:19px;font-weight:700;">Select an account to edit</div>'
+      +'<button onclick="document.getElementById(\'_coEditPickBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:14px 20px 8px;display:flex;gap:8px;flex-wrap:wrap;">'
+      +'<select id="_coEditType" onchange="window._coEditType=this.value;coRenderEditPickList()" style="flex:1;min-width:150px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;background:#fff;">'+typeOpts+'</select>'
+      +'<input id="_coEditSearch" type="text" placeholder="Search by name..." oninput="window._coEditQuery=this.value;coRenderEditPickList()" style="flex:1.4;min-width:160px;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;">'
+    +'</div>'
+    +'<div id="_coEditPickList" style="overflow-y:auto;padding:0 12px 14px;flex:1;"></div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  coRenderEditPickList();
+  var s=document.getElementById('_coEditSearch'); if(s) s.focus();
+}
+function coRenderEditPickList(){
+  var type=window._coEditType||'';
+  var q=(window._coEditQuery||'').toLowerCase();
+  var list=document.getElementById('_coEditPickList'); if(!list) return;
+  // Nothing chosen yet → show the account types to pick first
+  if(!type && !q){
+    var typeSet={}; ACCOUNTS.forEach(function(a){ if(a.level===1 && a.type){ typeSet[a.type]=(typeSet[a.type]||0)+1; } });
+    var types=Object.keys(typeSet).sort();
+    list.innerHTML='<div style="padding:8px 10px 4px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Choose an account type</div>'
+      +types.map(function(t){
+        return '<div onclick="window._coEditType=\''+t.replace(/'/g,"\\'")+'\';document.getElementById(\'_coEditType\').value=\''+t.replace(/'/g,"\\'")+'\';coRenderEditPickList()" style="padding:11px 10px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
+          +'<span style="font-size:14px;font-weight:600;">'+t+'</span>'
+          +'<span style="font-size:12px;color:var(--muted);">'+typeSet[t]+' account'+(typeSet[t]!==1?'s':'')+' →</span>'
+        +'</div>';
+      }).join('');
+    return;
+  }
+  // Filter accounts by chosen type and/or name query
+  var items=ACCOUNTS.filter(function(a){
+    if(a.level===0) return false;
+    if(type && a.type!==type) return false;
+    if(q && a.name.toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  var crumb='';
+  if(type){ crumb='<div style="padding:8px 10px;font-size:12px;color:var(--muted);"><button onclick="window._coEditType=\'\';document.getElementById(\'_coEditType\').value=\'\';coRenderEditPickList()" style="border:none;background:none;color:var(--gold);font-weight:700;cursor:pointer;font-family:Barlow,sans-serif;font-size:12px;">‹ All types</button> · <strong>'+type+'</strong></div>'; }
+  if(!items.length){ list.innerHTML=crumb+'<div style="padding:18px;text-align:center;color:var(--muted2);font-style:italic;font-size:13px;">No accounts match'+(q?' "'+q+'"':'')+'.</div>'; return; }
+  list.innerHTML=crumb+items.map(function(a){
+    return '<div onclick="coPickEdit(\''+a.id+'\')" style="padding:10px 10px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
+      +'<div><div style="font-size:14px;font-weight:600;">'+a.name+'</div><div style="font-size:11px;color:var(--muted);">'+(a.type||'')+'</div></div>'
+      +'<span style="font-size:12px;color:var(--gold);font-weight:700;">Edit →</span>'
+    +'</div>';
+  }).join('');
+}
+function coPickEdit(id){
+  var bg=document.getElementById('_coEditPickBg'); if(bg) bg.remove();
+  coEditAcct(id);
+}
+function coEditAcct(id){
+  var a=ACCOUNTS.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  var ex=document.getElementById('_coEditFormBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_coEditFormBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5001;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var typeOpts=['Bank','Accounts Receivable','Other Current Asset','Fixed Asset','Accounts Payable','Credit Card','Other Current Liability','Long Term Liability','Equity','Income','Cost of Goods Sold','Expense','Other Income','Other Expense','Non-Posting']
+    .map(function(t){ return '<option'+(t===a.type?' selected':'')+'>'+t+'</option>'; }).join('');
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:16px 22px;border-bottom:1px solid var(--border);font-family:\'Barlow Condensed\',sans-serif;font-size:19px;font-weight:700;">Edit Account</div>'
+    +'<div style="padding:18px 22px;">'
+      +'<div class="ff"><label>Account name</label><input id="_coEditName" value="'+a.name.replace(/"/g,'&quot;')+'"></div>'
+      +'<div class="ff"><label>Type</label><select id="_coEditType">'+typeOpts+'</select></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button class="co-btn" onclick="document.getElementById(\'_coEditFormBg\').remove()">Cancel</button>'
+      +'<button class="co-btn co-btn-gold" onclick="coSaveEdit(\''+id+'\')">Save Changes</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function coSaveEdit(id){
+  var a=ACCOUNTS.filter(function(x){return x.id===id;})[0]; if(!a) return;
+  var nm=document.getElementById('_coEditName'), tp=document.getElementById('_coEditType');
+  if(nm) a.name=nm.value;
+  if(tp) a.type=tp.value;
+  // Persist to the shared data layer so the change shows everywhere (Banking, etc.)
+  if(window.SDD && window.SDD.save) window.SDD.save();
+  var bg=document.getElementById('_coEditFormBg'); if(bg) bg.remove();
+  coShow('coa');
+  coFlash('Account updated: '+a.name);
+}
 
 // ===== REPORTS: transactions per account =====
+var _rptSort='date-desc';
+var _rptFrom='';
+var _rptTo='';
 function renderReports(){
-  // Build a transactions list from SDD (invoices, bills) mapped to accounts
   var opts=ACCOUNTS.filter(function(a){return a.level===1;}).map(function(a){return '<option value="'+a.id+'">'+a.name+'</option>';}).join('');
   return '<div class="co-card"><h3>Account Reports</h3>'
-    +'<div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:12px;">'
-      +'<div class="ff" style="flex:1;margin:0;"><label>Account</label><select id="rptAcct" onchange="coRunReport()">'+opts+'</select></div>'
+    +'<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px;">'
+      +'<div class="ff" style="flex:1;min-width:200px;margin:0;"><label>Account</label><select id="rptAcct" onchange="coRunReport()">'+opts+'</select></div>'
+      +'<div class="ff" style="margin:0;"><label>Sort by</label><select id="rptSort" onchange="_rptSort=this.value;coRunReport()">'
+        +'<option value="date-desc">Date (newest)</option>'
+        +'<option value="date-asc">Date (oldest)</option>'
+        +'<option value="ref-asc">Ref (A→Z)</option>'
+        +'<option value="ref-desc">Ref (Z→A)</option>'
+        +'<option value="desc-asc">Description (A→Z)</option>'
+        +'<option value="desc-desc">Description (Z→A)</option>'
+        +'<option value="amt-desc">Amount (high→low)</option>'
+        +'<option value="amt-asc">Amount (low→high)</option>'
+      +'</select></div>'
       +'<button class="co-btn co-btn-gold" onclick="coRunReport()">Run Report</button>'
+    +'</div>'
+    +'<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px;background:var(--surface2);padding:10px 12px;border-radius:8px;">'
+      +'<span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;align-self:center;">Date range</span>'
+      +'<div class="ff" style="margin:0;"><label>From</label><input type="date" id="rptFrom" onchange="_rptFrom=this.value;coRunReport()"></div>'
+      +'<div class="ff" style="margin:0;"><label>To</label><input type="date" id="rptTo" onchange="_rptTo=this.value;coRunReport()"></div>'
+      +'<button class="co-btn co-btn-sm" onclick="_rptFrom=\'\';_rptTo=\'\';document.getElementById(\'rptFrom\').value=\'\';document.getElementById(\'rptTo\').value=\'\';coRunReport()">Clear dates</button>'
     +'</div>'
     +'<div id="rptOut"><div style="padding:20px;text-align:center;color:var(--muted2);font-style:italic;">Select an account and run the report.</div></div>'
   +'</div>';
@@ -455,30 +590,298 @@ function coRunReport(){
   var sel=document.getElementById('rptAcct'); if(!sel) return;
   var acctId=sel.value; var acctName=coAcctName(acctId);
   var tx=coCollectTxForAccount(acctId, acctName);
+  // Date-range filter
+  if(_rptFrom){ var fT=Date.parse(_rptFrom); if(!isNaN(fT)) tx=tx.filter(function(t){ var d=Date.parse(t.date); return isNaN(d)||d>=fT; }); }
+  if(_rptTo){ var tT=Date.parse(_rptTo); if(!isNaN(tT)){ tT+=86400000-1; tx=tx.filter(function(t){ var d=Date.parse(t.date); return isNaN(d)||d<=tT; }); } }
+  // Sorting
+  tx.sort(function(a,b){
+    switch(_rptSort){
+      case 'date-asc': return (Date.parse(a.date)||0)-(Date.parse(b.date)||0);
+      case 'date-desc': return (Date.parse(b.date)||0)-(Date.parse(a.date)||0);
+      case 'ref-asc': return String(a.ref).localeCompare(String(b.ref));
+      case 'ref-desc': return String(b.ref).localeCompare(String(a.ref));
+      case 'desc-asc': return String(a.desc).localeCompare(String(b.desc));
+      case 'desc-desc': return String(b.desc).localeCompare(String(a.desc));
+      case 'amt-desc': return b.amount-a.amount;
+      case 'amt-asc': return a.amount-b.amount;
+      default: return 0;
+    }
+  });
   var out=document.getElementById('rptOut');
-  if(!tx.length){ out.innerHTML='<div style="padding:18px;text-align:center;color:var(--muted2);font-style:italic;">No transactions found for '+acctName+'.</div>'; return; }
-  var total=0;
-  var rows=tx.map(function(t){ total+=t.amount; return '<tr><td>'+t.date+'</td><td>'+t.ref+'</td><td>'+t.desc+'</td><td style="text-align:right;font-weight:700;color:'+(t.amount<0?'var(--danger)':'var(--success)')+';">'+coMoney(t.amount)+'</td></tr>'; }).join('');
-  out.innerHTML='<table class="co-table"><tr><th>Date</th><th>Ref</th><th>Description</th><th style="text-align:right;">Amount</th></tr>'+rows
-    +'<tr style="background:var(--surface2);"><td colspan="3" style="font-weight:700;">Total · '+tx.length+' transactions</td><td style="text-align:right;font-weight:800;">'+coMoney(total)+'</td></tr></table>';
+  if(!tx.length){ out.innerHTML='<div style="padding:18px;text-align:center;color:var(--muted2);font-style:italic;">No transactions found for '+acctName+(_rptFrom||_rptTo?' in this date range':'')+'.</div>'; return; }
+  // Running balance: compute chronologically (oldest→newest), then attach to each tx
+  var chrono=tx.slice().sort(function(a,b){ return (Date.parse(a.date)||0)-(Date.parse(b.date)||0); });
+  var run=0;
+  chrono.forEach(function(t){ run+=t.amount; t._balance=run; });
+  var total=run; // final running balance = account balance
+  // Clickable sortable headers too
+  function thSort(label,key){ return '<th style="cursor:pointer;" onclick="coSortBy(\''+key+'\')">'+label+' ⇅</th>'; }
+  var rows=tx.map(function(t){ return '<tr><td>'+t.date+'</td><td>'+t.ref+'</td><td>'+t.desc+'</td>'
+    +'<td style="text-align:right;font-weight:700;color:'+(t.amount<0?'var(--danger)':'var(--success)')+';">'+coMoney(t.amount)+'</td>'
+    +'<td style="text-align:right;font-weight:600;color:var(--muted);">'+coMoney(t._balance)+'</td></tr>'; }).join('');
+  out.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">'
+      +'<div style="font-size:13px;color:var(--muted);">Showing '+tx.length+' transaction'+(tx.length!==1?'s':'')+' for <strong>'+acctName+'</strong>'+(_rptFrom||_rptTo?(' · '+(_rptFrom||'…')+' to '+(_rptTo||'…')):'')+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);">Account balance: <strong style="font-size:16px;color:'+(total<0?'var(--danger)':'var(--success)')+';">'+coMoney(total)+'</strong></div>'
+    +'</div>'
+    +'<table class="co-table"><tr>'+thSort('Date','date')+thSort('Ref','ref')+thSort('Description','desc')
+      +'<th style="text-align:right;cursor:pointer;" onclick="coSortBy(\'amt\')">Amount ⇅</th>'
+      +'<th style="text-align:right;">Balance</th></tr>'+rows
+    +'<tr style="background:var(--surface2);"><td colspan="3" style="font-weight:700;">Total · '+tx.length+' transactions</td>'
+      +'<td style="text-align:right;font-weight:800;">'+coMoney(tx.reduce(function(s,t){return s+t.amount;},0))+'</td>'
+      +'<td style="text-align:right;font-weight:800;">'+coMoney(total)+'</td></tr></table>';
+}
+// Toggle sort direction when clicking a column header
+function coSortBy(key){
+  var asc=key+'-asc', desc=key+'-desc';
+  _rptSort=(_rptSort===desc)?asc:desc;
+  var s=document.getElementById('rptSort'); if(s) s.value=_rptSort;
+  coRunReport();
 }
 function coMoney(n){ var s=(n<0?'-':'')+'$'+Math.abs(Math.round(n)).toLocaleString('en-US'); return s; }
 function coCollectTxForAccount(acctId, acctName){
-  var tx=[];
-  // Income/AR accounts → invoices; AP/expense → bills. Simple demo mapping.
-  var isIncome=/income|receivable|^ar/i.test(acctId)||/income|receivable/i.test(acctName);
-  var isAP=/payable|^ap|expense|cogs/i.test(acctId)||/payable|expense/i.test(acctName);
-  if(window.SDD && window.SDD.customers && (isIncome || acctId==='ar1' || /income/i.test(acctName))){
-    window.SDD.customers.forEach(function(c){ (c.contacts||[]).forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ (j.invoices||[]).forEach(function(iv){
-      tx.push({date:iv.date||'', ref:iv.est, desc:c.name+' · invoice', amount:Math.abs(parseFloat(String(iv.amount||'').replace(/[^0-9.]/g,''))||0)});
-    }); }); }); });
+  // Pull real postings from the General Ledger (double-entry) for this account.
+  if(window.SDD && window.SDD.ledgerForAccount){
+    var rows=window.SDD.ledgerForAccount(acctId);
+    return rows.map(function(r){ return {date:r.date, ref:r.ref, desc:r.desc, amount:r.amount, source:r.source}; });
   }
-  if(window.SDD && window.SDD.bills && (isAP || /payable|expense|cogs/i.test(acctName))){
-    (window.SDD.bills||[]).forEach(function(b){ tx.push({date:b.date||'', ref:b.num, desc:(b.vendor||'')+' · '+(b.desc||'bill'), amount:-(Math.abs(parseFloat(String(b.amount||'').replace(/[^0-9.]/g,''))||0))}); });
-  }
-  return tx;
+  return [];
 }
 function coViewAcctTx(id){ coShow('reports'); setTimeout(function(){ var s=document.getElementById('rptAcct'); if(s){ s.value=id; coRunReport(); } },50); }
+
+// ===== GENERAL LEDGER =====
+function renderLedger(){
+  var entries=(window.SDD && window.SDD.ledger) ? window.SDD.ledger() : [];
+  // newest first by date
+  entries=entries.slice().sort(function(a,b){ return (Date.parse(b.date)||0)-(Date.parse(a.date)||0); });
+  var srcBadge={invoice:'#3A7ED4',payment:'#3A9E6A','bill':'#C8822A','bill-payment':'#D94F4F',manual:'#7C5CBF'};
+  var rows=entries.map(function(e){
+    var lines=(e.lines||[]).map(function(ln){
+      var nm=coAcctName(ln.account);
+      var dr=ln.debit?coMoney(ln.debit):'';
+      var cr=ln.credit?coMoney(ln.credit):'';
+      return '<tr><td style="padding-left:30px;color:var(--muted);font-size:12px;">'+nm+'</td>'
+        +'<td style="text-align:right;font-size:12px;">'+dr+'</td>'
+        +'<td style="text-align:right;font-size:12px;">'+cr+'</td><td></td></tr>';
+    }).join('');
+    var col=srcBadge[e.source]||'#777';
+    var canDelete=(e.source==='manual');
+    return '<tr style="background:var(--surface2);"><td style="font-weight:700;">'+(e.date||'—')+' · '+(e.ref||e.id)
+        +' <span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:'+col+'22;color:'+col+';margin-left:6px;">'+(e.source||'').toUpperCase()+'</span></td>'
+      +'<td colspan="2" style="color:var(--muted);font-size:12px;">'+(e.memo||'')+'</td>'
+      +'<td style="text-align:right;">'+(canDelete?'<button class="co-btn co-btn-sm" onclick="coDeleteManual(\''+e.id+'\')">Delete</button>':'')+'</td></tr>'
+      +lines;
+  }).join('');
+  // totals
+  var totD=0,totC=0; entries.forEach(function(e){ (e.lines||[]).forEach(function(l){ totD+=(l.debit||0); totC+=(l.credit||0); }); });
+  return '<div class="co-card"><h3>General Ledger '
+      +'<button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coOpenManualEntry()">+ Journal Entry</button></h3>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Every invoice, bill and payment posts here automatically as a double-entry. You can also add manual journal entries.</div>'
+    +'<table class="co-table"><tr><th>Entry / Account</th><th style="text-align:right;">Debit</th><th style="text-align:right;">Credit</th><th></th></tr>'+rows
+    +'<tr style="border-top:2px solid var(--border2);"><td style="font-weight:800;">TOTALS · '+entries.length+' entries</td>'
+      +'<td style="text-align:right;font-weight:800;">'+coMoney(totD)+'</td>'
+      +'<td style="text-align:right;font-weight:800;">'+coMoney(totC)+'</td><td></td></tr>'
+    +'</table>'
+    +'<div style="font-size:12px;color:'+(Math.abs(totD-totC)<0.01?'var(--success)':'var(--danger)')+';margin-top:8px;font-weight:700;">'
+      +(Math.abs(totD-totC)<0.01?'✓ Books are balanced (debits = credits)':'⚠ Out of balance by '+coMoney(Math.abs(totD-totC)))+'</div>'
+  +'</div>';
+}
+function coDeleteManual(id){
+  if(window.SDD && window.SDD.deleteManualEntry){ window.SDD.deleteManualEntry(id); coShow('ledger'); coFlash('Journal entry deleted'); }
+}
+// Manual journal entry popup
+function coOpenManualEntry(){
+  var ex=document.getElementById('_coJEBg'); if(ex) ex.remove();
+  window._coJELines=[{account:'',debit:'',credit:''},{account:'',debit:'',credit:''}];
+  var bg=document.createElement('div');
+  bg.id='_coJEBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5000;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:600px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;display:flex;flex-direction:column;max-height:85vh;">'
+    +'<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:19px;font-weight:700;">New Journal Entry</div>'
+      +'<button onclick="document.getElementById(\'_coJEBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:16px 20px;overflow-y:auto;">'
+      +'<div style="display:flex;gap:10px;margin-bottom:12px;">'
+        +'<div class="ff" style="flex:1;margin:0;"><label>Date</label><input type="date" id="_coJEDate"></div>'
+        +'<div class="ff" style="flex:1;margin:0;"><label>Reference</label><input id="_coJERef" placeholder="JE-001"></div>'
+      +'</div>'
+      +'<div class="ff"><label>Memo</label><input id="_coJEMemo" placeholder="Description of the entry"></div>'
+      +'<div id="_coJELinesBox"></div>'
+      +'<button class="co-btn co-btn-sm" style="margin-top:8px;" onclick="coJEAddLine()">+ Add line</button>'
+      +'<div id="_coJEBalance" style="margin-top:10px;font-size:13px;font-weight:700;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 20px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button class="co-btn" onclick="document.getElementById(\'_coJEBg\').remove()">Cancel</button>'
+      +'<button class="co-btn co-btn-gold" onclick="coJESave()">Save Entry</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  coJERenderLines();
+}
+function coJEAcctOptions(sel){
+  return '<option value="">— account —</option>'+ACCOUNTS.filter(function(a){return a.level===1;}).map(function(a){
+    return '<option value="'+a.id+'"'+(a.id===sel?' selected':'')+'>'+a.name+'</option>';
+  }).join('');
+}
+function coJERenderLines(){
+  var box=document.getElementById('_coJELinesBox'); if(!box) return;
+  var L=window._coJELines||[];
+  box.innerHTML='<div style="display:flex;gap:6px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:0 2px 4px;"><span style="flex:2;">Account</span><span style="flex:1;">Debit</span><span style="flex:1;">Credit</span><span style="width:24px;"></span></div>'
+    +L.map(function(ln,i){
+    return '<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">'
+      +'<select style="flex:2;padding:8px;border:1.5px solid var(--border2);border-radius:7px;font-family:Barlow,sans-serif;font-size:13px;" onchange="window._coJELines['+i+'].account=this.value">'+coJEAcctOptions(ln.account)+'</select>'
+      +'<input style="flex:1;width:0;padding:8px;border:1.5px solid var(--border2);border-radius:7px;font-family:Barlow,sans-serif;font-size:13px;" type="number" placeholder="0" value="'+(ln.debit||'')+'" oninput="window._coJELines['+i+'].debit=this.value;coJEUpdateBalance()">'
+      +'<input style="flex:1;width:0;padding:8px;border:1.5px solid var(--border2);border-radius:7px;font-family:Barlow,sans-serif;font-size:13px;" type="number" placeholder="0" value="'+(ln.credit||'')+'" oninput="window._coJELines['+i+'].credit=this.value;coJEUpdateBalance()">'
+      +'<button onclick="coJEDelLine('+i+')" style="width:24px;border:none;background:none;color:var(--danger);cursor:pointer;font-size:16px;">×</button>'
+    +'</div>';
+  }).join('');
+  coJEUpdateBalance();
+}
+function coJEAddLine(){ window._coJELines.push({account:'',debit:'',credit:''}); coJERenderLines(); }
+function coJEDelLine(i){ window._coJELines.splice(i,1); if(!window._coJELines.length) window._coJELines.push({account:'',debit:'',credit:''}); coJERenderLines(); }
+function coJEUpdateBalance(){
+  var el=document.getElementById('_coJEBalance'); if(!el) return;
+  var d=0,c=0; (window._coJELines||[]).forEach(function(l){ d+=parseFloat(l.debit||0)||0; c+=parseFloat(l.credit||0)||0; });
+  var bal=Math.abs(d-c)<0.01 && d>0;
+  el.innerHTML='Debits: '+coMoney(d)+' · Credits: '+coMoney(c)+' — '+(d===0&&c===0?'<span style="color:var(--muted);">enter amounts</span>':(bal?'<span style="color:var(--success);">✓ balanced</span>':'<span style="color:var(--danger);">✗ not balanced</span>'));
+}
+function coJESave(){
+  var d=0,c=0; var lines=(window._coJELines||[]).filter(function(l){ return l.account && ((parseFloat(l.debit)||0)>0 || (parseFloat(l.credit)||0)>0); })
+    .map(function(l){ var deb=parseFloat(l.debit)||0, cre=parseFloat(l.credit)||0; d+=deb; c+=cre; return {account:l.account, debit:deb, credit:cre}; });
+  if(lines.length<2){ coFlash('Add at least two lines'); return; }
+  if(Math.abs(d-c)>0.01){ coFlash('Entry is not balanced (debits must equal credits)'); return; }
+  var dateInput=document.getElementById('_coJEDate').value;
+  var human=dateInput?new Date(dateInput+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var ref=document.getElementById('_coJERef').value||'JE';
+  var memo=document.getElementById('_coJEMemo').value||'Manual entry';
+  window.SDD.addManualEntry({date:human, ref:ref, memo:memo, lines:lines});
+  var bg=document.getElementById('_coJEBg'); if(bg) bg.remove();
+  coShow('ledger');
+  coFlash('Journal entry posted');
+}
+
+// ===== FINANCIAL STATEMENTS =====
+function _fsRow(name, amount, opts){
+  opts=opts||{};
+  var ind=opts.indent?'padding-left:'+(opts.indent*18+10)+'px;':'';
+  var bold=opts.bold?'font-weight:800;':(opts.semi?'font-weight:700;':'');
+  var border=opts.topBorder?'border-top:2px solid var(--border2);':'';
+  var col=opts.color||'';
+  var size=opts.big?'font-size:15px;':'';
+  return '<tr style="'+border+'"><td style="'+ind+bold+size+'">'+name+'</td>'
+    +'<td style="text-align:right;'+bold+size+(col?'color:'+col+';':'')+'">'+(amount==null?'':coMoney(amount))+'</td></tr>';
+}
+function renderPnL(){
+  if(!(window.SDD && window.SDD.summaryByTypes)) return '<div class="co-card">Ledger not available.</div>';
+  var income=window.SDD.summaryByTypes(/^Income$/);
+  var otherInc=window.SDD.summaryByTypes(/Other Income/);
+  var cogs=window.SDD.summaryByTypes(/Cost of Goods Sold/);
+  var exp=window.SDD.summaryByTypes(/^Expense$/);
+  var otherExp=window.SDD.summaryByTypes(/Other Expense/);
+  var grossProfit=income.total - cogs.total;
+  var netOrdinary=grossProfit - exp.total;
+  var netIncome=netOrdinary + otherInc.total - otherExp.total;
+  function section(title, data){
+    if(!data.accounts.length) return _fsRow('<em style="color:var(--muted2);">No '+title.toLowerCase()+'</em>', null);
+    return data.accounts.map(function(a){ return _fsRow(a.name, a.balance, {indent:1}); }).join('');
+  }
+  var rows=''
+    +'<tr><td colspan="2" style="font-weight:800;padding-top:6px;color:var(--success);">Income</td></tr>'
+    +section('Income', income)
+    +_fsRow('Total Income', income.total, {semi:true, topBorder:true})
+    +'<tr><td colspan="2" style="font-weight:800;padding-top:12px;color:var(--warning);">Cost of Goods Sold</td></tr>'
+    +section('COGS', cogs)
+    +_fsRow('Total COGS', cogs.total, {semi:true, topBorder:true})
+    +_fsRow('Gross Profit', grossProfit, {bold:true, big:true, topBorder:true, color:'var(--success)'})
+    +'<tr><td colspan="2" style="font-weight:800;padding-top:12px;color:var(--danger);">Expenses</td></tr>'
+    +section('Expenses', exp)
+    +_fsRow('Total Expenses', exp.total, {semi:true, topBorder:true})
+    +_fsRow('Net Ordinary Income', netOrdinary, {bold:true, topBorder:true});
+  if(otherInc.accounts.length || otherExp.accounts.length){
+    rows+='<tr><td colspan="2" style="font-weight:800;padding-top:12px;color:var(--muted);">Other Income / Expense</td></tr>'
+      +otherInc.accounts.map(function(a){ return _fsRow(a.name, a.balance, {indent:1}); }).join('')
+      +otherExp.accounts.map(function(a){ return _fsRow(a.name, -a.balance, {indent:1}); }).join('');
+  }
+  rows+=_fsRow('NET INCOME', netIncome, {bold:true, big:true, topBorder:true, color:(netIncome<0?'var(--danger)':'var(--success)')});
+  return '<div class="co-card"><h3>Profit &amp; Loss</h3>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">All activity to date · built from the General Ledger</div>'
+    +'<table class="co-table" style="max-width:560px;">'+rows+'</table></div>';
+}
+function renderBalanceSheet(){
+  if(!(window.SDD && window.SDD.summaryByTypes)) return '<div class="co-card">Ledger not available.</div>';
+  var bank=window.SDD.summaryByTypes(/^Bank$/);
+  var ar=window.SDD.summaryByTypes(/Accounts Receivable$/);
+  var oca=window.SDD.summaryByTypes(/Other Current Asset/);
+  var fa=window.SDD.summaryByTypes(/Fixed Asset/);
+  var totalAssets=bank.total+ar.total+oca.total+fa.total;
+  var ap=window.SDD.summaryByTypes(/Accounts Payable$/);
+  var ocl=window.SDD.summaryByTypes(/Other Current Liability/);
+  var cc=window.SDD.summaryByTypes(/Credit Card/);
+  var ltl=window.SDD.summaryByTypes(/Long Term Liability/);
+  var totalLiab=ap.total+ocl.total+cc.total+ltl.total;
+  var eq=window.SDD.summaryByTypes(/^Equity$/);
+  // Net income flows into equity (retained earnings)
+  var income=window.SDD.summaryByTypes(/^Income$/);
+  var cogs=window.SDD.summaryByTypes(/Cost of Goods Sold/);
+  var exp=window.SDD.summaryByTypes(/^Expense$/);
+  var oi=window.SDD.summaryByTypes(/Other Income/);
+  var oe=window.SDD.summaryByTypes(/Other Expense/);
+  var netIncome=income.total-cogs.total-exp.total+oi.total-oe.total;
+  var totalEquity=eq.total+netIncome;
+  function grp(title, data){
+    if(!data.accounts.length) return '';
+    return data.accounts.map(function(a){ return _fsRow(a.name, a.balance, {indent:1}); }).join('');
+  }
+  var rows=''
+    +'<tr><td colspan="2" style="font-weight:800;color:var(--info);">ASSETS</td></tr>'
+    +grp('Bank',bank)+grp('AR',ar)+grp('OCA',oca)+grp('FA',fa)
+    +_fsRow('Total Assets', totalAssets, {bold:true, big:true, topBorder:true, color:'var(--info)'})
+    +'<tr><td colspan="2" style="font-weight:800;padding-top:14px;color:var(--danger);">LIABILITIES</td></tr>'
+    +grp('AP',ap)+grp('OCL',ocl)+grp('CC',cc)+grp('LTL',ltl)
+    +_fsRow('Total Liabilities', totalLiab, {semi:true, topBorder:true})
+    +'<tr><td colspan="2" style="font-weight:800;padding-top:14px;color:var(--purple);">EQUITY</td></tr>'
+    +grp('Equity',eq)
+    +_fsRow('Net Income (current)', netIncome, {indent:1})
+    +_fsRow('Total Equity', totalEquity, {semi:true, topBorder:true})
+    +_fsRow('Total Liabilities + Equity', totalLiab+totalEquity, {bold:true, big:true, topBorder:true, color:'var(--purple)'});
+  var balanced=Math.abs(totalAssets-(totalLiab+totalEquity))<0.5;
+  return '<div class="co-card"><h3>Balance Sheet</h3>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">As of today · built from the General Ledger</div>'
+    +'<table class="co-table" style="max-width:560px;">'+rows+'</table>'
+    +'<div style="font-size:12px;color:'+(balanced?'var(--success)':'var(--danger)')+';margin-top:10px;font-weight:700;">'
+      +(balanced?'✓ Assets = Liabilities + Equity':'⚠ Out of balance by '+coMoney(Math.abs(totalAssets-(totalLiab+totalEquity))))+'</div>'
+  +'</div>';
+}
+function renderCashFlow(){
+  if(!(window.SDD && window.SDD.ledger)) return '<div class="co-card">Ledger not available.</div>';
+  // Simple cash-basis view: every ledger line touching a Bank account.
+  var bankIds={}; (window.SDD.accounts||[]).forEach(function(a){ if(a.type==='Bank' && a.level===1) bankIds[a.id]=a.name; });
+  var inflow=0, outflow=0, rows=[];
+  window.SDD.ledger().forEach(function(e){
+    (e.lines||[]).forEach(function(ln){
+      if(bankIds[ln.account]){
+        var amt=(ln.debit||0)-(ln.credit||0); // debit to bank = cash in
+        if(amt>0) inflow+=amt; else outflow+=Math.abs(amt);
+        rows.push({date:e.date, ref:e.ref||e.id, memo:e.memo, acct:bankIds[ln.account], amount:amt, source:e.source});
+      }
+    });
+  });
+  rows.sort(function(a,b){ return (Date.parse(b.date)||0)-(Date.parse(a.date)||0); });
+  var net=inflow-outflow;
+  var summary='<table class="co-table" style="max-width:560px;margin-bottom:16px;">'
+    +_fsRow('Cash In (deposits, collections)', inflow, {color:'var(--success)'})
+    +_fsRow('Cash Out (payments)', -outflow, {color:'var(--danger)'})
+    +_fsRow('Net Cash Flow', net, {bold:true, big:true, topBorder:true, color:(net<0?'var(--danger)':'var(--success)')})
+    +'</table>';
+  var detail=rows.length? '<table class="co-table"><tr><th>Date</th><th>Ref</th><th>Description</th><th>Account</th><th style="text-align:right;">Amount</th></tr>'
+    +rows.map(function(r){ return '<tr><td>'+(r.date||'—')+'</td><td>'+r.ref+'</td><td>'+r.memo+'</td><td style="color:var(--muted);">'+r.acct+'</td>'
+      +'<td style="text-align:right;font-weight:700;color:'+(r.amount<0?'var(--danger)':'var(--success)')+';">'+coMoney(r.amount)+'</td></tr>'; }).join('')
+    +'</table>' : '<div style="padding:16px;color:var(--muted2);font-style:italic;">No cash movements yet.</div>';
+  return '<div class="co-card"><h3>Cash Flow</h3>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Cash basis · movements through bank accounts</div>'
+    +summary
+    +'<h3 style="font-size:15px;">Cash movements</h3>'+detail+'</div>';
+}
 
 // ===== USERS =====
 function renderUsers(){

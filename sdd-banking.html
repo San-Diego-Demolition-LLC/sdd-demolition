@@ -300,7 +300,7 @@ var BANK_TXNS = [
 // Ledger options for categorizing
 var BANK_LEDGERS = ['5010 · Disposal','5020 · Equipment','5030 · Subcontract','5040 · Permits','5050 · Materials','6010 · Fuel','6020 · Insurance','6030 · Office Supplies','6040 · Utilities','Accounts Receivable','Owner Draw','Transfer between accounts'];
 
-var ACCOUNTS = [
+var _ACCOUNTS_FALLBACK = [
   {id:'bank',name:'Bank',type:'Bank',level:0,expanded:true},
   {id:'b1',name:'Chase Business Checking - 7522',type:'Bank',level:1,parent:'bank'},
   {id:'b2',name:'Chase Business Savings - 2896',type:'Bank',level:1,parent:'bank'},
@@ -501,6 +501,8 @@ var ACCOUNTS = [
   {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
   {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
 ];
+// Shared Chart of Accounts from the central data layer (sdd-data.js)
+var ACCOUNTS = (window.SDD && window.SDD.accounts && window.SDD.accounts.length) ? window.SDD.accounts : _ACCOUNTS_FALLBACK;
 
 function fmt(n){ return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function flash(msg,col){ var e=document.createElement('div'); e.style.cssText='position:fixed;bottom:24px;right:24px;background:'+(col||'var(--success)')+';color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:9999;'; e.textContent=msg; document.body.appendChild(e); setTimeout(function(){e.remove();},3000); }

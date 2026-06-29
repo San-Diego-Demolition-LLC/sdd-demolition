@@ -285,14 +285,348 @@
   {id:10,vendorId:1,vendor:'Coastal Equipment Rentals',num:'BILL-010',desc:'Excavator rental June',amount:3600,due:'Jun 3, 2026',status:'unpaid',date:'May 20, 2026'},
   {id:11,vendorId:3,vendor:'EDCO Disposal',num:'BILL-011',desc:'Dump fees 5 loads',amount:1500,due:'Jun 9, 2026',status:'unpaid',date:'May 26, 2026'},
   {id:12,vendorId:5,vendor:'ADP Payroll',num:'BILL-012',desc:'Payroll fee May',amount:410,due:'Jun 10, 2026',status:'unpaid',date:'May 28, 2026'}
-]
+],
+    accounts: [
+  {id:'bank',name:'Bank',type:'Bank',level:0,expanded:true},
+  {id:'b1',name:'Chase Business Checking - 7522',type:'Bank',level:1,parent:'bank'},
+  {id:'b2',name:'Chase Business Savings - 2896',type:'Bank',level:1,parent:'bank'},
+  {id:'b3',name:'Tax Savings Account - 9898',type:'Bank',level:1,parent:'bank'},
+  {id:'b4',name:'UBS Savings Account',type:'Bank',level:1,parent:'bank'},
+  {id:'ar',name:'Accounts Receivable',type:'Accounts Receivable',level:0,expanded:false},
+  {id:'ar1',name:'Accounts Receivable',type:'Accounts Receivable',level:1,parent:'ar'},
+  {id:'ar2',name:'Accounts Receivable - Contra',type:'Other Current Asset',level:1,parent:'ar'},
+  {id:'oca',name:'Other Current Assets',type:'Other Current Asset',level:0,expanded:false},
+  {id:'oca1',name:'Inventory Asset',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca2',name:'Loan to Partner - James & Alexis',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca3',name:'Payroll Asset',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca4',name:'Retention Receivable',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca5',name:'Undeposited Funds',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'fadump',name:'Dumpsters',type:'Fixed Asset',level:0,expanded:false},
+  {id:'fadump1',name:'Dumpster 1 - D1-23',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump2',name:'Dumpster 1 - D1-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump3',name:'Dumpster 2 - D2-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump4',name:'Dumpster 3 - D3-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump5',name:'Dumpster 4 - D4-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump6',name:'Dumpster 5 - D5-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump7',name:'Accum Depreciation - Dumpsters',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'faeq',name:'Equipment',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faeq1',name:'2006 Skyjack Scissor Lift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq2',name:'2015 CAT Skid Steer Loader',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq3',name:'2022 Viking Breaker',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq4',name:'2023 Interstate West Trailor',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq5',name:'2024 Kubota Excavator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq6',name:'2024 Kubota Skid Steer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq7',name:'2025 Hook Lift Rolloffs',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq8',name:'2025 Kubota Mini Excavator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq9',name:'2025 Kubota Stand Loader',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq10',name:'2025 Striker Breaker',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq11',name:'2025 Ultima 21S-5300 Multilift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq12',name:'Carson Trailer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq13',name:'Floor Scraper',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq14',name:'PITMA Trailer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq15',name:'Roll off Flatbed',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq16',name:'Scissor Lift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq17',name:'Terminator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq18',name:'Truck Dump Hoist',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq19',name:'Wells Fargo - Mini Bobcat',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq20',name:'Yard Storage Container',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq21',name:'Yard Storage Container 2',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq22',name:'Accum Depreciation - Equipment',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faoff',name:'Office Equipment',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faoff1',name:'Computers',type:'Fixed Asset',level:1,parent:'faoff'},
+  {id:'faoff2',name:'Accum Depreciation - Office Eq',type:'Fixed Asset',level:1,parent:'faoff'},
+  {id:'faveh',name:'Vehicles & Trucks',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faveh1',name:'2005 Freightliner FL70',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh2',name:'2012 AutoCar Dump Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh3',name:'2015 Chevy Colorado',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh4',name:'2015 Ford F550',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh5',name:'2015 Freightline M2',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh6',name:'2016 Western Star Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh7',name:'2018 Ford F250',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh8',name:'2018 Ram 2500',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh9',name:'2022 Ford F650 Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh10',name:'2023 Ford F-350 XL',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh11',name:'Accum Depreciation - Vehicles',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'ap',name:'Accounts Payable',type:'Accounts Payable',level:0,expanded:true},
+  {id:'ap1',name:'Accounts Payable',type:'Accounts Payable',level:1,parent:'ap'},
+  {id:'ccg',name:'Credit Cards',type:'Credit Card',level:0,expanded:true},
+  {id:'cc1',name:'Amazon Amex',type:'Credit Card',level:1,parent:'ccg'},
+  {id:'cc2',name:'Chase Business Credit Card',type:'Credit Card',level:1,parent:'ccg'},
+  {id:'ocl',name:'Other Current Liabilities',type:'Other Current Liability',level:0,expanded:false},
+  {id:'ocl1',name:'Customer Deposits Received',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl2',name:'Payroll Liabilities',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl3',name:'Sheffield Loan',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl4',name:'Suspense',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ltl',name:'Long Term Liabilities',type:'Long Term Liability',level:0,expanded:false},
+  {id:'ltl1',name:'2015 Cat Financial Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl2',name:'2018 Ram 2500 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl3',name:'2024 Kubota Excavator Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl4',name:'2024 Kubota Skid Steer Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl5',name:'2025 Kubota Mini Excavator Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl6',name:'2025 Kubota Stand Loader Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl7',name:'AutoCar Dump Truck Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl8',name:'Breaker - Wells Fargo Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl9',name:'Ford F350 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl10',name:'Ford F650 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl11',name:'Mini Bobcat - Wells Fargo Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'eq',name:'Equity',type:'Equity',level:0,expanded:true},
+  {id:'eq1',name:'Opening Balance Equity',type:'Equity',level:1,parent:'eq'},
+  {id:'eq2',name:"Owner's Draws",type:'Equity',level:1,parent:'eq'},
+  {id:'eq3',name:"Owner's Investment",type:'Equity',level:1,parent:'eq'},
+  {id:'eq4',name:'Retained Earnings',type:'Equity',level:1,parent:'eq'},
+  {id:'inc',name:'Income',type:'Income',level:0,expanded:true},
+  {id:'inc1',name:'Job Income',type:'Income',level:1,parent:'inc',expanded:true},
+  {id:'inc1a',name:'Dumpster Income',type:'Income',level:2,parent:'inc1'},
+  {id:'inc1b',name:'Grading',type:'Income',level:2,parent:'inc1'},
+  {id:'inc1c',name:'Welding Income',type:'Income',level:2,parent:'inc1'},
+  {id:'inc2',name:'Recycle Income',type:'Income',level:1,parent:'inc'},
+  {id:'inc3',name:'Refunds',type:'Income',level:1,parent:'inc'},
+  {id:'inc4',name:'Rental Income',type:'Income',level:1,parent:'inc'},
+  {id:'inc5',name:'Uncategorized Income',type:'Income',level:1,parent:'inc'},
+  {id:'cogs',name:'Cost of Goods Sold',type:'Cost of Goods Sold',level:0,expanded:true},
+  {id:'cogs1',name:'Cost of Goods Sold',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs2',name:'Dump Fees',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs3',name:'Equipment Rental for Jobs',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs4',name:'Hazmat Testing',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs5',name:'Job Related Costs',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs5a',name:'Testing',type:'Cost of Goods Sold',level:2,parent:'cogs5'},
+  {id:'cogs6',name:'Labor',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs6a',name:'Temp Labor',type:'Cost of Goods Sold',level:2,parent:'cogs6'},
+  {id:'cogs7',name:'Other Job Related Costs',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs8',name:'Permitting Agency',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs9',name:'Subcontractors Expense',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs9a',name:'Abatement',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9b',name:'Concrete Cutting',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9c',name:'Concrete Pouring',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9d',name:'Electrical',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9e',name:'Fabrication',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9f',name:'Grading',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9g',name:'Landscape',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9h',name:'Trucking',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9i',name:'Welding & Fabrication',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs10',name:'Tools and Job Supplies',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'exp',name:'Expenses',type:'Expense',level:0,expanded:false},
+  {id:'exp1',name:'Auto and Equipment Expense',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp1a',name:'Gas',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1b',name:'Maintenance',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1c',name:'Parking & Tolls',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1d',name:'Repairs',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1e',name:'Vehichle Rental Expense',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1f',name:'Vehicle Registration',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp2',name:'Bad Debt',type:'Expense',level:1,parent:'exp'},
+  {id:'exp3',name:'Bank Service Charges',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp3a',name:'Credit Card Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3b',name:'Foreign Exchange Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3c',name:'Late Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3d',name:'Merchant Deposit Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3e',name:'Transaction Fee',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp4',name:'Bonuses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp5',name:'Charitable Donations',type:'Expense',level:1,parent:'exp'},
+  {id:'exp6',name:'Collections Fees',type:'Expense',level:1,parent:'exp'},
+  {id:'exp7',name:'Compliance',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp7a',name:'Fines & Penalties',type:'Expense',level:2,parent:'exp7'},
+  {id:'exp8',name:'Computer and Internet Expenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp9',name:'Contract Labor Trucking',type:'Expense',level:1,parent:'exp'},
+  {id:'exp10',name:'Credit Card Payment',type:'Expense',level:1,parent:'exp'},
+  {id:'exp11',name:'Depreciation Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp12',name:'Incidental Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp13',name:'Insurance Expense',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp13a',name:'Auto Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13b',name:'Equipment Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13c',name:'GL Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13d',name:'Health Care',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13e',name:'Insurance Bond',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13f',name:'International Auto Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13g',name:'Key Person Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13h',name:'Life Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13i',name:"Worker's Compensation",type:'Expense',level:2,parent:'exp13'},
+  {id:'exp14',name:'Interest Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp15',name:'International Exchange',type:'Expense',level:1,parent:'exp'},
+  {id:'exp16',name:'Jobsite Materials',type:'Expense',level:1,parent:'exp'},
+  {id:'exp17',name:'Marketing',type:'Expense',level:1,parent:'exp'},
+  {id:'exp18',name:'Meals and Entertainment',type:'Expense',level:1,parent:'exp'},
+  {id:'exp19',name:'Office',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp19a',name:'Office Subscriptions',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19b',name:'Office Supplies',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19c',name:'Postage & Delivery',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19d',name:'Virtual Office',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp20',name:'Payroll Expenses',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp20a',name:'ADP 401K Employee Contribute',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20b',name:'ADP Management 401k',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20c',name:'ADP Payroll Fees',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20d',name:'Payroll',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20e',name:'Payroll Tax',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp21',name:'Permit and Licenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp22',name:'Professional Fees',type:'Expense',level:1,parent:'exp'},
+  {id:'exp23',name:'Promotional',type:'Expense',level:1,parent:'exp'},
+  {id:'exp24',name:'Reimbursment',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp24a',name:'Auto Insurance Reimbursement',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp24b',name:'Medical Reimbursment',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp24c',name:'Vehicle Reimbursement',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp25',name:'Rent Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp26',name:'Safety & Protection',type:'Expense',level:1,parent:'exp'},
+  {id:'exp27',name:'Sales Tax',type:'Expense',level:1,parent:'exp'},
+  {id:'exp28',name:'Telephone Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp29',name:'Tolls',type:'Expense',level:1,parent:'exp'},
+  {id:'exp30',name:'Travel Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp31',name:'Uncategorized Expenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp32',name:'Uniforms',type:'Expense',level:1,parent:'exp'},
+  {id:'exp33',name:'Utilities',type:'Expense',level:1,parent:'exp'},
+  {id:'exp34',name:'Website',type:'Expense',level:1,parent:'exp'},
+  {id:'oinc',name:'Other Income',type:'Other Income',level:0,expanded:false},
+  {id:'oinc1',name:'Dividend Income',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc2',name:'Gain on Sale of Asset',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc3',name:'Interest Earned',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc4',name:'Rewards Points',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oexp',name:'Other Expense',type:'Other Expense',level:0,expanded:false},
+  {id:'oexp1',name:'Ask My Accountant',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'oexp2',name:'Other Expense',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'oexp3',name:'Tax Payment',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'np',name:'Non-Posting',type:'Non-Posting',level:0,expanded:false},
+  {id:'np1',name:'Estimates',type:'Non-Posting',level:1,parent:'np'},
+  {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
+  {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
+],
+    invoices: [
+  {
+    id:1, num:'INV-2026-018', est:'EST-2026-047', so:'SO-2026-031',
+    customer:'ABC Construction Corp', contact:'James Torres',
+    billingContact:'Maria Rodriguez', billingEmail:'billing@abcconstruction.com',
+    jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
+    companyAddress:'4500 Main St, San Diego CA 92103',
+    jobName:'Harbor Blvd Demo Phase 1',
+    poNumber:'PO-2026-4891',
+    status:'partial',
+    invoiceDate:'May 2, 2026', dueDate:'Jun 1, 2026',
+    subtotal:23150, tax:2025, total:25175,
+    paid:12500, balance:12675,
+    terms:'Progress billing', waiver:'conditional', waiverSent:true, unconditionalSent:false,
+    paymentMethod:'portal',
+    lines:[
+      {desc:'Interior demolition — 2nd floor',qty:'1,800',unit:'sq ft',price:'$5.00',total:'$9,000'},
+      {desc:'Debris removal & hauling',qty:'3',unit:'loads',price:'$900',total:'$2,700'},
+      {desc:'Dumpster rental (7 days)',qty:'1',unit:'unit',price:'$850',total:'$850'},
+      {desc:'Dust protection & containment',qty:'1',unit:'job',price:'$600',total:'$600'},
+      {desc:'Concrete cutting & breaking',qty:'800',unit:'sq ft',price:'$8.00',total:'$6,400',alt:'Alt A'},
+      {desc:'Concrete debris hauling',qty:'4',unit:'loads',price:'$800',total:'$3,200',alt:'Alt A'},
+      {desc:'Surface grading after removal',qty:'800',unit:'sq ft',price:'$1.50',total:'$1,200',alt:'Alt A (partial)'},
+    ],
+    payments:[
+      {method:'card',label:'Credit card',amt:12500,date:'May 6, 2026',ref:'AUTH-4892',icon:'pi-card'},
+    ],
+    vendorBills:[
+      {vendor:'West Coast Hauling',account:'5010 · Disposal',amount:1800,status:'Paid'},
+      {vendor:'Pacific Equipment Rental',account:'5020 · Equipment',amount:850,status:'Pending'},
+      {vendor:'City Permits Office',account:'5040 · Permits',amount:350,status:'Pending'}
+    ],
+    timeline:[
+      {action:'Invoice created from EST-2026-047',date:'May 2, 2026',color:'#AAA'},
+      {action:'Sent to billing@abcconstruction.com',date:'May 2, 2026',color:'#3A7ED4'},
+      {action:'Conditional waiver sent',date:'May 2, 2026',color:'#C8822A'},
+      {action:'Payment received — $12,500 (credit card)',date:'May 6, 2026',color:'#3A9E6A'},
+    ]
+  },
+  {
+    id:2, num:'INV-2026-014', est:'EST-2026-038', so:'SO-2026-018',
+    customer:'Horizon Builders LLC', contact:'David Chen',
+    billingContact:'David Chen', billingEmail:'d.chen@horizonbuilders.com',
+    jobAddress:'901 National City Blvd, National City CA 91950',
+    companyAddress:'1200 Broadway, Chula Vista CA 91910',
+    jobName:'National City Full Demo',
+    poNumber:'HB-2026-0038',
+    status:'paid',
+    invoiceDate:'Mar 31, 2026', dueDate:'Apr 30, 2026',
+    subtotal:17200, tax:1505, total:18705,
+    paid:18705, balance:0,
+    terms:'Net 30', waiver:'unconditional', waiverSent:true, unconditionalSent:true,
+    paymentMethod:'ach',
+    lines:[
+      {desc:'Interior & exterior demolition',qty:'4,200',unit:'sq ft',price:'$3.00',total:'$12,600'},
+      {desc:'Full debris hauling — 8 loads',qty:'8',unit:'loads',price:'$500',total:'$4,000'},
+      {desc:'Final site cleanup',qty:'1',unit:'job',price:'$600',total:'$600'},
+    ],
+    payments:[
+      {method:'ach',label:'ACH transfer',amt:9352,date:'Apr 15, 2026',ref:'ACH-20260415',icon:'pi-ach'},
+      {method:'ach',label:'ACH transfer',amt:9353,date:'Apr 28, 2026',ref:'ACH-20260428',icon:'pi-ach'},
+    ],
+    timeline:[
+      {action:'Invoice created',date:'Mar 31, 2026',color:'#AAA'},
+      {action:'Sent to d.chen@horizonbuilders.com',date:'Mar 31, 2026',color:'#3A7ED4'},
+      {action:'Payment received — $9,352 (ACH)',date:'Apr 15, 2026',color:'#3A9E6A'},
+      {action:'Payment received — $9,353 (ACH)',date:'Apr 28, 2026',color:'#3A9E6A'},
+      {action:'Invoice marked paid in full',date:'Apr 28, 2026',color:'#3A9E6A'},
+      {action:'Unconditional waiver sent',date:'Apr 29, 2026',color:'#3A9E6A'},
+    ]
+  },
+  {
+    id:3, num:'INV-2026-021', est:'EST-2026-060', so:'SO-2026-021',
+    customer:'ABC Construction Corp', contact:'Robert Park',
+    billingContact:'Maria Rodriguez', billingEmail:'billing@abcconstruction.com',
+    jobAddress:'7700 Mission Valley Rd, San Diego CA 92108',
+    companyAddress:'4500 Main St, San Diego CA 92103',
+    jobName:'Mission Valley Commercial Demo',
+    poNumber:'PO-2026-6010',
+    status:'sent',
+    invoiceDate:'May 1, 2026', dueDate:'May 31, 2026',
+    subtotal:28700, tax:2511, total:31211,
+    paid:0, balance:31211,
+    terms:'Net 30', waiver:'conditional', waiverSent:true, unconditionalSent:false,
+    paymentMethod:'portal',
+    lines:[
+      {desc:'Commercial interior demolition',qty:'8,000',unit:'sq ft',price:'$2.80',total:'$22,400'},
+      {desc:'Structural element removal',qty:'1',unit:'job',price:'$3,800',total:'$3,800'},
+      {desc:'Full debris hauling — 6 loads',qty:'6',unit:'loads',price:'$400',total:'$2,400'},
+      {desc:'Dust & containment systems',qty:'1',unit:'job',price:'$1,100',total:'$1,100'},
+    ],
+    payments:[],
+    timeline:[
+      {action:'Invoice created from EST-2026-060',date:'May 1, 2026',color:'#AAA'},
+      {action:'Sent to billing@abcconstruction.com',date:'May 1, 2026',color:'#3A7ED4'},
+      {action:'Conditional waiver sent',date:'May 1, 2026',color:'#C8822A'},
+    ]
+  },
+  {
+    id:4, num:'INV-2026-022', est:'EST-2026-062', so:'SO-2026-034',
+    customer:'Horizon Builders LLC', contact:'David Chen',
+    billingContact:'Priya Nair', billingEmail:'billing@horizonbuilders.com',
+    jobAddress:'450 Broadway, Chula Vista CA 91910',
+    companyAddress:'1200 Broadway, Chula Vista CA 91910',
+    jobName:'Broadway Interior',
+    poNumber:'HB-2026-0062',
+    status:'draft',
+    invoiceDate:'May 11, 2026', dueDate:'Jun 10, 2026',
+    subtotal:10500, tax:919, total:11419,
+    paid:0, balance:11419,
+    terms:'50% deposit / 50% completion', waiver:'unconditional', waiverSent:false, unconditionalSent:false,
+    paymentMethod:'ach',
+    lines:[
+      {desc:'Interior demolition — full floor',qty:'2,800',unit:'sq ft',price:'$3.00',total:'$8,400'},
+      {desc:'Debris hauling — 3 loads',qty:'3',unit:'loads',price:'$600',total:'$1,800'},
+      {desc:'Site protection & cleanup',qty:'1',unit:'job',price:'$300',total:'$300'},
+    ],
+    payments:[],
+    timeline:[
+      {action:'Draft created from EST-2026-062',date:'May 11, 2026',color:'#AAA'},
+    ]
+  },
+],
   };
 
   // ---- Load from storage or seed ----
   function load(){
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if(raw){ return JSON.parse(raw); }
+      if(raw){
+        var saved = JSON.parse(raw);
+        // Backfill any top-level collection added after this browser last saved
+        // (e.g. invoices), so new modules still get their seed data.
+        Object.keys(SEED).forEach(function(k){
+          if(saved[k] === undefined){
+            saved[k] = JSON.parse(JSON.stringify(SEED[k]));
+          }
+        });
+        return saved;
+      }
     } catch(e){ console.warn('SDD: could not read storage', e); }
     return JSON.parse(JSON.stringify(SEED)); // deep copy of seed
   }
@@ -301,10 +635,127 @@
   // Make sure every collection exists even if storage was partial
   if(!_data.customers) _data.customers = JSON.parse(JSON.stringify(SEED.customers));
   if(!_data.estimates) _data.estimates = JSON.parse(JSON.stringify(SEED.estimates));
+  if(!_data.bills) _data.bills = JSON.parse(JSON.stringify(SEED.bills || []));
+  if(!_data.accounts) _data.accounts = JSON.parse(JSON.stringify(SEED.accounts || []));
+  if(!_data.manualEntries) _data.manualEntries = [];
 
   function save(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); }
     catch(e){ console.warn('SDD: could not save storage', e); }
+  }
+
+  // ===== General Ledger engine (double-entry) =====
+  function _num(v){ if(typeof v==='number') return v; var n=parseFloat(String(v||'').replace(/[^0-9.\-]/g,'')); return isNaN(n)?0:n; }
+  // Resolve a posting account id by matching the COA (with sensible fallbacks).
+  function _acct(idOrType){
+    var a=(_data.accounts||[]);
+    var byId=a.filter(function(x){return x.id===idOrType;})[0];
+    if(byId) return byId.id;
+    return idOrType;
+  }
+  // Standard posting accounts (ids from the seeded COA)
+  var POST = { AR:'ar1', AP:'ap1', INCOME:'inc1', BANK:'b1', EXPENSE:'exp1', COGS:'cogs2' };
+  // Map a bill to the best expense/COGS account based on its description.
+  function _billAccount(b){
+    var d=((b.desc||'')+' '+(b.vendor||'')).toLowerCase();
+    if(/dump|disposal|landfill|edco/.test(d)) return 'cogs2';      // Dump Fees
+    if(/rental|rent|excavator|skid|equipment/.test(d)) return 'cogs3'; // Equipment Rental for Jobs
+    if(/payroll|adp|wage/.test(d)) return 'exp1';                  // (payroll-ish) → expense
+    if(/subcontract|abatement|asbestos|safeair|concrete|cutting|drilling/.test(d)) return 'cogs9'; // Subcontractors
+    if(/fuel|gas|auto|truck|vehicle/.test(d)) return 'exp1';       // Auto & Equipment Expense
+    return 'cogs1'; // generic Cost of Goods Sold
+  }
+
+  // Build automatic journal entries from invoices and bills.
+  function _autoEntries(){
+    var entries=[];
+    var eid=1;
+    // Invoices → AR (debit) / Income (credit); if Paid → also Bank (debit) / AR (credit)
+    (_data.customers||[]).forEach(function(c){
+      (c.contacts||[]).forEach(function(ct){
+        (ct.jobs||[]).forEach(function(j){
+          (j.invoices||[]).forEach(function(iv){
+            var amt=_num(iv.amount); if(!amt) return;
+            var proj=j.projectName||j.jobName||'';
+            entries.push({ id:'AUTO-'+(eid++), date:iv.date||'', source:'invoice', ref:iv.est,
+              memo:c.name+(proj?(' · '+proj):'')+' · invoice', lines:[
+                {account:POST.AR, debit:amt, credit:0},
+                {account:POST.INCOME, debit:0, credit:amt}
+              ]});
+            if((iv.status||'').toLowerCase()==='paid'){
+              entries.push({ id:'AUTO-'+(eid++), date:iv.date||'', source:'payment', ref:iv.est,
+                memo:c.name+' · payment received', lines:[
+                  {account:POST.BANK, debit:amt, credit:0},
+                  {account:POST.AR, debit:0, credit:amt}
+                ]});
+            }
+          });
+        });
+      });
+    });
+    // Bills → Expense (debit) / AP (credit); if Paid → AP (debit) / Bank (credit)
+    (_data.bills||[]).forEach(function(b){
+      var amt=_num(b.amount); if(!amt) return;
+      var expAcct=_billAccount(b);
+      entries.push({ id:'AUTO-'+(eid++), date:b.date||'', source:'bill', ref:b.num,
+        memo:(b.vendor||'Vendor')+' · '+(b.desc||'bill'), lines:[
+          {account:expAcct, debit:amt, credit:0},
+          {account:POST.AP, debit:0, credit:amt}
+        ]});
+      if((b.status||'').toLowerCase()==='paid'){
+        entries.push({ id:'AUTO-'+(eid++), date:b.date||'', source:'bill-payment', ref:b.num,
+          memo:(b.vendor||'Vendor')+' · bill paid', lines:[
+            {account:POST.AP, debit:amt, credit:0},
+            {account:POST.BANK, debit:0, credit:amt}
+          ]});
+      }
+    });
+    return entries;
+  }
+  // Full ledger = automatic + manual entries
+  function ledger(){
+    return _autoEntries().concat(_data.manualEntries||[]);
+  }
+  // Flattened postings for a single account, with signed amount (debit positive, credit negative)
+  function ledgerForAccount(acctId){
+    var rows=[];
+    ledger().forEach(function(e){
+      (e.lines||[]).forEach(function(ln){
+        if(ln.account===acctId){
+          var amount=_num(ln.debit)-_num(ln.credit);
+          rows.push({ date:e.date, ref:e.ref||e.id, desc:e.memo, source:e.source, amount:amount, entryId:e.id });
+        }
+      });
+    });
+    return rows;
+  }
+  // Raw signed balance of an account = sum(debit) - sum(credit)
+  function accountBalanceRaw(acctId){
+    var bal=0;
+    ledger().forEach(function(e){ (e.lines||[]).forEach(function(ln){ if(ln.account===acctId){ bal+=_num(ln.debit)-_num(ln.credit); } }); });
+    return bal;
+  }
+  // "Natural" balance: assets/expenses are debit-normal (positive as-is);
+  // liabilities/equity/income are credit-normal (flip the sign so they read positive).
+  function accountBalanceNatural(acctId){
+    var a=(_data.accounts||[]).filter(function(x){return x.id===acctId;})[0];
+    var raw=accountBalanceRaw(acctId);
+    if(!a) return raw;
+    var creditNormal=/Income|Liability|Equity|Payable|Credit Card|Other Income/i.test(a.type);
+    return creditNormal ? -raw : raw;
+  }
+  // Group level-1 accounts by a set of types, returning {accounts:[{id,name,balance}], total}
+  function summaryByTypes(typesRegex){
+    var out=[]; var total=0;
+    (_data.accounts||[]).forEach(function(a){
+      if(a.level!==1) return;
+      if(!typesRegex.test(a.type||'')) return;
+      var bal=accountBalanceNatural(a.id);
+      if(Math.abs(bal)<0.005) return; // skip zero accounts
+      out.push({id:a.id, name:a.name, type:a.type, balance:bal});
+      total+=bal;
+    });
+    return {accounts:out, total:total};
   }
 
   // ---- Public API ----
@@ -313,12 +764,36 @@
     get customers(){ return _data.customers; },
     get estimates(){ return _data.estimates; },
     get bills(){ return _data.bills || []; },
+    get accounts(){ return _data.accounts || []; },
+    get invoices(){ return _data.invoices || []; },
+    get manualEntries(){ return _data.manualEntries || []; },
     save: save,
     // replace a whole collection
     setCustomers: function(arr){ _data.customers = arr; save(); },
     setEstimates: function(arr){ _data.estimates = arr; save(); },
     setBills: function(arr){ _data.bills = arr; save(); },
+    setAccounts: function(arr){ _data.accounts = arr; save(); },
+    setInvoices: function(arr){ _data.invoices = arr; save(); },
+    // ===== General Ledger API =====
+    postingAccounts: POST,
+    ledger: ledger,                       // all journal entries (auto + manual)
+    ledgerForAccount: ledgerForAccount,   // postings touching one account
+    accountBalance: accountBalanceNatural,
+    accountBalanceRaw: accountBalanceRaw,
+    summaryByTypes: summaryByTypes,
+    addManualEntry: function(entry){
+      // entry: {date, ref, memo, lines:[{account,debit,credit}, ...]}
+      entry.id = entry.id || ('MAN-'+Date.now());
+      entry.source = 'manual';
+      _data.manualEntries.push(entry);
+      save();
+      return entry;
+    },
+    deleteManualEntry: function(id){
+      _data.manualEntries = (_data.manualEntries||[]).filter(function(e){ return e.id!==id; });
+      save();
+    },
     // wipe everything back to the original seed (handy for testing)
-    resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); save(); }
+    resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); _data.manualEntries=[]; save(); }
   };
 })();
