@@ -319,14 +319,15 @@ svg{display:block;}
     <a class="nav-item active" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
     <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
-    <a class="nav-item" href="/sdd-vendors.html?module=vendors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
-    <a class="nav-item" href="/sdd-vendors.html?module=banking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
+    <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
+    <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
+    <a class="nav-item" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
   </nav>
   <button onclick="if(confirm('This reloads the sample data and clears anything saved in this browser. Continue?')){ if(window.SDD){ window.SDD.resetAll(); } location.reload(); }" title="Reload sample data" style="margin-left:8px;padding:8px 12px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v99</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v104</span>
 </div>
 
 <div class="app">
@@ -1070,23 +1071,119 @@ function _txTableHTML(c, type, estFilter){
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   }
-  var head='<tr>'+headCells.map(function(h,i){ return '<th style="'+th+(i>=headCells.length-2?'text-align:right;':'')+'">'+h+'</th>'; }).join('')+'</tr>';
+  var head='<tr>'+headCells.map(function(h,i){ return '<th style="'+th+(i>=headCells.length-2?'text-align:right;':'')+'">'+h+'</th>'; }).join('')+'<th style="'+th+'text-align:center;">PDF</th></tr>';
   // When the job/customer has more than one PM, prepend a "Project Manager" column
   var showPM=!!rows._multiPM;
   if(showPM){
-    head='<tr><th style="'+th+'">Project Manager</th>'+headCells.map(function(h,i){ return '<th style="'+th+(i>=headCells.length-2?'text-align:right;':'')+'">'+h+'</th>'; }).join('')+'</tr>';
+    head='<tr><th style="'+th+'">Project Manager</th>'+headCells.map(function(h,i){ return '<th style="'+th+(i>=headCells.length-2?'text-align:right;':'')+'">'+h+'</th>'; }).join('')+'<th style="'+th+'text-align:center;">PDF</th></tr>';
   }
-  var body=rows.map(function(r){
+  var pdfIconSVG='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>';
+  var body=rows.map(function(r,ri){
     var pmCell='';
     if(showPM){
       // show the PM name on every row that belongs to it
       pmCell='<td style="'+td+'font-weight:700;color:var(--gold);">'+(r.pm||'—')+'</td>';
     }
-    return '<tr>'+pmCell+rowFn(r)+'</tr>';
+    // store row data for the PDF viewer
+    var rowKey=c.id+'_'+(estFilter||'all')+'_'+type+'_'+ri;
+    window._txRowCache=window._txRowCache||{};
+    window._txRowCache[rowKey]=Object.assign({}, r, {customer:c.name, customerId:c.id});
+    var pdfCell='<td style="'+td+'text-align:center;"><button onclick="openTxPdf(\''+rowKey+'\')" title="View PDF" style="border:1px solid var(--border2);border-radius:7px;background:transparent;color:var(--danger);padding:5px 7px;cursor:pointer;display:inline-flex;align-items:center;" onmouseover="this.style.background=\'rgba(217,79,79,.08)\'" onmouseout="this.style.background=\'transparent\'">'+pdfIconSVG+'</button></td>';
+    return '<tr>'+pmCell+rowFn(r)+pdfCell+'</tr>';
   }).join('');
   return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">'+head+body+'</table></div>';
 }
-// Re-render only the transactions table when a control changes.
+// ── Transaction PDF viewer (popup) ──
+function _txPdfDoc(r){
+  // A simple but professional document layout reused for any transaction type.
+  var typeLabel={'Estimate':'ESTIMATE','Change Order':'CHANGE ORDER','Invoice':'INVOICE','Payment':'PAYMENT RECEIPT'}[r.kind]||r.kind.toUpperCase();
+  var accent={'Estimate':'#2563eb','Change Order':'#C8822A','Invoice':'#16a34a','Payment':'#16a34a'}[r.kind]||'#1f2630';
+  var lines='';
+  lines+='<tr><td style="padding:8px 0;border-bottom:1px solid #eee;color:#555;">'+(r.desc||r.scope||r.project||'Demolition services')+'</td>'
+    +'<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;font-weight:700;">'+(r.amount||'$0')+'</td></tr>';
+  var refLine=r.ref?('<div style="font-size:12px;color:#777;">Reference: '+r.ref+'</div>'):'';
+  var dueLine=r.due?('<div style="font-size:12px;color:#777;">Due: '+r.due+'</div>'):'';
+  return '<div style="background:#fff;padding:38px 40px;font-family:Barlow,sans-serif;color:#1f2630;width:100%;box-sizing:border-box;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:16px;margin-bottom:20px;">'
+      +'<div><div style="font-size:22px;font-weight:800;letter-spacing:.04em;">SDD DEMOLITION</div>'
+        +'<div style="font-size:11px;color:#777;margin-top:2px;">San Diego Deconstruction &amp; Demolition</div>'
+        +'<div style="font-size:11px;color:#777;">4500 Main St, San Diego CA 92103 · (619) 555-0142</div></div>'
+      +'<div style="text-align:right;"><div style="font-size:20px;font-weight:800;color:'+accent+';letter-spacing:.05em;">'+typeLabel+'</div>'
+        +'<div style="font-size:13px;font-weight:700;margin-top:4px;">'+(r.num||'')+'</div>'
+        +'<div style="font-size:12px;color:#777;">'+(r.date||'')+'</div></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:22px;">'
+      +'<div><div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Bill To</div>'
+        +'<div style="font-size:14px;font-weight:700;">'+(r.customer||'')+'</div>'
+        +'<div style="font-size:12px;color:#555;">'+(r.project||'')+'</div></div>'
+      +'<div style="text-align:right;">'+refLine+dueLine
+        +'<div style="font-size:12px;color:#777;">Status: <span style="font-weight:700;color:'+_txStatusColor(r.status)+';">'+(r.status||'')+'</span></div></div>'
+    +'</div>'
+    +'<table style="width:100%;border-collapse:collapse;margin-bottom:18px;">'
+      +'<tr><th style="text-align:left;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px;border-bottom:2px solid #ddd;">Description</th>'
+        +'<th style="text-align:right;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding-bottom:8px;border-bottom:2px solid #ddd;">Amount</th></tr>'
+      +lines
+    +'</table>'
+    +'<div style="display:flex;justify-content:flex-end;"><div style="min-width:220px;">'
+      +'<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid '+accent+';font-size:16px;font-weight:800;"><span>'+(r.kind==='Payment'?'Amount Paid':'Total')+'</span><span style="color:'+accent+';">'+(r.amount||'$0')+'</span></div>'
+    +'</div></div>'
+    +'<div style="margin-top:30px;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:12px;">Thank you for your business. Payment terms as agreed. Questions? billing@sddemolition.com</div>'
+  +'</div>';
+}
+function openTxPdf(rowKey){
+  var r=(window._txRowCache||{})[rowKey];
+  if(!r) return;
+  var ex=document.getElementById('_txPdfBg'); if(ex) ex.remove();
+  // Modify target depends on transaction type
+  var modifyTarget, modifyLabel;
+  if(r.kind==='Invoice'||r.kind==='Payment'){ modifyTarget="/sdd-invoices.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Invoices'; }
+  else if(r.kind==='Change Order'){ modifyTarget="/sdd-estimates.html?openCO="+encodeURIComponent(r.num); modifyLabel='Modify in Estimates'; }
+  else { modifyTarget="/sdd-estimates.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Estimates'; }
+  var bg=document.createElement('div');
+  bg.id='_txPdfBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100050;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var btn='padding:9px 16px;border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--text);display:inline-flex;align-items:center;gap:6px;';
+  bg.innerHTML='<div style="background:#f3f1ec;border-radius:14px;max-width:760px;width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.35);overflow:hidden;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid var(--border);">'
+      +'<div style="font-family:Barlow,sans-serif;font-weight:700;font-size:15px;">'+r.kind+' · '+(r.num||'')+'</div>'
+      +'<button onclick="document.getElementById(\'_txPdfBg\').remove()" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div id="_txPdfDoc" style="overflow-y:auto;padding:20px;flex:1;">'+_txPdfDoc(r)+'</div>'
+    +'<div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:14px 20px;background:#fff;border-top:1px solid var(--border);">'
+      +'<button onclick="txPdfDownload(\''+rowKey+'\')" style="'+btn+'">⬇ Download</button>'
+      +'<button onclick="txPdfPrint()" style="'+btn+'">🖨 Print</button>'
+      +'<button onclick="txPdfSend(\''+rowKey+'\')" style="'+btn+'">✉ Send</button>'
+      +'<button onclick="window.location.href=\''+modifyTarget+'\'" style="'+btn+'border-color:var(--gold);background:var(--gold);color:#fff;">✎ '+modifyLabel+'</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function txPdfPrint(){
+  var doc=document.getElementById('_txPdfDoc'); if(!doc) return;
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Print</title></head><body style="margin:0;">'+doc.innerHTML+'</body></html>');
+  w.document.close(); w.focus(); setTimeout(function(){ w.print(); },300);
+}
+function txPdfDownload(rowKey){
+  var r=(window._txRowCache||{})[rowKey]; if(!r) return;
+  var doc=document.getElementById('_txPdfDoc');
+  var html='<html><head><meta charset="utf-8"><title>'+(r.num||'document')+'</title></head><body style="margin:0;">'+(doc?doc.innerHTML:'')+'</body></html>';
+  var blob=new Blob([html], {type:'text/html'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(r.num||'transaction')+'.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function txPdfSend(rowKey){
+  var r=(window._txRowCache||{})[rowKey]; if(!r) return;
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:100060;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✉ '+r.kind+' '+(r.num||'')+' sent to '+(r.customer||'client');
+  document.body.appendChild(f);
+  setTimeout(function(){ f.remove(); },2600);
+}
+// Re-render only the transactions table when the type filter changes.
 function setTxFilter(customerId, type, estFilter){
   _txActiveType=type;
   _rerenderTx(customerId, estFilter);
@@ -1571,8 +1668,56 @@ function jdNewEstimate(pn, customer, addr){
     window.location.href='/sdd-estimates.html?'+param+'='+pn+'&customer='+customer+'&addr='+addr;
   };
 }
-// Inactivate the job → move to Archived (mark a flag), with confirmation
+// Inactivate the job → only allowed when every estimate AND change order has been
+// invoiced and every invoice is Paid. Otherwise show a blocking popup.
 function jdInactivateJob(customerId, estNum){
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
+  var job=c?_findOriginalJob(c, estNum):null;
+  if(!job){ return; }
+  // Build the list of billable items (estimates + change orders)
+  var items=[];
+  (job.estimates||[]).forEach(function(e){ items.push({ref:e.est, kind:'Estimate', status:e.status}); });
+  (job.changeOrders||[]).forEach(function(co){ items.push({ref:co.est, kind:'Change Order', status:co.status}); });
+  var invoices=job.invoices||[];
+  function paidInvoiceFor(ref){
+    return invoices.some(function(iv){ return String(iv.originalEst)===String(ref) && /paid/i.test(iv.status||''); });
+  }
+  // Reasons it cannot be inactivated
+  var notInvoiced=[];   // estimate/CO with no invoice at all
+  var notPaid=[];       // estimate/CO whose invoice exists but isn't Paid
+  items.forEach(function(it){
+    var hasInvoice=invoices.some(function(iv){ return String(iv.originalEst)===String(it.ref); });
+    if(!hasInvoice) notInvoiced.push(it.ref);
+    else if(!paidInvoiceFor(it.ref)) notPaid.push(it.ref);
+  });
+  // Also any invoice that exists but isn't paid blocks it
+  var unpaidInvoices=invoices.filter(function(iv){ return !/paid/i.test(iv.status||''); }).map(function(iv){ return iv.est; });
+
+  var blocked=(notInvoiced.length>0 || notPaid.length>0 || unpaidInvoices.length>0);
+  if(blocked){
+    var ex0=document.getElementById('_jdBlockBg'); if(ex0) ex0.remove();
+    var msgParts=[];
+    if(notInvoiced.length) msgParts.push('These have no invoice yet: '+notInvoiced.join(', ')+'.');
+    if(notPaid.length) msgParts.push('These are invoiced but not paid: '+notPaid.join(', ')+'.');
+    if(unpaidInvoices.length) msgParts.push('These invoices are still unpaid: '+unpaidInvoices.join(', ')+'.');
+    var bb=document.createElement('div');
+    bb.id='_jdBlockBg';
+    bb.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100012;display:flex;align-items:center;justify-content:center;padding:20px;';
+    bb.innerHTML='<div style="background:#fff;border-radius:14px;max-width:430px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+      +'<div style="padding:20px 24px 8px;display:flex;align-items:center;gap:10px;">'
+        +'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d94f4f" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+        +'<div style="font-size:17px;font-weight:700;color:#d94f4f;">Cannot make this job inactive</div>'
+      +'</div>'
+      +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.55;">This job still has estimates or change orders that have not been invoiced, or invoices that have not been paid. Everything must be invoiced and paid before the job can be made inactive.<div style="margin-top:10px;color:#333;font-size:12px;">'+msgParts.join('<br>')+'</div></div>'
+      +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">'
+        +'<button id="_jdBlockOk" style="padding:9px 20px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Got it</button>'
+      +'</div></div>';
+    document.body.appendChild(bb);
+    document.getElementById('_jdBlockOk').onclick=function(){ bb.remove(); };
+    bb.onclick=function(e){ if(e.target===bb) bb.remove(); };
+    return;
+  }
+  // All clear → confirmation popup
   var bg=document.getElementById('_jobDetailBg');
   var ex=document.getElementById('_jdConfirmBg'); if(ex) ex.remove();
   var cf=document.createElement('div');
@@ -1580,7 +1725,7 @@ function jdInactivateJob(customerId, estNum){
   cf.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100010;display:flex;align-items:center;justify-content:center;padding:20px;';
   cf.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
     +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Are you sure you want to make this job inactive?</div>'
-    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">The job will be moved to the Archived section. You can view it there whenever you need.</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">All estimates and change orders are invoiced and paid. The job will move to the bottom of the list as an inactive (Paid) job.</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
       +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
       +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, make inactive</button>'
@@ -1588,9 +1733,7 @@ function jdInactivateJob(customerId, estNum){
   document.body.appendChild(cf);
   document.getElementById('_jdCancel').onclick=function(){ cf.remove(); };
   document.getElementById('_jdOk').onclick=function(){
-    var c=CUSTOMERS.find(function(x){return x.id===parseInt(customerId);});
     if(c){
-      var job=_findOriginalJob(c, estNum);
       if(job){ job.inactive=true; job.reactivated=false; }
       if(window.SDD) window.SDD.save();
     }
@@ -2602,7 +2745,7 @@ function renderDetail(id, pmFilter){
         </div>
       </div>
       <div id="jobs-${ct.id}" style="display:none;" class="cc-jobs-wrap">
-        ${ct.jobs.length ? ct.jobs.map(j=>`
+        ${ct.jobs.length ? ct.jobs.slice().sort((a,b)=>(_isJobArchived(a)?1:0)-(_isJobArchived(b)?1:0)).map(j=>`
           <div class="cc-job-row" onclick="goToEstimate('${j.est}')">
             <div class="ccj-dot" style="background:${STATUS_COLOR[j.status]||'var(--gold)'}"></div>
             <div class="ccj-info">

@@ -129,8 +129,8 @@ svg{display:block;}
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
     <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
-    <a class="nav-item active" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
-    <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
+    <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
+    <a class="nav-item active" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
     <a class="nav-item" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
   </nav>
   <button class="btn btn-gold" id="addBtn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span id="addBtnLabel">New vendor</span></button>
@@ -140,7 +140,6 @@ svg{display:block;}
   <div class="view-toggle" id="bankingTabs" style="display:none;">
     <button class="vt-btn active" id="btnBanking" onclick="setView('banking')">Banking</button>
     <button class="vt-btn" id="btnRecon" onclick="setView('recon')">Reconciliation</button>
-    <button class="vt-btn" id="btnCOA" onclick="setView('coa')">Chart of Accounts</button>
     <button class="vt-btn" id="btnCC" onclick="setView('cc')">Credit Cards</button>
   </div>
   <div class="view-toggle" id="vendorTabs" style="display:none;">
@@ -1414,8 +1413,8 @@ document.addEventListener('DOMContentLoaded',function(){
     if(!e.target.closest('#b_vendor_search')&&!e.target.closest('#b_vendor_drop')){var d=document.getElementById('b_vendor_drop'); if(d)d.style.display='none';}
     if(!e.target.closest('#b_account_search')&&!e.target.closest('#b_account_drop')){var d2=document.getElementById('b_account_drop'); if(d2)d2.style.display='none';}
   });
-  // Banking now lives in its own module (sdd-banking.html) — this file is vendors only.
-  applyModule('vendors');
+  // This is the dedicated Banking module — always start in banking mode.
+  applyModule('banking');
 });
 function applyModule(mod){
   var bankTabs=document.getElementById('bankingTabs');

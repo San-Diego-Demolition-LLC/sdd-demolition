@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD — Company</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--gold:#B8922A;--gold-light:#C9A84C;--gold-dim:rgba(184,146,42,0.12);--gold-dim2:rgba(184,146,42,0.07);--surface:#FFFFFF;--surface2:#F5F4F1;--surface3:#ECEAE5;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);--text:#1A1A1A;--muted:#777;--muted2:#AAA;--danger:#D94F4F;--success:#3A9E6A;--warning:#C8822A;--info:#3A7ED4;--purple:#7C5CBF;}
+body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;display:flex;flex-direction:column;}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-svg .s-bar{fill:var(--gold);}.logo-svg .letters{fill:#1A1A1A;}
+.logo-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
+.nav{display:flex;gap:4px;}
+.nav-item{padding:6px 14px;border-radius:6px;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;text-decoration:none;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--gold-dim);color:var(--gold);}
+.nav-item svg{width:15px;height:15px;opacity:.7;}
+.btn{padding:8px 18px;border-radius:6px;font-size:14px;font-family:'Barlow',sans-serif;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-gold{background:var(--gold);color:#fff;font-weight:600;}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2);}
+.btn-ghost:hover{background:var(--surface2);color:var(--text);}
+.btn-sm{padding:5px 13px;font-size:13px;}
+.app{display:flex;flex:1;overflow:hidden;height:calc(100vh - 112px);}
+.view-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.view-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;}
+.vt-btn{padding:5px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Barlow',sans-serif;transition:all .15s;white-space:nowrap;}
+.vt-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.panel-left{width:300px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:all .2s;}
+.search-box{margin:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;flex:1;}
+.search-box input::placeholder{color:var(--muted2);}
+.left-list{flex:1;overflow-y:auto;}
+.left-list::-webkit-scrollbar{width:4px;}
+.left-list::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+.list-item{padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.list-item:hover{background:var(--surface2);}
+.list-item.active{background:var(--gold-dim2);border-left:3px solid var(--gold);}
+.li-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;}
+.li-name{font-size:14px;font-weight:600;}
+.li-amt{font-size:14px;font-weight:700;color:var(--danger);}
+.li-sub{font-size:12px;color:var(--muted);}
+.panel-right{flex:1;overflow-y:auto;background:#F0EEE9;}
+.panel-right::-webkit-scrollbar{width:6px;}
+.panel-right::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+.empty-state{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--muted);}
+.empty-state svg{width:40px;height:40px;opacity:.25;}
+.detail-wrap{padding:20px 24px;}
+.card{background:var(--surface);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.card-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+.pill{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;}
+.pill-paid{background:rgba(58,158,106,.12);color:var(--success);}
+.pill-unpaid{background:rgba(217,79,79,.1);color:var(--danger);}
+.pill-partial{background:rgba(200,130,42,.12);color:var(--warning);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;letter-spacing:.04em;padding:7px 10px;border-bottom:1px solid var(--border);}
+td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+
+<style>
+.co-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px;}
+.co-card h3{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin:0 0 12px;}
+.co-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ff{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.ff label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.ff input,.ff select,.ff textarea{padding:9px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;background:#fff;}
+.co-table{width:100%;border-collapse:collapse;}
+.co-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:9px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.co-table td{font-size:13px;padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.pill{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;}
+.doc-ok{background:rgba(58,158,106,.12);color:var(--success);}
+.doc-soon{background:rgba(200,130,42,.14);color:var(--warning);}
+.doc-exp{background:rgba(217,79,79,.12);color:var(--danger);}
+.role-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;}
+.r-admin{background:rgba(124,92,191,.14);color:var(--purple);}
+.r-manager{background:rgba(58,126,212,.14);color:var(--info);}
+.r-driver{background:rgba(184,146,42,.14);color:var(--gold);}
+.co-btn{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:'Barlow',sans-serif;}
+.co-btn-gold{background:var(--gold);color:#fff;border-color:var(--gold);}
+.co-btn-sm{padding:4px 10px;font-size:12px;}
+.veh-doc-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+</style>
+</head>
+<body>
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg class="logo-svg" width="38" height="26" viewBox="0 0 60 40"><rect class="s-bar" x="4" y="6" width="11" height="28" rx="2"/><text class="letters" x="20" y="29" font-family="Barlow Condensed" font-size="26" font-weight="700">DD</text></svg>
+    <span class="logo-text">Demolition</span>
+  </div>
+  <nav class="nav" style="display:flex;gap:4px;">
+    <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
+    <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
+    <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
+    <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
+    <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
+    <a class="nav-item active" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
+  </nav>
+  <div style="font-size:11px;color:var(--muted);">SDD Demolition <span style="font-weight:700;color:var(--gold);">company-v1</span></div>
+</div>
+
+<div class="view-bar">
+  <div class="view-toggle">
+    <button class="vt-btn active" id="tab-settings" onclick="coShow('settings')">Settings</button>
+    <button class="vt-btn" id="tab-coa" onclick="coShow('coa')">Chart of Accounts</button>
+    <button class="vt-btn" id="tab-reports" onclick="coShow('reports')">Reports</button>
+    <button class="vt-btn" id="tab-users" onclick="coShow('users')">Users</button>
+    <button class="vt-btn" id="tab-fleet" onclick="coShow('fleet')">Fleet</button>
+    <button class="vt-btn" id="tab-compliance" onclick="coShow('compliance')">Compliance</button>
+  </div>
+</div>
+
+<div style="flex:1;padding:20px 24px;max-width:1100px;width:100%;margin:0 auto;box-sizing:border-box;">
+  <div id="co-content"></div>
+</div>
+
+<script src="sdd-data.js"></script>
+<script>
+var ACCOUNTS = [
+  {id:'bank',name:'Bank',type:'Bank',level:0,expanded:true},
+  {id:'b1',name:'Chase Business Checking - 7522',type:'Bank',level:1,parent:'bank'},
+  {id:'b2',name:'Chase Business Savings - 2896',type:'Bank',level:1,parent:'bank'},
+  {id:'b3',name:'Tax Savings Account - 9898',type:'Bank',level:1,parent:'bank'},
+  {id:'b4',name:'UBS Savings Account',type:'Bank',level:1,parent:'bank'},
+  {id:'ar',name:'Accounts Receivable',type:'Accounts Receivable',level:0,expanded:false},
+  {id:'ar1',name:'Accounts Receivable',type:'Accounts Receivable',level:1,parent:'ar'},
+  {id:'ar2',name:'Accounts Receivable - Contra',type:'Other Current Asset',level:1,parent:'ar'},
+  {id:'oca',name:'Other Current Assets',type:'Other Current Asset',level:0,expanded:false},
+  {id:'oca1',name:'Inventory Asset',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca2',name:'Loan to Partner - James & Alexis',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca3',name:'Payroll Asset',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca4',name:'Retention Receivable',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'oca5',name:'Undeposited Funds',type:'Other Current Asset',level:1,parent:'oca'},
+  {id:'fadump',name:'Dumpsters',type:'Fixed Asset',level:0,expanded:false},
+  {id:'fadump1',name:'Dumpster 1 - D1-23',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump2',name:'Dumpster 1 - D1-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump3',name:'Dumpster 2 - D2-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump4',name:'Dumpster 3 - D3-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump5',name:'Dumpster 4 - D4-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump6',name:'Dumpster 5 - D5-25',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'fadump7',name:'Accum Depreciation - Dumpsters',type:'Fixed Asset',level:1,parent:'fadump'},
+  {id:'faeq',name:'Equipment',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faeq1',name:'2006 Skyjack Scissor Lift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq2',name:'2015 CAT Skid Steer Loader',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq3',name:'2022 Viking Breaker',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq4',name:'2023 Interstate West Trailor',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq5',name:'2024 Kubota Excavator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq6',name:'2024 Kubota Skid Steer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq7',name:'2025 Hook Lift Rolloffs',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq8',name:'2025 Kubota Mini Excavator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq9',name:'2025 Kubota Stand Loader',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq10',name:'2025 Striker Breaker',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq11',name:'2025 Ultima 21S-5300 Multilift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq12',name:'Carson Trailer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq13',name:'Floor Scraper',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq14',name:'PITMA Trailer',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq15',name:'Roll off Flatbed',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq16',name:'Scissor Lift',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq17',name:'Terminator',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq18',name:'Truck Dump Hoist',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq19',name:'Wells Fargo - Mini Bobcat',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq20',name:'Yard Storage Container',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq21',name:'Yard Storage Container 2',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faeq22',name:'Accum Depreciation - Equipment',type:'Fixed Asset',level:1,parent:'faeq'},
+  {id:'faoff',name:'Office Equipment',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faoff1',name:'Computers',type:'Fixed Asset',level:1,parent:'faoff'},
+  {id:'faoff2',name:'Accum Depreciation - Office Eq',type:'Fixed Asset',level:1,parent:'faoff'},
+  {id:'faveh',name:'Vehicles & Trucks',type:'Fixed Asset',level:0,expanded:false},
+  {id:'faveh1',name:'2005 Freightliner FL70',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh2',name:'2012 AutoCar Dump Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh3',name:'2015 Chevy Colorado',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh4',name:'2015 Ford F550',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh5',name:'2015 Freightline M2',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh6',name:'2016 Western Star Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh7',name:'2018 Ford F250',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh8',name:'2018 Ram 2500',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh9',name:'2022 Ford F650 Truck',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh10',name:'2023 Ford F-350 XL',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'faveh11',name:'Accum Depreciation - Vehicles',type:'Fixed Asset',level:1,parent:'faveh'},
+  {id:'ap',name:'Accounts Payable',type:'Accounts Payable',level:0,expanded:true},
+  {id:'ap1',name:'Accounts Payable',type:'Accounts Payable',level:1,parent:'ap'},
+  {id:'ccg',name:'Credit Cards',type:'Credit Card',level:0,expanded:true},
+  {id:'cc1',name:'Amazon Amex',type:'Credit Card',level:1,parent:'ccg'},
+  {id:'cc2',name:'Chase Business Credit Card',type:'Credit Card',level:1,parent:'ccg'},
+  {id:'ocl',name:'Other Current Liabilities',type:'Other Current Liability',level:0,expanded:false},
+  {id:'ocl1',name:'Customer Deposits Received',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl2',name:'Payroll Liabilities',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl3',name:'Sheffield Loan',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ocl4',name:'Suspense',type:'Other Current Liability',level:1,parent:'ocl'},
+  {id:'ltl',name:'Long Term Liabilities',type:'Long Term Liability',level:0,expanded:false},
+  {id:'ltl1',name:'2015 Cat Financial Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl2',name:'2018 Ram 2500 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl3',name:'2024 Kubota Excavator Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl4',name:'2024 Kubota Skid Steer Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl5',name:'2025 Kubota Mini Excavator Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl6',name:'2025 Kubota Stand Loader Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl7',name:'AutoCar Dump Truck Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl8',name:'Breaker - Wells Fargo Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl9',name:'Ford F350 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl10',name:'Ford F650 Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'ltl11',name:'Mini Bobcat - Wells Fargo Loan',type:'Long Term Liability',level:1,parent:'ltl'},
+  {id:'eq',name:'Equity',type:'Equity',level:0,expanded:true},
+  {id:'eq1',name:'Opening Balance Equity',type:'Equity',level:1,parent:'eq'},
+  {id:'eq2',name:"Owner's Draws",type:'Equity',level:1,parent:'eq'},
+  {id:'eq3',name:"Owner's Investment",type:'Equity',level:1,parent:'eq'},
+  {id:'eq4',name:'Retained Earnings',type:'Equity',level:1,parent:'eq'},
+  {id:'inc',name:'Income',type:'Income',level:0,expanded:true},
+  {id:'inc1',name:'Job Income',type:'Income',level:1,parent:'inc',expanded:true},
+  {id:'inc1a',name:'Dumpster Income',type:'Income',level:2,parent:'inc1'},
+  {id:'inc1b',name:'Grading',type:'Income',level:2,parent:'inc1'},
+  {id:'inc1c',name:'Welding Income',type:'Income',level:2,parent:'inc1'},
+  {id:'inc2',name:'Recycle Income',type:'Income',level:1,parent:'inc'},
+  {id:'inc3',name:'Refunds',type:'Income',level:1,parent:'inc'},
+  {id:'inc4',name:'Rental Income',type:'Income',level:1,parent:'inc'},
+  {id:'inc5',name:'Uncategorized Income',type:'Income',level:1,parent:'inc'},
+  {id:'cogs',name:'Cost of Goods Sold',type:'Cost of Goods Sold',level:0,expanded:true},
+  {id:'cogs1',name:'Cost of Goods Sold',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs2',name:'Dump Fees',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs3',name:'Equipment Rental for Jobs',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs4',name:'Hazmat Testing',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs5',name:'Job Related Costs',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs5a',name:'Testing',type:'Cost of Goods Sold',level:2,parent:'cogs5'},
+  {id:'cogs6',name:'Labor',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs6a',name:'Temp Labor',type:'Cost of Goods Sold',level:2,parent:'cogs6'},
+  {id:'cogs7',name:'Other Job Related Costs',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs8',name:'Permitting Agency',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'cogs9',name:'Subcontractors Expense',type:'Cost of Goods Sold',level:1,parent:'cogs',expanded:true},
+  {id:'cogs9a',name:'Abatement',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9b',name:'Concrete Cutting',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9c',name:'Concrete Pouring',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9d',name:'Electrical',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9e',name:'Fabrication',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9f',name:'Grading',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9g',name:'Landscape',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9h',name:'Trucking',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs9i',name:'Welding & Fabrication',type:'Cost of Goods Sold',level:2,parent:'cogs9'},
+  {id:'cogs10',name:'Tools and Job Supplies',type:'Cost of Goods Sold',level:1,parent:'cogs'},
+  {id:'exp',name:'Expenses',type:'Expense',level:0,expanded:false},
+  {id:'exp1',name:'Auto and Equipment Expense',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp1a',name:'Gas',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1b',name:'Maintenance',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1c',name:'Parking & Tolls',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1d',name:'Repairs',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1e',name:'Vehichle Rental Expense',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp1f',name:'Vehicle Registration',type:'Expense',level:2,parent:'exp1'},
+  {id:'exp2',name:'Bad Debt',type:'Expense',level:1,parent:'exp'},
+  {id:'exp3',name:'Bank Service Charges',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp3a',name:'Credit Card Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3b',name:'Foreign Exchange Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3c',name:'Late Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3d',name:'Merchant Deposit Fees',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp3e',name:'Transaction Fee',type:'Expense',level:2,parent:'exp3'},
+  {id:'exp4',name:'Bonuses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp5',name:'Charitable Donations',type:'Expense',level:1,parent:'exp'},
+  {id:'exp6',name:'Collections Fees',type:'Expense',level:1,parent:'exp'},
+  {id:'exp7',name:'Compliance',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp7a',name:'Fines & Penalties',type:'Expense',level:2,parent:'exp7'},
+  {id:'exp8',name:'Computer and Internet Expenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp9',name:'Contract Labor Trucking',type:'Expense',level:1,parent:'exp'},
+  {id:'exp10',name:'Credit Card Payment',type:'Expense',level:1,parent:'exp'},
+  {id:'exp11',name:'Depreciation Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp12',name:'Incidental Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp13',name:'Insurance Expense',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp13a',name:'Auto Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13b',name:'Equipment Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13c',name:'GL Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13d',name:'Health Care',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13e',name:'Insurance Bond',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13f',name:'International Auto Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13g',name:'Key Person Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13h',name:'Life Insurance',type:'Expense',level:2,parent:'exp13'},
+  {id:'exp13i',name:"Worker's Compensation",type:'Expense',level:2,parent:'exp13'},
+  {id:'exp14',name:'Interest Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp15',name:'International Exchange',type:'Expense',level:1,parent:'exp'},
+  {id:'exp16',name:'Jobsite Materials',type:'Expense',level:1,parent:'exp'},
+  {id:'exp17',name:'Marketing',type:'Expense',level:1,parent:'exp'},
+  {id:'exp18',name:'Meals and Entertainment',type:'Expense',level:1,parent:'exp'},
+  {id:'exp19',name:'Office',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp19a',name:'Office Subscriptions',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19b',name:'Office Supplies',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19c',name:'Postage & Delivery',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp19d',name:'Virtual Office',type:'Expense',level:2,parent:'exp19'},
+  {id:'exp20',name:'Payroll Expenses',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp20a',name:'ADP 401K Employee Contribute',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20b',name:'ADP Management 401k',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20c',name:'ADP Payroll Fees',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20d',name:'Payroll',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp20e',name:'Payroll Tax',type:'Expense',level:2,parent:'exp20'},
+  {id:'exp21',name:'Permit and Licenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp22',name:'Professional Fees',type:'Expense',level:1,parent:'exp'},
+  {id:'exp23',name:'Promotional',type:'Expense',level:1,parent:'exp'},
+  {id:'exp24',name:'Reimbursment',type:'Expense',level:1,parent:'exp',expanded:false},
+  {id:'exp24a',name:'Auto Insurance Reimbursement',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp24b',name:'Medical Reimbursment',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp24c',name:'Vehicle Reimbursement',type:'Expense',level:2,parent:'exp24'},
+  {id:'exp25',name:'Rent Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp26',name:'Safety & Protection',type:'Expense',level:1,parent:'exp'},
+  {id:'exp27',name:'Sales Tax',type:'Expense',level:1,parent:'exp'},
+  {id:'exp28',name:'Telephone Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp29',name:'Tolls',type:'Expense',level:1,parent:'exp'},
+  {id:'exp30',name:'Travel Expense',type:'Expense',level:1,parent:'exp'},
+  {id:'exp31',name:'Uncategorized Expenses',type:'Expense',level:1,parent:'exp'},
+  {id:'exp32',name:'Uniforms',type:'Expense',level:1,parent:'exp'},
+  {id:'exp33',name:'Utilities',type:'Expense',level:1,parent:'exp'},
+  {id:'exp34',name:'Website',type:'Expense',level:1,parent:'exp'},
+  {id:'oinc',name:'Other Income',type:'Other Income',level:0,expanded:false},
+  {id:'oinc1',name:'Dividend Income',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc2',name:'Gain on Sale of Asset',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc3',name:'Interest Earned',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oinc4',name:'Rewards Points',type:'Other Income',level:1,parent:'oinc'},
+  {id:'oexp',name:'Other Expense',type:'Other Expense',level:0,expanded:false},
+  {id:'oexp1',name:'Ask My Accountant',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'oexp2',name:'Other Expense',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'oexp3',name:'Tax Payment',type:'Other Expense',level:1,parent:'oexp'},
+  {id:'np',name:'Non-Posting',type:'Non-Posting',level:0,expanded:false},
+  {id:'np1',name:'Estimates',type:'Non-Posting',level:1,parent:'np'},
+  {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
+  {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
+];
+
+
+// ===== Company module data =====
+var COMPANY = {
+  name:'San Diego Deconstruction & Demolition',
+  legalName:'SDD Demolition LLC',
+  address:'4500 Main St, San Diego CA 92103',
+  phone:'(619) 555-0142',
+  email:'office@sddemolition.com',
+  ein:'47-1234567',
+  license:'CSLB #1098765',
+  founded:'2019'
+};
+var USERS = [
+  {id:1, name:'Leontina Reyes', email:'leontina@sddemolition.com', role:'admin', phone:'(619) 555-0150', active:true},
+  {id:2, name:'James Torres', email:'james@sddemolition.com', role:'admin', phone:'(619) 555-0151', active:true},
+  {id:3, name:'Carlos Mendez', email:'carlos@sddemolition.com', role:'manager', phone:'(619) 555-0152', active:true},
+  {id:4, name:'Ana Rivera', email:'ana@sddemolition.com', role:'manager', phone:'(619) 555-0153', active:true},
+  {id:5, name:'Mike Herrera', email:'mike@sddemolition.com', role:'driver', phone:'(619) 555-0154', active:true},
+  {id:6, name:'Tony Diaz', email:'tony@sddemolition.com', role:'driver', phone:'(619) 555-0155', active:false}
+];
+var ROLE_PERMS = {
+  admin:   {label:'Admin',   coaView:true, coaEdit:true, reports:true, users:true, fleet:true, compliance:true},
+  manager: {label:'Manager', coaView:true, coaEdit:false, reports:true, users:false, fleet:true, compliance:true},
+  driver:  {label:'Driver',  coaView:false, coaEdit:false, reports:false, users:false, fleet:true, compliance:false}
+};
+// Vehicles / Fleet. assetAccountId links to a Chart of Accounts (Fixed Asset) entry.
+var FLEET = [
+  {id:1, name:'2022 Ford F-550 Dump', plate:'7XYZ123', vin:'1FDUF5GT2NEC12345', type:'Dump Truck', asset:true, assetAccountId:'faveh',
+    docs:[
+      {kind:'Insurance', provider:'State Farm Commercial', number:'POL-99812', expires:'Aug 14, 2026', file:'insurance_f550.pdf'},
+      {kind:'DMV Registration', provider:'CA DMV', number:'REG-55120', expires:'Mar 31, 2026', file:'dmv_f550.pdf'},
+      {kind:'Clean Truck Check', provider:'CARB', number:'CTC-2025-118', expires:'Jul 1, 2026', file:'ctc_f550.pdf'},
+      {kind:'BIT Inspection', provider:'CHP', number:'BIT-4471', expires:'Jun 20, 2026', file:'bit_f550.pdf'},
+      {kind:'Smog Check', provider:'CA BAR', number:'SMOG-7781', expires:'Feb 10, 2026', file:'smog_f550.pdf'},
+      {kind:'Permit (Hauling)', provider:'City of San Diego', number:'HAUL-3392', expires:'Dec 31, 2026', file:'permit_f550.pdf'}
+    ]},
+  {id:2, name:'2020 Peterbilt 348 Rolloff', plate:'8ABC456', vin:'2NP3LJ0X5LM98765', type:'Rolloff Truck', asset:true, assetAccountId:'faveh',
+    docs:[
+      {kind:'Insurance', provider:'State Farm Commercial', number:'POL-99813', expires:'Aug 14, 2026', file:'insurance_pete.pdf'},
+      {kind:'DMV Registration', provider:'CA DMV', number:'REG-55121', expires:'Jan 18, 2026', file:'dmv_pete.pdf'},
+      {kind:'Clean Truck Check', provider:'CARB', number:'CTC-2025-119', expires:'Jul 1, 2026', file:'ctc_pete.pdf'},
+      {kind:'BIT Inspection', provider:'CHP', number:'BIT-4472', expires:'Sep 5, 2026', file:'bit_pete.pdf'},
+      {kind:'Smog Check', provider:'CA BAR', number:'SMOG-7782', expires:'May 22, 2026', file:'smog_pete.pdf'}
+    ]},
+  {id:3, name:'2019 Ford F-250 Crew', plate:'6DEF789', vin:'1FT7W2BT9KED54321', type:'Pickup', asset:true, assetAccountId:'faveh',
+    docs:[
+      {kind:'Insurance', provider:'State Farm Commercial', number:'POL-99814', expires:'Aug 14, 2026', file:'insurance_f250.pdf'},
+      {kind:'DMV Registration', provider:'CA DMV', number:'REG-55122', expires:'Nov 30, 2026', file:'dmv_f250.pdf'},
+      {kind:'Smog Check', provider:'CA BAR', number:'SMOG-7783', expires:'Apr 12, 2026', file:'smog_f250.pdf'}
+    ]}
+];
+// Company compliance documents (not tied to a single vehicle)
+var COMPLIANCE = [
+  {id:1, name:'Contractors License (CSLB)', authority:'CSLB', number:'1098765', expires:'Oct 31, 2026', file:'cslb_license.pdf'},
+  {id:2, name:'General Liability Insurance', authority:'The Hartford', number:'GL-44120', expires:'Jul 1, 2026', file:'gl_insurance.pdf'},
+  {id:3, name:'Workers Compensation', authority:'State Fund', number:'WC-88210', expires:'Jan 1, 2026', file:'workers_comp.pdf'},
+  {id:4, name:'Business License (City SD)', authority:'City of San Diego', number:'BL-2210', expires:'Dec 31, 2026', file:'business_license.pdf'},
+  {id:5, name:'Hazmat Transport Permit', authority:'CA DTSC', number:'HZ-5521', expires:'Mar 15, 2026', file:'hazmat_permit.pdf'},
+  {id:6, name:'SWPPP (Stormwater)', authority:'CA Water Board', number:'SW-3310', expires:'Sep 30, 2026', file:'swppp.pdf'}
+];
+var TODAY_CO = new Date('2026-05-15');
+
+// ===== Helpers =====
+function coParseD(d){ var t=Date.parse(d||''); return isNaN(t)?null:new Date(t); }
+function coDocStatus(expires){
+  var d=coParseD(expires); if(!d) return {cls:'doc-ok',label:'—'};
+  var days=Math.round((d-TODAY_CO)/86400000);
+  if(days<0) return {cls:'doc-exp',label:'Expired'};
+  if(days<=60) return {cls:'doc-soon',label:'Renew soon ('+days+'d)'};
+  return {cls:'doc-ok',label:'Valid'};
+}
+function coAcctName(id){ var a=ACCOUNTS.filter(function(x){return x.id===id;})[0]; return a?a.name:'—'; }
+
+// ===== Tab switching =====
+function coShow(tab){
+  ['settings','coa','reports','users','fleet','compliance'].forEach(function(t){
+    var b=document.getElementById('tab-'+t); if(b) b.classList.toggle('active', t===tab);
+  });
+  var el=document.getElementById('co-content');
+  if(tab==='settings') el.innerHTML=renderSettings();
+  else if(tab==='coa') el.innerHTML=renderCOA();
+  else if(tab==='reports') el.innerHTML=renderReports();
+  else if(tab==='users') el.innerHTML=renderUsers();
+  else if(tab==='fleet') el.innerHTML=renderFleet();
+  else if(tab==='compliance') el.innerHTML=renderCompliance();
+}
+
+// ===== SETTINGS =====
+function renderSettings(){
+  return '<div class="co-card"><h3>Company Settings</h3>'
+    +'<div class="co-grid">'
+      +ff('Company name', COMPANY.name)+ff('Legal name', COMPANY.legalName)
+      +ff('Address', COMPANY.address)+ff('Phone', COMPANY.phone)
+      +ff('Email', COMPANY.email)+ff('EIN', COMPANY.ein)
+      +ff('Contractor License', COMPANY.license)+ff('Founded', COMPANY.founded)
+    +'</div>'
+    +'<div style="margin-top:8px;"><button class="co-btn co-btn-gold" onclick="coFlash(\'Settings saved\')">Save Settings</button></div>'
+  +'</div>';
+}
+function ff(label,val){ return '<div class="ff"><label>'+label+'</label><input value="'+(val||'').replace(/"/g,'&quot;')+'"></div>'; }
+
+// ===== CHART OF ACCOUNTS =====
+function renderCOA(){
+  var rows='';
+  ACCOUNTS.forEach(function(a){
+    if(a.level===0){
+      rows+='<tr style="background:var(--surface2);"><td style="font-weight:700;" colspan="2">'+a.name+'</td><td>'+a.type+'</td><td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coAddSub(\''+a.id+'\')">+ Sub-account</button></td></tr>';
+    } else {
+      rows+='<tr><td style="padding-left:28px;color:var(--muted);">↳</td><td>'+a.name+'</td><td style="color:var(--muted);">'+a.type+'</td>'
+        +'<td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coEditAcct(\''+a.id+'\')">Edit</button> <button class="co-btn co-btn-sm" onclick="coViewAcctTx(\''+a.id+'\')">View Tx</button></td></tr>';
+    }
+  });
+  return '<div class="co-card"><h3>Chart of Accounts <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddAcct()">+ New Account</button></h3>'
+    +'<table class="co-table"><tr><th></th><th>Account</th><th>Type</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>';
+}
+function coAddAcct(){ coFlash('New account form (demo)'); }
+function coAddSub(pid){ coFlash('Add sub-account under '+coAcctName(pid)); }
+function coEditAcct(id){ coFlash('Edit '+coAcctName(id)); }
+
+// ===== REPORTS: transactions per account =====
+function renderReports(){
+  // Build a transactions list from SDD (invoices, bills) mapped to accounts
+  var opts=ACCOUNTS.filter(function(a){return a.level===1;}).map(function(a){return '<option value="'+a.id+'">'+a.name+'</option>';}).join('');
+  return '<div class="co-card"><h3>Account Reports</h3>'
+    +'<div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:12px;">'
+      +'<div class="ff" style="flex:1;margin:0;"><label>Account</label><select id="rptAcct" onchange="coRunReport()">'+opts+'</select></div>'
+      +'<button class="co-btn co-btn-gold" onclick="coRunReport()">Run Report</button>'
+    +'</div>'
+    +'<div id="rptOut"><div style="padding:20px;text-align:center;color:var(--muted2);font-style:italic;">Select an account and run the report.</div></div>'
+  +'</div>';
+}
+function coRunReport(){
+  var sel=document.getElementById('rptAcct'); if(!sel) return;
+  var acctId=sel.value; var acctName=coAcctName(acctId);
+  var tx=coCollectTxForAccount(acctId, acctName);
+  var out=document.getElementById('rptOut');
+  if(!tx.length){ out.innerHTML='<div style="padding:18px;text-align:center;color:var(--muted2);font-style:italic;">No transactions found for '+acctName+'.</div>'; return; }
+  var total=0;
+  var rows=tx.map(function(t){ total+=t.amount; return '<tr><td>'+t.date+'</td><td>'+t.ref+'</td><td>'+t.desc+'</td><td style="text-align:right;font-weight:700;color:'+(t.amount<0?'var(--danger)':'var(--success)')+';">'+coMoney(t.amount)+'</td></tr>'; }).join('');
+  out.innerHTML='<table class="co-table"><tr><th>Date</th><th>Ref</th><th>Description</th><th style="text-align:right;">Amount</th></tr>'+rows
+    +'<tr style="background:var(--surface2);"><td colspan="3" style="font-weight:700;">Total · '+tx.length+' transactions</td><td style="text-align:right;font-weight:800;">'+coMoney(total)+'</td></tr></table>';
+}
+function coMoney(n){ var s=(n<0?'-':'')+'$'+Math.abs(Math.round(n)).toLocaleString('en-US'); return s; }
+function coCollectTxForAccount(acctId, acctName){
+  var tx=[];
+  // Income/AR accounts → invoices; AP/expense → bills. Simple demo mapping.
+  var isIncome=/income|receivable|^ar/i.test(acctId)||/income|receivable/i.test(acctName);
+  var isAP=/payable|^ap|expense|cogs/i.test(acctId)||/payable|expense/i.test(acctName);
+  if(window.SDD && window.SDD.customers && (isIncome || acctId==='ar1' || /income/i.test(acctName))){
+    window.SDD.customers.forEach(function(c){ (c.contacts||[]).forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ (j.invoices||[]).forEach(function(iv){
+      tx.push({date:iv.date||'', ref:iv.est, desc:c.name+' · invoice', amount:Math.abs(parseFloat(String(iv.amount||'').replace(/[^0-9.]/g,''))||0)});
+    }); }); }); });
+  }
+  if(window.SDD && window.SDD.bills && (isAP || /payable|expense|cogs/i.test(acctName))){
+    (window.SDD.bills||[]).forEach(function(b){ tx.push({date:b.date||'', ref:b.num, desc:(b.vendor||'')+' · '+(b.desc||'bill'), amount:-(Math.abs(parseFloat(String(b.amount||'').replace(/[^0-9.]/g,''))||0))}); });
+  }
+  return tx;
+}
+function coViewAcctTx(id){ coShow('reports'); setTimeout(function(){ var s=document.getElementById('rptAcct'); if(s){ s.value=id; coRunReport(); } },50); }
+
+// ===== USERS =====
+function renderUsers(){
+  var rows=USERS.map(function(u){
+    var rb='r-'+u.role;
+    return '<tr><td style="font-weight:700;">'+u.name+(u.active?'':' <span style="font-size:10px;color:var(--muted2);">(inactive)</span>')+'</td>'
+      +'<td>'+u.email+'</td><td>'+u.phone+'</td>'
+      +'<td><span class="role-badge '+rb+'">'+ROLE_PERMS[u.role].label+'</span></td>'
+      +'<td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coEditUser('+u.id+')">Edit</button></td></tr>';
+  }).join('');
+  // Role legend
+  var legend=Object.keys(ROLE_PERMS).map(function(k){ var p=ROLE_PERMS[k];
+    var perms=[]; if(p.coaEdit)perms.push('Edit COA'); else if(p.coaView)perms.push('View COA');
+    if(p.reports)perms.push('Reports'); if(p.users)perms.push('Manage Users'); if(p.fleet)perms.push('Fleet'); if(p.compliance)perms.push('Compliance');
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><span class="role-badge r-'+k+'">'+p.label+'</span> <span style="font-size:12px;color:var(--muted);margin-left:8px;">'+perms.join(' · ')+'</span></div>';
+  }).join('');
+  return '<div class="co-card"><h3>Users <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddUser()">+ New User</button></h3>'
+    +'<table class="co-table"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>'
+    +'<div class="co-card"><h3>Roles & Permissions</h3>'+legend+'</div>';
+}
+function coAddUser(){ coFlash('New user form (demo)'); }
+function coEditUser(id){ var u=USERS.filter(function(x){return x.id===id;})[0]; coFlash('Edit user: '+(u?u.name:'')); }
+
+// ===== FLEET =====
+function renderFleet(){
+  var cards=FLEET.map(function(v){
+    var docRows=(v.docs||[]).map(function(d){
+      var st=coDocStatus(d.expires);
+      return '<div class="veh-doc-row"><div><div style="font-weight:600;font-size:13px;">'+d.kind+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);">'+d.provider+' · '+d.number+'</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:12px;">Exp: '+d.expires+'</div>'
+        +'<span class="pill '+st.cls+'">'+st.label+'</span> '
+        +'<button class="co-btn co-btn-sm" onclick="coRenewDoc('+v.id+',\''+d.kind+'\')">Renew</button></div></div>';
+    }).join('');
+    var assetLine=v.asset?('<span class="pill doc-ok">Asset</span> <span style="font-size:12px;color:var(--muted);">Linked to '+coAcctName(v.assetAccountId)+'</span>'):'<span style="font-size:12px;color:var(--muted);">Not an asset</span>';
+    return '<div class="co-card"><h3>'+v.name+' <span style="font-size:12px;font-weight:400;color:var(--muted);">· '+v.type+'</span>'
+      +'<button class="co-btn co-btn-sm" style="float:right;" onclick="coAddDoc('+v.id+')">+ Add Document</button></h3>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Plate: '+v.plate+' · VIN: '+v.vin+'</div>'
+      +'<div style="margin-bottom:10px;">'+assetLine+'</div>'
+      +docRows
+    +'</div>';
+  }).join('');
+  return '<div class="co-card" style="background:var(--surface2);"><h3>Fleet — Vehicles <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddVehicle()">+ New Vehicle</button></h3>'
+    +'<div style="font-size:12px;color:var(--muted);">California compliance tracked per vehicle: Insurance, DMV Registration, Clean Truck Check, BIT Inspection, Smog Check, and Permits. Vehicles marked as assets link to a Chart of Accounts entry.</div></div>'
+    +cards;
+}
+function coAddVehicle(){ coFlash('New vehicle form (demo)'); }
+function coAddDoc(vid){ coFlash('Add document to vehicle (upload + expiry date)'); }
+function coRenewDoc(vid,kind){ coRenewPrompt('vehicle', vid, kind); }
+
+// ===== COMPLIANCE =====
+function renderCompliance(){
+  var rows=COMPLIANCE.map(function(d){
+    var st=coDocStatus(d.expires);
+    return '<tr><td style="font-weight:700;">'+d.name+'</td><td>'+d.authority+'</td><td>'+d.number+'</td>'
+      +'<td>'+d.expires+'</td><td><span class="pill '+st.cls+'">'+st.label+'</span></td>'
+      +'<td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coViewFile(\''+d.file+'\')">View</button> <button class="co-btn co-btn-sm" onclick="coRenewDoc2('+d.id+')">Mark Renewed</button></td></tr>';
+  }).join('');
+  // Reminders: anything expiring within 60 days or expired
+  var soon=COMPLIANCE.concat(FLEET.reduce(function(arr,v){ (v.docs||[]).forEach(function(d){ arr.push({name:v.name+' · '+d.kind, expires:d.expires}); }); return arr; },[]))
+    .map(function(d){ return {name:d.name, expires:d.expires, st:coDocStatus(d.expires)}; })
+    .filter(function(d){ return d.st.cls!=='doc-ok'; })
+    .sort(function(a,b){ return (coParseD(a.expires)||0)-(coParseD(b.expires)||0); });
+  var reminders=soon.length?soon.map(function(d){ return '<div class="veh-doc-row"><span style="font-size:13px;">'+d.name+'</span><span><span style="font-size:12px;color:var(--muted);margin-right:8px;">'+d.expires+'</span><span class="pill '+d.st.cls+'">'+d.st.label+'</span></span></div>'; }).join('')
+    : '<div style="padding:14px;text-align:center;color:var(--muted2);font-style:italic;">Everything is up to date. 🎉</div>';
+  return '<div class="co-card" style="border:1px solid rgba(217,79,79,.25);background:rgba(217,79,79,.03);"><h3 style="color:var(--danger);">⚠ Renewal Reminders</h3>'+reminders+'</div>'
+    +'<div class="co-card"><h3>Company Documents <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddCompliance()">+ Add Document</button></h3>'
+    +'<table class="co-table"><tr><th>Document</th><th>Authority</th><th>Number</th><th>Expires</th><th>Status</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>';
+}
+function coAddCompliance(){ coFlash('Add company document (upload + expiry date)'); }
+function coViewFile(f){ coFlash('Opening '+f+' (demo)'); }
+function coRenewDoc2(id){ coRenewPrompt('compliance', id); }
+
+// ===== Renew popup (upload + new date) =====
+function coRenewPrompt(kind, id, sub){
+  var ex=document.getElementById('_coRenewBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_coRenewBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:5000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:18px 22px;border-bottom:1px solid var(--border);font-family:\'Barlow Condensed\',sans-serif;font-size:19px;font-weight:700;">Mark as Renewed</div>'
+    +'<div style="padding:18px 22px;">'
+      +'<div class="ff"><label>Upload new document</label><input type="file"></div>'
+      +'<div class="ff"><label>New expiration date</label><input type="date" id="_coNewDate"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button class="co-btn" onclick="document.getElementById(\'_coRenewBg\').remove()">Cancel</button>'
+      +'<button class="co-btn co-btn-gold" onclick="coDoRenew(\''+kind+'\','+id+',\''+(sub||'')+'\')">Save Renewal</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function coDoRenew(kind, id, sub){
+  var nd=document.getElementById('_coNewDate'); var val=nd?nd.value:'';
+  if(!val){ coFlash('Please choose a new expiration date'); return; }
+  var human=new Date(val+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(kind==='compliance'){ var d=COMPLIANCE.filter(function(x){return x.id===id;})[0]; if(d) d.expires=human; }
+  else if(kind==='vehicle'){ var v=FLEET.filter(function(x){return x.id===id;})[0]; if(v){ (v.docs||[]).forEach(function(dd){ if(dd.kind===sub) dd.expires=human; }); } }
+  var bg=document.getElementById('_coRenewBg'); if(bg) bg.remove();
+  // re-render current tab
+  var active=document.querySelector('.vt-btn.active'); var tab=active?active.id.replace('tab-',''):'compliance';
+  coShow(tab);
+  coFlash('Renewed — new expiration '+human);
+}
+
+// ===== Flash toast =====
+function coFlash(msg){
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2630;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:6000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent=msg;
+  document.body.appendChild(f);
+  setTimeout(function(){ f.remove(); },2400);
+}
+
+// init
+coShow('settings');
+</script>
+</body>
+</html>
