@@ -62,7 +62,7 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .empty-state svg{width:40px;height:40px;opacity:.25;}
 /* DETAIL */
 .detail-wrap{padding:24px 28px;}
-.card{background:var(--surface);border-radius:12px;padding:20px 22px;margin-bottom:16px;}
+.card{background:var(--surface);border-radius:12px;padding:20px 22px;margin-bottom:8px;}
 .card-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
 .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--border);margin-bottom:0;}
 .stat-box{padding:14px 18px;border-right:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative;}
@@ -328,7 +328,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v114</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v131</span>
 </div>
 
 <div class="app">
@@ -356,6 +356,7 @@ svg{display:block;}
         </select>
       </div>
     </div>
+    <div id="levelLabel" style="padding:10px 16px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);border-bottom:1px solid var(--border);display:none;"></div>
     <div class="customer-list" id="customerList"></div>
   </div>
   <div class="panel-right" id="panelRight">
@@ -1149,30 +1150,30 @@ function _txTableHTML(c, type, estFilter){
   function status(s){ return '<span style="font-size:11px;font-weight:600;color:'+_txStatusColor(s)+';">'+(s||'')+'</span>'; }
   if(type==='estimates'){
     headCells=['Num','Date','Project Name / Scope','Amount','Status'];
-    rowFn=function(r){ return '<td style="'+td+'"><span style="color:#2563eb;font-weight:700;">'+r.num+'</span></td>'
+    rowFn=function(r){ return '<td style="'+td+'"><span onclick="event.stopPropagation();txGoToDoc(\''+r.num+'\')" style="color:#2563eb;font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
       +'<td style="'+td+'">'+r.project+(r.scope?'<div style="font-size:11px;color:var(--muted);">'+r.scope+'</div>':'')+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else if(type==='changeorders'){
     headCells=['Num','Date','Description','Ref Estimate','Amount','Status'];
-    rowFn=function(r){ return '<td style="'+td+'"><span style="color:var(--gold);font-weight:700;">'+r.num+'</span></td>'
+    rowFn=function(r){ return '<td style="'+td+'"><span onclick="event.stopPropagation();txGoToDoc(\''+r.num+'\')" style="color:var(--gold);font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
       +'<td style="'+td+'">'+(r.desc||r.project)+'</td>'
-      +'<td style="'+td+'">'+(r.ref||'—')+'</td>'
+      +'<td style="'+td+'">'+(r.ref?'<span onclick="event.stopPropagation();txGoToDoc(\''+r.ref+'\')" style="color:#2563eb;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.ref+'</span>':'—')+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else if(type==='invoices'){
     headCells=['Num','Date','Due','Ref','Amount','Status'];
-    rowFn=function(r){ return '<td style="'+td+'"><span style="color:#16a34a;font-weight:700;">'+r.num+'</span></td>'
+    rowFn=function(r){ return '<td style="'+td+'"><span onclick="event.stopPropagation();txGoToDoc(\''+r.num+'\')" style="color:#16a34a;font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
       +'<td style="'+td+'">'+(r.due||'—')+'</td>'
-      +'<td style="'+td+'">'+(r.ref||'—')+'</td>'
+      +'<td style="'+td+'">'+(r.ref?'<span onclick="event.stopPropagation();txGoToDoc(\''+r.ref+'\')" style="color:#2563eb;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.ref+'</span>':'—')+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
       +'<td style="'+td+'">'+status(r.status)+'</td>'; };
   } else if(type==='payments'){
     headCells=['Invoice','Date','Project Name','Amount','Status'];
-    rowFn=function(r){ return '<td style="'+td+'"><span style="color:#16a34a;font-weight:700;">'+r.num+'</span></td>'
+    rowFn=function(r){ return '<td style="'+td+'"><span onclick="event.stopPropagation();txGoToDoc(\''+r.num+'\')" style="color:#16a34a;font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
       +'<td style="'+td+'">'+r.project+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
@@ -1180,7 +1181,7 @@ function _txTableHTML(c, type, estFilter){
   } else { // all
     headCells=['Type','Num','Date','Project Name','Amount','Status'];
     rowFn=function(r){ return '<td style="'+td+'"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--surface3);color:var(--muted);">'+r.kind+'</span></td>'
-      +'<td style="'+td+'font-weight:700;">'+r.num+'</td>'
+      +'<td style="'+td+'"><span onclick="event.stopPropagation();txGoToDoc(\''+r.num+'\')" style="font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;">'+r.num+'</span></td>'
       +'<td style="'+td+'">'+(r.date||'—')+'</td>'
       +'<td style="'+td+'">'+r.project+'</td>'
       +'<td style="'+td+'text-align:right;">'+money(r.amount)+'</td>'
@@ -1222,7 +1223,7 @@ function _txPdfDoc(r){
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:16px;margin-bottom:20px;">'
       +'<div><div style="font-size:22px;font-weight:800;letter-spacing:.04em;">SDD DEMOLITION</div>'
         +'<div style="font-size:11px;color:#777;margin-top:2px;">San Diego Deconstruction &amp; Demolition</div>'
-        +'<div style="font-size:11px;color:#777;">4500 Main St, San Diego CA 92103 · (619) 555-0142</div></div>'
+        +'<div style="font-size:11px;color:#777;">5755 Oberlin Drive, Suite 301, San Diego, CA 92121 · 619-273-3467</div></div>'
       +'<div style="text-align:right;"><div style="font-size:20px;font-weight:800;color:'+accent+';letter-spacing:.05em;">'+typeLabel+'</div>'
         +'<div style="font-size:13px;font-weight:700;margin-top:4px;">'+(r.num||'')+'</div>'
         +'<div style="font-size:12px;color:#777;">'+(r.date||'')+'</div></div>'
@@ -1441,6 +1442,17 @@ function getQ(){ return document.getElementById('searchInput').value.toLowerCase
 function renderList(){
   const q = getQ();
   const list = document.getElementById('customerList');
+  // Level breadcrumb label (CUSTOMER / JOB / ESTIMATE) based on what's selected
+  const ll = document.getElementById('levelLabel');
+  if(ll){
+    let lvl='';
+    if(activeDocRef){ lvl = (activeDocKind==='invoice'?'Invoice':'Change order')+' selected'; }
+    else if(activeEstimateId){ lvl='Estimate selected'; }
+    else if(activeJobEst){ lvl='Job selected'; }
+    else if(activeId && expandedCustomer===activeId){ lvl='Customer selected'; }
+    if(lvl){ ll.textContent=lvl; ll.style.display='block'; }
+    else { ll.style.display='none'; }
+  }
   const items = CUSTOMERS.filter(c=>{
     const matchName = c.name.toLowerCase().includes(q);
     const matchCity = c.city.toLowerCase().includes(q);
@@ -1658,6 +1670,14 @@ function toggleContactJobs(ccid){
 function toggleBillingJob(bid){
   var body=document.getElementById('billjob-body-'+bid);
   var chev=document.getElementById('billjob-chev-'+bid);
+  if(!body) return;
+  var open=body.style.display!=='none';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+function toggleDocJob(did){
+  var body=document.getElementById(did+'-body');
+  var chev=document.getElementById(did+'-chev');
   if(!body) return;
   var open=body.style.display!=='none';
   body.style.display=open?'none':'block';
@@ -2391,7 +2411,7 @@ function renderJobInfo(customerId, est){
     // ── BLOCK 1 — Job info (DARK) ──
     +'<div style="background:#1f2630;border-radius:14px;overflow:hidden;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.18);margin-bottom:16px;">'
       +'<div style="padding:20px 24px;background:#262f3b;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">'
-        +'<div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:21px;font-weight:800;color:#fff;">'+pn+'</div>'
+        +'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#e0b94a;margin-bottom:5px;">Job</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:21px;font-weight:800;color:#fff;">'+pn+'</div>'
           +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:20px;color:'+stCol+';background:'+stBg+';">'+stLbl+'</span></div>'
           +'<div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">'+c.name+'</div></div>'
         +'<div style="display:flex;align-items:center;gap:8px;">'
@@ -2552,6 +2572,22 @@ function docEnterEdit(ref){
   docEditMode=true;
   _reopenDoc(ref);
 }
+// Send the document to the client (confirmation + status update)
+function docSendToClient(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var kindWord=f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate');
+  _confirmDoc('Send this '+kindWord+' to the client?', function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    // mark as sent (estimate/CO → "Sent / Pending approval"; invoice → "Sent")
+    if(ff.kind==='invoice'){ if(!/paid/i.test(ff.doc.status||'')) ff.doc.status='Sent'; }
+    else { if(/pending|draft|^$/i.test(ff.doc.status||'')||!ff.doc.status) ff.doc.status='Pending approval'; }
+    ff.doc.dateSent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    if(window.SDD && SDD.save) SDD.save();
+    _flashDoc('✉ '+ref+' sent to client');
+    renderList();
+    _reopenDoc(ref);
+  }, 'Yes, send');
+}
 // Cancel edit mode (discard visual edit state, revert to read-only)
 function docCancelEdit(ref){
   docEditMode=false;
@@ -2571,7 +2607,7 @@ function docToggleClause(ref, clauseId, checked){
   if(window.SDD && SDD.save) SDD.save();
 }
 // In-page Yes/No confirmation popup (window.confirm is blocked in this environment)
-function _confirmDoc(msg, onYes){
+function _confirmDoc(msg, onYes, yesLabel){
   var ex=document.getElementById('_docConfirmBg'); if(ex) ex.remove();
   var bg=document.createElement('div');
   bg.id='_docConfirmBg';
@@ -2581,7 +2617,7 @@ function _confirmDoc(msg, onYes){
     +'<div style="padding:0 24px 12px;font-size:13px;color:#777;">This will update the record across the whole system.</div>'
     +'<div style="display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 20px;">'
       +'<button id="_dcNo" style="padding:9px 22px;border-radius:9px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">No</button>'
-      +'<button id="_dcYes" style="padding:9px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, save</button>'
+      +'<button id="_dcYes" style="padding:9px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">'+(yesLabel||'Yes, save')+'</button>'
     +'</div>'
   +'</div>';
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
@@ -2614,6 +2650,7 @@ function editableDocSheet(ref){
   var lines=_ensureLines(f);
   var total=lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
   var logo=(typeof SDD_LOGO!=='undefined')?SDD_LOGO:'';
+  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Deconstruction & Demolition',shortName:'SDD Demolition',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
   var ed=docEditMode; // edit mode on/off
 
   var inCss='font-family:Barlow,sans-serif;font-size:13px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:5px 7px;width:100%;box-sizing:border-box;background:#fff;transition:all .12s;';
@@ -2682,15 +2719,15 @@ function editableDocSheet(ref){
     +'</div>';
   }
 
-  // ── Action bar: Edit PDF button (read mode) OR Save/Cancel (edit mode) ──
-  var docWord=(f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate'));
+  // ── Action bar: Edit + Send (read mode) OR Cancel/Save (edit mode) ──
   var actionBar = ed
     ? '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
         +'<button onclick="docCancelEdit(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
-        +'<button onclick="docSave(\''+ref+'\')" style="padding:11px 30px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);">✓ Save '+docWord+'</button>'
+        +'<button onclick="docSave(\''+ref+'\')" style="padding:11px 32px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);">✓ Save</button>'
       +'</div>'
-    : '<div style="display:flex;justify-content:flex-end;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
-        +'<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 30px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit PDF</button>'
+    : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+        +'<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>'
+        +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to client</button>'
       +'</div>';
 
   // status badge (read) vs input (edit)
@@ -2700,7 +2737,7 @@ function editableDocSheet(ref){
 
   var modeBadge = ed
     ? '<div style="font-size:11px;color:'+accent+';display:flex;align-items:center;gap:6px;font-weight:700;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editing — fields unlocked</div>'
-    : '<div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Read-only · press Edit PDF to change</div>';
+    : '<div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Read-only · press Edit to change</div>';
 
   return '<div style="background:#fff;padding:40px 44px;font-family:Barlow,sans-serif;color:#1f2630;width:100%;box-sizing:border-box;">'
     // mode badge
@@ -2708,9 +2745,9 @@ function editableDocSheet(ref){
     // HEADER: big logo left, big doc type right
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:18px;margin-bottom:22px;">'
       +'<div>'
-        +(logo?'<img src="'+logo+'" alt="SDD" style="height:60px;width:auto;display:block;margin-bottom:10px;border-radius:4px;">':'')
-        +'<div style="font-size:24px;font-weight:800;letter-spacing:.02em;">SDD Demolition</div>'
-        +'<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.6;">San Diego Deconstruction &amp; Demolition<br>License #1094583 · (619) 555-0100<br>info@sddemo.com</div>'
+        +(logo?'<img src="'+logo+'" alt="SDD" style="height:64px;width:auto;display:block;margin-bottom:10px;">':'')
+        +'<div style="font-size:22px;font-weight:800;letter-spacing:.01em;">'+CO.name+'</div>'
+        +'<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.7;">License Number #'+CO.license+'<br>'+CO.address1+'<br>'+CO.address2+'<br>'+CO.email+'<br>'+CO.phone+'</div>'
       +'</div>'
       +'<div style="text-align:right;min-width:190px;">'
         +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:40px;font-weight:700;color:'+accent+';letter-spacing:.04em;line-height:1;">'+kindLabel+'</div>'
@@ -2788,6 +2825,19 @@ function selectEstimate(customerId, jobEst, estId){
   var pr=document.getElementById('panelRight'); if(pr) pr.scrollTop=0;
 }
 
+// From the Transactions table: click a reference number → open that doc in the right panel
+// (exactly like selecting it in the left sidebar tree).
+function txGoToDoc(ref){
+  if(!ref) return;
+  var f=_findDoc(ref);
+  if(!f){ return; }
+  if(f.kind==='estimate'){
+    selectEstimate(f.cust.id, f.job.est, ref);
+  } else {
+    selectDoc(f.kind==='invoice'?'invoice':'co', ref);
+  }
+}
+
 function _estStageInfo(status){
   var s=(status||'').toLowerCase();
   // Returns {step, label, color} — mirrors the Estimates module lifecycle
@@ -2842,16 +2892,6 @@ function renderEstimateDetail(customerId, jobEst, estId){
     +'</div>'
     // native editable estimate document
     +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(est.est)+'</div>'
-    // change orders (hierarchical)
-    +'<div style="margin-top:18px;">'
-      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#C8822A;margin-bottom:10px;display:flex;align-items:center;gap:7px;">Change Orders <span style="font-size:12px;color:var(--muted2);font-weight:600;">('+cos.length+')</span></div>'
-      +coList
-    +'</div>'
-    // invoices (hierarchical)
-    +'<div style="margin-top:18px;">'
-      +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#16a34a;margin-bottom:10px;display:flex;align-items:center;gap:7px;">Invoices Billed <span style="font-size:12px;color:var(--muted2);font-weight:600;">('+invs.length+')</span></div>'
-      +invList
-    +'</div>'
   +'</div>';
 }
 
@@ -3254,7 +3294,7 @@ function jobBillingContactsBlock(c, job){
       +'</div>'+rows
     +'</div>';
   }).join('');
-  return '<div class="card" style="margin-bottom:16px;">'
+  return '<div class="card" style="margin-bottom:8px;">'
     +'<div onclick="toggleJobBilling('+c.id+')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">'
       +'<div class="card-title" style="margin:0;display:flex;align-items:center;gap:8px;">'
         +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>'
@@ -3636,6 +3676,249 @@ function renderDetail(id, pmFilter){
     </div>` : ''
   ].filter(Boolean).join('');
 
+  // Company contacts list (extracted so it can live in its own block above Jobs)
+  const companyContactsHTML = (()=>{
+    const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
+    if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
+    return allC.map((ct,cIdx)=>{
+      var ctJobs=(ct.jobs||[]);
+      var isPM=(ct.role==='project-manager');
+      var ccid=c.id+'_'+cIdx;
+      var jobsInner = isPM
+        ? (ctJobs.length
+          ? ctJobs.map(function(j){
+                var pn=j.projectName||j.jobName||j.address||'—';
+                return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--muted);">'
+                  +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+                  +'<span style="font-weight:600;color:var(--text);cursor:pointer;" onclick="goToEstimate(\''+j.est+'\')">'+pn+'</span>'
+                  +(j.date?'<span style="color:var(--muted2);">· '+j.date+'</span>':'')
+                  +'</div>';
+              }).join('')
+          : '<div style="font-size:11px;color:var(--muted2);font-style:italic;">No jobs assigned</div>')
+        : '';
+      var jobsHTML = isPM
+        ? '<div id="ccpm-body-'+ccid+'" style="display:none;margin:8px 0 0 56px;padding-left:12px;border-left:2px solid var(--border);">'+jobsInner+'</div>'
+        : '';
+      var nameClick = isPM ? ' style="cursor:pointer;" onclick="toggleContactJobs(\''+ccid+'\')"' : '';
+      var chev = isPM ? '<span id="ccpm-chev-'+ccid+'" style="font-size:11px;color:var(--muted);transition:transform .15s;display:inline-block;margin-right:4px;">▸</span>' : '';
+      return `
+      <div class="contact-simple" style="justify-content:space-between;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="cs-av ${ct.color}">${ct.initials}</div>
+          <div class="cs-info">
+            <div class="cs-name"${nameClick}>${chev}${ct.name}
+              ${ct.role==='project-manager'
+                ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);margin-left:6px;">PM</span>'
+                : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>'}
+              ${isPM&&ctJobs.length?'<span style="font-size:10px;color:var(--muted2);margin-left:4px;">('+ctJobs.length+' job'+(ctJobs.length===1?'':'s')+')</span>':''}
+            </div>
+            <div class="cs-sub">${ct.title||''} · ${ct.email} ${ct.phone?'· '+ct.phone:''}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0;">
+          <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;" onclick="openJobAssignPanel(${c.id},'${ct.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;color:var(--danger);border-color:rgba(217,79,79,.25);" onclick="deleteContact(${c.id},'${ct.id}')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            Delete
+          </button>
+        </div>
+        <div style="flex-basis:100%;">${jobsHTML}</div>
+      </div>`;
+    }).join('');
+  })();
+
+  // Billing-by-job list (extracted so it can live in its own block below Company Contacts)
+  const billingPanelHTML = (()=>{
+    const allJ = getAllJobs(c).filter(_tabJobFilter).filter(j=>!isJobFullyArchived(j));
+    if(!allJ.length) return '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px;font-style:italic;border:1px solid var(--border);border-radius:10px;">No active jobs yet.</div>';
+    const money = v => parseFloat(String(v||'').replace(/[$,]/g,''))||0;
+    const fmtM = n => '$'+Number(n||0).toLocaleString('en-US');
+    const paidRe = /paid/i, unpaidRe = /unpaid/i;
+
+    // ── Group jobs by physical site (siteId), falling back to jobName/address ──
+    const groups = {};
+    allJ.forEach(function(j){
+      const key = j.siteId || ('NAME::'+(j.jobName||j.projectName||j.address||j.est));
+      if(!groups[key]) groups[key]={ key:key, label:(j.jobName||j.projectName||j.address||'Job'), address:(j.address||j.streetOnly||'')+(j.city?', '+j.city:''), jobs:[], pms:[], estimates:[], changeOrders:[], invoices:[] };
+      const g=groups[key];
+      g.jobs.push(j);
+      const pm = c.contacts.find(x=>String(x.id)===String(j.contactId));
+      if(pm && !g.pms.some(p=>String(p.id)===String(pm.id))) g.pms.push(pm);
+      (j.estimates||[]).forEach(e=>g.estimates.push(e));
+      (j.changeOrders||[]).forEach(co=>g.changeOrders.push(co));
+      (j.invoices||[]).forEach(iv=>g.invoices.push(iv));
+    });
+    const groupList = Object.keys(groups).map(k=>groups[k]);
+    // expose for the Edit Billing flow (per-site job/PM picker)
+    window._billingSiteGroups = window._billingSiteGroups || {};
+    window._billingSiteGroups[c.id] = groupList.map(function(g){
+      return { label:g.label, jobs:g.jobs.map(function(j){ var pm=c.contacts.find(function(x){return String(x.id)===String(j.contactId);}); return {est:j.est, jobName:(j.jobName||j.projectName||j.address||j.est), pmName:(pm?pm.name:'No PM'), pmId:(pm?pm.id:null)}; }) };
+    });
+
+    function siteCard(g, gIdx){
+      const sid = c.id+'_site'+gIdx;
+      // Totals
+      const estTotal = g.estimates.reduce((s,e)=>s+money(e.amount),0);
+      const coTotal  = g.changeOrders.reduce((s,o)=>s+money(o.amount),0);
+      const contractTotal = estTotal + coTotal;
+      const invoicedTotal = g.invoices.reduce((s,i)=>s+money(i.amount),0);
+      const paidTotal = g.invoices.filter(i=>paidRe.test(i.status||'')&&!unpaidRe.test(i.status||'')).reduce((s,i)=>s+money(i.amount),0);
+      const outstanding = invoicedTotal - paidTotal;
+
+      // PM chips (handles 2+ PMs per site)
+      const pmChips = g.pms.length ? g.pms.map(p=>`<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);"><span class="cs-av ${p.color}" style="width:18px;height:18px;font-size:9px;">${p.initials}</span>${p.name}</span>`).join(' ')
+        : '<span style="font-size:11px;color:var(--danger);">No PM assigned</span>';
+
+      // Detail rows: estimates → their COs → their invoices, then orphan invoices
+      function statusPill(st){
+        const paid=paidRe.test(st||'')&&!unpaidRe.test(st||'');
+        const col = paid ? '#16a34a' : (/sent|pending/i.test(st||'')?'#2563eb':'#888');
+        const bg  = paid ? 'rgba(22,163,74,.12)' : (/sent|pending/i.test(st||'')?'rgba(37,99,235,.12)':'var(--surface3)');
+        return `<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:${bg};color:${col};">${st||''}</span>`;
+      }
+      function lineRow(label, ref, amount, st, indent, color){
+        return `<div onclick="event.stopPropagation();selectDoc&&typeof selectDoc==='function'?null:null" style="display:flex;align-items:center;gap:8px;padding:7px 14px 7px ${indent}px;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="width:7px;height:7px;border-radius:50%;background:${color};flex-shrink:0;"></span>
+          <span style="font-weight:700;color:var(--text);">${ref}</span>
+          <span style="color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label||''}</span>
+          <span style="font-weight:700;white-space:nowrap;">${fmtM(money(amount))}</span>
+          ${statusPill(st)}
+        </div>`;
+      }
+      let detail='';
+      g.estimates.forEach(function(e){
+        detail += lineRow(e.scope||e.projectName||'Estimate', e.est, e.amount, e.status, 14, '#B8922A');
+        // change orders of this estimate
+        g.changeOrders.filter(co=>co.originalEst===e.est).forEach(function(co){
+          detail += lineRow(co.description||'Change order', co.est, co.amount, co.status, 30, '#C8822A');
+          // invoices of this CO
+          g.invoices.filter(iv=>iv.originalEst===co.est).forEach(function(iv){
+            detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 46, '#16a34a');
+          });
+        });
+        // invoices directly off this estimate
+        g.invoices.filter(iv=>iv.originalEst===e.est).forEach(function(iv){
+          detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 30, '#16a34a');
+        });
+      });
+      // orphan invoices (no matching estimate/CO in this site)
+      const accountedFor = new Set();
+      g.estimates.forEach(e=>accountedFor.add(e.est));
+      g.changeOrders.forEach(o=>accountedFor.add(o.est));
+      g.invoices.filter(iv=>!accountedFor.has(iv.originalEst)).forEach(function(iv){
+        detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 14, '#16a34a');
+      });
+      if(!detail) detail = '<div style="padding:12px 16px;font-size:12px;color:var(--muted2);font-style:italic;">No estimates or invoices for this site yet.</div>';
+
+      return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;">
+        <div onclick="toggleBillingJob('${sid}')" style="padding:11px 16px;background:var(--surface2);cursor:pointer;user-select:none;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
+            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+              <span id="billjob-chev-${sid}" style="font-size:12px;color:var(--muted);transition:transform .15s;flex-shrink:0;">▸</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-size:14px;font-weight:800;">${g.label}</span>
+              ${g.jobs.length>1?'<span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px;background:rgba(58,126,212,.12);color:#2563eb;">'+g.jobs.length+' jobs</span>':''}
+            </div>
+            <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;flex-shrink:0;" onclick="event.stopPropagation();editSiteBilling(${c.id},${gIdx})">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Edit Billing
+            </button>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin:4px 0 0 22px;">${g.address||''}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 22px;">${pmChips}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 0 22px;">
+            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Contract</div><div style="font-size:14px;font-weight:800;">${fmtM(contractTotal)}</div></div>
+            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Invoiced</div><div style="font-size:14px;font-weight:800;color:#2563eb;">${fmtM(invoicedTotal)}</div></div>
+            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Paid</div><div style="font-size:14px;font-weight:800;color:#16a34a;">${fmtM(paidTotal)}</div></div>
+            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Outstanding</div><div style="font-size:14px;font-weight:800;color:${outstanding>0?'#D94F4F':'var(--muted2)'};">${fmtM(outstanding)}</div></div>
+          </div>
+        </div>
+        <div id="billjob-body-${sid}" style="display:none;border-top:1px solid var(--border);">
+          <div style="padding:8px 0;">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);padding:4px 16px 6px;">Schedule of Values — Estimates · Change Orders · Invoices</div>
+            ${detail}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    let out = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">By Job / Site <span style="color:var(--text);">('+groupList.length+')</span></div>';
+    out += groupList.map((g,i)=>siteCard(g,i)).join('');
+    return out;
+  })();
+
+  // Documents (job docs + customer docs) extracted so it can live in its own block below Billing
+  const documentsPanelHTML = (()=>{
+    var jobsDocsHTML = (()=>{
+      var jobs=getCustomerJobs(c).filter(_tabJobFilter);
+      if(!jobs.length) return '<div style="color:var(--muted2);font-size:13px;padding:10px 0;font-style:italic;">No jobs yet</div>';
+      return jobs.map(function(j, jIdx){
+        var docs=j.documents||[];
+        var did='docjob_'+c.id+'_'+jIdx;
+        var docsHTML = docs.length ? docs.map(function(d){
+          return '<div class="doc-row">'
+            +'<div class="doc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>'
+            +'<div class="doc-info"><div class="doc-name">'+d.name+'</div><div class="doc-meta">'+(d.date||'')+(d.category?' &middot; <span class="doc-badge" style="background:var(--surface3);color:var(--muted);">'+d.category+'</span>':'')+'</div></div>'
+            +'<div class="doc-actions"><button class="doc-download-btn" onclick="downloadDoc(\''+d.name+'\',\'jobdoc\',\''+c.name+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button></div>'
+          +'</div>';
+        }).join('') : '<div style="color:var(--muted2);font-size:12px;padding:6px 0 8px;font-style:italic;">No documents for this job</div>';
+        var docCount=docs.length;
+        return '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;">'
+          +'<div onclick="toggleDocJob(\''+did+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);cursor:pointer;user-select:none;">'
+            +'<div style="display:flex;align-items:center;gap:8px;min-width:0;">'
+              +'<span id="'+did+'-chev" style="font-size:12px;color:var(--muted);transition:transform .15s;flex-shrink:0;">▸</span>'
+              +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+              +'<span style="font-size:13px;font-weight:700;">'+(j.jobName||j.projectName||j.address||'Job')+'</span>'
+              +'<span style="font-size:11px;color:var(--muted2);margin-left:4px;">· '+docCount+' document'+(docCount===1?'':'s')+'</span>'
+            +'</div>'
+            +'<div onclick="event.stopPropagation();">'
+              +'<input type="file" id="jobFileIn_'+c.id+'_'+j.est+'" style="display:none;" onchange="handleJobFileUpload(event,'+c.id+',\''+j.est+'\')">'
+              +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'jobFileIn_'+c.id+'_'+j.est+'\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Document</button>'
+            +'</div>'
+          +'</div>'
+          +'<div id="'+did+'-body" style="display:none;padding:4px 8px;border-top:1px solid var(--border);">'+docsHTML+'</div>'
+        +'</div>';
+      }).join('');
+    })();
+    var custDocsHTML = _pmContact ? '' : `<div class="doc-section-title" style="margin-top:20px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Customer documents
+      </div>
+      <div style="font-size:11px;color:var(--muted2);margin:-6px 0 10px;">General files for this customer, not tied to a specific job.</div>
+      ${(c.uploadedDocs||[]).length
+        ? (c.uploadedDocs||[]).map(d=>`
+          <div class="doc-row">
+            <div class="doc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="doc-info">
+              <div class="doc-name">${d.name}</div>
+              <div class="doc-meta">${d.date} · <span class="doc-badge" style="background:var(--surface3);color:var(--muted);">${d.category}</span></div>
+            </div>
+            <div class="doc-actions">
+              <button class="doc-download-btn" onclick="downloadDoc('${d.name}','uploaded','${c.name}')">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>`).join('')
+        : '<div style="color:var(--muted2);font-size:13px;padding:10px 0;font-style:italic;">No customer documents yet</div>'}
+      <div style="margin-top:10px;">
+        <input type="file" id="fileIn_${c.id}" style="display:none;" onchange="handleFileUpload(event,${c.id})">
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('fileIn_${c.id}').click()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Customer Document
+        </button>
+      </div>`;
+    return `<div class="doc-section-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Job documents
+      </div>
+      <div style="font-size:11px;color:var(--muted2);margin:-6px 0 10px;">Contracts and files attached to specific jobs (e.g. special billing instructions).</div>`
+      + jobsDocsHTML + custDocsHTML;
+  })();
+
   document.getElementById('panelRight').innerHTML = `
   <div class="detail-wrap">
     <div class="card" style="padding:0;overflow:hidden;">
@@ -3706,7 +3989,22 @@ function renderDetail(id, pmFilter){
 
     ${pmBlockHTML}
 
-    ${_pmContact ? '' : `<div class="card" style="margin-bottom:16px;">
+    ${_pmContact ? '' : `<div class="card" style="margin-bottom:8px;">
+      <div class="card-title">Company Contacts — ${c.name}</div>
+      ${companyContactsHTML}
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <div class="card-title">Billing &amp; SOV — ${c.name}</div>
+      ${billingPanelHTML}
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
+      <div class="card-title">Documents — ${c.name}</div>
+      ${documentsPanelHTML}
+    </div>
+
+    <div class="card" style="margin-bottom:8px;">
       <div class="card-title">Jobs — ${c.name}</div>
       ${jobsListHTML}
     </div>
@@ -3714,273 +4012,6 @@ function renderDetail(id, pmFilter){
     ${archivedBlockHTML}
 
     ${txBlockHTML(c)}`}
-
-    <div class="card">
-      <div class="card-title" style="margin-bottom:0;">
-        Company Information
-    
-      </div>
-
-      <!-- TABS -->
-      <div class="tab-bar" style="margin-top:16px;">
-        ${_pmContact ? '' : `<button class="tab-btn active" onclick="showTab('pm','${c.id}',this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Company contacts
-          <span class="tab-badge">${c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional').length}</span>
-        </button>`}
-        <button class="tab-btn${_pmContact?' active':''}" onclick="showTab('billing','${c.id}',this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          Billing
-          ${_pmContact ? '' : `<span class="tab-badge">${c.contacts.filter(x=>x.role==='billing').length}</span>`}
-        </button>
-
-
-        <button class="tab-btn" onclick="showTab('documents','${c.id}',this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          Documents
-        </button>
-        ${_pmContact ? '' : `<button class="tab-btn" onclick="showTab('sov','${c.id}',this)" style="${c.sov?'':'color:var(--muted2);'}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
-          SOV ${c.sov?'':'<span style="font-size:9px;padding:1px 5px;background:var(--surface3);border-radius:20px;color:var(--muted2);">Off</span>'}
-        </button>`}
-      </div>
-
-      <!-- TAB: COMPANY CONTACTS -->
-      <div class="tab-panel${_pmContact?'':' active'}" id="tab-pm-${c.id}" ${_pmContact?'style="display:none;"':''}>
-        ${(()=>{
-          const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
-          if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
-          return allC.map((ct,cIdx)=>{
-            var ctJobs=(ct.jobs||[]);
-            var isPM=(ct.role==='project-manager');
-            var ccid=c.id+'_'+cIdx;
-            var jobsInner = isPM
-              ? (ctJobs.length
-                ? ctJobs.map(function(j){
-                      var pn=j.projectName||j.jobName||j.address||'—';
-                      return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--muted);">'
-                        +'<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
-                        +'<span style="font-weight:600;color:var(--text);cursor:pointer;" onclick="goToEstimate(\''+j.est+'\')">'+pn+'</span>'
-                        +(j.date?'<span style="color:var(--muted2);">· '+j.date+'</span>':'')
-                        +'</div>';
-                    }).join('')
-                : '<div style="font-size:11px;color:var(--muted2);font-style:italic;">No jobs assigned</div>')
-              : '';
-            var jobsHTML = isPM
-              ? '<div id="ccpm-body-'+ccid+'" style="display:none;margin:8px 0 0 56px;padding-left:12px;border-left:2px solid var(--border);">'+jobsInner+'</div>'
-              : '';
-            var nameClick = isPM ? ' style="cursor:pointer;" onclick="toggleContactJobs(\''+ccid+'\')"' : '';
-            var chev = isPM ? '<span id="ccpm-chev-'+ccid+'" style="font-size:11px;color:var(--muted);transition:transform .15s;display:inline-block;margin-right:4px;">▸</span>' : '';
-            return `
-            <div class="contact-simple" style="justify-content:space-between;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:12px;">
-                <div class="cs-av ${ct.color}">${ct.initials}</div>
-                <div class="cs-info">
-                  <div class="cs-name"${nameClick}>${chev}${ct.name}
-                    ${ct.role==='project-manager'
-                      ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);margin-left:6px;">PM</span>'
-                      : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>'}
-                    ${isPM&&ctJobs.length?'<span style="font-size:10px;color:var(--muted2);margin-left:4px;">('+ctJobs.length+' job'+(ctJobs.length===1?'':'s')+')</span>':''}
-                  </div>
-                  <div class="cs-sub">${ct.title||''} · ${ct.email} ${ct.phone?'· '+ct.phone:''}</div>
-                </div>
-              </div>
-              <div style="display:flex;gap:6px;flex-shrink:0;">
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;" onclick="openJobAssignPanel(${c.id},'${ct.id}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Edit
-                </button>
-                <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;color:var(--danger);border-color:rgba(217,79,79,.25);" onclick="deleteContact(${c.id},'${ct.id}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                  Delete
-                </button>
-              </div>
-              <div style="flex-basis:100%;">${jobsHTML}</div>
-            </div>`;
-          }).join('');
-        })()}
-      </div>
-
-      <!-- TAB: BILLING CONTACTS -->
-      <div class="tab-panel${_pmContact?' active':''}" id="tab-billing-${c.id}">
-
-        <!-- BILLING BY JOB — each job shows its PM + billing contacts, editable -->
-        <div style="margin-bottom:24px;">
-          <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Billing by Job${_pmContact?' · '+_pmContact.name:''}
-          </div>
-
-          ${(()=>{
-            const allJ = getAllJobs(c).filter(_tabJobFilter);
-            if(!allJ.length) return '<div style="padding:20px;text-align:center;color:var(--muted2);font-size:13px;font-style:italic;border:1px solid var(--border);border-radius:10px;">No jobs yet. Add a job to manage its billing recipients.</div>';
-            function billCard(j,jIdx){
-              const pn = j.projectName||j.jobName||j.address||'—';
-              const pm = c.contacts.find(x=>x.id===j.contactId);
-              const billing = j.billing||[];
-              const bid = c.id+'_'+jIdx;
-              const billCount = billing.length;
-              // The PM is only a billing recipient if they were actually added to j.billing
-              const pmInBilling = pm && billing.some(function(b){return String(b.id)===String(pm.id);});
-              const summary = billCount
-                ? billCount+' billing contact'+(billCount>1?'s':'')
-                : '⚠ no billing';
-              const pmRow = pmInBilling ? `
-                <div style="display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 16px;border-bottom:${billing.length>1?'1px solid var(--border)':'none'};">
-                  <div class="cs-av ${pm.color}" style="width:30px;height:30px;font-size:11px;flex-shrink:0;">${pm.initials}</div>
-                  <div>
-                    <div style="font-size:13px;font-weight:700;">${pm.name}</div>
-                    <div style="font-size:12px;color:var(--muted);">${pm.email||''}</div>
-                  </div>
-                  <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(58,126,212,.1);color:var(--info);">PM · TO</span>
-                </div>` : '';
-              const ccContacts = billing.filter(function(b){ return !(pm && String(b.id)===String(pm.id)); });
-              const billRows = billing.length ? ccContacts.map(bc=>`
-                <div style="display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:9px 16px 9px 32px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.01);">
-                  <div style="display:flex;align-items:center;gap:8px;">
-                    <div style="width:2px;height:26px;background:rgba(184,146,42,.25);border-radius:2px;flex-shrink:0;"></div>
-                  </div>
-                  <div>
-                    <div style="font-size:13px;font-weight:600;">${bc.name}</div>
-                    <div style="font-size:12px;color:var(--muted);">${bc.email||''}</div>
-                  </div>
-                  <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--surface3);color:var(--muted);">${pmInBilling?'CC':'TO'}</span>
-                </div>`).join('')
-                : '<div style="padding:9px 16px 9px 32px;font-size:12px;color:var(--danger);font-style:italic;">⚠ No billing contacts — pending billing information</div>';
-              return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px;">
-                <div onclick="toggleBillingJob('${bid}')" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);cursor:pointer;user-select:none;">
-                  <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-                    <span id="billjob-chev-${bid}" style="font-size:12px;color:var(--muted);transition:transform .15s;flex-shrink:0;">▸</span>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <span style="font-size:13px;font-weight:700;">${pn}</span>
-                    <span style="font-size:11px;color:var(--muted);">${j.est||''}</span>
-                    <span style="font-size:11px;color:var(--muted2);margin-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">· ${summary}</span>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;flex-shrink:0;" onclick="event.stopPropagation();editJobBilling(${c.id},'${j.est}')">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    Edit
-                  </button>
-                </div>
-                <div id="billjob-body-${bid}" style="display:none;border-top:1px solid var(--border);">
-                  ${pmRow}
-                  ${billRows}
-                </div>
-              </div>`;
-            }
-            // Billing tab shows active jobs only (archived not needed here)
-            const activeJ = allJ.filter(j=>!isJobFullyArchived(j));
-            let out = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">Active <span style="color:var(--text);">('+activeJ.length+')</span></div>';
-            out += activeJ.length ? activeJ.map((j,i)=>billCard(j,'a'+i)).join('') : '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;">No active jobs</div>';
-            return out;
-          })()}
-
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;display:flex;gap:14px;">
-            <span><strong style="color:var(--info);">TO</strong> = Project Manager — primary recipient</span>
-            <span><strong style="color:var(--muted);">CC</strong> = Billing contacts — copied</span>
-          </div>
-        </div>
-
-
-      </div>
-
-      
-      <!-- TAB: DOCUMENTS -->
-      <div class="tab-panel" id="tab-documents-${c.id}">
-
-        <!-- JOB DOCUMENTS -->
-        <div class="doc-section-title">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Job documents
-        </div>
-        <div style="font-size:11px;color:var(--muted2);margin:-6px 0 10px;">Contracts and files attached to specific jobs (e.g. special billing instructions).</div>
-        ${(()=>{
-          var jobs=getCustomerJobs(c).filter(_tabJobFilter);
-          if(!jobs.length) return '<div style="color:var(--muted2);font-size:13px;padding:10px 0;font-style:italic;">No jobs yet</div>';
-          return jobs.map(function(j){
-            var docs=j.documents||[];
-            var docsHTML = docs.length ? docs.map(function(d){
-              return '<div class="doc-row">'
-                +'<div class="doc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>'
-                +'<div class="doc-info"><div class="doc-name">'+d.name+'</div><div class="doc-meta">'+(d.date||'')+(d.category?' &middot; <span class="doc-badge" style="background:var(--surface3);color:var(--muted);">'+d.category+'</span>':'')+'</div></div>'
-                +'<div class="doc-actions"><button class="doc-download-btn" onclick="downloadDoc(\''+d.name+'\',\'jobdoc\',\''+c.name+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button></div>'
-              +'</div>';
-            }).join('') : '<div style="color:var(--muted2);font-size:12px;padding:6px 0 8px;font-style:italic;">No documents for this job</div>';
-            return '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;">'
-              +'<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);">'
-                +'<div style="font-size:13px;font-weight:700;">'+(j.jobName||j.projectName||j.address||'Job')+'</div>'
-                +'<div>'
-                  +'<input type="file" id="jobFileIn_'+c.id+'_'+j.est+'" style="display:none;" onchange="handleJobFileUpload(event,'+c.id+',\''+j.est+'\')">'
-                  +'<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'jobFileIn_'+c.id+'_'+j.est+'\').click()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Document</button>'
-                +'</div>'
-              +'</div>'
-              +'<div style="padding:4px 8px;">'+docsHTML+'</div>'
-            +'</div>';
-          }).join('');
-        })()}
-
-        <!-- CUSTOMER DOCUMENTS -->
-        ${_pmContact ? '' : `<div class="doc-section-title" style="margin-top:20px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Customer documents
-        </div>
-        <div style="font-size:11px;color:var(--muted2);margin:-6px 0 10px;">General files for this customer, not tied to a specific job.</div>
-        ${(c.uploadedDocs||[]).length
-          ? (c.uploadedDocs||[]).map(d=>`
-            <div class="doc-row">
-              <div class="doc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-              <div class="doc-info">
-                <div class="doc-name">${d.name}</div>
-                <div class="doc-meta">${d.date} · <span class="doc-badge" style="background:var(--surface3);color:var(--muted);">${d.category}</span></div>
-              </div>
-              <div class="doc-actions">
-                <button class="doc-download-btn" onclick="downloadDoc('${d.name}','uploaded','${c.name}')">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Download
-                </button>
-              </div>
-            </div>`).join('')
-          : '<div style="color:var(--muted2);font-size:13px;padding:10px 0;font-style:italic;">No customer documents yet</div>'}
-        <div style="margin-top:10px;">
-          <input type="file" id="fileIn_${c.id}" style="display:none;" onchange="handleFileUpload(event,${c.id})">
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('fileIn_${c.id}').click()">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Upload Customer Document
-          </button>
-        </div>`}
-      </div>
-
-      <!-- TAB: SOV -->
-      <div class="tab-panel" id="tab-sov-${c.id}">
-        <div class="sov-toggle-row">
-          <label class="toggle-sw">
-            <input type="checkbox" ${c.sov?'checked':''} onchange="toggleSOV(${c.id},this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
-          <div>
-            <div class="sov-toggle-label">Schedule of Values (SOV)</div>
-            <div class="sov-toggle-sub">Enable to track base estimates, change orders, invoices and retention for this client</div>
-          </div>
-          ${c.sov ? `<button class="btn btn-gold btn-sm" onclick="exportSOVPdf(${c.id})" style="margin-left:auto;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
-          </button>` : ''}
-        </div>
-
-        ${c.sov ? `
-        ${buildSOVHtml(c)}
-        ` : `<div style="text-align:center;padding:32px 20px;color:var(--muted2);">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;opacity:.3;display:block;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
-          <div style="font-size:14px;font-weight:600;margin-bottom:6px;">SOV not enabled for this client</div>
-          <div style="font-size:13px;">Toggle the switch above to enable Schedule of Values tracking</div>
-        </div>`}
-      </div>
-
-    </div>
-
-    ${_pmContact ? '' : `<div class="card" style="margin-top:0;">
-      <div class="card-title">All estimates — ${c.name}</div>
-      <div class="jobs-grid">${jobCardsHTML}</div>
-    </div>`}
 
     ${c.notes?`<div class="card"><div class="card-title">Internal notes</div><div style="font-size:13px;color:var(--text);line-height:1.6;">${c.notes}</div></div>`:''}
   </div>`;
@@ -3992,6 +4023,82 @@ function renderDetail(id, pmFilter){
       var _bt=document.getElementById('tab-billing-'+c.id); if(_bt) _bt.classList.add('active');
     }
   }
+  // Make every .card block in the customer detail collapsible (collapsed by default)
+  _makeCardsCollapsible();
+}
+
+// Adds an Expand/Minimize toggle + block title to each .card in the right panel.
+// First block (Customer Information) and the Jobs block start EXPANDED; the rest minimized.
+var _cardCollapseState = {};
+function _makeCardsCollapsible(){
+  var pr=document.getElementById('panelRight');
+  if(!pr) return;
+  // Ensure ALL blocks live inside .detail-wrap so they share the same centered width/padding
+  var dw=pr.querySelector('.detail-wrap');
+  if(dw){
+    // move any top-level .card that ended up as a sibling of .detail-wrap into it
+    Array.from(pr.children).forEach(function(ch){
+      if(ch!==dw && ch.classList && ch.classList.contains('card')){ dw.appendChild(ch); }
+    });
+  }
+  // grab every top-level .card (now all inside .detail-wrap)
+  var cards=[];
+  pr.querySelectorAll('.card').forEach(function(cd){
+    if(!cd.parentElement.closest('.card')) cards.push(cd);
+  });
+  cards.forEach(function(card, idx){
+    if(card.getAttribute('data-collapsible')) return; // already processed
+    card.setAttribute('data-collapsible','1');
+
+    // ── derive a human title for this block ──
+    var title='';
+    var titleEl=card.querySelector('.card-title');
+    if(idx===0){ title='Customer Information'; }
+    else if(titleEl){ title=(titleEl.textContent||'').trim(); }
+    if(!title){
+      var txt=(card.textContent||'').trim();
+      title=txt.slice(0,32)||'Section';
+    }
+    // shorten "Jobs — ABC Construction Corp" → "Jobs"; strip trailing count badges
+    var shortTitle=title.replace(/\s*—\s+.*/,'').replace(/\s*\(\d+\)\s*$/,'').replace(/\s+/g,' ').trim();
+    if(!shortTitle) shortTitle=title;
+    var isJobs=/^jobs\b/i.test(shortTitle);
+    var defaultExpanded = (idx===0 || isJobs); // Customer Info + Jobs expanded; Company Contacts & Billing minimized
+
+    // wrap everything currently inside the card into a body container
+    var body=document.createElement('div');
+    body.className='card-collapse-body';
+    while(card.firstChild){ body.appendChild(card.firstChild); }
+
+    // toolbar: title (left) + Expand/Minimize button (right)
+    var bar=document.createElement('div');
+    bar.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 16px;background:var(--surface2,#faf9f7);';
+    var titleSpan=document.createElement('div');
+    titleSpan.style.cssText='font-family:Barlow,sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text);display:flex;align-items:center;gap:7px;min-width:0;';
+    titleSpan.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+shortTitle+'</span>';
+
+    var key='card_'+idx;
+    var collapsed=(_cardCollapseState[key]===undefined)?(!defaultExpanded):_cardCollapseState[key];
+
+    var btn=document.createElement('button');
+    btn.type='button';
+    btn.style.cssText='display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);flex-shrink:0;';
+    function paint(){
+      body.style.display=collapsed?'none':'block';
+      bar.style.borderBottom=collapsed?'none':'1px solid var(--border)';
+      btn.innerHTML=(collapsed
+        ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Expand'
+        : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg> Minimize');
+    }
+    btn.onclick=function(){ collapsed=!collapsed; _cardCollapseState[key]=collapsed; paint(); };
+    bar.appendChild(titleSpan);
+    bar.appendChild(btn);
+    card.appendChild(bar);
+    card.appendChild(body);
+    card.style.padding='0';
+    card.style.overflow='hidden';
+    paint();
+  });
 }
 
 function saveContactPref(customerId, contactIdx, docType, checked){
@@ -6540,6 +6647,42 @@ function closeBillingPopupConfirm(){
   document.getElementById('_billConfirmOk').onclick=function(){ bg.remove(); closeBillingPopup(); };
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
 }
+// Edit billing for a site group. If the site has multiple jobs/PMs, first pick the PM/job.
+function editSiteBilling(customerId, siteIdx){
+  var groups=(window._billingSiteGroups||{})[customerId];
+  if(!groups || !groups[siteIdx]){ return; }
+  var site=groups[siteIdx];
+  if(!site.jobs.length) return;
+  if(site.jobs.length===1){ editJobBilling(customerId, site.jobs[0].est); return; }
+  // multiple PMs/jobs → show a picker first
+  _siteBillingPicker(customerId, site);
+}
+function _siteBillingPicker(customerId, site){
+  var ex=document.getElementById('_sbPickerBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_sbPickerBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100100;display:flex;align-items:center;justify-content:center;padding:24px;';
+  var rows=site.jobs.map(function(j){
+    return '<button onclick="_sbPick(\''+customerId+'\',\''+j.est+'\')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:13px 16px;border:1px solid var(--border2);border-radius:10px;background:#fff;cursor:pointer;font-family:Barlow,sans-serif;margin-bottom:8px;">'
+      +'<div><div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+j.pmName+'</div>'
+      +'<div style="font-size:12px;color:var(--muted);margin-top:2px;">'+j.jobName+' · '+j.est+'</div></div>'
+      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted2)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>'
+    +'</button>';
+  }).join('');
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:440px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);overflow:hidden;font-family:Barlow,sans-serif;">'
+    +'<div style="padding:20px 24px 6px;font-size:16px;font-weight:800;color:#1f2630;">Edit billing — '+site.label+'</div>'
+    +'<div style="padding:0 24px 14px;font-size:13px;color:#777;">This site has more than one Project Manager. Choose whose billing you want to edit:</div>'
+    +'<div style="padding:0 24px 8px;">'+rows+'</div>'
+    +'<div style="display:flex;justify-content:flex-end;padding:8px 24px 20px;"><button onclick="document.getElementById(\'_sbPickerBg\').remove()" style="padding:9px 22px;border-radius:9px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button></div>'
+  +'</div>';
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  document.body.appendChild(bg);
+}
+function _sbPick(customerId, jobEst){
+  var bg=document.getElementById('_sbPickerBg'); if(bg) bg.remove();
+  editJobBilling(parseInt(customerId), jobEst);
+}
+
 function editJobBilling(customerId, jobEst){
   var c=CUSTOMERS.find(function(x){return x.id===customerId;});
   if(!c) return;

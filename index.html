@@ -995,6 +995,17 @@ svg{display:block;}
 
   // ---- Public API ----
   window.SDD = {
+    // ===== Company profile (single source of truth for letterheads) =====
+    COMPANY: {
+      name: 'San Diego Deconstruction & Demolition',
+      shortName: 'SDD Demolition',
+      license: '1082669',
+      address1: '5755 Oberlin Drive, Suite 301',
+      address2: 'San Diego, CA 92121',
+      addressOneLine: '5755 Oberlin Drive, Suite 301, San Diego, CA 92121',
+      phone: '619-273-3467',
+      email: 'info@sandiegodemolition.com'
+    },
     // direct access to the live arrays (modules can read & mutate, then call save)
     get customers(){ return _data.customers; },
     get estimates(){ return _data.estimates; },
