@@ -275,7 +275,10 @@ svg{display:block;}
 .pdf-tot-row{display:flex;justify-content:space-between;padding:6px 10px;font-size:13px;color:#555;border-top:1px solid #E0E0E0;}
 .pdf-tot-grand{display:flex;justify-content:space-between;padding:10px 10px;font-size:16px;font-weight:700;background:#F8F6F2;border-top:2px solid #B8922A;margin-top:4px;}
 .pdf-footer{margin-top:28px;padding-top:14px;border-top:1px solid #E0E0E0;display:flex;justify-content:space-between;font-size:11px;color:#AAA;}
-
+/* EMBED MODE: only show the invoice detail (for iframe inside Customers) */
+body.embed-mode .panel-left{display:none !important;}
+body.embed-mode .header{display:none !important;}
+body.embed-mode .panel-right{background:#fff;}
 </style>
 </head>
 <body>
@@ -1646,6 +1649,17 @@ renderList();
 // ── AUTO-CREATE INVOICE FROM URL PARAMS ──
 (function(){
   const params = new URLSearchParams(window.location.search);
+  // Embed mode: hide header/nav for clean iframe rendering inside Customers
+  if(params.get('embed')==='1'){
+    document.body.classList.add('embed-mode');
+    var _hdr=document.querySelector('.header'); if(_hdr) _hdr.style.display='none';
+  }
+  // Open a specific invoice by its number
+  const openNum = params.get('open');
+  if(openNum){
+    var found = INVOICES.find(function(i){return i.num===openNum || i.est===openNum;});
+    if(found){ selectInvoice(found.id); return; }
+  }
   const estNum = params.get('create');
   if(!estNum) { selectInvoice(1); return; }
 

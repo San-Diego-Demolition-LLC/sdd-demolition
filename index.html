@@ -122,7 +122,7 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .alert-text{flex:1;}
 .alert-title{font-size:13px;font-weight:600;}
 .alert-sub{font-size:11px;color:var(--muted);margin-top:2px;}
-.alert-amt{font-size:13px;font-weight:700;}
+.alert-amt{font-size:13px;font-weight:700;min-width:72px;text-align:right;flex-shrink:0;}
 
 /* MINI BAR CHART */
 .bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:12px;}
@@ -1181,9 +1181,9 @@ const colors = ['#ECEAE5','#ECEAE5','#ECEAE5','#B8922A','#B8922A','#3A9E6A'];
       return '<div class="alert-item alert-danger">'
         +'<div class="alert-icon ai-danger">'+iconSVG(a.kind)+'</div>'
         +'<div class="alert-text"><div class="alert-title">'+a.title+'</div><div class="alert-sub">'+a.sub+'</div></div>'
-        +'<div style="display:flex;gap:8px;align-items:center;">'
-          +(a.amount?'<div class="alert-amt" style="color:var(--danger);">'+fmtFull(a.amount)+'</div>':'')
-          +'<button class="btn btn-ghost btn-sm">'+a.action+'</button>'
+        +'<div style="display:flex;gap:8px;align-items:center;flex-shrink:0;justify-content:flex-end;">'
+          +(a.amount?'<div class="alert-amt" style="color:var(--danger);">'+fmtFull(a.amount)+'</div>':'<div class="alert-amt"></div>')
+          +'<button class="btn btn-ghost btn-sm" style="min-width:118px;justify-content:center;">'+a.action+'</button>'
         +'</div>'
       +'</div>';
     }).join('');
@@ -1411,7 +1411,7 @@ function renderStagePipeline(){
         // Active-stage lines (pending approval / in progress / ready to bill) come from the job itself.
         if(!/complet|paid|invoiced|archiv/.test(jstatus)){
           var st=stageOf(job.status);
-          var jobDetail={project:(job.projectName||job.jobName||''), dateSent:job.dateSent||'', dateApproved:job.dateApproved||'', startDate:job.startDate||'', endDate:job.endDate||'', scheduledBy:job.scheduledBy||'', completedBy:job.completedBy||'', completionNotes:job.completionNotes||''};
+          var jobDetail={project:(job.projectName||job.jobName||''), dateSent:job.dateSent||'', dateApproved:job.dateApproved||'', startDate:job.startDate||'', endDate:job.endDate||'', scheduledBy:job.scheduledBy||'', completedBy:job.completedBy||'', completionNotes:job.completionNotes||'', dateCompleted:job.dateCompleted||'', dateSentToClient:job.dateSentToClient||'', notifications:job.notifications||[]};
           push(st, c.name, job, Object.assign({ref:job.est, kind:'EST', company:c.name, location:loc, amount:pa(job.amount), status:(job.status||''), stage:st, color:BLOCKS.filter(function(b){return b.key===st;})[0].color}, jobDetail));
           (job.changeOrders||[]).forEach(function(co){
             var cst=stageOf(co.status);
@@ -1466,7 +1466,8 @@ function renderStagePipeline(){
     var leftDetail='';
     if(ln.stage==='pending-approval'){
       leftDetail=projRow
-        +(ln.dateSent?'<div style="'+muted+'">Sent: '+ln.dateSent+'</div>':'');
+        +(ln.dateSent?'<div style="'+muted+'">Sent: '+ln.dateSent+'</div>':'')
+        +((ln.notifications&&ln.notifications.length)?'<button onclick="dashShowNotifs(\''+estId+'\')" style="margin-top:4px;padding:3px 9px;border:1px solid var(--border2);border-radius:6px;background:transparent;color:var(--info);font-family:Barlow,sans-serif;font-size:10px;font-weight:700;cursor:pointer;">🔔 History ('+ln.notifications.length+')</button>':'');
     } else if(ln.stage==='approved-pending-schedule'){
       // Project + ref, plus the date the client approved
       leftDetail=projRow
@@ -1477,6 +1478,7 @@ function renderStagePipeline(){
         +(ln.scheduledBy?'<div style="'+muted+'">Scheduled by '+ln.scheduledBy+'</div>':'');
     } else if(ln.stage==='ready-to-bill'){
       leftDetail=projRow
+        +(ln.dateCompleted?'<div style="'+muted+'">Completed: '+ln.dateCompleted+'</div>':'')
         +(ln.completedBy?'<div style="'+muted+'">Completed by '+ln.completedBy+'</div>':'')
         +(ln.completionNotes?'<div style="font-size:11px;color:var(--muted);font-style:italic;">"'+ln.completionNotes+'"</div>':'');
     } else if(ln.stage==='completed'){

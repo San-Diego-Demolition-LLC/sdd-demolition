@@ -213,6 +213,12 @@ tr:last-child td{border-bottom:none;}
 }
 @media(min-width:769px){.mobile-nav{display:none;}}
 svg{display:block;}
+/* EMBED MODE: only show the editable estimate document (for iframe inside Customers) */
+body.embed-mode .panel-left{display:none !important;}
+body.embed-mode #pipelineBar,body.embed-mode .pipeline-wrap{display:none !important;}
+body.embed-mode .panel-right{background:#fff;}
+body.embed-mode .header,body.embed-mode .mobile-nav{display:none !important;}
+body.embed-mode{padding-bottom:0 !important;}
 
 /* ── PDF PREVIEW MODAL ── */
 .pdf-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
@@ -2979,8 +2985,13 @@ document.addEventListener('DOMContentLoaded',function(){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTypeSel();closeNewEstForm();closeCOForm();closePortal();document.getElementById('scheduleOverlay').classList.remove('open');document.getElementById('rejectOverlay').classList.remove('open');document.getElementById('confirmCompleteOverlay').classList.remove('open');document.getElementById('siConfirmOverlay').classList.remove('open');document.getElementById('pdfOverlay').classList.remove('open');}});
   // Auto-select from URL param
   const params=new URLSearchParams(window.location.search);
-  const estNum=params.get('est');
+  const estNum=params.get('est')||params.get('open');
   const newFor=params.get('newFor');
+  // Embed mode: hide header/nav so this can render cleanly inside an iframe
+  if(params.get('embed')==='1'){
+    document.body.classList.add('embed-mode');
+    var _hdr=document.querySelector('.header'); if(_hdr) _hdr.style.display='none';
+  }
   let initId=1;
   if(estNum){const found=ESTIMATES.find(e=>e.num===estNum);if(found)initId=found.id;}
   renderPipeline();
