@@ -374,7 +374,7 @@ svg{display:block;}
    - Each module reads/writes through window.SDD.
    ============================================================ */
 (function(){
-  var STORAGE_KEY = 'sdd_data_v1';
+  var STORAGE_KEY = 'sdd_data_v3';
 
   // ---- DEFAULT SEED DATA (used the first time, before anything is saved) ----
   var SEED = {
@@ -397,9 +397,9 @@ svg{display:block;}
             {est:'EST-CO047-1',originalEst:'EST-047',amount:'$2,100',status:'Approved',date:'May 10, 2026',description:'Additional haul-off - 3 loads'},
             {est:'EST-CO052-1',originalEst:'EST-052',amount:'$950',status:'Pending',date:'May 12, 2026',description:'Hazmat disposal - asbestos tile'}
           ],
-          invoices:[{est:'INV-047-3',originalEst:'EST-047',amount:'$8,500',status:'Sent',date:'Apr 18, 2026',due:'May 18, 2026'},{est:'INV-047-4',originalEst:'EST-047',amount:'$6,200',status:'Sent',date:'Apr 25, 2026',due:'May 25, 2026'},{est:'INV-047-5',originalEst:'EST-047',amount:'$7,300',status:'Sent',date:'May 3, 2026',due:'Jun 2, 2026'},
-            {est:'INV-047-1',originalEst:'EST-047',amount:'$14,301',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026'},
-            {est:'INV-047-2',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026'}
+          invoices:[{est:'INV-047P1',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 18, 2026',due:'May 18, 2026',payments:[{id:'PMT-047P1',date:'Apr 20, 2026',amount:'$4,000',method:'ACH',ref:'Chase ACH #88101',note:'Partial payment 1 of 4'}]},{est:'INV-047P2',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 25, 2026',due:'May 25, 2026',payments:[{id:'PMT-047P2',date:'Apr 28, 2026',amount:'$4,000',method:'Check',ref:'Check #10455',note:'Partial payment 2 of 4'}]},{est:'INV-047P3',originalEst:'EST-047',amount:'$3,500',status:'Paid',date:'May 3, 2026',due:'Jun 2, 2026',payments:[{id:'PMT-047P3',date:'May 6, 2026',amount:'$3,500',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 3 of 4'}]},
+            {est:'INV-047P4',originalEst:'EST-047',amount:'$2,801',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026',payments:[{id:'PMT-047P4',date:'May 17, 2026',amount:'$2,801',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 4 of 4 - final'}]},
+            {est:'INV-CO047-1',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026',payments:[{id:'PMT-CO047-1',date:'May 18, 2026',amount:'$2,100',method:'ACH',ref:'Chase ACH #88213',note:'Paid in full'}]}
           ]},
         {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', dateSent:'May 8, 2026', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
           estimates:[
@@ -419,8 +419,8 @@ svg{display:block;}
             {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved',date:'Mar 20, 2026',description:'Concrete slab breakout'}
           ],
           invoices:[
-            {est:'INV-044-1',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026'},
-            {est:'INV-044-2',originalEst:'EST-CO044-1',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026'}
+            {est:'INV-044',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026',payments:[{id:'PMT-044',date:'Mar 25, 2026',amount:'$18,750',method:'Check',ref:'Check #10428',note:'Paid in full'}]},
+            {est:'INV-CO044-1',originalEst:'EST-CO044-1',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026',payments:[{id:'PMT-CO044-1',date:'Mar 28, 2026',amount:'$3,200',method:'Credit Card',ref:'Amex ····3377',note:'Paid in full'}]}
           ]},
       ]},
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
@@ -434,7 +434,7 @@ svg{display:block;}
           ],
           changeOrders:[],
           invoices:[
-            {est:'INV-058-1',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
+            {est:'INV-058',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
           ]},
         {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', dateApproved:'Apr 28, 2026', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
           estimates:[
@@ -478,9 +478,9 @@ svg{display:block;}
           changeOrders:[
             {est:'EST-CO070-1',originalEst:'EST-070',amount:'$4,500',status:'Approved',date:'May 9, 2026',description:'Additional asbestos abatement'}
           ],
-          invoices:[{est:'INV-070-1',originalEst:'EST-070',amount:'$12,400',status:'Sent',date:'May 4, 2026',due:'May 19, 2026'},{est:'INV-070-2',originalEst:'EST-070',amount:'$15,600',status:'Sent',date:'May 17, 2026',due:'Jun 1, 2026'},{est:'INV-070-3',originalEst:'EST-070',amount:'$8,900',status:'Sent',date:'May 26, 2026',due:'Jun 10, 2026'},
-            {est:'INV-070-1',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026'},
-            {est:'INV-070-2',originalEst:'EST-070',amount:'$13,200',status:'Unpaid',date:'May 20, 2026',due:'Jun 19, 2026'}
+          invoices:[{est:'INV-070P1',originalEst:'EST-070',amount:'$12,400',status:'Sent',date:'May 4, 2026',due:'May 19, 2026'},{est:'INV-070P3',originalEst:'EST-070',amount:'$15,600',status:'Sent',date:'May 17, 2026',due:'Jun 1, 2026'},{est:'INV-070P5',originalEst:'EST-070',amount:'$8,900',status:'Sent',date:'May 26, 2026',due:'Jun 10, 2026'},
+            {est:'INV-070P2',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026',payments:[{id:'PMT-070P2',date:'May 12, 2026',amount:'$13,200',method:'ACH',ref:'Wells Fargo ACH #55021',note:'Paid in full'}]},
+            {est:'INV-070P4',originalEst:'EST-070',amount:'$13,200',status:'Unpaid',date:'May 20, 2026',due:'Jun 19, 2026'}
           ]},
         {est:'EST-066', address:'1820 Coast Hwy', city:'Oceanside CA 92054', status:'Completed', dateCompleted:'Apr 18, 2026', dateSentToClient:'Apr 20, 2026', notifications:[{type:'Invoice sent',date:'Apr 20, 2026',by:'Leontina'}], amount:'$15,900', date:'Feb 8, 2026', jobName:'Coast Hwy Teardown', projectName:'Coast Hwy Teardown', streetOnly:'1820 Coast Hwy',
           billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'},{id:'cb2',name:'Daniel Cruz',email:'d.cruz@coastalbuilders.com',phone:'(760) 555-0182'}],
@@ -492,8 +492,8 @@ svg{display:block;}
             {est:'EST-CO066-1',originalEst:'EST-066',amount:'$2,800',status:'Paid',date:'Feb 14, 2026',description:'Extra dumpster rentals'}
           ],
           invoices:[
-            {est:'INV-066-1',originalEst:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 18, 2026',due:'Mar 20, 2026'},
-            {est:'INV-066-2',originalEst:'EST-CO066-1',amount:'$2,800',status:'Paid',date:'Feb 20, 2026',due:'Mar 22, 2026'}
+            {est:'INV-066',originalEst:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 18, 2026',due:'Mar 20, 2026',payments:[{id:'PMT-066',date:'Feb 18, 2026',amount:'$15,900',method:'Check',ref:'Check #10391',note:'Paid in full'}]},
+            {est:'INV-CO066-1',originalEst:'EST-CO066-1',amount:'$2,800',status:'Paid',date:'Feb 20, 2026',due:'Mar 22, 2026',payments:[{id:'PMT-CO066-1',date:'Feb 20, 2026',amount:'$2,800',method:'Cash',ref:'Cash receipt #204',note:'Paid in full'}]}
           ]},
       ]},
    ]},
@@ -513,8 +513,8 @@ svg{display:block;}
             {est:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 3, 2025',scope:'Full Structure Demolition'}
           ],
           changeOrders:[],
-          invoices:[{est:'INV-040-2',originalEst:'EST-040',amount:'$9,800',status:'Sent',date:'Apr 26, 2026',due:'May 26, 2026'},{est:'INV-040-3',originalEst:'EST-040',amount:'$11,200',status:'Sent',date:'May 9, 2026',due:'Jun 8, 2026'},
-            {est:'INV-040-1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025'}
+          invoices:[{est:'INV-040P2',originalEst:'EST-040',amount:'$9,800',status:'Sent',date:'Apr 26, 2026',due:'May 26, 2026'},{est:'INV-040P3',originalEst:'EST-040',amount:'$11,200',status:'Sent',date:'May 9, 2026',due:'Jun 8, 2026'},
+            {est:'INV-040P1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025',payments:[{id:'PMT-040P1',date:'Nov 15, 2025',amount:'$19,200',method:'Credit Card',ref:'Visa ····4821',note:'Paid in full'}]}
           ]},
       ]},
    ]},
@@ -534,8 +534,8 @@ svg{display:block;}
             {est:'EST-038',amount:'$24,800',status:'Approved',date:'Dec 12, 2025',scope:'Commercial Demolition'}
           ],
           changeOrders:[],
-          invoices:[{est:'INV-038-2',originalEst:'EST-038',amount:'$4,500',status:'Sent',date:'May 12, 2026',due:'May 27, 2026'},{est:'INV-038-3',originalEst:'EST-038',amount:'$5,400',status:'Sent',date:'May 25, 2026',due:'Jun 9, 2026'},
-            {est:'INV-038-1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
+          invoices:[{est:'INV-038P2',originalEst:'EST-038',amount:'$4,500',status:'Sent',date:'May 12, 2026',due:'May 27, 2026'},{est:'INV-038P3',originalEst:'EST-038',amount:'$5,400',status:'Sent',date:'May 25, 2026',due:'Jun 9, 2026'},
+            {est:'INV-038P1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
           ]},
       ]},
    ]},

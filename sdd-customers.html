@@ -328,7 +328,7 @@ svg{display:block;}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     Reset Data
   </button>
-  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v131</span>
+  <span style="margin-left:10px;font-size:10px;color:var(--muted2);align-self:center;">v133</span>
 </div>
 
 <div class="app">
@@ -715,14 +715,14 @@ function sendBillingEmail(job, type, payload){
 var CUSTOMERS_SEED = [
   {id:1, name:'ABC Construction Corp', city:'San Diego, CA',
    address:'4500 Main St, San Diego CA 92103', phone:'(619) 555-0142',
-   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, billingMethod:'direct-email', sov:true, sovEstimates:[],
+   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, paymentTerms:'net-30', billingMethod:'direct-email', sov:true, sovEstimates:[],
    contacts:[
      {id:'c1', name:'Maria Rodriguez', initials:'MR', color:'av-info', role:'billing',
       email:'billing@abcconstruction.com', phone:'(619) 555-0101', title:'Billing Manager', jobs:[]},
      {id:'c2', name:'James Torres', initials:'JT', color:'av-gold', role:'project-manager',
       email:'j.torres@abcconstruction.com', phone:'(619) 555-0102', title:'Project Manager',
       jobs:[
-        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
+        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', startDate:'May 13, 2026', endDate:'May 22, 2026', scheduledBy:'Leontina', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
           estimates:[
             {est:'EST-047',amount:'$14,301',status:'Paid',date:'May 2, 2026',scope:'Original Scope - Demolition',projectName:'Harbor District Redevelopment'},
             {est:'EST-052',amount:'$8,200',status:'Approved',date:'May 5, 2026',scope:'Revised Scope - Debris Removal',projectName:'Harbor Phase 2 - Site Cleanup'}
@@ -731,11 +731,11 @@ var CUSTOMERS_SEED = [
             {est:'EST-CO047-1',originalEst:'EST-047',amount:'$2,100',status:'Approved',date:'May 10, 2026',description:'Additional haul-off - 3 loads'},
             {est:'EST-CO052-1',originalEst:'EST-052',amount:'$950',status:'Pending',date:'May 12, 2026',description:'Hazmat disposal - asbestos tile'}
           ],
-          invoices:[
-            {est:'INV-047-1',originalEst:'EST-047',amount:'$14,301',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026'},
-            {est:'INV-047-2',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026'}
+          invoices:[{est:'INV-047P1',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 18, 2026',due:'May 18, 2026',payments:[{id:'PMT-047P1',date:'Apr 20, 2026',amount:'$4,000',method:'ACH',ref:'Chase ACH #88101',note:'Partial payment 1 of 4'}]},{est:'INV-047P2',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 25, 2026',due:'May 25, 2026',payments:[{id:'PMT-047P2',date:'Apr 28, 2026',amount:'$4,000',method:'Check',ref:'Check #10455',note:'Partial payment 2 of 4'}]},{est:'INV-047P3',originalEst:'EST-047',amount:'$3,500',status:'Paid',date:'May 3, 2026',due:'Jun 2, 2026',payments:[{id:'PMT-047P3',date:'May 6, 2026',amount:'$3,500',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 3 of 4'}]},
+            {est:'INV-047P4',originalEst:'EST-047',amount:'$2,801',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026',payments:[{id:'PMT-047P4',date:'May 17, 2026',amount:'$2,801',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 4 of 4 - final'}]},
+            {est:'INV-CO047-1',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026',payments:[{id:'PMT-CO047-1',date:'May 18, 2026',amount:'$2,100',method:'ACH',ref:'Chase ACH #88213',note:'Paid in full'}]}
           ]},
-        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
+        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', dateSent:'May 8, 2026', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
           estimates:[
             {est:'EST-051',amount:'$9,850',status:'Pending approval',date:'May 8, 2026',scope:'Site Demo - Full Clearance'}
           ],
@@ -743,7 +743,7 @@ var CUSTOMERS_SEED = [
             {est:'EST-CO051-1',originalEst:'EST-051',amount:'$1,400',status:'Pending',date:'May 14, 2026',description:'Underground pipe removal'}
           ],
           invoices:[]},
-        {est:'EST-044', address:'210 Market St', city:'San Diego CA 92101', status:'Completed', amount:'$18,750', date:'Mar 12, 2026', jobName:'Market St Teardown', projectName:'East Village Tower Site', streetOnly:'210 Market St',
+        {est:'EST-044', address:'210 Market St', city:'San Diego CA 92101', status:'Completed', dateCompleted:'Mar 24, 2026', dateSentToClient:'Mar 25, 2026', notifications:[{type:'Invoice sent',date:'Mar 25, 2026',by:'Leontina'},{type:'Payment reminder',date:'Apr 5, 2026',by:'Leontina'}], amount:'$18,750', date:'Mar 12, 2026', jobName:'Market St Teardown', projectName:'East Village Tower Site', streetOnly:'210 Market St',
           billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101'},{id:'c4',name:'Robert Park',email:'r.park@abcconstruction.com',phone:'(619) 555-0104'}],
           pendingBilling:false,
           estimates:[
@@ -753,14 +753,14 @@ var CUSTOMERS_SEED = [
             {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved',date:'Mar 20, 2026',description:'Concrete slab breakout'}
           ],
           invoices:[
-            {est:'INV-044-1',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026'},
-            {est:'INV-044-2',originalEst:'EST-CO044-1',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026'}
+            {est:'INV-044',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026',payments:[{id:'PMT-044',date:'Mar 25, 2026',amount:'$18,750',method:'Check',ref:'Check #10428',note:'Paid in full'}]},
+            {est:'INV-CO044-1',originalEst:'EST-CO044-1',amount:'$3,200',status:'Paid',date:'Mar 28, 2026',due:'Apr 27, 2026',payments:[{id:'PMT-CO044-1',date:'Mar 28, 2026',amount:'$3,200',method:'Credit Card',ref:'Amex ····3377',note:'Paid in full'}]}
           ]},
       ]},
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
       email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
       jobs:[
-        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
+        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', startDate:'May 14, 2026', endDate:'May 20, 2026', scheduledBy:'Leontina', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
           billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101',role:'main'}],
           pendingBilling:false,
           estimates:[
@@ -768,9 +768,9 @@ var CUSTOMERS_SEED = [
           ],
           changeOrders:[],
           invoices:[
-            {est:'INV-058-1',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
+            {est:'INV-058',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
           ]},
-        {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
+        {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', dateApproved:'Apr 28, 2026', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
           estimates:[
             {est:'EST-055',amount:'$22,500',status:'Approved',date:'Apr 28, 2026',scope:'Site Demolition & Grading',projectName:'Chula Vista Retail Plaza'}
           ],
@@ -780,13 +780,13 @@ var CUSTOMERS_SEED = [
      {id:'c4', name:'Robert Park', initials:'RP', color:'av-success', role:'additional',
       email:'r.park@abcconstruction.com', phone:'(619) 555-0104', title:'Director',
       jobs:[
-        {est:'EST-060', address:'7700 Mission Valley Rd', city:'San Diego CA 92108', status:'Ready to bill', amount:'$31,200', date:'Apr 10, 2026', jobName:'Mission Valley Demo', projectName:'Mission Valley Office Park', streetOnly:'7700 Mission Valley Rd',
+        {est:'EST-060', address:'7700 Mission Valley Rd', city:'San Diego CA 92108', status:'Ready to bill', completedBy:'Leontina', completionNotes:'Demo finished, site cleared and swept. Ready to invoice.', amount:'$31,200', date:'Apr 10, 2026', jobName:'Mission Valley Demo', projectName:'Mission Valley Office Park', streetOnly:'7700 Mission Valley Rd',
           estimates:[
             {est:'EST-060',amount:'$31,200',status:'Approved',date:'Apr 10, 2026',scope:'Commercial Building Demolition',projectName:'Mission Valley Office Park'}
           ],
           changeOrders:[],
           invoices:[]},
-        {est:'EST-031', address:'915 Broadway', city:'San Diego CA 92101', status:'Approved', amount:'$12,800', date:'Feb 15, 2025', jobName:'Broadway Lot Demo', projectName:'Broadway Parking Structure', streetOnly:'915 Broadway',
+        {est:'EST-031', address:'915 Broadway', city:'San Diego CA 92101', status:'Approved', dateApproved:'Apr 22, 2026', amount:'$12,800', date:'Feb 15, 2025', jobName:'Broadway Lot Demo', projectName:'Broadway Parking Structure', streetOnly:'915 Broadway',
           estimates:[
             {est:'EST-031',amount:'$12,800',status:'Approved',date:'Feb 15, 2025',scope:'Parking Lot Demolition',projectName:'Broadway Parking Structure'}
           ],
@@ -796,14 +796,14 @@ var CUSTOMERS_SEED = [
    ]},
   {id:2, name:'Coastal Builders Inc', city:'Carlsbad, CA',
    address:'2100 Palomar Airport Rd, Carlsbad CA 92011', phone:'(760) 555-0188',
-   since:'2024', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, billingMethod:'direct-email', sov:true, sovEstimates:[],
+   since:'2024', type:'commercial', waiver:'conditional', portal:false, notes:'', specialInstructions:false, paymentTerms:'net-15', billingMethod:'direct-email', sov:true, sovEstimates:[],
    contacts:[
      {id:'cb1', name:'Elena Marsh', initials:'EM', color:'av-info', role:'billing',
       email:'billing@coastalbuilders.com', phone:'(760) 555-0181', title:'Billing Manager', jobs:[]},
      {id:'cb2', name:'Daniel Cruz', initials:'DC', color:'av-gold', role:'project-manager',
       email:'d.cruz@coastalbuilders.com', phone:'(760) 555-0182', title:'Project Manager',
       jobs:[
-        {est:'EST-070', address:'650 Grand Ave', city:'Carlsbad CA 92008', status:'In progress', amount:'$26,400', date:'May 4, 2026', jobName:'Grand Ave Commercial Demo', projectName:'Carlsbad Village Center', streetOnly:'650 Grand Ave',
+        {est:'EST-070', address:'650 Grand Ave', city:'Carlsbad CA 92008', status:'In progress', startDate:'May 4, 2026', endDate:'May 16, 2026', scheduledBy:'Ana Rivera', amount:'$26,400', date:'May 4, 2026', jobName:'Grand Ave Commercial Demo', projectName:'Carlsbad Village Center', streetOnly:'650 Grand Ave',
           billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'}],
           pendingBilling:false,
           estimates:[
@@ -812,11 +812,11 @@ var CUSTOMERS_SEED = [
           changeOrders:[
             {est:'EST-CO070-1',originalEst:'EST-070',amount:'$4,500',status:'Approved',date:'May 9, 2026',description:'Additional asbestos abatement'}
           ],
-          invoices:[
-            {est:'INV-070-1',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026'},
-            {est:'INV-070-2',originalEst:'EST-070',amount:'$13,200',status:'Unpaid',date:'May 20, 2026',due:'Jun 19, 2026'}
+          invoices:[{est:'INV-070P1',originalEst:'EST-070',amount:'$12,400',status:'Sent',date:'May 4, 2026',due:'May 19, 2026'},{est:'INV-070P3',originalEst:'EST-070',amount:'$15,600',status:'Sent',date:'May 17, 2026',due:'Jun 1, 2026'},{est:'INV-070P5',originalEst:'EST-070',amount:'$8,900',status:'Sent',date:'May 26, 2026',due:'Jun 10, 2026'},
+            {est:'INV-070P2',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026',payments:[{id:'PMT-070P2',date:'May 12, 2026',amount:'$13,200',method:'ACH',ref:'Wells Fargo ACH #55021',note:'Paid in full'}]},
+            {est:'INV-070P4',originalEst:'EST-070',amount:'$13,200',status:'Unpaid',date:'May 20, 2026',due:'Jun 19, 2026'}
           ]},
-        {est:'EST-066', address:'1820 Coast Hwy', city:'Oceanside CA 92054', status:'Completed', amount:'$15,900', date:'Feb 8, 2026', jobName:'Coast Hwy Teardown', projectName:'Coast Hwy Teardown', streetOnly:'1820 Coast Hwy',
+        {est:'EST-066', address:'1820 Coast Hwy', city:'Oceanside CA 92054', status:'Completed', dateCompleted:'Apr 18, 2026', dateSentToClient:'Apr 20, 2026', notifications:[{type:'Invoice sent',date:'Apr 20, 2026',by:'Leontina'}], amount:'$15,900', date:'Feb 8, 2026', jobName:'Coast Hwy Teardown', projectName:'Coast Hwy Teardown', streetOnly:'1820 Coast Hwy',
           billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'},{id:'cb2',name:'Daniel Cruz',email:'d.cruz@coastalbuilders.com',phone:'(760) 555-0182'}],
           pendingBilling:false,
           estimates:[
@@ -826,50 +826,50 @@ var CUSTOMERS_SEED = [
             {est:'EST-CO066-1',originalEst:'EST-066',amount:'$2,800',status:'Paid',date:'Feb 14, 2026',description:'Extra dumpster rentals'}
           ],
           invoices:[
-            {est:'INV-066-1',originalEst:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 18, 2026',due:'Mar 20, 2026'},
-            {est:'INV-066-2',originalEst:'EST-CO066-1',amount:'$2,800',status:'Paid',date:'Feb 20, 2026',due:'Mar 22, 2026'}
+            {est:'INV-066',originalEst:'EST-066',amount:'$15,900',status:'Paid',date:'Feb 18, 2026',due:'Mar 20, 2026',payments:[{id:'PMT-066',date:'Feb 18, 2026',amount:'$15,900',method:'Check',ref:'Check #10391',note:'Paid in full'}]},
+            {est:'INV-CO066-1',originalEst:'EST-CO066-1',amount:'$2,800',status:'Paid',date:'Feb 20, 2026',due:'Mar 22, 2026',payments:[{id:'PMT-CO066-1',date:'Feb 20, 2026',amount:'$2,800',method:'Cash',ref:'Cash receipt #204',note:'Paid in full'}]}
           ]},
       ]},
    ]},
   {id:3, name:'Pacific Demo Partners', city:'San Diego, CA', customerStatus:'inactive',
    address:'780 Industrial Way, San Diego CA 92110', phone:'(619) 555-0211',
-   since:'2022', type:'commercial', waiver:'conditional', portal:false, notes:'Account inactive — no active jobs.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   since:'2022', type:'commercial', waiver:'conditional', portal:false, notes:'Account inactive — no active jobs.', specialInstructions:false, paymentTerms:'net-30', billingMethod:'direct-email', sov:false, sovEstimates:[],
    contacts:[
      {id:'pd1', name:'Greg Holt', initials:'GH', color:'av-info', role:'billing',
       email:'billing@pacificdemo.com', phone:'(619) 555-0210', title:'Billing Manager', jobs:[]},
      {id:'pd2', name:'Laura Kim', initials:'LK', color:'av-gold', role:'project-manager',
       email:'l.kim@pacificdemo.com', phone:'(619) 555-0212', title:'Project Manager',
       jobs:[
-        {est:'EST-040', address:'780 Industrial Way', city:'San Diego CA 92110', status:'Completed', amount:'$19,200', date:'Nov 3, 2025', jobName:'Industrial Way Demo', projectName:'Pacific Industrial Site', streetOnly:'780 Industrial Way',
+        {est:'EST-040', address:'780 Industrial Way', city:'San Diego CA 92110', status:'Completed', dateCompleted:'Apr 10, 2026', dateSentToClient:'Apr 12, 2026', notifications:[{type:'Invoice sent',date:'Apr 12, 2026',by:'Ana Rivera'},{type:'Payment reminder',date:'Apr 22, 2026',by:'Leontina'},{type:'Statement sent',date:'May 1, 2026',by:'Leontina'}], amount:'$19,200', date:'Nov 3, 2025', jobName:'Industrial Way Demo', projectName:'Pacific Industrial Site', streetOnly:'780 Industrial Way',
           billing:[{id:'pd1',name:'Greg Holt',email:'billing@pacificdemo.com',phone:'(619) 555-0210'}],
           pendingBilling:false,
           estimates:[
             {est:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 3, 2025',scope:'Full Structure Demolition'}
           ],
           changeOrders:[],
-          invoices:[
-            {est:'INV-040-1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025'}
+          invoices:[{est:'INV-040P2',originalEst:'EST-040',amount:'$9,800',status:'Sent',date:'Apr 26, 2026',due:'May 26, 2026'},{est:'INV-040P3',originalEst:'EST-040',amount:'$11,200',status:'Sent',date:'May 9, 2026',due:'Jun 8, 2026'},
+            {est:'INV-040P1',originalEst:'EST-040',amount:'$19,200',status:'Paid',date:'Nov 15, 2025',due:'Dec 15, 2025',payments:[{id:'PMT-040P1',date:'Nov 15, 2025',amount:'$19,200',method:'Credit Card',ref:'Visa ····4821',note:'Paid in full'}]}
           ]},
       ]},
    ]},
   {id:4, name:'Summit Contractors LLC', city:'El Cajon, CA', customerStatus:'collections',
    address:'1290 Fletcher Pkwy, El Cajon CA 92020', phone:'(619) 555-0277',
-   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'Sent to collections — overdue balance.', specialInstructions:false, billingMethod:'direct-email', sov:false, sovEstimates:[],
+   since:'2023', type:'commercial', waiver:'conditional', portal:false, notes:'Sent to collections — overdue balance.', specialInstructions:false, paymentTerms:'net-15', billingMethod:'direct-email', sov:false, sovEstimates:[],
    contacts:[
      {id:'sc1', name:'Nina Brooks', initials:'NB', color:'av-info', role:'billing',
       email:'billing@summitcontractors.com', phone:'(619) 555-0276', title:'Billing Manager', jobs:[]},
      {id:'sc2', name:'Marcus Reed', initials:'MR', color:'av-gold', role:'project-manager',
       email:'m.reed@summitcontractors.com', phone:'(619) 555-0278', title:'Project Manager',
       jobs:[
-        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to bill', amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
+        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to bill', completedBy:'Ana Rivera', completionNotes:'Final walkthrough done with client. All debris hauled.', dateCompleted:'Dec 5, 2025', dateSentToClient:'Dec 8, 2025', notifications:[{type:'Invoice sent',date:'Dec 8, 2025',by:'Leontina'},{type:'Payment reminder',date:'Dec 20, 2025',by:'Leontina'},{type:'Past-due notice',date:'Jan 5, 2026',by:'Leontina'}], amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
           billing:[{id:'sc1',name:'Nina Brooks',email:'billing@summitcontractors.com',phone:'(619) 555-0276'}],
           pendingBilling:false,
           estimates:[
             {est:'EST-038',amount:'$24,800',status:'Approved',date:'Dec 12, 2025',scope:'Commercial Demolition'}
           ],
           changeOrders:[],
-          invoices:[
-            {est:'INV-038-1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
+          invoices:[{est:'INV-038P2',originalEst:'EST-038',amount:'$4,500',status:'Sent',date:'May 12, 2026',due:'May 27, 2026'},{est:'INV-038P3',originalEst:'EST-038',amount:'$5,400',status:'Sent',date:'May 25, 2026',due:'Jun 9, 2026'},
+            {est:'INV-038P1',originalEst:'EST-038',amount:'$24,800',status:'Past due',date:'Dec 20, 2025',due:'Jan 19, 2026'}
           ]},
       ]},
    ]},
@@ -1269,7 +1269,7 @@ function openTxPdf(rowKey){
       +'<button onclick="txPdfDownload(\''+rowKey+'\')" style="'+btn+'">⬇ Download</button>'
       +'<button onclick="txPdfPrint()" style="'+btn+'">🖨 Print</button>'
       +'<button onclick="txPdfSend(\''+rowKey+'\')" style="'+btn+'">✉ Send</button>'
-      +'<button onclick="window.location.href=\''+modifyTarget+'\'" style="'+btn+'border-color:var(--gold);background:var(--gold);color:#fff;">✎ '+modifyLabel+'</button>'
+      +'<button onclick="document.getElementById(\'_txPdfBg\').remove();txGoToDoc(\''+(r.num||'')+'\')" style="'+btn+'border-color:var(--gold);background:var(--gold);color:#fff;">✎ Open &amp; edit here</button>'
     +'</div>'
   +'</div>';
   document.body.appendChild(bg);
@@ -1507,12 +1507,27 @@ function renderList(){
                     const isActiveDoc=(activeDocRef===iv.est && activeDocKind==='invoice');
                     const rowBg=isActiveDoc?'#1f2630':'transparent';
                     const nameCol=isActiveDoc?'#fff':'var(--text)';
-                    return `<div onclick="event.stopPropagation();selectDoc('invoice','${iv.est}')" style="display:flex;align-items:center;gap:6px;padding:4px 7px;margin-left:${indent}px;border-radius:6px;cursor:pointer;background:${rowBg};${isActiveDoc?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveDoc}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${rowBg}'">`
+                    let out=`<div onclick="event.stopPropagation();selectDoc('invoice','${iv.est}')" style="display:flex;align-items:center;gap:6px;padding:4px 7px;margin-left:${indent}px;border-radius:6px;cursor:pointer;background:${rowBg};${isActiveDoc?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveDoc}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${rowBg}'">`
                       +`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${icoCol}" stroke-width="2" style="flex-shrink:0;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
                       +`<span style="font-size:11px;font-weight:600;color:${nameCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${iv.est}</span>`
                       +`<span style="font-size:9px;color:${isActiveDoc?'#bbb':'var(--muted)'};">${iv.amount||''}</span>`
                       +`<span style="font-size:9px;padding:1px 5px;border-radius:7px;font-weight:700;background:${paid?'rgba(22,163,74,.14)':'rgba(58,126,212,.14)'};color:${paid?'#16a34a':'#2563eb'};">${iv.status||''}</span>`
                       +`</div>`;
+                    // Payment sub-rows: only show when this invoice (or one of its payments) is selected
+                    var _pmtsActive = isActiveDoc || (iv.payments||[]).some(function(pp){ return activeDocRef===pp.id && activeDocKind==='payment'; });
+                    if(_pmtsActive){
+                      (iv.payments||[]).forEach(function(p){
+                        const isActivePmt=(activeDocRef===p.id && activeDocKind==='payment');
+                        const pBg=isActivePmt?'#1f2630':'transparent';
+                        const pCol=isActivePmt?'#fff':'var(--muted)';
+                        out+=`<div onclick="event.stopPropagation();selectDoc('payment','${p.id}')" style="display:flex;align-items:center;gap:6px;padding:3px 7px;margin-left:${indent+16}px;border-radius:6px;cursor:pointer;background:${pBg};${isActivePmt?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActivePmt}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${pBg}'">`
+                          +`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" style="flex-shrink:0;"><path d="M20 6L9 17l-5-5"/></svg>`
+                          +`<span style="font-size:10px;font-weight:600;color:${pCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.method||'Payment'}</span>`
+                          +`<span style="font-size:9px;color:${isActivePmt?'#bbb':'var(--muted2)'};">${p.amount||''}</span>`
+                          +`</div>`;
+                      });
+                    }
+                    return out;
                   };
                   // group label helper
                   const groupLabel=(txt,color)=>`<div style="display:flex;align-items:center;gap:5px;margin:6px 0 2px;padding-left:4px;"><span style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:${color};">${txt}</span><span style="flex:1;height:1px;background:${color};opacity:.25;"></span></div>`;
@@ -1957,7 +1972,15 @@ function jdInactivateJob(customerId, estNum){
 function _findOriginalJob(c, estNum){
   var found=null;
   (c.contacts||[]).forEach(function(ct){
-    (ct.jobs||[]).forEach(function(j){ if(j.est===estNum) found=j; });
+    (ct.jobs||[]).forEach(function(j){
+      if(found) return;
+      // job identified directly by its .est
+      if(j.est===estNum){ found=j; return; }
+      // or the estimate/CO/invoice lives inside one of the job's arrays
+      if((j.estimates||[]).some(function(e){return e.est===estNum;})){ found=j; return; }
+      if((j.changeOrders||[]).some(function(o){return o.est===estNum;})){ found=j; return; }
+      if((j.invoices||[]).some(function(iv){return iv.est===estNum;})){ found=j; return; }
+    });
   });
   return found;
 }
@@ -2481,6 +2504,12 @@ function _findDoc(ref){
         if(co) return {doc:co, kind:'co', job:job, cust:c, contact:ct};
         var iv=(job.invoices||[]).find(function(x){return x.est===ref;});
         if(iv) return {doc:iv, kind:'invoice', job:job, cust:c, contact:ct};
+        // payment lookup: ref is a payment id (PMT-...)
+        for(var vi=0;vi<(job.invoices||[]).length;vi++){
+          var inv=job.invoices[vi];
+          var pm=(inv.payments||[]).find(function(x){return x.id===ref;});
+          if(pm) return {doc:pm, kind:'payment', invoice:inv, job:job, cust:c, contact:ct};
+        }
       }
     }
   }
@@ -2488,6 +2517,77 @@ function _findDoc(ref){
 }
 function _money(v){ var n=parseFloat(String(v||'').replace(/[$,]/g,''))||0; return n; }
 function _moneyStr(n){ return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0}); }
+
+// ── FINANCIAL SUMMARY HELPERS ──
+// Sum of payments applied to a single invoice
+function _invPaid(iv){ return (iv.payments||[]).reduce(function(s,p){return s+_money(p.amount);},0); }
+// Retention held on an invoice (explicit amount, or 10% flag)
+function _invRetention(iv){
+  if(iv.retentionAmount!=null) return _money(iv.retentionAmount);
+  if(iv.retention===true || iv.retentionPct) { var pct=iv.retentionPct||10; return _money(iv.amount)*pct/100; }
+  return 0;
+}
+// Per-invoice financial picture
+function _invSummary(iv){
+  var total=_money(iv.amount);
+  var paid=_invPaid(iv);
+  var ret=_invRetention(iv);
+  var balance=total-paid;
+  return {total:total, paid:paid, retention:ret, balance:balance, fullyPaid:(balance<=0.5)};
+}
+// Estimate/CO financial picture: billed vs total, remaining to bill, collected
+function _estSummary(job, estId){
+  var src=(job.estimates||[]).find(function(e){return e.est===estId;})
+        ||(job.changeOrders||[]).find(function(o){return o.est===estId;});
+  var estTotal=src?_money(src.amount):0;
+  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft;});
+  var billed=invs.reduce(function(s,iv){return s+_money(iv.amount);},0);
+  var collected=invs.reduce(function(s,iv){return s+_invPaid(iv);},0);
+  var retention=invs.reduce(function(s,iv){return s+_invRetention(iv);},0);
+  var remainingToBill=Math.max(0, estTotal-billed);
+  var outstanding=billed-collected;
+  return {estTotal:estTotal, billed:billed, collected:collected, retention:retention,
+          remainingToBill:remainingToBill, outstanding:outstanding, invoices:invs, source:src};
+}
+// Convert a customer's payment terms into the number of days until an invoice is due.
+// Handles 'net-30', 'Net 15', 'net45', 'Due on receipt', 'COD', or a plain number.
+function _termsToDays(terms){
+  if(terms==null) return 30;
+  var t=String(terms).toLowerCase().trim();
+  if(/receipt|cod|due on|^0$|immediate/.test(t)) return 0;
+  var m=t.match(/(\d+)/);
+  if(m) return parseInt(m[1],10);
+  return 30; // sensible default
+}
+// Return a human label + days for a customer's terms (e.g. {days:30, label:'Net 30'})
+function _customerTerms(c){
+  var raw=(c&&(c.paymentTerms||c.billingMethod))||'Net 30';
+  var days=_termsToDays(raw);
+  var label = days===0 ? 'Due on receipt' : ('Net '+days);
+  return {days:days, label:label, raw:raw};
+}
+// Compute a due date string given a start date and a customer's terms
+function _dueDateFor(c, startDate){
+  var t=_customerTerms(c);
+  var d=new Date((startDate||new Date()).getTime()+t.days*86400000);
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+
+// A document is locked (read-only) when it should no longer be edited.
+// Rules:
+//  - an invoice paid in full is locked.
+//  - an estimate is locked once it is 100% billed AND 100% collected (no remaining, no outstanding).
+// Change orders and any doc with remaining work stay editable.
+function _docIsLocked(f){
+  if(!f) return false;
+  if(f.kind==='invoice'){ return _invSummary(f.doc).fullyPaid; }
+  if(f.kind==='estimate'){
+    var s=_estSummary(f.job, f.doc.est);
+    // must have been billed at all, fully billed (no remaining), and fully collected (no outstanding)
+    return s.billed>0.5 && s.remainingToBill<=0.5 && s.outstanding<=0.5;
+  }
+  return false;
+}
 
 // Ensure the doc has an editable lines array (built from scope/description if missing)
 function _ensureLines(found){
@@ -2499,9 +2599,14 @@ function _ensureLines(found){
         return {desc:l.desc||'', qty:(l.qty!=null?l.qty:1), unit:(l.unit||''), unitPrice:(l.unitPrice!=null?l.unitPrice:amt), amount:amt};
       });
     } else {
-      var label=d.scope||d.description||(found.kind==='invoice'?'Demolition services':'Scope of work');
-      var amt=_money(d.amount);
-      d._lines=[{desc:label, qty:1, unit:'job', unitPrice:amt, amount:amt}];
+      if(d._isNew){
+        // brand-new estimate/CO: start with one empty line the user must fill in
+        d._lines=[{desc:'', qty:1, unit:'job', unitPrice:0, amount:0, _needsService:true}];
+      } else {
+        var label=d.scope||d.description||(found.kind==='invoice'?'Demolition services':'Scope of work');
+        var amt=_money(d.amount);
+        d._lines=[{desc:label, qty:1, unit:'job', unitPrice:amt, amount:amt}];
+      }
     }
   }
   // backfill qty/unit/unitPrice on older line shapes
@@ -2523,7 +2628,11 @@ function docLineSave(ref, idx, field, val){
   var f=_findDoc(ref); if(!f) return;
   var lines=_ensureLines(f);
   if(!lines[idx]) return;
-  if(field==='qty'||field==='unitPrice'){
+  if(field==='desc'){
+    lines[idx].desc=val;
+    // once a real service is typed, clear the "needs service" red flag
+    if(String(val||'').trim()){ if(lines[idx]._needsService) delete lines[idx]._needsService; if(f.doc._isNew) delete f.doc._isNew; }
+  } else if(field==='qty'||field==='unitPrice'){
     lines[idx][field]=_money(val);
     lines[idx].amount=(Number(lines[idx].qty)||0)*(Number(lines[idx].unitPrice)||0);
   } else if(field==='amount'){
@@ -2557,18 +2666,31 @@ function docDeleteLine(ref, idx){
   _reopenDoc(ref);
 }
 function docSave(ref){
-  // Ask for confirmation before saving
-  _confirmDoc('Save changes to '+ref+'?', function(){
-    var f=_findDoc(ref); if(!f) return;
+  var f=_findDoc(ref); if(!f) return;
+  var isDraft=!!f.doc._draft;
+  // For a brand-new draft, require at least one real service line before saving
+  if(isDraft){
+    var lines=_ensureLines(f).filter(function(l){ return String(l.desc||'').trim() && (Number(l.amount)||0)>0; });
+    if(!lines.length){
+      _flashDoc && _flashDoc('Add a service with an amount before saving');
+      return;
+    }
+  }
+  _confirmDoc(isDraft?('Create '+ref+'?'):('Save changes to '+ref+'?'), function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    // Confirm the draft → it becomes a real document
+    if(ff.doc._draft){ delete ff.doc._draft; delete ff.doc._isNew; }
     if(window.SDD && SDD.save) SDD.save();
     docEditMode=false; // back to read-only after saving
-    _flashDoc('✓ '+ref+' saved');
+    _flashDoc(isDraft?('✓ '+ref+' created'):('✓ '+ref+' saved'));
     renderList();
     _reopenDoc(ref);
-  });
+  }, isDraft?'Yes, create':'Yes, save');
 }
 // Enter edit mode for the PDF (fields become editable)
 function docEnterEdit(ref){
+  var f=_findDoc(ref);
+  if(_docIsLocked(f)){ _flashDoc && _flashDoc(f.kind==='estimate'?'This estimate is fully billed and paid; it can\'t be edited':'This invoice is paid in full and can\'t be edited'); return; }
   docEditMode=true;
   _reopenDoc(ref);
 }
@@ -2588,10 +2710,39 @@ function docSendToClient(ref){
     _reopenDoc(ref);
   }, 'Yes, send');
 }
-// Cancel edit mode (discard visual edit state, revert to read-only)
+// Cancel edit mode. If this is an unsaved draft, discard it entirely.
 function docCancelEdit(ref){
+  var f=_findDoc(ref);
+  if(f && f.doc._draft){
+    _confirmDoc('Discard this new '+(f.kind==='co'?'change order':f.kind)+'? It won\'t be created.', function(){
+      _discardDraft(ref);
+    }, 'Yes, discard');
+    return;
+  }
   docEditMode=false;
   _reopenDoc(ref);
+}
+// Remove an unsaved draft document from its job and return to the previous view
+function _discardDraft(ref){
+  var f=_findDoc(ref); if(!f){ docEditMode=false; return; }
+  var job=f.job, kind=f.kind, cId=f.cust?f.cust.id:activeId, jEst=job.est;
+  var parentEst=(kind==='invoice')?(f.doc.originalEst||''):'';
+  if(kind==='estimate'){ job.estimates=(job.estimates||[]).filter(function(e){return e.est!==ref;}); }
+  else if(kind==='co'){ job.changeOrders=(job.changeOrders||[]).filter(function(o){return o.est!==ref;}); }
+  else if(kind==='invoice'){ job.invoices=(job.invoices||[]).filter(function(iv){return iv.est!==ref;}); }
+  docEditMode=false;
+  activeDocRef=null; activeDocKind=null;
+  _flashDoc && _flashDoc('Discarded — nothing was created');
+  // If a draft invoice was created from an estimate, go back to that estimate's view
+  if(kind==='invoice' && parentEst && _findDoc(parentEst)){
+    renderList();
+    selectEstimate(cId, jEst, parentEst);
+    return;
+  }
+  if(kind==='estimate'){ activeEstimateId=null; }
+  renderList();
+  if(typeof renderJobInfo==='function'){ renderJobInfo(cId, jEst); }
+  else { renderDetail(cId); }
 }
 // Toggle a terms clause on/off for this doc
 function docToggleClause(ref, clauseId, checked){
@@ -2651,7 +2802,8 @@ function editableDocSheet(ref){
   var total=lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
   var logo=(typeof SDD_LOGO!=='undefined')?SDD_LOGO:'';
   var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Deconstruction & Demolition',shortName:'SDD Demolition',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
-  var ed=docEditMode; // edit mode on/off
+  var locked=_docIsLocked(f);           // paid-in-full invoices are locked
+  var ed=docEditMode && !locked;        // edit mode on/off (never editable when locked)
 
   var inCss='font-family:Barlow,sans-serif;font-size:13px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:5px 7px;width:100%;box-sizing:border-box;background:#fff;transition:all .12s;';
   var esc=function(v){return String(v==null?'':v).replace(/"/g,'&quot;');};
@@ -2665,14 +2817,18 @@ function editableDocSheet(ref){
   // line rows — inputs in edit mode, plain cells otherwise
   var lineRows=lines.map(function(l,i){
     if(ed){
+      var needs=(l._needsService || !String(l.desc||'').trim());
+      var descCss=inCss + (needs?'border:1.5px solid #D94F4F;background:#FFF5F5;':'');
+      var descPlaceholder=needs?' placeholder="⚠ Add a service — describe the work"':'';
       return '<tr>'
-        +'<td style="padding:5px 6px 5px 0;width:40%;"><input value="'+esc(l.desc)+'" oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" style="'+inCss+'"></td>'
+        +'<td style="padding:5px 6px 5px 0;width:40%;"><input value="'+esc(l.desc)+'"'+descPlaceholder+' oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" style="'+descCss+'"></td>'
         +'<td style="padding:5px 4px;width:64px;"><input value="'+esc(l.qty)+'" oninput="docLineSave(\''+ref+'\','+i+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
         +'<td style="padding:5px 4px;width:64px;"><input value="'+esc(l.unit)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unit\',this.value)" style="'+inCss+'text-align:center;"></td>'
         +'<td style="padding:5px 4px;width:84px;"><input value="'+esc(l.unitPrice)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
         +'<td style="padding:5px 4px;width:96px;text-align:right;font-weight:700;white-space:nowrap;" id="docLineTot-'+i+'">'+f2(l.amount)+'</td>'
         +'<td style="padding:5px 0 5px 6px;width:30px;text-align:center;"><button onclick="docDeleteLine(\''+ref+'\','+i+')" title="Delete" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:15px;line-height:1;">×</button></td>'
-        +'</tr>';
+        +'</tr>'
+        +(needs?'<tr><td colspan="6" style="padding:0 6px 6px 0;"><span style="font-size:11px;color:#D94F4F;font-weight:600;">← Add the service for this estimate to get started.</span></td></tr>':'');
     }
     return '<tr>'
       +'<td style="padding:9px 6px 9px 0;font-size:13px;border-bottom:1px solid #F0F0F0;">'+(esc(l.desc)||'')+'</td>'
@@ -2725,10 +2881,15 @@ function editableDocSheet(ref){
         +'<button onclick="docCancelEdit(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
         +'<button onclick="docSave(\''+ref+'\')" style="padding:11px 32px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);">✓ Save</button>'
       +'</div>'
-    : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+    : (locked
+      ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+          +'<div style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#16a34a;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked — '+(f.kind==='estimate'?'this estimate is fully billed and paid; it can\'t be edited':'this invoice is paid in full and can\'t be edited')+'</div>'
+          +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'+(f.kind==='estimate'?'Resend copy':'Resend receipt')+'</button>'
+        +'</div>'
+      : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
         +'<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>'
         +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to client</button>'
-      +'</div>';
+      +'</div>');
 
   // status badge (read) vs input (edit)
   var statusEl = ed
@@ -2752,8 +2913,11 @@ function editableDocSheet(ref){
       +'<div style="text-align:right;min-width:190px;">'
         +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:40px;font-weight:700;color:'+accent+';letter-spacing:.04em;line-height:1;">'+kindLabel+'</div>'
         +'<div style="font-size:15px;font-weight:700;color:#555;margin-top:6px;">#'+ref+'</div>'
-        +'<div style="margin-top:6px;display:flex;justify-content:flex-end;">'+fld(d.date,'date','text-align:right;font-size:12px;max-width:130px;','Date')+'</div>'
-        +(f.kind==='invoice'?'<div style="margin-top:4px;display:flex;justify-content:flex-end;">'+fld(d.due,'due','text-align:right;font-size:12px;max-width:130px;','Due date')+'</div>':'')
+        +'<div style="margin-top:8px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;text-align:right;">'+(f.kind==='invoice'?'Invoice Date':'Date')+'</div>'
+        +'<div style="margin-top:2px;display:flex;justify-content:flex-end;">'+fld(d.date,'date','text-align:right;font-size:12px;max-width:130px;','Date')+'</div>'
+        +(f.kind==='invoice'?'<div style="margin-top:8px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;text-align:right;">Due Date</div>':'')
+        +(f.kind==='invoice'?'<div style="margin-top:2px;display:flex;justify-content:flex-end;">'+fld(d.due,'due','text-align:right;font-size:12px;max-width:130px;','Due date')+'</div>':'')
+        +(f.kind==='invoice'?'<div style="margin-top:4px;font-size:11px;color:#999;text-align:right;">Terms: '+((d.terms)||_customerTerms(c).label)+'</div>':'')
         +(f.kind!=='invoice'?'<div style="margin-top:6px;font-size:12px;color:#777;display:flex;align-items:center;gap:6px;justify-content:flex-end;"><strong>PO:</strong>'+fld(d.poNumber,'poNumber','text-align:right;font-size:12px;max-width:110px;','PO')+'</div>':'')
       +'</div>'
     +'</div>'
@@ -2791,11 +2955,305 @@ function editableDocSheet(ref){
       +'</tr></thead>'
       +'<tbody>'+lineRows+'</tbody></table>'
     +(ed?'<button onclick="docAddLine(\''+ref+'\')" style="margin-top:8px;padding:6px 12px;border:1px dashed '+accent+';border-radius:7px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">+ Add line item</button>':'')
+    // CONTRACT SCOPE REFERENCE (item descriptions only, no prices) — shown before the total
+    +(f.kind==='invoice'?_invoiceScopeReference(f, accent):'')
     +'<div style="border-top:2px solid '+accent+';display:flex;justify-content:space-between;padding:14px 4px 2px;margin-top:10px;font-size:18px;font-weight:800;background:#F8F6F2;"><span style="padding-left:6px;">Total</span><span style="color:'+accent+';padding-right:6px;" id="docGrandTot">'+f2(total)+'</span></div>'
+    // CONTRACT SUMMARY (progress-billing invoices tied to an estimate)
+    +(f.kind==='invoice'?_invoiceContractSummary(f, accent):'')
+    // CLIENT PAYMENT SECTION (invoices only, read-only, inside the PDF)
+    +(f.kind==='invoice'?_invoicePdfPayments(f, accent):'')
     // TERMS & CONDITIONS
     +termsBlock
     // ACTION BAR
     +actionBar
+  +'</div>'
+  // PAYMENT SUMMARY (invoices only)
+  +(f.kind==='invoice'?_invPaymentSummary(f):'')
+  // ACTIVITY LOG (below the editable document)
+  +_docActivityLog(f);
+}
+
+// Contract summary block for a progress-billing invoice (shown inside the PDF, client-facing)
+// Shows: contract total, previously billed, this invoice, total billed to date, remaining on contract.
+function _invoiceContractSummary(f, accent){
+  var iv=f.doc, estId=iv.originalEst||'';
+  if(!estId) return ''; // standalone invoice → no contract context
+  var job=f.job;
+  var src=(job.estimates||[]).find(function(e){return e.est===estId;})
+        ||(job.changeOrders||[]).find(function(o){return o.est===estId;});
+  if(!src) return '';
+  var contractTotal=_money(src.amount);
+  var thisInv=_money(iv.amount);
+  // sum invoices for this estimate dated on/before this one, excluding this invoice, as "previously billed"
+  var allInvs=(job.invoices||[]).filter(function(x){return (x.originalEst||'')===estId;});
+  // order by their creation order in the array; treat everything before this invoice as prior
+  var idxThis=allInvs.indexOf(iv);
+  var previously=0;
+  allInvs.forEach(function(x,i){ if(x!==iv && i<idxThis) previously+=_money(x.amount); });
+  var billedToDate=previously+thisInv;
+  var remaining=Math.max(0, contractTotal-billedToDate);
+  // Only show the block when this is a partial/progress invoice or part of a multi-invoice estimate
+  var isProgress = iv._progressBilling || iv.partial || allInvs.length>1 || (thisInv < contractTotal-0.5);
+  if(!isProgress) return '';
+  var f2=function(n){ return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  var row=function(lbl,val,strong,col){
+    return '<div style="display:flex;justify-content:space-between;padding:6px 8px;font-size:13px;'+(strong?'font-weight:700;':'color:#555;')+'">'
+      +'<span>'+lbl+'</span><span style="'+(col?'color:'+col+';':'')+(strong?'font-weight:700;':'font-weight:600;')+'">'+f2(val)+'</span></div>';
+  };
+  return '<div style="margin-top:22px;">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:8px;">Contract Summary · '+estId+'</div>'
+    +'<div style="border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;">'
+      +row('Contract total (estimate)', contractTotal)
+      +'<div style="border-top:1px solid #eee;"></div>'
+      +row('Previously billed', previously)
+      +row('This invoice', thisInv, true, accent)
+      +'<div style="border-top:1px solid #eee;"></div>'
+      +row('Total billed to date', billedToDate)
+      +'<div style="background:#F5F4F1;">'+row('Remaining on contract', remaining, true, remaining>0.5?'#B8922A':'#16a34a')+'</div>'
+    +'</div>'
+  +'</div>';
+}
+
+// Contract scope reference: lists the original estimate's line items by description only (no prices),
+// shown on progress-billing invoices so the client sees what the contract covers, without affecting totals.
+function _invoiceScopeReference(f, accent){
+  var iv=f.doc, estId=iv.originalEst||'';
+  if(!estId) return '';
+  // only for progress/partial invoices (not full-value single invoices)
+  var isProgress = iv._progressBilling || iv.partial;
+  if(!isProgress) return '';
+  var job=f.job;
+  var src=(job.estimates||[]).find(function(e){return e.est===estId;})
+        ||(job.changeOrders||[]).find(function(o){return o.est===estId;});
+  if(!src) return '';
+  var estF={doc:src, kind:'estimate', job:job, cust:f.cust};
+  var lines=_ensureLines(estF).filter(function(l){ return String(l.desc||'').trim(); });
+  if(!lines.length) return '';
+  var items=lines.map(function(l){
+    return '<li style="font-size:13px;color:#444;padding:3px 0;">'+esc_(l.desc)+'</li>';
+  }).join('');
+  return '<div style="margin-top:22px;">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:4px;">Scope of Work Included in This Contract</div>'
+    +'<div style="font-size:11px;color:#999;margin-bottom:8px;">Reference only — for the full contract ('+estId+'). This progress invoice bills a portion of the total.</div>'
+    +'<ul style="margin:0;padding-left:20px;">'+items+'</ul>'
+  +'</div>';
+}
+
+// Read-only payment section rendered INSIDE the invoice PDF (client-facing, no buttons)
+function _invoicePdfPayments(f, accent){
+  var iv=f.doc, s=_invSummary(iv);
+  var pays=iv.payments||[];
+  // Only show if there are payments OR an outstanding balance worth noting.
+  if(!pays.length && s.balance<=0.5) return '';
+  var f2=function(n){ return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+  // Payment history rows (each payment with its date and method)
+  var rows=pays.map(function(p){
+    return '<tr>'
+      +'<td style="padding:7px 6px;border-bottom:1px solid #eee;font-size:13px;color:#444;">'+(p.date||'')+'</td>'
+      +'<td style="padding:7px 6px;border-bottom:1px solid #eee;font-size:13px;color:#444;">'+(p.method||'')+(p.ref?' · '+p.ref:'')+'</td>'
+      +'<td style="padding:7px 6px;border-bottom:1px solid #eee;font-size:13px;text-align:right;font-weight:700;color:#16a34a;">'+(p.amount||'')+'</td>'
+    +'</tr>';
+  }).join('');
+  var paidInFull=s.balance<=0.5;
+  var out='<div style="margin-top:22px;">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:8px;">Payment History</div>';
+  if(pays.length){
+    out+='<table style="width:100%;border-collapse:collapse;">'
+      +'<thead><tr>'
+        +'<th style="text-align:left;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 6px 6px 0;border-bottom:2px solid #ddd;">Date</th>'
+        +'<th style="text-align:left;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 6px 6px;border-bottom:2px solid #ddd;">Method</th>'
+        +'<th style="text-align:right;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 6px 6px;border-bottom:2px solid #ddd;">Amount</th>'
+      +'</tr></thead><tbody>'+rows+'</tbody></table>';
+  } else {
+    out+='<div style="font-size:13px;color:#888;font-style:italic;padding-bottom:4px;">No payments received yet.</div>';
+  }
+  // Summary rows: invoiced, paid, balance
+  out+='<div style="margin-top:10px;border-top:1px solid #ddd;padding-top:10px;">'
+    +'<div style="display:flex;justify-content:space-between;padding:3px 6px;font-size:13px;color:#555;"><span>Invoice total</span><span style="font-weight:600;">'+f2(s.total)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:3px 6px;font-size:13px;color:#555;"><span>Total paid</span><span style="font-weight:600;color:#16a34a;">'+f2(s.paid)+'</span></div>'
+    +(s.retention>0?'<div style="display:flex;justify-content:space-between;padding:3px 6px;font-size:13px;color:#555;"><span>Retention held</span><span style="font-weight:600;color:#B8922A;">'+f2(s.retention)+'</span></div>':'');
+  if(paidInFull){
+    out+='<div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:2px solid #16a34a;border-radius:8px;background:rgba(22,163,74,.06);">'
+      +'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>'
+      +'<span style="font-size:16px;font-weight:800;color:#16a34a;letter-spacing:.04em;">PAID IN FULL</span>'
+    +'</div>';
+  } else {
+    out+='<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;background:'+accent+';color:#fff;">'
+      +'<span style="font-size:14px;font-weight:700;letter-spacing:.03em;">BALANCE DUE</span>'
+      +'<span style="font-size:20px;font-weight:800;">'+f2(s.balance)+'</span>'
+    +'</div>';
+  }
+  out+='</div></div>';
+  return out;
+}
+
+// Payment summary block for an invoice: paid, balance, retention (INTERNAL view with buttons)
+function _invPaymentSummary(f){
+  var iv=f.doc, s=_invSummary(iv), accent='#16a34a';
+  var estId=iv.originalEst||'';
+  var estLink=estId?'<span style="font-size:11px;color:var(--muted);">Part of '+estId+'</span>':'';
+  var pmRows=(iv.payments||[]).map(function(p){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">'
+      +'<div><div style="font-size:13px;font-weight:600;">'+(p.method||'Payment')+'</div><div style="font-size:11px;color:var(--muted);">'+(p.date||'')+(p.ref?' · '+p.ref:'')+'</div></div>'
+      +'<div style="font-size:14px;font-weight:700;color:'+accent+';">'+(p.amount||'')+'</div>'
+    +'</div>';
+  }).join('');
+  var box=function(lbl,val,col){ return '<div style="flex:1;text-align:center;padding:12px 8px;"><div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;">'+lbl+'</div><div style="font-size:19px;font-weight:800;color:'+(col||'var(--text)')+';margin-top:3px;">'+_moneyStr(val)+'</div></div>'; };
+  var statusPill;
+  if(s.fullyPaid) statusPill='<span style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:rgba(22,163,74,.14);color:#16a34a;">Paid in full</span>';
+  else if(s.paid>0) statusPill='<span style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:rgba(200,130,42,.14);color:#B8922A;">Partially paid</span>';
+  else statusPill='<span style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:rgba(58,126,212,.14);color:#2563eb;">Unpaid</span>';
+  return '<div style="margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+      +'<div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);">Payment summary</div>'
+      +statusPill
+    +'</div>'
+    +estLink
+    +'<div style="display:flex;gap:8px;margin:12px 0;background:var(--surface2);border-radius:10px;">'
+      +box('Invoice total', s.total)
+      +'<div style="width:1px;background:var(--border);"></div>'
+      +box('Paid', s.paid, '#16a34a')
+      +'<div style="width:1px;background:var(--border);"></div>'
+      +box('Balance', s.balance, s.balance>0.5?'#D94F4F':'#16a34a')
+      +(s.retention>0?'<div style="width:1px;background:var(--border);"></div>'+box('Retention', s.retention, '#B8922A'):'')
+    +'</div>'
+    +(pmRows?'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 4px;">Payments received</div>'+pmRows:'<div style="font-size:13px;color:var(--muted2);font-style:italic;">No payments recorded yet.</div>')
+    +'<div style="margin-top:12px;">'
+      +(s.fullyPaid
+          ? '<div style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:rgba(22,163,74,.1);color:#16a34a;font-size:13px;font-weight:700;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>This invoice is paid in full</div>'
+          : '<button onclick="_recordPayment(\''+iv.est+'\')" style="padding:9px 16px;border:1px solid '+accent+';border-radius:8px;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ Record payment</button>'
+            +'<button onclick="_toggleRetention(\''+iv.est+'\')" style="margin-left:8px;padding:9px 16px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">'+(s.retention>0?'Remove retention':'Add 10% retention')+'</button>')
+    +'</div>'
+  +'</div>';
+}
+
+// Toggle 10% retention on an invoice
+function _toggleRetention(invRef){
+  var f=_findDoc(invRef); if(!f||f.kind!=='invoice') return;
+  var iv=f.doc;
+  var has=_invRetention(iv)>0;
+  if(has){ iv.retention=false; delete iv.retentionPct; delete iv.retentionAmount; }
+  else { iv.retention=true; iv.retentionPct=10; }
+  if(window.SDD && SDD.save) SDD.save();
+  _reopenDoc(invRef);
+}
+// Record a payment against an invoice (popup)
+function _recordPayment(invRef){
+  var f=_findDoc(invRef); if(!f||f.kind!=='invoice') return;
+  var iv=f.doc, s=_invSummary(iv);
+  if(s.fullyPaid){ _flashDoc && _flashDoc('This invoice is already paid in full'); return; }
+  var ex=document.getElementById('_recPmtBg'); if(ex) ex.remove();
+  var bg=document.createElement('div'); bg.id='_recPmtBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000080;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var suggested=Math.max(0,s.balance);
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:440px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:20px 24px 4px;font-size:18px;font-weight:800;">Record payment · '+iv.est+'</div>'
+    +'<div style="padding:0 24px 14px;font-size:13px;color:var(--muted);">Balance due: <b>'+_moneyStr(s.balance)+'</b></div>'
+    +'<div style="padding:4px 24px;">'
+      +'<label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Amount</label>'
+      +'<input id="_rpAmt" type="text" value="'+suggested+'" style="width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;margin:4px 0 12px;box-sizing:border-box;">'
+      +'<label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Method</label>'
+      +'<select id="_rpMethod" style="width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;margin:4px 0 12px;box-sizing:border-box;background:#fff;">'
+        +'<option>Credit Card</option><option>ACH</option><option>Check</option><option>Cash</option><option>Wire</option>'
+      +'</select>'
+      +'<label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Reference (optional)</label>'
+      +'<input id="_rpRef" type="text" placeholder="Check #, last 4 digits, etc." style="width:100%;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;margin:4px 0 12px;box-sizing:border-box;">'
+    +'</div>'
+    +'<div style="padding:8px 24px 20px;display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_recPmtBg\').remove()" style="padding:10px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_recordPaymentSave(\''+iv.est+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save payment</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _recordPaymentSave(invRef){
+  var f=_findDoc(invRef); if(!f||f.kind!=='invoice') return;
+  var iv=f.doc;
+  var amt=_money(document.getElementById('_rpAmt').value);
+  var method=document.getElementById('_rpMethod').value;
+  var ref=document.getElementById('_rpRef').value.trim();
+  if(amt<=0){ return; }
+  var today=new Date();
+  var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+  iv.payments=iv.payments||[];
+  var pid='PMT-'+(iv.est||'').replace(/^INV-?/,'')+'-'+(iv.payments.length+1);
+  iv.payments.push({id:pid, date:fmt(today), amount:_moneyStr(amt), method:method, ref:ref, note:'Payment recorded'});
+  // update status
+  var s=_invSummary(iv);
+  iv.status = s.fullyPaid ? 'Paid' : (s.paid>0 ? 'Partial' : 'Unpaid');
+  if(window.SDD && SDD.save) SDD.save();
+  var bg=document.getElementById('_recPmtBg'); if(bg) bg.remove();
+  _flashDoc && _flashDoc('Payment recorded on '+iv.est);
+  renderList();
+  _reopenDoc(invRef);
+}
+
+// Build an activity log for a document (estimate / change order / invoice)
+function _docActivityLog(f){
+  var d=f.doc, job=f.job, kind=f.kind, accent={estimate:'#B8922A', co:'#C8822A', invoice:'#16a34a'}[kind];
+  var events=[];
+  var push=function(date,label,by,icon){ if(date) events.push({date:date, label:label, by:by||'', icon:icon||'dot', _s:_txDate(date)}); };
+  var kindName={estimate:'Estimate', co:'Change order', invoice:'Invoice'}[kind]||'Document';
+  // Creation
+  push(d.date, kindName+' '+(d.est||'')+' created', d.createdBy||'', 'plus');
+  // Estimate-specific
+  if(kind==='estimate'){
+    push(d.dateSent||job.dateSent, 'Sent to client', d.sentBy||'', 'send');
+    if(/approved/i.test(d.status||'')) push(d.dateApproved||d.date, 'Approved by client', '', 'check');
+    if(/paid/i.test(d.status||'')&&!/unpaid/i.test(d.status||'')) push(d.datePaid||'', 'Marked paid', '', 'money');
+  }
+  // Change order-specific
+  if(kind==='co'){
+    if(/approved/i.test(d.status||'')) push(d.dateApproved||d.date, 'Change order approved', '', 'check');
+    if(/pending/i.test(d.status||'')) push(d.date, 'Awaiting approval', '', 'clock');
+  }
+  // Invoice-specific
+  if(kind==='invoice'){
+    push(d.dateSentToClient||d.date, 'Invoice sent to client', '', 'send');
+    push(d.due, 'Payment due', '', 'clock');
+    (d.payments||[]).forEach(function(p){ push(p.date, 'Payment received · '+(p.method||'')+' · '+(p.amount||''), '', 'money'); });
+    if(/past due/i.test(d.status||'')) push(d.due, 'Marked past due', '', 'alert');
+  }
+  // Job-level notifications tied to this document (sent notices, reminders)
+  (job.notifications||[]).forEach(function(n){ push(n.date, n.type, n.by||'', 'send'); });
+  // Sort chronologically
+  events.sort(function(a,b){ return a._s-b._s; });
+  var ic=function(name){
+    var paths={
+      plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+      send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+      check:'<path d="M20 6L9 17l-5-5"/>',
+      money:'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+      clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+      alert:'<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+      dot:'<circle cx="12" cy="12" r="4"/>'
+    };
+    return paths[name]||paths.dot;
+  };
+  var rows;
+  if(!events.length){
+    rows='<div style="color:var(--muted2);font-style:italic;font-size:13px;padding:4px 0;">No activity recorded yet.</div>';
+  } else {
+    rows=events.map(function(e,i){
+      var last=i===events.length-1;
+      return '<div style="display:flex;gap:12px;position:relative;">'
+        +'<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">'
+          +'<div style="width:26px;height:26px;border-radius:50%;background:rgba(22,163,74,.1);display:flex;align-items:center;justify-content:center;">'
+            +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ic(e.icon)+'</svg>'
+          +'</div>'
+          +(last?'':'<div style="width:2px;flex:1;background:var(--border);margin:2px 0;min-height:14px;"></div>')
+        +'</div>'
+        +'<div style="padding-bottom:'+(last?'0':'14px')+';flex:1;">'
+          +'<div style="font-size:13px;font-weight:600;color:var(--text);">'+e.label+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);margin-top:1px;">'+e.date+(e.by?' · '+e.by:'')+'</div>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+  }
+  return '<div style="margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Activity Log</div>'
+    +rows
   +'</div>';
 }
 
@@ -2810,7 +3268,17 @@ function docSetTermsType(ref, type){
   _reopenDoc(ref);
 }
 
+// Remove any unsaved draft documents (except optionally the one being opened now).
+// Drafts are never persisted, so this just cleans them out of the in-memory arrays.
+function _purgeDrafts(exceptRef){
+  CUSTOMERS.forEach(function(c){(c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(job){
+    ['estimates','changeOrders','invoices'].forEach(function(k){
+      if(job[k]) job[k]=job[k].filter(function(d){ return !d._draft || d.est===exceptRef; });
+    });
+  });});});
+}
 function selectEstimate(customerId, jobEst, estId){
+  _purgeDrafts(estId);
   activeId=customerId;
   expandedCustomer=customerId;
   activePM=null;
@@ -2889,15 +3357,52 @@ function renderEstimateDetail(customerId, jobEst, estId){
         +est.est+' · '+c.name
         +'<span style="padding:2px 10px;border-radius:12px;background:'+stage.color+';color:#fff;font-size:11px;font-weight:700;margin-left:4px;">'+stage.label+'</span>'
       +'</div>'
+      +(_estSummary(job, est.est).remainingToBill>0.5
+          ? '<button onclick="_jdInvoiceMode(\''+est.est+'\')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate invoice</button>'
+          : '')
     +'</div>'
     // native editable estimate document
     +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(est.est)+'</div>'
+    // FINANCIAL SUMMARY: billed vs total, remaining to bill, collected
+    +_estFinancialPanel(job, est.est, invList)
+  +'</div>';
+}
+
+// Financial summary panel for an estimate (shown in its detail view)
+function _estFinancialPanel(job, estId, invListHtml){
+  var s=_estSummary(job, estId);
+  var pct=s.estTotal>0?Math.min(100,Math.round(s.billed/s.estTotal*100)):0;
+  var colPct=s.collected>0&&s.billed>0?Math.min(100,Math.round(s.collected/s.billed*100)):0;
+  var box=function(lbl,val,col){ return '<div style="flex:1;text-align:center;padding:14px 8px;"><div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;">'+lbl+'</div><div style="font-size:20px;font-weight:800;color:'+(col||'var(--text)')+';margin-top:3px;">'+_moneyStr(val)+'</div></div>'; };
+  var canBill = s.remainingToBill>0.5;
+  return '<div style="margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Billing summary</div>'
+    +'<div style="display:flex;gap:8px;background:var(--surface2);border-radius:10px;margin-bottom:6px;">'
+      +box('Estimate total', s.estTotal)
+      +'<div style="width:1px;background:var(--border);"></div>'
+      +box('Billed', s.billed, '#2563eb')
+      +'<div style="width:1px;background:var(--border);"></div>'
+      +box('Remaining to bill', s.remainingToBill, s.remainingToBill>0.5?'#B8922A':'#16a34a')
+    +'</div>'
+    // progress bar billed vs total
+    +'<div style="margin:10px 2px 4px;"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;"><span>Billed '+pct+'% of estimate</span><span>'+_moneyStr(s.billed)+' / '+_moneyStr(s.estTotal)+'</span></div>'
+      +'<div style="height:8px;border-radius:4px;background:var(--surface3);overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:#2563eb;border-radius:4px;"></div></div></div>'
+    +'<div style="display:flex;gap:8px;background:var(--surface2);border-radius:10px;margin:12px 0 6px;">'
+      +box('Collected', s.collected, '#16a34a')
+      +'<div style="width:1px;background:var(--border);"></div>'
+      +box('Outstanding', s.outstanding, s.outstanding>0.5?'#D94F4F':'#16a34a')
+      +(s.retention>0?'<div style="width:1px;background:var(--border);"></div>'+box('Retention', s.retention, '#B8922A'):'')
+    +'</div>'
+    +(canBill?'<div style="margin-top:12px;padding:10px 14px;border-radius:9px;background:rgba(200,130,42,.08);border:1px solid rgba(200,130,42,.25);font-size:13px;color:#8a6414;"><b>'+_moneyStr(s.remainingToBill)+'</b> remaining to bill on this estimate.</div>':'<div style="margin-top:12px;padding:10px 14px;border-radius:9px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.25);font-size:13px;color:#15803d;">This estimate is fully billed.</div>')
+    +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px;">Invoices generated ('+s.invoices.length+')</div>'
+    +invListHtml
   +'</div>';
 }
 
 // Popup with NATIVE editable PDF (change order or invoice)
 // Show an editable CO/Invoice document in the RIGHT panel (not a popup)
 function selectDoc(kind, ref){
+  _purgeDrafts(ref);
   var f=_findDoc(ref); if(!f) return;
   activeId=f.cust.id;
   expandedCustomer=f.cust.id;
@@ -2912,6 +3417,12 @@ function selectDoc(kind, ref){
     var parentCo=(f.job.changeOrders||[]).find(function(co){return co.est===root;});
     activeEstimateId = parentCo ? parentCo.originalEst : root;
   }
+  else if(kind==='payment' && f.invoice){
+    // resolve context from the invoice this payment belongs to
+    var iroot=f.invoice.originalEst;
+    var ipCo=(f.job.changeOrders||[]).find(function(co){return co.est===iroot;});
+    activeEstimateId = ipCo ? ipCo.originalEst : iroot;
+  }
   expandedJobEst=f.job.est;
   activeJobEst=f.job.est;
   renderList();
@@ -2923,6 +3434,7 @@ function renderDocDetail(kind, ref){
   var f=_findDoc(ref);
   var pr=document.getElementById('panelRight');
   if(!f||!pr) return;
+  if(kind==='payment'){ renderPaymentDetail(f); return; }
   var accent = kind==='invoice' ? '#16a34a' : '#C8822A';
   var label = kind==='invoice' ? 'Invoice' : 'Change Order';
   var paid=/paid/i.test(f.doc.status||'')&&!/unpaid/i.test(f.doc.status||'');
@@ -2940,6 +3452,49 @@ function renderDocDetail(kind, ref){
   +'</div>';
 }
 
+// ── PAYMENT DETAIL panel ──
+function _pmMethodIcon(method){
+  var m=(method||'').toLowerCase();
+  if(m.indexOf('credit')>-1||m.indexOf('card')>-1) return '<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>';
+  if(m.indexOf('ach')>-1||m.indexOf('bank')>-1||m.indexOf('wire')>-1) return '<path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>';
+  if(m.indexOf('check')>-1||m.indexOf('cheque')>-1) return '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h6"/>';
+  if(m.indexOf('cash')>-1) return '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/>';
+  return '<path d="M20 6L9 17l-5-5"/>';
+}
+function renderPaymentDetail(f){
+  var pr=document.getElementById('panelRight'); if(!pr) return;
+  var p=f.doc, inv=f.invoice||{}, accent='#16a34a';
+  var row=function(lbl,val){ return '<div><div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">'+lbl+'</div><div style="font-size:15px;font-weight:600;">'+(val||'&#8212;')+'</div></div>'; };
+  pr.innerHTML='<div style="padding:2px 2px 24px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2630;border-radius:10px 10px 0 0;">'
+      +'<div style="display:flex;align-items:center;gap:9px;color:#fff;font-size:14px;font-weight:600;">'
+        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>'
+        +'Payment Receipt · '+(p.id||'')+' · '+f.cust.name
+      +'</div>'
+      +'<button onclick="selectDoc(\'invoice\',\''+(inv.est||'')+'\')" style="padding:6px 12px;border:1px solid rgba(255,255,255,.3);border-radius:7px;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">← Back to invoice</button>'
+    +'</div>'
+    +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);background:#fff;">'
+      +'<div style="padding:26px 28px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;">'
+        +'<div><div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Amount received</div>'
+        +'<div style="font-size:34px;font-weight:800;color:'+accent+';margin-top:2px;">'+(p.amount||'$0')+'</div></div>'
+        +'<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;background:rgba(22,163,74,.1);">'
+          +'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="1.8">'+_pmMethodIcon(p.method)+'</svg>'
+          +'<span style="font-size:14px;font-weight:700;color:'+accent+';">'+(p.method||'Payment')+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div style="padding:24px 28px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">'
+        +row('Payment date', p.date)
+        +row('Payment method', p.method)
+        +row('Reference', p.ref)
+        +row('Applied to invoice', inv.est||'')
+        +row('Invoice amount', inv.amount||'')
+        +row('Invoice date', inv.date||'')
+      +'</div>'
+      +(p.note?'<div style="padding:0 28px 24px;"><div style="font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Note</div><div style="font-size:14px;color:var(--muted);">'+p.note+'</div></div>':'')
+    +'</div>'
+  +'</div>';
+  var prc=document.getElementById('panelRight'); if(prc) prc.scrollTop=0;
+}
 function clearJobSelection(customerId){
   activeJobEst=null;
   expandedJobEst=null;
@@ -3009,7 +3564,7 @@ function jobNewEstimateForPM(customerId, est, pmId){
   if(!job) return;
   var pm=c.contacts.find(function(x){return String(x.id)===String(pmId);});
   var pn=job.projectName||job.jobName||job.address||est;
-  window._createForJob={ pn:encodeURIComponent(pn), customer:encodeURIComponent(c.name), addr:encodeURIComponent(job.address||job.streetOnly||''), pm:encodeURIComponent((pm&&pm.name)||'') };
+  window._createForJob={ pn:encodeURIComponent(pn), customer:encodeURIComponent(c.name), addr:encodeURIComponent(job.address||job.streetOnly||''), pm:encodeURIComponent((pm&&pm.name)||''), _custId:c.id, _jobEst:job.est, _pmName:(pm&&pm.name)||'' };
   // Build a self-contained Estimate/Change Order chooser (does not depend on the
   // static #typeSelectorBg element, which proved unreliable in some browsers).
   var ex=document.getElementById('_jdTypeBg'); if(ex) ex.remove();
@@ -3040,13 +3595,84 @@ function jobNewEstimateForPM(customerId, est, pmId){
   document.body.appendChild(bg);
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
 }
-// Navigate to the estimates module to create the chosen document type
+// Create the chosen document locally inside CUSTOMERS and open it in the detail view
+// (same as selecting it in the left sidebar). No longer navigates to the estimates module.
 function _jdGoCreate(type){
   var bg=document.getElementById('_jdTypeBg'); if(bg) bg.remove();
   var j=window._createForJob||{};
-  var q='customer='+(j.customer||'')+'&addr='+(j.addr||'')+(j.pm?('&pm='+j.pm):'');
-  if(type==='changeorder'){ window.location.href='/sdd-estimates.html?changeOrderFor='+(j.pn||'')+'&'+q; }
-  else { window.location.href='/sdd-estimates.html?newFor='+(j.pn||'')+'&'+q; }
+  var c=CUSTOMERS.find(function(x){return x.id===j._custId;});
+  if(!c){ return; }
+  var job=_findOriginalJob(c, j._jobEst) || (function(){
+    // fallback: search job by est across contacts
+    var found=null;
+    (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(jb){ if(jb.est===j._jobEst) found=jb; });});
+    return found;
+  })();
+  if(!job){ return; }
+  if(type==='changeorder'){ _createChangeOrderLocal(c, job); }
+  else { _createEstimateLocal(c, job); }
+}
+
+// Next available EST-### number across all customers
+function _nextEstNumber(){
+  var max=0;
+  CUSTOMERS.forEach(function(c){(c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(job){
+    (job.estimates||[]).forEach(function(e){ var m=String(e.est||'').match(/^EST-(\d+)$/); if(m){ var n=parseInt(m[1]); if(n>max)max=n; } });
+  });});});
+  return 'EST-'+String(max+1).padStart(3,'0');
+}
+function _todayStr(){ return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+
+function _createEstimateLocal(c, job){
+  var num=_nextEstNumber();
+  var pn=job.projectName||job.jobName||'';
+  var est={ est:num, amount:'$0', status:'Draft', date:_todayStr(),
+            scope:'New Scope of Work', projectName:pn, lines:[], _isNew:true, _draft:true };
+  job.estimates=job.estimates||[];
+  job.estimates.push(est);
+  // NOTE: not persisted yet — it only becomes real when the user presses Save.
+  // Open in edit mode so the user fills in the service, then Save/Cancel decides its fate.
+  selectEstimate(c.id, job.est, num);
+  docEditMode=true;
+  renderEstimateDetail(c.id, job.est, num);
+}
+
+function _createChangeOrderLocal(c, job){
+  var origEstimates=(job.estimates||[]).filter(function(e){ return /^EST-\d+$/.test(e.est||''); });
+  if(!origEstimates.length){ _flashDoc && _flashDoc('This job has no estimate to attach a change order to'); return; }
+  // If multiple estimates, ask which one; if one, use it directly
+  if(origEstimates.length===1){ _doCreateCO(c, job, origEstimates[0].est); return; }
+  var ex=document.getElementById('_coPickBg'); if(ex) ex.remove();
+  var bg=document.createElement('div'); bg.id='_coPickBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000065;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var rows=origEstimates.map(function(e){
+    return '<div onclick="_doCreateCO('+c.id+',\''+job.est+'\',\''+e.est+'\');document.getElementById(\'_coPickBg\').remove();" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1.5px solid var(--border2);border-radius:10px;cursor:pointer;margin-bottom:8px;" onmouseover="this.style.borderColor=\'var(--warning)\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
+      +'<span style="font-weight:700;font-family:monospace;">'+e.est+'</span><span style="font-size:12px;color:var(--muted);">'+(e.amount||'')+' · '+(e.status||'')+'</span></div>';
+  }).join('');
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:440px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:20px 24px 6px;font-size:18px;font-weight:800;">Attach change order to…</div>'
+    +'<div style="padding:0 24px 8px;font-size:13px;color:var(--muted);">Pick the estimate this change order belongs to.</div>'
+    +'<div style="padding:8px 24px 20px;">'+rows+'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _doCreateCO(custId, jobEst, origEst){
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(custId);}); if(!c) return;
+  var job=_findOriginalJob(c, jobEst) || _findOriginalJob(c, origEst); if(!job) return;
+  // next CO sequence for this estimate
+  var m=origEst.match(/^EST-(\d+)$/); var base=m?m[1]:origEst.replace(/^EST-?/,'');
+  var seq=1; (job.changeOrders||[]).forEach(function(co){ var mm=String(co.est||'').match(new RegExp('^EST-CO'+base+'-(\\d+)$')); if(mm){ var n=parseInt(mm[1]); if(n>=seq) seq=n+1; } });
+  var num='EST-CO'+base+'-'+seq;
+  var co={ est:num, originalEst:origEst, amount:'$0', status:'Pending', date:_todayStr(),
+           description:'New change order', lines:[], _isNew:true, _draft:true };
+  job.changeOrders=job.changeOrders||[];
+  job.changeOrders.push(co);
+  // NOTE: not persisted yet — becomes real only when the user presses Save.
+  activeId=c.id; expandedCustomer=c.id; activeJobEst=job.est; expandedJobEst=job.est; activeEstimateId=origEst;
+  selectDoc('co', num);
+  docEditMode=true;
+  _reopenDoc(num);
 }
 // From the job info block: add a new Project Manager (contact) to this customer
 function jobAddProjectManager(customerId, est){
@@ -3178,7 +3804,7 @@ function _jobInvoicePickPM(customerId, est, pmId){
   if(!job) return;
   var pm=c.contacts.find(function(x){return String(x.id)===String(pmId);});
   var pn=job.projectName||job.jobName||job.address||est;
-  window._createForJob={ pn:encodeURIComponent(pn), customer:encodeURIComponent(c.name), addr:encodeURIComponent(job.address||job.streetOnly||''), pm:encodeURIComponent((pm&&pm.name)||''), est:est };
+  window._createForJob={ custId:c.id, pn:encodeURIComponent(pn), customer:encodeURIComponent(c.name), addr:encodeURIComponent(job.address||job.streetOnly||''), pm:encodeURIComponent((pm&&pm.name)||''), est:est };
   // Find estimates (and change orders) on this job that don't yet have an invoice
   var lines=[];
   (job.estimates||[]).forEach(function(e){
@@ -3195,7 +3821,7 @@ function _jobInvoicePickPM(customerId, est, pmId){
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000060;display:flex;align-items:center;justify-content:center;padding:20px;';
   var subt=pn+(pm?(' · '+pm.name):'');
   var estListHTML = lines.length ? lines.map(function(l){
-    return '<button onclick="_jdInvoiceFromEst(\''+l.est+'\')" style="display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:11px 14px;border:1.5px solid var(--border2);border-radius:10px;background:#fff;font-family:Barlow,sans-serif;cursor:pointer;margin-bottom:8px;" onmouseover="this.style.borderColor=\'#22c55e\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
+    return '<button onclick="_jdInvoiceMode(\''+l.est+'\')" style="display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:11px 14px;border:1.5px solid var(--border2);border-radius:10px;background:#fff;font-family:Barlow,sans-serif;cursor:pointer;margin-bottom:8px;" onmouseover="this.style.borderColor=\'#22c55e\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
       +'<span style="display:flex;align-items:center;gap:8px;min-width:0;"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--surface3);color:var(--muted);flex-shrink:0;">'+l.kind+'</span>'
       +'<span style="font-size:13px;font-weight:700;color:#2563eb;">'+l.est+'</span>'
       +(l.scope?'<span style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+l.scope+'</span>':'')+'</span>'
@@ -3220,17 +3846,257 @@ function _jobInvoicePickPM(customerId, est, pmId){
   document.body.appendChild(bg);
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
 }
+// Step: choose how much to bill — remaining, custom amount, or full total
+function _jdInvoiceMode(estId){
+  var typeBg=document.getElementById('_jdInvTypeBg'); if(typeBg) typeBg.style.display='none';
+  var ex=document.getElementById('_jdInvModeBg'); if(ex) ex.remove();
+  // resolve job + estimate summary for the remaining amount
+  var c=CUSTOMERS.find(function(x){ return _findOriginalJob(x, estId); });
+  var job=c?_findOriginalJob(c, estId):null;
+  var s=job?_estSummary(job, estId):{estTotal:0,billed:0,remainingToBill:0};
+  var remaining=s.remainingToBill, estTotal=s.estTotal;
+  var bg=document.createElement('div');
+  bg.id='_jdInvModeBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000070;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var fullPreview=_invNumberFor(estId,false,1);
+  var partPreview=_invNumberFor(estId,true,1);
+  var fullyBilled=remaining<=0.5;
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:500px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:20px 24px 4px;font-size:18px;font-weight:800;">Generate invoice · '+estId+'</div>'
+    +'<div style="padding:0 24px 12px;font-size:13px;color:var(--muted);">Estimate total <b>'+_moneyStr(estTotal)+'</b> · Billed <b>'+_moneyStr(s.billed)+'</b> · Remaining <b style="color:#B8922A;">'+_moneyStr(remaining)+'</b></div>'
+    +'<div style="padding:4px 24px 8px;">'
+    // Option 1: remaining (suggested) — only if there's a remainder
+    +(!fullyBilled?'<button onclick="_jdInvoiceCreate(\''+estId+'\',true,'+remaining+')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px;border:2px solid #16a34a;border-radius:12px;background:rgba(22,163,74,.04);cursor:pointer;margin-bottom:10px;">'
+        +'<div><div style="font-size:15px;font-weight:700;">Bill remaining balance <span style="font-size:11px;background:#16a34a;color:#fff;padding:1px 8px;border-radius:10px;margin-left:4px;">Suggested</span></div><div style="font-size:12px;color:var(--muted);">Invoices what\'s left to bill on this estimate.</div></div>'
+        +'<span style="font-size:15px;font-weight:800;color:#16a34a;">'+_moneyStr(remaining)+'</span>'
+      +'</button>':'')
+    // Option 2: full total
+    +'<button onclick="_jdInvoiceCreate(\''+estId+'\',false,'+estTotal+')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px;border:1.5px solid var(--border2);border-radius:12px;background:#fff;cursor:pointer;margin-bottom:10px;" onmouseover="this.style.borderColor=\'#16a34a\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
+        +'<div><div style="font-size:15px;font-weight:700;">Full amount (total)</div><div style="font-size:12px;color:var(--muted);">Bills the entire estimate in one invoice.</div></div>'
+        +'<span style="font-size:13px;font-weight:800;color:#16a34a;font-family:monospace;">'+fullPreview+'</span>'
+      +'</button>'
+    // Option 3: partial invoice → by amount OR by percentage of the estimate total
+    +'<div style="border:1.5px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:10px;">'
+      +'<div style="font-size:15px;font-weight:700;margin-bottom:2px;">Partial invoice ('+partPreview+', P2\u2026)</div>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Creates an invoice for part of the estimate. The rest stays as <b>remaining to bill</b>.</div>'
+      // radio: amount vs percentage
+      +'<div style="display:flex;gap:16px;margin-bottom:10px;">'
+        +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdPartialMode" value="amount" checked onchange="_jdPartialModeSwitch()" style="accent-color:#B8922A;">By amount</label>'
+        +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdPartialMode" value="percent" onchange="_jdPartialModeSwitch()" style="accent-color:#B8922A;">By percentage</label>'
+      +'</div>'
+      // amount input
+      +'<div id="_jdAmtRow" style="display:flex;gap:8px;align-items:center;">'
+        +'<span style="font-size:12px;color:var(--muted);white-space:nowrap;">Invoice amount:</span>'
+        +'<input id="_jdCustomAmt" type="text" placeholder="0.00" style="flex:1;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;box-sizing:border-box;">'
+        +'<button onclick="_jdInvoiceCustom(\''+estId+'\')" style="padding:10px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">Create</button>'
+      +'</div>'
+      // percent input (hidden by default)
+      +'<div id="_jdPctRow" style="display:none;gap:8px;align-items:center;">'
+        +'<span style="font-size:12px;color:var(--muted);white-space:nowrap;">Percentage:</span>'
+        +'<input id="_jdCustomPct" type="text" placeholder="0" oninput="_jdPctPreview('+estTotal+')" style="width:70px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;box-sizing:border-box;text-align:right;">'
+        +'<span style="font-size:15px;font-weight:700;">%</span>'
+        +'<span id="_jdPctAmt" style="flex:1;font-size:13px;color:var(--muted);white-space:nowrap;">= $0</span>'
+        +'<button onclick="_jdInvoicePercent(\''+estId+'\','+estTotal+')" style="padding:10px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">Create</button>'
+      +'</div>'
+    +'</div>'
+      +'</div>'
+    +'</div>'
+    // Option 4: select items from the estimate
+    +_jdItemPickerBlock(estId)
+    +'</div>'
+    +'<div style="padding:10px 24px 18px;display:flex;justify-content:flex-end;"><button onclick="document.getElementById(\'_jdInvModeBg\').remove();var t=document.getElementById(\'_jdInvTypeBg\');if(t)t.style.display=\'flex\';" style="padding:9px 20px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Back</button></div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg){ bg.remove(); var t=document.getElementById('_jdInvTypeBg'); if(t) t.style.display='flex'; } };
+}
+function _jdInvoiceCustom(estId){
+  var amt=_money(document.getElementById('_jdCustomAmt').value);
+  if(amt<=0) return;
+  // Create a partial invoice for exactly this amount (progress billing → INV-...P1, P2...)
+  _jdInvoiceCreate(estId, true, amt);
+}
+// Toggle between amount and percentage inputs
+function _jdPartialModeSwitch(){
+  var mode=(document.querySelector('input[name="_jdPartialMode"]:checked')||{}).value;
+  var amtRow=document.getElementById('_jdAmtRow');
+  var pctRow=document.getElementById('_jdPctRow');
+  if(!amtRow||!pctRow) return;
+  if(mode==='percent'){ amtRow.style.display='none'; pctRow.style.display='flex'; }
+  else { amtRow.style.display='flex'; pctRow.style.display='none'; }
+}
+// Live preview of the dollar amount for a given percentage
+function _jdPctPreview(estTotal){
+  var pct=_money(document.getElementById('_jdCustomPct').value);
+  var amt=estTotal*(pct/100);
+  var el=document.getElementById('_jdPctAmt');
+  if(el) el.textContent='= '+_moneyStr(amt);
+}
+// Create a partial invoice for a percentage of the estimate total
+function _jdInvoicePercent(estId, estTotal){
+  var pct=_money(document.getElementById('_jdCustomPct').value);
+  if(pct<=0) return;
+  if(pct>100) pct=100;
+  var amt=Math.round(estTotal*(pct/100)*100)/100;
+  if(amt<=0) return;
+  _jdInvoiceCreate(estId, true, amt);
+}
+
+// Build the "select items to bill" block for the invoice modal
+function _jdItemPickerBlock(estId){
+  var f=_findDoc(estId); if(!f) return '';
+  var lines=_ensureLines(f).filter(function(l){ return String(l.desc||'').trim() && (Number(l.amount)||0)>0; });
+  if(!lines.length){
+    return '<div style="border:1.5px dashed var(--border2);border-radius:12px;padding:14px;color:var(--muted2);font-size:13px;font-style:italic;">Add priced items to the estimate to bill by item.</div>';
+  }
+  var rows=lines.map(function(l,i){
+    return '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:6px;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
+      +'<input type="checkbox" class="_jdItemChk" data-amt="'+(Number(l.amount)||0)+'" data-idx="'+i+'" onchange="_jdItemToggle()" style="width:17px;height:17px;accent-color:#16a34a;flex-shrink:0;">'
+      +'<span style="flex:1;font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc_(l.desc)+'</span>'
+      +'<span style="font-size:13px;font-weight:700;color:#16a34a;white-space:nowrap;">'+_moneyStr(l.amount)+'</span>'
+    +'</label>';
+  }).join('');
+  return '<div style="border:1.5px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:6px;">'
+    +'<div style="font-size:15px;font-weight:700;margin-bottom:2px;">Select items to bill</div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Pick specific line items from the estimate to invoice.</div>'
+    +rows
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">'
+      +'<span style="font-size:13px;color:var(--muted);">Selected total: <b id="_jdItemsTotal" style="color:#16a34a;">$0</b></span>'
+      +'<button id="_jdItemsBtn" onclick="_jdInvoiceFromItems(\''+estId+'\')" disabled style="padding:10px 18px;border:none;border-radius:8px;background:#ccc;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:not-allowed;white-space:nowrap;">Create</button>'
+    +'</div>'
+  +'</div>';
+}
+function esc_(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function _jdItemToggle(){
+  var chks=document.querySelectorAll('._jdItemChk');
+  var total=0, any=false;
+  chks.forEach(function(ch){ if(ch.checked){ total+=parseFloat(ch.getAttribute('data-amt'))||0; any=true; } });
+  var tEl=document.getElementById('_jdItemsTotal'); if(tEl) tEl.textContent=_moneyStr(total);
+  var btn=document.getElementById('_jdItemsBtn');
+  if(btn){
+    btn.disabled=!any;
+    btn.style.background=any?'#16a34a':'#ccc';
+    btn.style.cursor=any?'pointer':'not-allowed';
+  }
+}
+function _jdInvoiceFromItems(estId){
+  var chks=document.querySelectorAll('._jdItemChk');
+  var f=_findDoc(estId); if(!f) return;
+  var lines=_ensureLines(f);
+  var picked=[], total=0;
+  chks.forEach(function(ch){ if(ch.checked){ var idx=parseInt(ch.getAttribute('data-idx')); if(lines[idx]){ picked.push(lines[idx]); total+=Number(lines[idx].amount)||0; } } });
+  if(!picked.length) return;
+  // determine if this covers the full estimate or is partial
+  var s=_estSummary(f.job, estId);
+  var isPartial = total < (s.estTotal - 0.5);
+  _jdInvoiceCreate(estId, isPartial, total, picked);
+}
+
+// Build the invoice number for a given estimate/CO, full or partial, with a partial index
+function _invNumberFor(estId, isPartial, pIndex){
+  var mCO=estId.match(/^EST-CO(\d+)-(\d+)$/);
+  var mEST=estId.match(/^EST-(\d+)$/);
+  if(mCO){ return isPartial ? ('INV-CO'+mCO[1]+'P'+pIndex+'-'+mCO[2]) : ('INV-CO'+mCO[1]+'-'+mCO[2]); }
+  if(mEST){ return isPartial ? ('INV-'+mEST[1]+'P'+pIndex) : ('INV-'+mEST[1]); }
+  // fallback for unusual ids
+  return isPartial ? ('INV-'+estId.replace(/^EST-?/,'')+'P'+pIndex) : ('INV-'+estId.replace(/^EST-?/,''));
+}
+
+// Actually create the invoice natively and open it in the right panel
+function _jdInvoiceCreate(estId, isPartial, billAmount, pickedItems, upfrontPayment){
+  var mb=document.getElementById('_jdInvModeBg'); if(mb) mb.remove();
+  var tb=document.getElementById('_jdInvTypeBg'); if(tb) tb.remove();
+  // Resolve the customer + job directly from the estimate id (reliable, independent of _createForJob)
+  var c=null, job=null;
+  for(var ci=0; ci<CUSTOMERS.length; ci++){
+    var jb=_findOriginalJob(CUSTOMERS[ci], estId);
+    if(jb){ c=CUSTOMERS[ci]; job=jb; break; }
+  }
+  if(!c||!job){ _flashDoc && _flashDoc('Could not find the estimate to invoice'); return; }
+  var src=(job.estimates||[]).find(function(e){return e.est===estId;})
+        ||(job.changeOrders||[]).find(function(o){return o.est===estId;});
+  // amount: use explicit billAmount if provided, otherwise the source total
+  var amount = (billAmount!=null) ? _moneyStr(billAmount) : (src?src.amount:'$0');
+  job.invoices=job.invoices||[];
+  var newNum;
+  if(isPartial){
+    // find highest existing P index for this estimate
+    var re=new RegExp('^'+_invNumberFor(estId,true,'(\\d+)').replace(/[.*+?^${}()|[\]\\]/g,function(m){return m==='('||m===')'||m==='\\'?m:'\\'+m;}));
+    // simpler: count existing partials for this originalEst
+    var existing=job.invoices.filter(function(iv){return (iv.originalEst||'')===estId && /P\d+/.test(iv.est);});
+    var maxP=0;
+    existing.forEach(function(iv){ var m=iv.est.match(/P(\d+)/); if(m && +m[1]>maxP) maxP=+m[1]; });
+    newNum=_invNumberFor(estId,true,maxP+1);
+  } else {
+    newNum=_invNumberFor(estId,false,0);
+    // if a full invoice already exists, bump into partial to avoid collision
+    if(job.invoices.some(function(iv){return iv.est===newNum;})){
+      var ex=job.invoices.filter(function(iv){return (iv.originalEst||'')===estId && /P\d+/.test(iv.est);});
+      var mx=0; ex.forEach(function(iv){var m=iv.est.match(/P(\d+)/);if(m&&+m[1]>mx)mx=+m[1];});
+      newNum=_invNumberFor(estId,true,mx+1);
+    }
+  }
+  var today=new Date();
+  var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+  var due=_dueDateFor(c, today);
+  var newInv={est:newNum, originalEst:estId, amount:amount, status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, partial:!!isPartial};
+  // If specific items were picked, copy them as the invoice's line items
+  if(pickedItems && pickedItems.length){
+    newInv.lines=pickedItems.map(function(l){
+      return {desc:l.desc, qty:(l.qty!=null?l.qty:1), unit:(l.unit||''), unitPrice:(l.unitPrice!=null?l.unitPrice:l.amount), total:(Number(l.amount)||0), amount:(Number(l.amount)||0)};
+    });
+  } else if(isPartial){
+    // partial (progress billing) invoice: a single clean "Progress payment" line for the billed amount
+    var billed=_money(newInv.amount);
+    // count existing partials for this estimate to number the progress payment
+    var priorCount=job.invoices.filter(function(iv){return (iv.originalEst||'')===estId && /P\d+/.test(iv.est||'');}).length;
+    var payNo=priorCount+1;
+    newInv.lines=[{desc:'Progress payment '+payNo+' — '+estId, qty:1, unit:'', unitPrice:billed, total:billed, amount:billed}];
+    newInv._progressBilling=true;
+  } else if(src){
+    // full invoice: copy the estimate's own line items so the invoice reflects the real work
+    var estF={doc:src, kind:'estimate', job:job, cust:c};
+    var estLines=_ensureLines(estF).filter(function(l){ return String(l.desc||'').trim(); });
+    if(estLines.length){
+      newInv.lines=estLines.map(function(l){
+        return {desc:l.desc, qty:(l.qty!=null?l.qty:1), unit:(l.unit||''), unitPrice:(l.unitPrice!=null?l.unitPrice:l.amount), total:(Number(l.amount)||0), amount:(Number(l.amount)||0)};
+      });
+    }
+  }
+  newInv._draft=true; // not real until the user presses Save
+  job.invoices.push(newInv);
+  // NOTE: not persisted yet — becomes real only when the user presses Save.
+  selectDoc('invoice', newNum);
+  docEditMode=true;
+  _reopenDoc(newNum);
+}
+
 function _jdInvoiceFromEst(estId){
-  var bg=document.getElementById('_jdInvTypeBg'); if(bg) bg.remove();
-  var j=window._createForJob||{};
-  var q='customer='+(j.customer||'')+'&addr='+(j.addr||'')+(j.pm?('&pm='+j.pm):'');
-  window.location.href='/sdd-invoices.html?invoiceForEst='+encodeURIComponent(estId)+'&job='+(j.pn||'')+'&'+q;
+  // kept for backward compatibility → route through the mode picker
+  _jdInvoiceMode(estId);
 }
 function _jdInvoiceStandalone(){
   var bg=document.getElementById('_jdInvTypeBg'); if(bg) bg.remove();
   var j=window._createForJob||{};
-  var q='customer='+(j.customer||'')+'&addr='+(j.addr||'')+(j.pm?('&pm='+j.pm):'');
-  window.location.href='/sdd-invoices.html?standaloneFor='+(j.pn||'')+'&'+q;
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(j.custId!=null?j.custId:activeId);});
+  if(!c && j.est){ c=CUSTOMERS.find(function(x){ return _findOriginalJob(x, j.est); }); }
+  if(!c) return;
+  var job=j.est?_findOriginalJob(c, j.est):null;
+  if(!job){ // fall back to first job of customer
+    var all=getAllJobs(c); job=all.length?_findOriginalJob(c, all[0].est):null;
+  }
+  if(!job) return;
+  job.invoices=job.invoices||[];
+  var seq=job.invoices.length+1;
+  var newNum='INV-'+(job.est||'X').replace('EST-','')+'-S'+seq;
+  while(job.invoices.some(function(iv){return iv.est===newNum;})){ seq++; newNum='INV-'+(job.est||'X').replace('EST-','')+'-S'+seq; }
+  var today=new Date();
+  var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+  var due=_dueDateFor(c, today);
+  job.invoices.push({est:newNum, originalEst:'', amount:'$0', status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, standalone:true, _draft:true, _isNew:true});
+  // not persisted yet — becomes real only when the user presses Save.
+  selectDoc('invoice', newNum);
+  docEditMode=true;
+  _reopenDoc(newNum);
 }
 // Stats bar for a single job (dark themed, to sit inside the job info block)
 function _jobStatsBarHTML(c, job){
@@ -5430,6 +6296,7 @@ document.addEventListener('DOMContentLoaded', function(){
   on('customerList','click',function(e){
     const item=e.target.closest('.customer-item');if(!item)return;
     const id=parseInt(item.dataset.id);
+    _purgeDrafts();
     // toggle: clicking the already-expanded customer collapses its list
     expandedCustomer = (expandedCustomer===id) ? null : id;
     activeId=id;activePM=null;activeJobEst=null;expandedJobEst=null;activeEstimateId=null;activeDocRef=null;activeDocKind=null;renderList();renderDetail(id);
@@ -5438,12 +6305,12 @@ document.addEventListener('DOMContentLoaded', function(){
   on('typeSelectorBg','click',function(e){if(e.target===this)closeTypeSel();});
   on('btnGoNewEst','click',()=>{
     closeTypeSel();
-    if(window._createForJob){ var j=window._createForJob; window._createForJob=null; window.location.href='/sdd-estimates.html?newFor='+j.pn+'&customer='+j.customer+'&addr='+j.addr; }
+    if(window._createForJob && window._createForJob._custId!=null){ _jdGoCreate('estimate'); }
     else { window.location.href='/sdd-estimates.html'; }
   });
   on('btnGoChangOrder','click',()=>{
     closeTypeSel();
-    if(window._createForJob){ var j=window._createForJob; window._createForJob=null; window.location.href='/sdd-estimates.html?changeOrderFor='+j.pn+'&customer='+j.customer+'&addr='+j.addr; }
+    if(window._createForJob && window._createForJob._custId!=null){ _jdGoCreate('changeorder'); }
     else { window.location.href='/sdd-estimates.html'; }
   });
   on('statPopupBg','click',function(e){if(e.target===this)closeStatPopup();});
@@ -6897,7 +7764,16 @@ function askCreateEstimate(job, cust){
 }
 function goCreateEstimate(jobName, customer, addr){
   document.getElementById('_estAskBg') && document.getElementById('_estAskBg').remove();
-  window.location.href='/sdd-estimates.html?newFor='+jobName+'&customer='+customer+'&addr='+addr;
+  var cn=decodeURIComponent(customer||''), jn=decodeURIComponent(jobName||''), ad=decodeURIComponent(addr||'');
+  var c=CUSTOMERS.find(function(x){return x.name===cn;});
+  if(!c){ window.location.href='/sdd-estimates.html'; return; }
+  // find the just-created job by name/address
+  var job=null;
+  (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(jb){
+    if((jb.jobName===jn || jb.address===ad || jb.streetOnly===ad) && !job) job=jb;
+  });});
+  if(!job){ window.location.href='/sdd-estimates.html'; return; }
+  _createEstimateLocal(c, job);
 }
 function saveNewJob(){
   function gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}

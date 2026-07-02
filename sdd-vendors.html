@@ -256,11 +256,234 @@ var activeId = null;
 var coaParentTarget = null;
 
 var VENDORS = [
-  {id:1,name:'SoCal Equipment Rentals',type:'equipment',contact:'Mike Herrera',email:'rentals@socalequip.com',phone:'(619) 555-1100',address:'2400 Main St, El Cajon CA 92020',eligible1099:'no',billed:'yes',since:'2022',terms:'Net 30',notes:'Primary equipment rental vendor'},
-  {id:2,name:'SafeAir Environmental',type:'subcontractor',contact:'Luis Paz',email:'luis@safeair.com',phone:'(760) 555-2200',address:'890 Industrial Blvd, Oceanside CA 92054',eligible1099:'yes',billed:'yes',since:'2021',terms:'Net 15',notes:'Abatement and hazmat'},
-  {id:3,name:'SD Disposal & Recycling',type:'disposal',contact:'Anna Kim',email:'billing@sddisposal.com',phone:'(619) 555-3300',address:'5500 Convoy St, San Diego CA 92111',eligible1099:'no',billed:'yes',since:'2020',terms:'Due on receipt',notes:'Primary dump fees'},
-  {id:4,name:'Pacific Concrete Cutting',type:'subcontractor',contact:'Carlos Reyes',email:'c.reyes@pacificconcrete.com',phone:'(619) 555-4400',address:'1100 Palm Ave, Chula Vista CA 91911',eligible1099:'yes',billed:'yes',since:'2023',terms:'Net 30',notes:'Concrete cutting'},
-  {id:5,name:'ADP Payroll Services',type:'payroll',contact:'ADP Support',email:'support@adp.com',phone:'(800) 225-5237',address:'1 ADP Blvd, Roseland NJ 07068',eligible1099:'no',billed:'yes',since:'2019',terms:'Monthly',notes:'Payroll processing'},
+  {id:1,name:'SoCal Equipment Rentals',type:'equipment',contact:'Mike Herrera',email:'rentals@socalequip.com',phone:'(619) 555-1100',address:'2400 Main St, El Cajon CA 92020',eligible1099:'no',billed:'yes',since:'2022',terms:'Net 30',accountName:'Equipment Rental for Jobs',notes:'Primary equipment rental vendor'},
+  {id:2,name:'SafeAir Environmental',type:'subcontractor',contact:'Luis Paz',email:'luis@safeair.com',phone:'(760) 555-2200',address:'890 Industrial Blvd, Oceanside CA 92054',eligible1099:'yes',billed:'yes',since:'2021',terms:'Net 15',accountName:'Abatement',notes:'Abatement and hazmat'},
+  {id:3,name:'SD Disposal & Recycling',type:'disposal',contact:'Anna Kim',email:'billing@sddisposal.com',phone:'(619) 555-3300',address:'5500 Convoy St, San Diego CA 92111',eligible1099:'no',billed:'yes',since:'2020',terms:'Due on receipt',accountName:'Dump Fees',notes:'Primary dump fees'},
+  {id:4,name:'Pacific Concrete Cutting',type:'subcontractor',contact:'Carlos Reyes',email:'c.reyes@pacificconcrete.com',phone:'(619) 555-4400',address:'1100 Palm Ave, Chula Vista CA 91911',eligible1099:'yes',billed:'yes',since:'2023',terms:'Net 30',accountName:'Concrete Cutting',notes:'Concrete cutting'},
+  {id:5,name:'ADP Payroll Services',type:'payroll',contact:'ADP Support',email:'support@adp.com',phone:'(800) 225-5237',address:'1 ADP Blvd, Roseland NJ 07068',eligible1099:'no',billed:'yes',since:'2019',terms:'Monthly',accountName:'ADP Payroll Fees',notes:'Payroll processing'},
+  {id:6,name:'711',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:7,name:'76 Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:8,name:'A-1 Self Storage Downt',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:9,name:'Ababa Bolt',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:10,name:'ABC Industrial',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:11,name:'Ace Cloud Hosting',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:12,name:'Ace Hardware',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:13,name:'Ace Parking',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:14,name:'ADP 401 (K) Employee Contribution',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'ADP 401 (K) Employee Contribute',notes:''},
+  {id:15,name:'ADP Fees',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'ADP Payroll Fees',notes:''},
+  {id:16,name:'ADP Management Fee 401 (K)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'ADP Management (401k)',notes:''},
+  {id:17,name:'ADP Tax',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Payroll Tax',notes:''},
+  {id:18,name:'ADP Wage',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Payroll',notes:''},
+  {id:19,name:'Alexis Salary',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Owner\'s Draws',notes:''},
+  {id:20,name:'Ally Finanacial - $513.85 Land Rover',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Vehicle Reimbursement',notes:''},
+  {id:21,name:'Ally Financial - $833.28 Dodge Ram',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2018 Ram 2500 Loan',notes:''},
+  {id:22,name:'Amazon',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:23,name:'American Express',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Amazon Amex',notes:''},
+  {id:24,name:'American Golf Foundation',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Charitable Donations',notes:''},
+  {id:25,name:'American Licensing Services',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Vehicles & Trucks',notes:''},
+  {id:26,name:'Americana Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:27,name:'Amswede Recycling',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:28,name:'Anthem Inc',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Health Care',notes:''},
+  {id:29,name:'Arco',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:30,name:'Ark Cal Studio',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Permit and Licenses',notes:''},
+  {id:31,name:'Asana',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:32,name:'AT&T',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Telephone Expense',notes:''},
+  {id:33,name:'Atlas Contruction Supply Inc',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:34,name:'Auto Maintenance',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Maintenance · Repairs'},
+  {id:35,name:'Auto Zone',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:36,name:'Automotive Painting Supp',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:37,name:'Be Carb Compliant',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Compliance',notes:''},
+  {id:38,name:'Best Buy',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:39,name:'BlueBeam Inc',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:40,name:'Boot Barn',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:41,name:'Box and Shipping',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Postage & Delivery',notes:''},
+  {id:42,name:'California Beemers',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Due from Cedar St. (Rivian)',notes:''},
+  {id:43,name:'Canva',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:44,name:'Car Wash',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:45,name:'Cardiff Valero',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:46,name:'Cedar St. Holding Company',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Professional Fees · Due from Cedar St. (Rivian)'},
+  {id:47,name:'Cedar Street Rental ($928.05)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Vehichle Rental Expense',notes:''},
+  {id:48,name:'Central Valley Environmental',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Abatement',notes:''},
+  {id:49,name:'Champion Tire Centers',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:50,name:'Chargepoint',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:51,name:'Charlies Foreign Car',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:52,name:'Charter Industrial San Diego',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:53,name:'Chase',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Transaction Fee',notes:''},
+  {id:54,name:'Chase Staments Rewards',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Rewards Points',notes:''},
+  {id:55,name:'Chat GPT',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:56,name:'Chevron',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:57,name:'Chick-Fil-A',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:58,name:'Circle K',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:59,name:'City Of Del Mar Parking',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:60,name:'Clairemont Equipment',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:61,name:'Claude AI',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:62,name:'Clean Truck Check',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Compliance',notes:''},
+  {id:63,name:'Clover Leaf Market Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:64,name:'Competitive Metals',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Job Related Costs · Dump Fees · Jobsite Materials'},
+  {id:65,name:'Container Store San Diego',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:66,name:'Cornerstone Aggregate',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:67,name:'Costco',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:68,name:'Cox Utilities',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Utilities',notes:''},
+  {id:69,name:'Crumbl Cookies',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:70,name:'CSD DSD Online Payment',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Permit and Licenses',notes:''},
+  {id:71,name:'CVS Pharmacy',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:72,name:'Diamond Enviromental',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:73,name:'DISA INC',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Compliance',notes:''},
+  {id:74,name:'Dixieline',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:75,name:'DMV',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Vehicle Registration',notes:''},
+  {id:76,name:'Dunn Edwards Paints',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:77,name:'E-W Truck & Equipment',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto and Equipment Expense',notes:''},
+  {id:78,name:'E and M Shop',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:79,name:'Edco',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:80,name:'Environmental Lab',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Abatement · Job Related Costs · Maintenance'},
+  {id:81,name:'ER Welding',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Welding & Fabrication',notes:''},
+  {id:82,name:'Escondido Resource Recovery',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:83,name:'Evernote',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:84,name:'EVGO',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:85,name:'Exxon',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:86,name:'Fastest Labs',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Compliance',notes:''},
+  {id:87,name:'Fernando Reimbursement ($761)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Reimbursment',notes:''},
+  {id:88,name:'Fernando Salary',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Owner\'s Draws',notes:''},
+  {id:89,name:'Ferr Trp Supertien Tkt',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:90,name:'First Citizens Bank',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'AutoCar Dump Truck Loan',notes:''},
+  {id:91,name:'First Insurance Funding',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'GL Insurance',notes:''},
+  {id:92,name:'Fiverr',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:93,name:'Floor and Decor',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:94,name:'Food4Less',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:95,name:'Ford Credit -$1,201.86 F650',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Ford F650 Loan',notes:''},
+  {id:96,name:'Ford Credit -$1,237.92 F350',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Ford F350 Loan',notes:''},
+  {id:97,name:'Ford Parts Giant',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Repairs',notes:''},
+  {id:98,name:'Foreign Transaction Fee',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Foreign Exchange Fees',notes:''},
+  {id:99,name:'Franchise Tax Board',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tax Payment',notes:''},
+  {id:100,name:'Freddi M and Alice',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:101,name:'G&M',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:102,name:'Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:103,name:'Gas King',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:104,name:'Geico',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto Insurance Reimbursement',notes:''},
+  {id:105,name:'Golden State Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:106,name:'Google',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:107,name:'Google Youtube',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:108,name:'Green Tech Services',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:109,name:'Happy Cow Car Wash',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto and Equipment Expense',notes:''},
+  {id:110,name:'Harbor Freight',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:111,name:'Hawthorne Machinery',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:112,name:'Helix Water District',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Utilities',notes:''},
+  {id:113,name:'Home Depot',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:114,name:'Hotel',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Travel Expense',notes:''},
+  {id:115,name:'Industrial Metal Supply',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:116,name:'Industrial Rubber',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:117,name:'Instacart',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:118,name:'Intuit (Checking Account Transactions)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Merchant Deposit Fees',notes:''},
+  {id:119,name:'J and M Tire Shop',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:120,name:'Jack in the Box',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:121,name:'Jamul Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:122,name:'Jamul Hardware',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:123,name:'JC Services',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Job Related Costs',notes:''},
+  {id:124,name:'Jiffy Lube',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:125,name:'JSC Construction',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Concrete Pouring',notes:''},
+  {id:126,name:'Kubota- $521.73 Mini Excavator',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2025 Kubota Mini Excavator',notes:''},
+  {id:127,name:'Kubota- $585.98 Stand Loader',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2025 Kubota Stand Loader Loan',notes:''},
+  {id:128,name:'Kubota-$1,068.85 Skid Steer',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2024 Kubota Skid Steer Loan',notes:''},
+  {id:129,name:'Kubota-$1,442.34 Excavator',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2024 Kubota Excavator Loan',notes:''},
+  {id:130,name:'Kubota Maintenance',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:131,name:'Liberty Mutual',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Insurance',notes:''},
+  {id:132,name:'Lion File Solutions Inc.',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Professional Fees',notes:''},
+  {id:133,name:'Lowes',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:134,name:'Lyft',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Postage & Delivery',notes:''},
+  {id:135,name:'Meals',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:136,name:'Mediexcel Health Plan',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Health Care',notes:''},
+  {id:137,name:'Mega Fuel',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:138,name:'Microsoft Store',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:139,name:'Midwest EQ SLS Columbus OH',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:140,name:'Miramar Bobcat',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:141,name:'Miramar Landfill',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:142,name:'Mohsen Oil',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:143,name:'Moody\'s',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:144,name:'Napa Auto Parts',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:145,name:'National City Tool Repair',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:146,name:'North County Concrete Cutting & Coring',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Concrete Cutting',notes:''},
+  {id:147,name:'Notarize DBA Proof.com',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Professional Fees',notes:''},
+  {id:148,name:'O\'Reilly',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto and Equipment Expense',notes:''},
+  {id:149,name:'O\'Reilly Auto Parts',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:150,name:'OBP SVC Fee San Diego',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Permit and Licenses',notes:''},
+  {id:151,name:'Office Depot',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:152,name:'Otay Hidraulics',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:153,name:'Otay Truck Sales',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'2016 Western Star Truck',notes:''},
+  {id:154,name:'Palomar Transfer Station',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:155,name:'Pam San Diego Parking',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:156,name:'Parking',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:157,name:'PDQ Equipment',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:158,name:'Pedro Insurance Reimburse ($200)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto Insurance Reimbursement',notes:''},
+  {id:159,name:'Pedro Salary',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Owner\'s Draws',notes:''},
+  {id:160,name:'Pedro Truck Reimburse ($500)',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Vehicle Reimbursement',notes:''},
+  {id:161,name:'Pilot',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:162,name:'Pinturas Tecate Max',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:163,name:'Prime Video Channels',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:164,name:'Progressive Insurance',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Auto Insurance',notes:''},
+  {id:165,name:'PURCHASE INTEREST',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Interest Expense',notes:''},
+  {id:166,name:'QR Code Generator',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:167,name:'RAMCO',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:168,name:'Rancho CFO',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:169,name:'RCH Pedregal',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:170,name:'Remitly',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Virtual Office',notes:''},
+  {id:171,name:'Rivian',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:172,name:'Roman Castaneda',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Job Related Costs · Subcontractors Expense'},
+  {id:173,name:'Ross',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:174,name:'Rush Truck CTR San Diego',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:175,name:'San Bern Cnty VictorVi',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:176,name:'San Diego Hydraulics',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:177,name:'San Diego Truck Parts',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:178,name:'SANDAG',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tolls',notes:''},
+  {id:179,name:'SDD Sorrento Valley Yard',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Rent Expense',notes:''},
+  {id:180,name:'SDGE',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Utilities',notes:''},
+  {id:181,name:'Shell',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:182,name:'Sherwin Williams',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:183,name:'Sign King',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Marketing',notes:''},
+  {id:184,name:'Sky View Petroleum',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:185,name:'Spectrum',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:186,name:'Sprouts',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:187,name:'Sq Go Postal',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:188,name:'Staples',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:189,name:'Starbucks',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Meals and Entertainment',notes:''},
+  {id:190,name:'Stars & Stripes',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:191,name:'Statefund Policy',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Worker\'s Compensation',notes:''},
+  {id:192,name:'Sunbelt Rentals',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:193,name:'Sunstate Equipment',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:194,name:'Super Star Gas',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:195,name:'Superior Court La Traffic',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Parking & Tolls',notes:''},
+  {id:196,name:'Sycamore Landfill',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:197,name:'T-Shirt Mart',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Uniforms',notes:''},
+  {id:198,name:'Tally Systems',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:199,name:'Target',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:200,name:'Tesla Inc',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Supplies',notes:''},
+  {id:201,name:'Tires',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:202,name:'Toby Ramos Tires',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Maintenance',notes:''},
+  {id:203,name:'Toll Road',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tolls',notes:''},
+  {id:204,name:'Tools and Supplies',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:205,name:'Tractor Supply',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'',notes:'Split sin asignar — revisar. Opciones: Tools and Job Supplies · Maintenance'},
+  {id:206,name:'Uber Trip',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Postage & Delivery',notes:''},
+  {id:207,name:'Uline',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:208,name:'Union 76',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:209,name:'United Rentals',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Equipment Rental for Jobs',notes:''},
+  {id:210,name:'UP Work',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office',notes:''},
+  {id:211,name:'US Compliance Services',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Compliance',notes:''},
+  {id:212,name:'USPS',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Postage & Delivery',notes:''},
+  {id:213,name:'Valero',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Gas',notes:''},
+  {id:214,name:'Verizon',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Telephone Expense',notes:''},
+  {id:215,name:'Virtual Receptionist',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Virtual Office',notes:''},
+  {id:216,name:'Volos',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Virtual Office',notes:''},
+  {id:217,name:'Vons',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:218,name:'Walmart',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:219,name:'Water Garden Business Center',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Rent Expense',notes:''},
+  {id:220,name:'Wells Fargo - $350.78 Breaker',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Breaker - Wells Fargo Loan',notes:''},
+  {id:221,name:'Wetch Electric',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Electrical',notes:''},
+  {id:222,name:'Wetmore\'s',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:223,name:'White Cap',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:224,name:'Wix',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
+  {id:225,name:'WM El Cajon Transfer',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:226,name:'WM Lancaster',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Dump Fees',notes:''},
+  {id:227,name:'WM Super Center',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Tools and Job Supplies',notes:''},
+  {id:228,name:'Zoom',type:'',contact:'',email:'',phone:'',address:'',eligible1099:'no',billed:'no',since:'',terms:'',accountName:'Office Subscriptions',notes:''},
 ];
 
 var BILLS_SEED = [
@@ -536,6 +759,18 @@ function renderEmptyRight(){
   pr.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:40px;height:40px;opacity:.25;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>'+(labels[currentView]||'Select item')+'</span></div>';
 }
 
+// Subtítulo del listado lateral: muestra tipo (si existe) + cuenta contable asociada
+function _vendorSubLine(v){
+  var parts=[];
+  if(v.type){ parts.push(v.type.charAt(0).toUpperCase()+v.type.slice(1)); }
+  if(v.eligible1099==='yes'){ parts.push('<span style="color:var(--warning);">1099</span>'); }
+  var sep=' &nbsp;&#183;&nbsp; ';
+  var lead=parts.join(sep);
+  var acct;
+  if(v.accountName){ acct='<span style="color:var(--info);">'+v.accountName+'</span>'; }
+  else { acct='<span style="color:var(--warning);font-style:italic;">No account assigned</span>'; }
+  return lead ? (lead+sep+acct) : acct;
+}
 function buildVendorList(q){
   var filtered=VENDORS.filter(function(v){ return !q||v.name.toLowerCase().includes(q)||v.type.includes(q); });
   if(!filtered.length) return '<div style="padding:20px;color:var(--muted2);text-align:center;">No vendors found</div>';
@@ -544,7 +779,7 @@ function buildVendorList(q){
     var owed=bills.filter(function(b){return b.status!=='paid';}).reduce(function(s,b){return s+b.amount;},0);
     return '<div class="list-item'+(activeId===v.id?' active':'')+'" onclick="selectVendor('+v.id+')">'
       +'<div class="li-top"><div class="li-name">'+v.name+'</div>'+(owed>0?'<div class="li-amt">'+fmt(owed)+'</div>':'')+'</div>'
-      +'<div class="li-sub">'+(v.type.charAt(0).toUpperCase()+v.type.slice(1))+(v.eligible1099==='yes'?' &nbsp;&#183;&nbsp; <span style="color:var(--warning);">1099</span>':'')+'</div>'
+      +'<div class="li-sub">'+_vendorSubLine(v)+'</div>'
       +'</div>';
   }).join('');
 }
@@ -604,7 +839,36 @@ function selectVendor(id){
     +(vb.length?'<table><thead><tr><th>Bill #</th><th>Description</th><th>Date</th><th>Due</th><th>Status</th><th style="text-align:right;">Amount</th></tr></thead><tbody>'
       +vb.map(function(b){ var pc=b.status==='paid'?'pill-paid':b.status==='partial'?'pill-partial':'pill-unpaid'; return '<tr><td style="font-weight:600;">'+b.num+'</td><td>'+b.desc+'</td><td style="color:var(--muted);">'+b.date+'</td><td style="color:var(--muted);">'+b.due+'</td><td><span class="pill '+pc+'">'+b.status+'</span></td><td style="text-align:right;font-weight:600;">'+fmt(b.amount)+'</td></tr>'; }).join('')
       +'</tbody></table>':'<div style="color:var(--muted2);font-style:italic;font-size:13px;">No bills for this vendor</div>')
-    +'</div></div>';
+    +'</div>'
+    +_vendorTxnsBlock(v)
+    +'</div>';
+}
+
+// ── Transacciones por método de pago (Chase, Amex, etc.) para un vendor ──
+function _vendorTxnsBlock(v){
+  // Cruzar BANK_TXNS por payee que coincida con el nombre del vendor (cargos salientes)
+  var name=(v.name||'').toLowerCase();
+  var txns=(typeof BANK_TXNS!=='undefined'?BANK_TXNS:[]).filter(function(t){
+    if(t.dir!=='out') return false;
+    var p=(t.payee||'').toLowerCase();
+    return p===name || p.indexOf(name)>-1 || name.indexOf(p)>-1;
+  });
+  // Agrupar por cuenta de pago (tarjeta/banco)
+  var acctName=function(id){ var a=(typeof BANK_ACCOUNTS!=='undefined'?BANK_ACCOUNTS:[]).find(function(x){return x.id===id;}); return a?a.name+' ····'+a.last4:id; };
+  var groups={};
+  txns.forEach(function(t){ if(!groups[t.account]) groups[t.account]={count:0,total:0}; groups[t.account].count++; groups[t.account].total+=t.amount; });
+  var keys=Object.keys(groups);
+  var grand=txns.reduce(function(s,t){return s+t.amount;},0);
+  var rows;
+  if(!keys.length){
+    rows='<div style="color:var(--muted2);font-style:italic;font-size:13px;">No transactions recorded for this vendor.</div>';
+  } else {
+    rows='<table><thead><tr><th>Payment method</th><th style="text-align:center;"># Transactions</th><th style="text-align:right;">Total</th></tr></thead><tbody>'
+      +keys.map(function(k){ return '<tr><td style="font-weight:600;">'+acctName(k)+'</td><td style="text-align:center;color:var(--muted);">'+groups[k].count+'</td><td style="text-align:right;font-weight:600;">'+fmt(groups[k].total)+'</td></tr>'; }).join('')
+      +'<tr style="border-top:2px solid var(--border2);"><td style="font-weight:700;">Total</td><td style="text-align:center;font-weight:700;">'+txns.length+'</td><td style="text-align:right;font-weight:700;color:var(--info);">'+fmt(grand)+'</td></tr>'
+      +'</tbody></table>';
+  }
+  return '<div class="card"><div class="card-title">Transactions by payment method</div>'+rows+'</div>';
 }
 
 // ── BILL DETAIL ──
