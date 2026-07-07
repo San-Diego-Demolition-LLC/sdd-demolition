@@ -46,7 +46,7 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .customer-list::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
 .customer-item{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:all .15s;}
 .customer-item:hover{background:var(--surface2);}
-.customer-item.active{background:var(--gold-dim2);border-left:4px solid var(--gold);box-shadow:inset 0 0 0 1px rgba(184,146,42,.35);}
+.customer-item.active{background:var(--gold-dim2);border-left:4px solid var(--gold);box-shadow:inset 0 0 0 1px rgba(184,146,42,.35);padding:16px 18px 18px 16px;}
 .customer-item.active .ci-name{color:var(--gold);}
 .ci-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
 .ci-name{font-weight:600;font-size:16px;color:var(--text);}
@@ -873,6 +873,43 @@ var CUSTOMERS_SEED = [
           ]},
       ]},
    ]},
+  {id:5, name:'Coronado Development Group', city:'Coronado, CA',
+   address:'1201 Orange Ave, Coronado CA 92118', phone:'(619) 555-0350',
+   since:'2024', type:'commercial', waiver:'conditional', portal:false, notes:'Large multi-scope demolition — sample with detailed line items.', specialInstructions:false, paymentTerms:'net-30', billingMethod:'direct-email', sov:true, sovEstimates:[],
+   contacts:[
+     {id:'cd1', name:'Laura Kim', initials:'LK', color:'av-info', role:'billing',
+      email:'billing@coronadodev.com', phone:'(619) 555-0351', title:'Billing Manager', jobs:[]},
+     {id:'cd2', name:'David Fuentes', initials:'DF', color:'av-gold', role:'project-manager',
+      email:'d.fuentes@coronadodev.com', phone:'(619) 555-0352', title:'Project Manager',
+      jobs:[
+        {est:'EST-080', address:'1201 Orange Ave', city:'Coronado CA 92118', status:'Approved', amount:'$78,450', date:'May 20, 2026', jobName:'Orange Ave Full Demolition', projectName:'Coronado Mixed-Use Redevelopment', streetOnly:'1201 Orange Ave', siteId:'SITE-1201-ORANGE',
+          estimates:[
+            {est:'EST-080',amount:'$78,450',status:'Approved',date:'May 20, 2026',scope:'Full Site Demolition - Detailed Scope',projectName:'Coronado Mixed-Use Redevelopment',
+             lines:[
+               {desc:'Site mobilization & temporary fencing setup', qty:1, unit:'job', unitPrice:3200, total:3200},
+               {desc:'Asbestos abatement - floor tile & mastic (east wing)', qty:2400, unit:'sqft', unitPrice:3.25, total:7800},
+               {desc:'Hazardous material disposal & manifest documentation', qty:1, unit:'job', unitPrice:4100, total:4100},
+               {desc:'Interior soft demolition - drywall, fixtures, cabinetry', qty:5800, unit:'sqft', unitPrice:1.15, total:6670},
+               {desc:'Mechanical, electrical & plumbing disconnection', qty:1, unit:'job', unitPrice:2850, total:2850},
+               {desc:'Structural steel cutting & removal', qty:12, unit:'ton', unitPrice:420, total:5040},
+               {desc:'Concrete slab demolition - main floor', qty:3200, unit:'sqft', unitPrice:2.40, total:7680},
+               {desc:'Concrete foundation & footing removal', qty:1, unit:'job', unitPrice:5600, total:5600},
+               {desc:'Masonry & CMU wall demolition', qty:1800, unit:'sqft', unitPrice:1.85, total:3330},
+               {desc:'Roof structure teardown & disposal', qty:4200, unit:'sqft', unitPrice:1.30, total:5460},
+               {desc:'Excavation & backfill - foundation area', qty:180, unit:'cyd', unitPrice:38, total:6840},
+               {desc:'Concrete crushing & on-site recycling', qty:90, unit:'ton', unitPrice:22, total:1980},
+               {desc:'Debris haul-off - roll-off dumpsters (40 yd)', qty:14, unit:'load', unitPrice:485, total:6790},
+               {desc:'Dust control & water truck service', qty:6, unit:'day', unitPrice:340, total:2040},
+               {desc:'Erosion control & SWPPP compliance', qty:1, unit:'job', unitPrice:1450, total:1450},
+               {desc:'Utility capping & sewer line plugging', qty:1, unit:'job', unitPrice:1900, total:1900},
+               {desc:'Final site grading & compaction', qty:1, unit:'job', unitPrice:2760, total:2760},
+               {desc:'Permits, inspections & agency coordination', qty:1, unit:'job', unitPrice:2960, total:2960}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]}
+      ]},
+   ]},
 ];
 // Use shared data layer if present (sdd-data.js); otherwise fall back to the seed above.
 var CUSTOMERS = (window.SDD && window.SDD.customers) ? window.SDD.customers : CUSTOMERS_SEED;
@@ -901,15 +938,15 @@ const TERMS_AND_CONDITIONS = {
     clauses: [
       {id:'cm_a', ltr:'A', text:'Estimate pricing is based on a clear and unobstructed path for demolition activities.'},
       {id:'cm_b', ltr:'B', text:'All work is bid for regular working hours or after-hours only. No weekend or after hours work has been included unless otherwise specified.'},
-      {id:'cm_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Deconstruction & Demolition shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
+      {id:'cm_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Demolition, LLC shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
       {id:'cm_d', ltr:'D', text:'All work is based on a single mobilization and phase of work. Any additional mobilizations, return trips, or phased scheduling requested by the General Contractor and/or Owner will result in an additional move-on fee of $350.00 per occurrence.'},
-      {id:'cm_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Deconstruction & Demolition assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
-      {id:'cm_f', ltr:'F', text:'San Diego Deconstruction & Demolition is not responsible for construction fencing or erosion control.'},
+      {id:'cm_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Demolition, LLC assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
+      {id:'cm_f', ltr:'F', text:'San Diego Demolition, LLC is not responsible for construction fencing or erosion control.'},
       {id:'cm_g', ltr:'G', text:'This estimate does not include the identification, handling, abatement, removal, or disposal of hazardous materials, including but not limited to paint, light bulbs, oils, chemicals, asbestos-containing materials, lead-containing materials, or other regulated substances. Any required hazardous material remediation must be completed prior to demolition activities. If requested, SDD may coordinate and/or subcontract such services under a separate proposal or change order.'},
-      {id:'cm_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Deconstruction & Demolition unless otherwise specified.'},
-      {id:'cm_i', ltr:'I', text:'Upon request, San Diego Deconstruction & Demolition will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
+      {id:'cm_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Demolition, LLC unless otherwise specified.'},
+      {id:'cm_i', ltr:'I', text:'Upon request, San Diego Demolition, LLC will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
       {id:'cm_j', ltr:'J', text:'Payment in full is due Net 15 from the date of completion. A monthly late fee of 3% of the total outstanding balance will be charged on overdue payments.'},
-      {id:'cm_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Deconstruction & Demolition, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
+      {id:'cm_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Demolition, LLC, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
       {id:'cm_l', ltr:'L', text:'By commencing the work outlined in this estimate, the customer agrees to all terms, conditions, and notes stated herein.'},
     ]
   },
@@ -918,15 +955,15 @@ const TERMS_AND_CONDITIONS = {
     clauses: [
       {id:'rd_a', ltr:'A', text:'Estimate pricing is based on a clear and unobstructed path for demolition activities.'},
       {id:'rd_b', ltr:'B', text:'All work is bid for regular working hours or after-hours only. No weekend or after hours work has been included unless otherwise specified.'},
-      {id:'rd_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Deconstruction & Demolition shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
+      {id:'rd_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Demolition, LLC shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
       {id:'rd_d', ltr:'D', text:'All work is based on a single mobilization and phase of work. Any additional mobilizations, return trips, or phased scheduling requested by the General Contractor and/or Owner will result in an additional move-on fee of $350.00 per occurrence.'},
-      {id:'rd_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Deconstruction & Demolition assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
-      {id:'rd_f', ltr:'F', text:'San Diego Deconstruction & Demolition is not responsible for construction fencing or erosion control.'},
+      {id:'rd_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Demolition, LLC assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
+      {id:'rd_f', ltr:'F', text:'San Diego Demolition, LLC is not responsible for construction fencing or erosion control.'},
       {id:'rd_g', ltr:'G', text:'This estimate does not include the identification, handling, abatement, removal, or disposal of hazardous materials, including but not limited to paint, light bulbs, oils, chemicals, asbestos-containing materials, lead-containing materials, or other regulated substances. Any required hazardous material remediation must be completed prior to demolition activities. If requested, SDD may coordinate and/or subcontract such services under a separate proposal or change order.'},
-      {id:'rd_h', ltr:'H', text:'Upon request, San Diego Deconstruction & Demolition will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
-      {id:'rd_i', ltr:'I', text:'All demolition debris becomes the property of San Diego Deconstruction & Demolition unless otherwise specified.'},
+      {id:'rd_h', ltr:'H', text:'Upon request, San Diego Demolition, LLC will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
+      {id:'rd_i', ltr:'I', text:'All demolition debris becomes the property of San Diego Demolition, LLC unless otherwise specified.'},
       {id:'rd_j', ltr:'J', text:'Payment in full is due Net 15 from the date of completion. A monthly late fee of 3% of the total outstanding balance will be charged on overdue payments.'},
-      {id:'rd_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Deconstruction & Demolition, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
+      {id:'rd_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Demolition, LLC, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
       {id:'rd_l', ltr:'L', text:'By commencing the work outlined in this estimate, the customer agrees to all terms, conditions, and notes stated herein.'},
     ]
   },
@@ -935,17 +972,17 @@ const TERMS_AND_CONDITIONS = {
     clauses: [
       {id:'cd_a', ltr:'A', text:'Estimate pricing is based on a clear and unobstructed path for demolition activities.'},
       {id:'cd_b', ltr:'B', text:'All work is bid for regular working hours or after-hours only. No weekend or after hours work has been included unless otherwise specified.'},
-      {id:'cd_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Deconstruction & Demolition shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
+      {id:'cd_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Demolition, LLC shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
       {id:'cd_d', ltr:'D', text:'All work is based on a single mobilization and phase of work. Any additional mobilizations, return trips, or phased scheduling requested by the General Contractor and/or Owner will result in an additional move-on fee of $350.00 per occurrence.'},
-      {id:'cd_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Deconstruction & Demolition assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
+      {id:'cd_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Demolition, LLC assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
       {id:'cd_f', ltr:'F', text:'Concrete slab demolition pricing is based on a maximum slab thickness of four inches (4").'},
       {id:'cd_g', ltr:'G', text:"Concrete footing demolition pricing is based on isolated footings only, with a maximum size of two feet by two feet (2' x 2') beneath posts. No grade beam footings have been included in this estimate."},
       {id:'cd_h', ltr:'H', text:'All required X-ray and/or concrete scanning must be completed prior to demolition commencement. SDD is not responsible for damage to unmarked or unidentified utilities embedded within concrete.'},
       {id:'cd_i', ltr:'I', text:'This estimate does not include the identification, handling, abatement, removal, or disposal of hazardous materials, including but not limited to paint, light bulbs, oils, chemicals, asbestos-containing materials, lead-containing materials, or other regulated substances. Any required hazardous material remediation must be completed prior to demolition activities. If requested, SDD may coordinate and/or subcontract such services under a separate proposal or change order.'},
-      {id:'cd_j', ltr:'J', text:'All demolition debris becomes the property of San Diego Deconstruction & Demolition unless otherwise specified.'},
-      {id:'cd_k', ltr:'K', text:'Upon request, San Diego Deconstruction & Demolition will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
+      {id:'cd_j', ltr:'J', text:'All demolition debris becomes the property of San Diego Demolition, LLC unless otherwise specified.'},
+      {id:'cd_k', ltr:'K', text:'Upon request, San Diego Demolition, LLC will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
       {id:'cd_l', ltr:'L', text:'Payment in full is due Net 15 from the date of completion. A monthly late fee of 3% of the total outstanding balance will be charged on overdue payments.'},
-      {id:'cd_m', ltr:'M', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Deconstruction & Demolition, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
+      {id:'cd_m', ltr:'M', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Demolition, LLC, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
       {id:'cd_n', ltr:'N', text:'By commencing the work outlined in this estimate, the customer agrees to all terms, conditions, and notes stated herein.'},
     ]
   },
@@ -954,14 +991,14 @@ const TERMS_AND_CONDITIONS = {
     clauses: [
       {id:'id_a', ltr:'A', text:'Estimate pricing is based on a clear and unobstructed path for demolition activities.'},
       {id:'id_b', ltr:'B', text:'All work is bid for regular working hours or after-hours only. No weekend or after-hours work has been included unless otherwise specified.'},
-      {id:'id_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Deconstruction & Demolition shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
+      {id:'id_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Demolition, LLC shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
       {id:'id_d', ltr:'D', text:'All work is based on a single mobilization and phase of work. Any additional mobilizations, return trips, or phased scheduling requested by the General Contractor and/or Owner will result in an additional move-on fee of $350.00 per occurrence.'},
-      {id:'id_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Deconstruction & Demolition assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
-      {id:'id_f', ltr:'F', text:'Upon request, San Diego Deconstruction & Demolition will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
+      {id:'id_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Demolition, LLC assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
+      {id:'id_f', ltr:'F', text:'Upon request, San Diego Demolition, LLC will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
       {id:'id_g', ltr:'G', text:'This estimate does not include the identification, handling, abatement, removal, or disposal of hazardous materials, including but not limited to paint, light bulbs, oils, chemicals, asbestos-containing materials, lead-containing materials, or other regulated substances. Any required hazardous material remediation must be completed prior to demolition activities. If requested, SDD may coordinate and/or subcontract such services under a separate proposal or change order.'},
-      {id:'id_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Deconstruction & Demolition unless otherwise specified.'},
+      {id:'id_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Demolition, LLC unless otherwise specified.'},
       {id:'id_i', ltr:'I', text:'Payment in full is due Net 15 from the date of completion. A monthly late fee of 3% of the total outstanding balance will be charged on overdue payments.'},
-      {id:'id_j', ltr:'J', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Deconstruction & Demolition, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
+      {id:'id_j', ltr:'J', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Demolition, LLC, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
       {id:'id_k', ltr:'K', text:'By commencing the work outlined in this estimate, the customer agrees to all terms, conditions, and notes stated herein.'},
     ]
   },
@@ -970,15 +1007,15 @@ const TERMS_AND_CONDITIONS = {
     clauses: [
       {id:'ti_a', ltr:'A', text:'Estimate pricing is based on a clear and unobstructed path for demolition activities.'},
       {id:'ti_b', ltr:'B', text:'All work is bid for regular working hours or after-hours only. No weekend or after-hours work has been included unless otherwise specified.'},
-      {id:'ti_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Deconstruction & Demolition shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
+      {id:'ti_c', ltr:'C', text:'The General Contractor and/or Owner is solely responsible for obtaining all required demolition permits, inspections, approvals, and related agency authorizations prior to the commencement of work. San Diego Demolition, LLC shall not be held liable for delays, penalties, stop-work orders, fees, or damages resulting from failure to obtain required permits or approvals.'},
       {id:'ti_d', ltr:'D', text:'All work is based on a single mobilization and phase of work. Any additional mobilizations, return trips, or phased scheduling requested by the General Contractor and/or Owner will result in an additional move-on fee of $350.00 per occurrence.'},
-      {id:'ti_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Deconstruction & Demolition assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
-      {id:'ti_f', ltr:'F', text:"San Diego Deconstruction & Demolition will provide daily cleanup for debris and materials generated by SDD's demolition activities only. Cleanup of debris or materials generated by other trades or contractors is excluded unless otherwise specified."},
+      {id:'ti_e', ltr:'E', text:'Where applicable, prior to the commencement of demolition activities, all electrical, plumbing, gas, and utility lines must be properly disconnected, shut off, secured, and/or capped by the General Contractor and/or Owner. San Diego Demolition, LLC assumes no responsibility or liability for leaks, utility-related damages, or issues resulting from improperly disconnected, unidentified, or active utility lines.'},
+      {id:'ti_f', ltr:'F', text:"San Diego Demolition, LLC will provide daily cleanup for debris and materials generated by SDD's demolition activities only. Cleanup of debris or materials generated by other trades or contractors is excluded unless otherwise specified."},
       {id:'ti_g', ltr:'G', text:'This estimate does not include the identification, handling, abatement, removal, or disposal of hazardous materials, including but not limited to paint, light bulbs, oils, chemicals, asbestos-containing materials, lead-containing materials, or other regulated substances. Any required hazardous material remediation must be completed prior to demolition activities. If requested, SDD may coordinate and/or subcontract such services under a separate proposal or change order.'},
-      {id:'ti_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Deconstruction & Demolition unless otherwise specified.'},
-      {id:'ti_i', ltr:'I', text:'Upon request, San Diego Deconstruction & Demolition will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
+      {id:'ti_h', ltr:'H', text:'All demolition debris becomes the property of San Diego Demolition, LLC unless otherwise specified.'},
+      {id:'ti_i', ltr:'I', text:'Upon request, San Diego Demolition, LLC will provide the customer with all applicable Construction & Demolition (C&D) recycling reports, weight tickets, and supporting documentation required for compliance with local jurisdiction and City waste diversion and recycling requirements, if applicable.'},
       {id:'ti_j', ltr:'J', text:'Payment in full is due Net 15 from the date of completion. A monthly late fee of 3% of the total outstanding balance will be charged on overdue payments.'},
-      {id:'ti_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Deconstruction & Demolition, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
+      {id:'ti_k', ltr:'K', text:'Any invoice remaining unpaid for more than ninety (90) days past due may, at the sole discretion of San Diego Demolition, LLC, be referred to a third-party collections agency or legal counsel for recovery. In such event, an additional collection fee equal to thirty percent (30%) of the total outstanding invoice balance shall be added to the amount due, along with any applicable legal fees, court costs, and collection expenses permitted by law.'},
       {id:'ti_l', ltr:'L', text:'By commencing the work outlined in this estimate, the customer agrees to all terms, conditions, and notes stated herein.'},
     ]
   },
@@ -1222,14 +1259,14 @@ function _txPdfDoc(r){
   return '<div style="background:#fff;padding:38px 40px;font-family:Barlow,sans-serif;color:#1f2630;width:100%;box-sizing:border-box;">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:16px;margin-bottom:20px;">'
       +'<div><div style="font-size:22px;font-weight:800;letter-spacing:.04em;">SDD DEMOLITION</div>'
-        +'<div style="font-size:11px;color:#777;margin-top:2px;">San Diego Deconstruction &amp; Demolition</div>'
+        +'<div style="font-size:11px;color:#777;margin-top:2px;">San Diego Demolition, LLC</div>'
         +'<div style="font-size:11px;color:#777;">5755 Oberlin Drive, Suite 301, San Diego, CA 92121 · 619-273-3467</div></div>'
       +'<div style="text-align:right;"><div style="font-size:20px;font-weight:800;color:'+accent+';letter-spacing:.05em;">'+typeLabel+'</div>'
         +'<div style="font-size:13px;font-weight:700;margin-top:4px;">'+(r.num||'')+'</div>'
         +'<div style="font-size:12px;color:#777;">'+(r.date||'')+'</div></div>'
     +'</div>'
     +'<div style="display:flex;justify-content:space-between;margin-bottom:22px;">'
-      +'<div><div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Bill To</div>'
+      +'<div><div style="font-size:12px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Bill To</div>'
         +'<div style="font-size:14px;font-weight:700;">'+(r.customer||'')+'</div>'
         +'<div style="font-size:12px;color:#555;">'+(r.project||'')+'</div></div>'
       +'<div style="text-align:right;">'+refLine+dueLine
@@ -1507,7 +1544,7 @@ function renderList(){
                     const isActiveDoc=(activeDocRef===iv.est && activeDocKind==='invoice');
                     const rowBg=isActiveDoc?'#1f2630':'transparent';
                     const nameCol=isActiveDoc?'#fff':'var(--text)';
-                    let out=`<div onclick="event.stopPropagation();selectDoc('invoice','${iv.est}')" style="display:flex;align-items:center;gap:6px;padding:4px 7px;margin-left:${indent}px;border-radius:6px;cursor:pointer;background:${rowBg};${isActiveDoc?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveDoc}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${rowBg}'">`
+                    let out=`<div onclick="event.stopPropagation();selectDoc('invoice','${iv.est}')" style="display:flex;align-items:center;gap:6px;padding:7px 9px;margin-left:${indent}px;border-radius:6px;cursor:pointer;background:${rowBg};${isActiveDoc?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveDoc}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${rowBg}'">`
                       +`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${icoCol}" stroke-width="2" style="flex-shrink:0;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
                       +`<span style="font-size:11px;font-weight:600;color:${nameCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${iv.est}</span>`
                       +`<span style="font-size:9px;color:${isActiveDoc?'#bbb':'var(--muted)'};">${iv.amount||''}</span>`
@@ -1520,7 +1557,7 @@ function renderList(){
                         const isActivePmt=(activeDocRef===p.id && activeDocKind==='payment');
                         const pBg=isActivePmt?'#1f2630':'transparent';
                         const pCol=isActivePmt?'#fff':'var(--muted)';
-                        out+=`<div onclick="event.stopPropagation();selectDoc('payment','${p.id}')" style="display:flex;align-items:center;gap:6px;padding:3px 7px;margin-left:${indent+16}px;border-radius:6px;cursor:pointer;background:${pBg};${isActivePmt?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActivePmt}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${pBg}'">`
+                        out+=`<div onclick="event.stopPropagation();selectDoc('payment','${p.id}')" style="display:flex;align-items:center;gap:6px;padding:6px 9px;margin-left:${indent+16}px;border-radius:6px;cursor:pointer;background:${pBg};${isActivePmt?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActivePmt}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${pBg}'">`
                           +`<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" style="flex-shrink:0;"><path d="M20 6L9 17l-5-5"/></svg>`
                           +`<span style="font-size:10px;font-weight:600;color:${pCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.method||'Payment'}</span>`
                           +`<span style="font-size:9px;color:${isActivePmt?'#bbb':'var(--muted2)'};">${p.amount||''}</span>`
@@ -1547,7 +1584,7 @@ function renderList(){
                       const isActiveCo=(activeDocRef===co.est && activeDocKind==='co');
                       const coBg=isActiveCo?'#1f2630':'rgba(200,130,42,.06)';
                       const coNameCol=isActiveCo?'#fff':'#C8822A';
-                      coHtml+=`<div onclick="event.stopPropagation();selectDoc('co','${co.est}')" style="display:flex;align-items:center;gap:6px;padding:4px 7px;margin-left:8px;border-radius:6px;cursor:pointer;background:${coBg};${isActiveCo?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveCo}))this.style.background='rgba(200,130,42,.14)'" onmouseout="this.style.background='${coBg}'">`
+                      coHtml+=`<div onclick="event.stopPropagation();selectDoc('co','${co.est}')" style="display:flex;align-items:center;gap:6px;padding:7px 9px;margin-left:8px;border-radius:6px;cursor:pointer;background:${coBg};${isActiveCo?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveCo}))this.style.background='rgba(200,130,42,.14)'" onmouseout="this.style.background='${coBg}'">`
                         +`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="${isActiveCo?'#e0b94a':'#C8822A'}" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
                         +`<span style="font-size:11px;font-weight:700;color:${coNameCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${co.est}</span>`
                         +`<span style="font-size:9px;color:${isActiveCo?'#bbb':'#C8822A'};">${co.amount||''}</span>`
@@ -1565,7 +1602,7 @@ function renderList(){
                     subTree=`<div style="margin-left:10px;margin-top:2px;margin-bottom:6px;border-left:2px solid #3a3f48;padding-left:8px;">`+originalHtml+coHtml+`</div>`;
                   }
                 }
-                return `<div onclick="event.stopPropagation();selectEstimate(${c.id},'${j.est}','${e.est}')" style="display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:6px;cursor:pointer;background:${eBg};${isActiveEst?'box-shadow:0 1px 4px rgba(0,0,0,.25);margin-left:-8px;padding-left:7px;':''}" onmouseover="if(!(${isActiveEst}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${eBg}'">`
+                return `<div onclick="event.stopPropagation();selectEstimate(${c.id},'${j.est}','${e.est}')" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:7px;cursor:pointer;background:${eBg};${isActiveEst?'box-shadow:0 1px 4px rgba(0,0,0,.25);margin-left:-8px;padding-left:10px;':''}" onmouseover="if(!(${isActiveEst}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${eBg}'">`
                   +`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${isActiveEst?'#e0b94a':'var(--muted2)'}" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
                   +`<span style="font-size:12px;font-weight:600;color:${isActiveEst?'#fff':'var(--text)'};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.est}</span>`
                   +`<span style="font-size:10px;color:${eCol};">${e.amount||''}</span>`
@@ -1574,8 +1611,8 @@ function renderList(){
               }).join('')
             + `</div>` : '';
           const estCount = jobEstimates.length;
-          const chevron = estCount ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5" style="flex-shrink:0;transition:transform .15s;transform:rotate(${estsExpanded?90:0}deg);"><polyline points="9 18 15 12 9 6"/></svg>` : '';
-          return `<div class="ci-pm" onclick="event.stopPropagation();selectJob(${c.id},'${j.est}')" style="display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;background:${baseBg};${isActiveJob?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveJob}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${baseBg}'">`
+          const chevron = estCount ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="3" style="flex-shrink:0;transition:transform .15s;transform:rotate(${estsExpanded?90:0}deg);"><polyline points="9 18 15 12 9 6"/></svg>` : '';
+          return `<div class="ci-pm" onclick="event.stopPropagation();selectJob(${c.id},'${j.est}')" style="display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:7px;cursor:pointer;background:${baseBg};${isActiveJob?'box-shadow:0 1px 4px rgba(0,0,0,.25);':''}" onmouseover="if(!(${isActiveJob}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${baseBg}'">`
             +chevron
             +`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${isActiveJob?'#e0b94a':'var(--muted)'}" stroke-width="2" style="flex-shrink:0;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3v4M8 3v4"/></svg>`
             +`<span style="font-size:13px;font-weight:600;color:${lblCol};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>`
@@ -1608,7 +1645,7 @@ function renderList(){
       <div style="display:flex;justify-content:flex-end;align-items:center;margin-top:2px;">
         <div class="ci-total">${fmt(t.total)}</div>
       </div>
-      ${tree}
+      ${tree ? `<div style="margin:10px 4px 4px;">${tree}</div>` : ''}
     </div>`;
   }).join('') : '<div style="padding:20px 16px;color:var(--muted2);font-size:13px;text-align:center;">No customers found</div>';
 }
@@ -1785,7 +1822,7 @@ function openJobDetailPopup(customerId, estNum){
   var rows = ests.length ? ests.map(function(item,i){
     var childCOs=(job.changeOrders||[]).filter(function(co){return co.originalEst===item.est;});
     var estUnb=_unbilled(item.est,item.amount);
-    var coToggle = childCOs.length ? '<span onclick="event.stopPropagation();var b=document.getElementById(\'_jd_co_'+i+'\');if(b){var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';}" style="cursor:pointer;color:#b8922a;font-size:11px;font-weight:700;margin-left:8px;">▸ '+childCOs.length+' CO</span>' : '';
+    var coToggle = childCOs.length ? '<span onclick="event.stopPropagation();var b=document.getElementById(\'_jd_co_'+i+'\');if(b){var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';}" style="cursor:pointer;color:#b8922a;font-size:14px;font-weight:800;margin-left:8px;">▸ '+childCOs.length+' CO</span>' : '';
     var estRow='<div onclick="openDocPdf(\''+_docJson(item,'estimates')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;" onmouseover="this.style.background=\'#fafaf8\'" onmouseout="this.style.background=\'\'">'
       +'<div style="display:flex;align-items:center;flex-wrap:wrap;"><span style="font-weight:700;font-size:14px;color:#2563eb;">'+item.est+'</span><span style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-weight:700;margin-left:8px;">EST</span>'+coToggle+'</div>'
       +'<div style="text-align:right;flex-shrink:0;margin-left:12px;"><div style="font-weight:700;font-size:15px;color:#222;">'+item.amount+'</div><div style="font-size:11px;font-weight:600;color:'+_stCol(item.status)+';margin-top:1px;">'+item.status+'</div>'+_billed(item.est)+(estUnb?_warn('est'):'')+'</div>'
@@ -2171,7 +2208,7 @@ function showJobPopup(e, customerId, estNum, type){
       var childCOs=(job.changeOrders||[]).filter(function(co){return co.originalEst===item.est;});
       var estUnbilled=_unbilled(item.est, item.amount);
       var estBadge='<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(59,130,246,.12);color:#2563eb;font-weight:700;margin-left:8px;">EST</span>';
-      var coToggle = childCOs.length ? '<span onclick="event.stopPropagation();var b=document.getElementById(\'_co_'+i+'\');var a=document.getElementById(\'_coarrow_'+i+'\');if(b){var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';if(a)a.style.transform=o?\'rotate(0deg)\':\'rotate(90deg)\';}" style="cursor:pointer;color:#b8922a;font-size:11px;font-weight:700;margin-left:8px;">▸ '+childCOs.length+' CO</span>' : '';
+      var coToggle = childCOs.length ? '<span onclick="event.stopPropagation();var b=document.getElementById(\'_co_'+i+'\');var a=document.getElementById(\'_coarrow_'+i+'\');if(b){var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';if(a)a.style.transform=o?\'rotate(0deg)\':\'rotate(90deg)\';}" style="cursor:pointer;color:#b8922a;font-size:14px;font-weight:800;margin-left:8px;">▸ '+childCOs.length+' CO</span>' : '';
       var estRow='<div onclick="openDocPdf(\''+_docJson(item,'estimates')+'\')" style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .12s;" onmouseover="this.style.background=\'#fafaf8\'" onmouseout="this.style.background=\'\'">'
         +'<div style="display:flex;flex-direction:column;">'
         +'<div style="display:flex;align-items:center;flex-wrap:wrap;">'
@@ -2413,7 +2450,7 @@ function renderJobInfo(customerId, est){
     var editLabel=isPM?'✎ Edit Project Manager':'✎ Edit Contact';
     return '<div style="border-bottom:1px solid rgba(255,255,255,.07);">'
       +'<div onclick="toggleJobPM(\''+ckey+'\')" style="display:flex;align-items:center;gap:8px;padding:11px 0;cursor:pointer;user-select:none;">'
-        +'<span id="jpm-chev-'+ckey+'" style="font-size:12px;color:rgba(255,255,255,.5);transition:transform .15s;width:12px;flex-shrink:0;">▸</span>'
+        +'<span id="jpm-chev-'+ckey+'" style="font-size:18px;color:rgba(255,255,255,.85);transition:transform .15s;width:18px;flex-shrink:0;font-weight:700;">▸</span>'
         +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="'+iconColor+'" stroke-width="2" style="flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
         +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+(ct.name||'')+'</div>'
         +(ct.title?'<div style="font-size:11px;color:rgba(255,255,255,.45);">'+ct.title+'</div>':'')+'</div>'
@@ -2566,6 +2603,12 @@ function _customerTerms(c){
   var label = days===0 ? 'Due on receipt' : ('Net '+days);
   return {days:days, label:label, raw:raw};
 }
+// Parse a document date string like "May 2, 2026" into a Date (or null)
+function _parseDocDate(s){
+  if(!s) return null;
+  var d=new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
 // Compute a due date string given a start date and a customer's terms
 function _dueDateFor(c, startDate){
   var t=_customerTerms(c);
@@ -2573,6 +2616,20 @@ function _dueDateFor(c, startDate){
   return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
 
+// Human-readable document type name (used in headers/labels)
+function _docKindName(kind){
+  return {estimate:'Estimate', invoice:'Invoice', co:'Change Order'}[kind] || 'Document';
+}
+// Full job site address: street + city + zip (avoids duplicating parts already present)
+function _fullJobSite(job){
+  if(!job) return '';
+  // If job.address already looks complete (has a comma/city), use it
+  if(job.address && /,/.test(job.address)) return job.address;
+  var street=job.streetOnly||job.address||'';
+  var city=job.city||''; // city usually already includes state + zip e.g. "San Diego CA 92101"
+  var parts=[street, city].filter(function(p){return String(p||'').trim();});
+  return parts.join(', ') || job.address || '';
+}
 // A document is locked (read-only) when it should no longer be edited.
 // Rules:
 //  - an invoice paid in full is locked.
@@ -2624,29 +2681,71 @@ function docFieldSave(ref, field, val){
   f.doc[field]=val;
   if(window.SDD && SDD.save) SDD.save();
 }
+// Split an address into line 1 (street) and line 2 (city, state, zip)
+function _addrLine1(addr){
+  var s=String(addr||'').trim();
+  var i=s.indexOf(',');
+  return i>=0 ? s.slice(0,i).trim() : s;
+}
+function _addrLine2(addr){
+  var s=String(addr||'').trim();
+  var i=s.indexOf(',');
+  var rest = i>=0 ? s.slice(i+1).trim() : '';
+  if(!rest) return '';
+  // Insert a comma after the city: "San Diego CA 92103" -> "San Diego, CA 92103"
+  // match: <city words> <2-letter state> <zip>
+  var m=rest.match(/^(.*?)\s+([A-Za-z]{2})\s+(\d{5}(?:-\d{4})?)$/);
+  if(m){ return m[1].trim()+', '+m[2].toUpperCase()+' '+m[3]; }
+  return rest;
+}
+// Capitalize the first letter of each word (Title Case), preserving small joining words lightly
+function _titleCase(s){
+  return String(s||'').replace(/\b([a-zà-ÿ])([a-zà-ÿ']*)/gi, function(m,first,rest){
+    return first.toUpperCase()+rest;
+  });
+}
+// Unit dropdown for line items (editable mode)
+function _unitDropdown(ref, idx, current){
+  var units=['square feet','linear feet','each','per','loads','pounds','tons','trips','job'];
+  var cur=String(current||'').toLowerCase();
+  // normalize common abbreviations to the full label
+  var norm={sqft:'square feet','sq ft':'square feet',lf:'linear feet','lin ft':'linear feet',ea:'each',lb:'pounds',lbs:'pounds',ton:'tons',trip:'trips',load:'loads'};
+  if(norm[cur]) cur=norm[cur];
+  if(cur && units.indexOf(cur)<0) units.unshift(cur); // keep any custom existing value
+  var opts=units.map(function(u){
+    return '<option value="'+u+'"'+(u===cur?' selected':'')+'>'+u+'</option>';
+  }).join('');
+  return '<select onchange="docLineSave(\''+ref+'\','+idx+',\'unit\',this.value)" style="font-family:Barlow,sans-serif;font-size:15px;color:#1f2630;border:1px solid #B8922A;border-radius:5px;padding:8px 6px;width:100%;box-sizing:border-box;background:#fff;cursor:pointer;">'+opts+'</select>';
+}
 function docLineSave(ref, idx, field, val){
   var f=_findDoc(ref); if(!f) return;
   var lines=_ensureLines(f);
   if(!lines[idx]) return;
+  var round2=function(n){ return Math.round((Number(n)||0)*100)/100; };
   if(field==='desc'){
     lines[idx].desc=val;
     // once a real service is typed, clear the "needs service" red flag
     if(String(val||'').trim()){ if(lines[idx]._needsService) delete lines[idx]._needsService; if(f.doc._isNew) delete f.doc._isNew; }
-  } else if(field==='qty'||field==='unitPrice'){
-    lines[idx][field]=_money(val);
-    lines[idx].amount=(Number(lines[idx].qty)||0)*(Number(lines[idx].unitPrice)||0);
+  } else if(field==='qty' || field==='unitPrice'){
+    // parse the raw number (keep decimals), then recompute amount = qty × unitPrice
+    var num=parseFloat(String(val).replace(/[^0-9.\-]/g,''));
+    if(isNaN(num)) num=0;
+    lines[idx][field]=num;
+    var q=Number(lines[idx].qty)||0;
+    var up=Number(lines[idx].unitPrice)||0;
+    lines[idx].amount=round2(q*up);
   } else if(field==='amount'){
-    lines[idx].amount=_money(val);
+    lines[idx].amount=round2(_money(val));
   } else {
     lines[idx][field]=val;
   }
-  // recompute total
-  var total=lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
+  // recompute grand total (rounded)
+  var total=round2(lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0));
   f.doc.amount=_moneyStr(total);
   var cell=document.getElementById('docLineTot-'+idx);
-  if(cell) cell.textContent='$'+Number(lines[idx].amount).toLocaleString('en-US',{minimumFractionDigits:2});
+  if(cell) cell.textContent='$'+Number(lines[idx].amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   var totEl=document.getElementById('docGrandTot');
-  if(totEl) totEl.textContent='$'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2});
+  if(totEl) totEl.textContent='$'+Number(total).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(window.SDD && SDD.save) SDD.save();
 }
 function docAddLine(ref){
@@ -2790,22 +2889,31 @@ function _reopenDoc(ref){
 }
 
 // Build an editable PDF sheet (letterhead) for any doc kind. Returns HTML.
-function editableDocSheet(ref){
+// opts.noSidebar: when true, render only the sheet (no activity log / billing column).
+function editableDocSheet(ref, opts){
+  opts=opts||{};
   var f=_findDoc(ref); if(!f) return '<div style="padding:40px;color:#999;">Document not found</div>';
   var d=f.doc, c=f.cust, job=f.job;
   var pm=(c.contacts||[]).find(function(x){return String(x.id)===String(job.contactId);})||f.contact||{};
+  // Due date: use saved value; otherwise compute (estimate/CO = date + 30 days; invoice = customer terms)
+  var dueVal=d.due;
+  if(!dueVal){
+    var _base=_parseDocDate(d.date)||new Date();
+    if(f.kind==='invoice'){ dueVal=_dueDateFor(c, _base); }
+    else { dueVal=new Date(_base.getTime()+30*86400000).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  }
   var kindLabel={estimate:'ESTIMATE', co:'CHANGE ORDER', invoice:'INVOICE'}[f.kind];
-  var accent={estimate:'#B8922A', co:'#C8822A', invoice:'#16a34a'}[f.kind];
+  var accent='#B8922A'; // unified gold accent for estimate, invoice and change order PDFs
   var addr=job.address||((job.streetOnly||'')+(job.city?', '+job.city:''))||'';
   var terms=c.paymentTerms||c.billingMethod||'Net 30';
   var lines=_ensureLines(f);
   var total=lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
   var logo=(typeof SDD_LOGO!=='undefined')?SDD_LOGO:'';
-  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Deconstruction & Demolition',shortName:'SDD Demolition',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
+  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Demolition, LLC',shortName:'SDD Demolition',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
   var locked=_docIsLocked(f);           // paid-in-full invoices are locked
   var ed=docEditMode && !locked;        // edit mode on/off (never editable when locked)
 
-  var inCss='font-family:Barlow,sans-serif;font-size:13px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:5px 7px;width:100%;box-sizing:border-box;background:#fff;transition:all .12s;';
+  var inCss='font-family:Barlow,sans-serif;font-size:18px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:9px 11px;width:100%;box-sizing:border-box;background:#fff;transition:all .12s;';
   var esc=function(v){return String(v==null?'':v).replace(/"/g,'&quot;');};
   var f2=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2});};
   // Render a field: editable input when in edit mode, plain text otherwise
@@ -2821,22 +2929,22 @@ function editableDocSheet(ref){
       var descCss=inCss + (needs?'border:1.5px solid #D94F4F;background:#FFF5F5;':'');
       var descPlaceholder=needs?' placeholder="⚠ Add a service — describe the work"':'';
       return '<tr>'
-        +'<td style="padding:5px 6px 5px 0;width:40%;"><input value="'+esc(l.desc)+'"'+descPlaceholder+' oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" style="'+descCss+'"></td>'
-        +'<td style="padding:5px 4px;width:64px;"><input value="'+esc(l.qty)+'" oninput="docLineSave(\''+ref+'\','+i+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
-        +'<td style="padding:5px 4px;width:64px;"><input value="'+esc(l.unit)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unit\',this.value)" style="'+inCss+'text-align:center;"></td>'
-        +'<td style="padding:5px 4px;width:84px;"><input value="'+esc(l.unitPrice)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
-        +'<td style="padding:5px 4px;width:96px;text-align:right;font-weight:700;white-space:nowrap;" id="docLineTot-'+i+'">'+f2(l.amount)+'</td>'
-        +'<td style="padding:5px 0 5px 6px;width:30px;text-align:center;"><button onclick="docDeleteLine(\''+ref+'\','+i+')" title="Delete" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:15px;line-height:1;">×</button></td>'
+        +'<td style="padding:3px 10px 3px 0;"><input value="'+esc(l.desc)+'"'+descPlaceholder+' oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" onblur="this.value=_titleCase(this.value);docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" style="'+descCss+'"></td>'
+        +'<td style="padding:3px 4px;width:50px;"><input value="'+esc(l.qty)+'" oninput="docLineSave(\''+ref+'\','+i+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
+        +'<td style="padding:3px 4px;width:110px;">'+_unitDropdown(ref,i,l.unit)+'</td>'
+        +'<td style="padding:3px 4px;width:90px;"><input value="'+esc(l.unitPrice)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
+        +'<td style="padding:3px 4px;width:110px;text-align:right;font-weight:700;white-space:nowrap;" id="docLineTot-'+i+'">'+f2(l.amount)+'</td>'
+        +'<td style="padding:3px 0 3px 6px;width:20px;text-align:center;"><button onclick="docDeleteLine(\''+ref+'\','+i+')" title="Delete" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:17px;line-height:1;">×</button></td>'
         +'</tr>'
         +(needs?'<tr><td colspan="6" style="padding:0 6px 6px 0;"><span style="font-size:11px;color:#D94F4F;font-weight:600;">← Add the service for this estimate to get started.</span></td></tr>':'');
     }
     return '<tr>'
-      +'<td style="padding:9px 6px 9px 0;font-size:13px;border-bottom:1px solid #F0F0F0;">'+(esc(l.desc)||'')+'</td>'
-      +'<td style="padding:9px 4px;font-size:13px;text-align:right;border-bottom:1px solid #F0F0F0;">'+(esc(l.qty)||'')+'</td>'
-      +'<td style="padding:9px 4px;font-size:13px;text-align:center;border-bottom:1px solid #F0F0F0;">'+(esc(l.unit)||'')+'</td>'
-      +'<td style="padding:9px 4px;font-size:13px;text-align:right;border-bottom:1px solid #F0F0F0;">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td>'
-      +'<td style="padding:9px 4px;font-size:13px;text-align:right;font-weight:700;white-space:nowrap;border-bottom:1px solid #F0F0F0;">'+f2(l.amount)+'</td>'
-      +'<td style="border-bottom:1px solid #F0F0F0;"></td>'
+      +'<td style="padding:4px 10px 4px 0;font-size:15px;border-bottom:1px solid #F4F4F4;">'+(esc(l.desc)||'')+'</td>'
+      +'<td style="padding:4px 4px;width:50px;font-size:15px;text-align:right;border-bottom:1px solid #F4F4F4;">'+(esc(l.qty)||'')+'</td>'
+      +'<td style="padding:4px 4px;width:56px;font-size:15px;text-align:center;border-bottom:1px solid #F4F4F4;">'+(esc(l.unit)||'')+'</td>'
+      +'<td style="padding:4px 4px;width:90px;font-size:15px;text-align:right;border-bottom:1px solid #F4F4F4;">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td>'
+      +'<td style="padding:4px 4px;width:110px;font-size:15px;text-align:right;font-weight:700;white-space:nowrap;border-bottom:1px solid #F4F4F4;">'+f2(l.amount)+'</td>'
+      +'<td style="width:20px;border-bottom:1px solid #F4F4F4;"></td>'
       +'</tr>';
   }).join('');
 
@@ -2866,12 +2974,19 @@ function editableDocSheet(ref){
         +'<span>'+cl.text+'</span>'
       +'</div>';
     }).join(''):'';
+    var _tid='_terms_'+String(ref).replace(/[^A-Za-z0-9]/g,'');
+    var _tcollapsed = (d._termsOpen===true) ? false : true; // minimized by default
     termsBlock='<div style="margin-top:26px;">'
-      +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:14px;">Terms &amp; Conditions</div>'
-      +'<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:6px;">Terms type</div>'
-      +typeSelector
-      +(ed?'<div style="font-size:11px;color:#999;margin:8px 0 4px;">Check or uncheck each clause to include or exclude it from this '+(f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate'))+'.</div>':'')
-      +'<div style="border:1px solid #eee;border-radius:10px;padding:6px 16px;margin-top:8px;">'+clausesHtml+'</div>'
+      +'<div onclick="_toggleTermsBlock(\''+_tid+'\',\''+ref+'\')" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:14px;">'
+        +'<span>Terms &amp; Conditions</span>'
+        +'<span id="'+_tid+'-chev" style="font-size:17px;font-weight:800;color:'+accent+';display:inline-flex;align-items:center;gap:6px;">'+(_tcollapsed?'<span style="font-size:11px;">Show</span>▾':'<span style="font-size:11px;">Hide</span>▴')+'</span>'
+      +'</div>'
+      +'<div id="'+_tid+'-body" style="display:'+(_tcollapsed?'none':'block')+';">'
+        +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:6px;">Terms type</div>'
+        +typeSelector
+        +(ed?'<div style="font-size:11px;color:#999;margin:8px 0 4px;">Check or uncheck each clause to include or exclude it from this '+(f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate'))+'.</div>':'')
+        +'<div style="border:1px solid #eee;border-radius:10px;padding:6px 16px;margin-top:8px;">'+clausesHtml+'</div>'
+      +'</div>'
     +'</div>';
   }
 
@@ -2887,72 +3002,82 @@ function editableDocSheet(ref){
           +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'+(f.kind==='estimate'?'Resend copy':'Resend receipt')+'</button>'
         +'</div>'
       : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
-        +'<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>'
+        +(( f.kind==='estimate' && _estComputedStage(job,d.est,d.status).step>=3 ) ? '' : '<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>')
         +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to client</button>'
       +'</div>');
 
   // status badge (read) vs input (edit)
+  var _estStage = (f.kind==='estimate') ? _estComputedStage(job, d.est, d.status) : null;
   var statusEl = ed
     ? '<input value="'+esc(d.status)+'" oninput="docFieldSave(\''+ref+'\',\'status\',this.value)" style="'+inCss+'max-width:200px;font-weight:600;">'
-    : '<span style="font-size:13px;font-weight:700;color:'+accent+';">'+(esc(d.status)||'—')+'</span>';
+    : (_estStage
+        ? '<span style="font-size:13px;font-weight:700;color:'+_estStage.color+';">'+_estStage.label+'</span>'
+        : '<span style="font-size:13px;font-weight:700;color:'+accent+';">'+(esc(d.status)||'—')+'</span>');
 
   var modeBadge = ed
     ? '<div style="font-size:11px;color:'+accent+';display:flex;align-items:center;gap:6px;font-weight:700;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editing — fields unlocked</div>'
     : '<div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Read-only · press Edit to change</div>';
 
-  return '<div style="background:#fff;padding:40px 44px;font-family:Barlow,sans-serif;color:#1f2630;width:100%;box-sizing:border-box;">'
+  return '<div style="background:'+(ed?'#ece9e2':'#f0eee8')+';padding:'+(ed?'20px':'16px')+';border-radius:12px;">'
+    +'<div style="background:#fff;padding:36px 56px 48px;font-family:Barlow,sans-serif;font-size:19px;line-height:1.65;color:#1f2630;max-width:820px;width:100%;margin:0 auto;box-sizing:border-box;'
+    +(ed?'border:2px solid '+accent+';box-shadow:0 0 0 4px rgba(184,146,42,.12), 0 10px 34px rgba(0,0,0,.16);border-radius:8px;':'box-shadow:0 6px 24px rgba(0,0,0,.12);border-radius:8px;')+'">'
     // mode badge
     +'<div style="display:flex;justify-content:flex-end;margin-bottom:4px;">'+modeBadge+'</div>'
     // HEADER: big logo left, big doc type right
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:18px;margin-bottom:22px;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid '+accent+';padding-bottom:12px;margin-bottom:14px;">'
       +'<div>'
-        +(logo?'<img src="'+logo+'" alt="SDD" style="height:64px;width:auto;display:block;margin-bottom:10px;">':'')
-        +'<div style="font-size:22px;font-weight:800;letter-spacing:.01em;">'+CO.name+'</div>'
-        +'<div style="font-size:11px;color:#888;margin-top:3px;line-height:1.7;">License Number #'+CO.license+'<br>'+CO.address1+'<br>'+CO.address2+'<br>'+CO.email+'<br>'+CO.phone+'</div>'
+        +(logo?'<img src="'+logo+'" alt="SDD" style="height:64px;width:auto;display:block;margin-bottom:6px;">':'')
+        +'<div style="font-size:22px;font-weight:800;letter-spacing:.01em;line-height:1.1;">'+CO.name+'</div>'
+        +'<div style="font-size:11px;color:#999;margin-top:4px;line-height:1.4;">License Number #'+CO.license+'<br>'+CO.address1+'<br>'+CO.address2+'<br>'+CO.phone+'</div>'
       +'</div>'
-      +'<div style="text-align:right;min-width:190px;">'
-        +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:40px;font-weight:700;color:'+accent+';letter-spacing:.04em;line-height:1;">'+kindLabel+'</div>'
-        +'<div style="font-size:15px;font-weight:700;color:#555;margin-top:6px;">#'+ref+'</div>'
-        +'<div style="margin-top:8px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;text-align:right;">'+(f.kind==='invoice'?'Invoice Date':'Date')+'</div>'
-        +'<div style="margin-top:2px;display:flex;justify-content:flex-end;">'+fld(d.date,'date','text-align:right;font-size:12px;max-width:130px;','Date')+'</div>'
-        +(f.kind==='invoice'?'<div style="margin-top:8px;font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;text-align:right;">Due Date</div>':'')
-        +(f.kind==='invoice'?'<div style="margin-top:2px;display:flex;justify-content:flex-end;">'+fld(d.due,'due','text-align:right;font-size:12px;max-width:130px;','Due date')+'</div>':'')
-        +(f.kind==='invoice'?'<div style="margin-top:4px;font-size:11px;color:#999;text-align:right;">Terms: '+((d.terms)||_customerTerms(c).label)+'</div>':'')
-        +(f.kind!=='invoice'?'<div style="margin-top:6px;font-size:12px;color:#777;display:flex;align-items:center;gap:6px;justify-content:flex-end;"><strong>PO:</strong>'+fld(d.poNumber,'poNumber','text-align:right;font-size:12px;max-width:110px;','PO')+'</div>':'')
+      +'<div style="text-align:right;min-width:200px;">'
+        +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:54px;font-weight:800;color:'+accent+';letter-spacing:.03em;line-height:1;">'+kindLabel+'</div>'
+        +'<div style="font-size:20px;font-weight:800;color:#555;margin-top:6px;letter-spacing:.02em;">#'+ref+'</div>'
+        +'<div style="margin-top:6px;display:flex;justify-content:flex-end;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.05em;">Status</span>'+statusEl+'</div>'
       +'</div>'
     +'</div>'
-    // BILL TO + CONTACT & TERMS
-    +'<div style="display:flex;justify-content:space-between;gap:24px;margin-bottom:18px;">'
-      +'<div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Bill To</div>'
-        +'<div style="font-size:14px;font-weight:700;">'+c.name+'</div>'
-        +'<div style="font-size:12px;color:#555;">'+(c.address||'4500 Main St, San Diego CA 92103')+'</div></div>'
-      +'<div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Contact &amp; Terms</div>'
-        +'<div style="font-size:13px;color:#444;">'+(pm.name||'')+'</div>'
-        +'<div style="font-size:13px;color:#444;">'+terms+'</div></div>'
+    // THREE COLUMNS: Customer Info (+project) | Job Site Address | Document Info
+    +'<div style="display:flex;justify-content:space-between;gap:24px;margin-bottom:14px;">'
+      +'<div style="flex:1;"><div style="font-size:12px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Customer Info</div>'
+        +'<div style="font-size:13px;font-weight:400;line-height:1.4;color:#555;">'+c.name+'</div>'
+        +'<div style="font-size:13px;color:#555;line-height:1.4;font-weight:400;">'+_addrLine1(c.address||'4500 Main St, San Diego CA 92103')+'</div>'
+        +'<div style="font-size:13px;color:#555;line-height:1.4;font-weight:400;">'+_addrLine2(c.address||'4500 Main St, San Diego CA 92103')+'</div>'
+      +'</div>'
+      +'<div style="flex:1;"><div style="font-size:12px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Job Site Address</div>'
+        +'<div style="font-size:13px;color:#555;font-weight:400;line-height:1.4;">'+_addrLine1(_fullJobSite(job))+'</div>'
+        +'<div style="font-size:13px;color:#555;font-weight:400;line-height:1.4;">'+_addrLine2(_fullJobSite(job))+'</div></div>'
+      // THIRD COLUMN: document info (date, [due only for invoice], po/terms)
+      +'<div style="flex:1;min-width:200px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">'
+          +'<span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">'+_docKindName(f.kind)+' Date</span>'
+          +'<span style="flex:1;display:flex;justify-content:flex-end;">'+fld(d.date,'date','text-align:right;font-size:13px;max-width:130px;color:#555;','Date')+'</span>'
+        +'</div>'
+        +(f.kind==='invoice'?'<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:10px;">'
+          +'<span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Due Date</span>'
+          +'<span style="flex:1;display:flex;justify-content:flex-end;">'+fld(dueVal,'due','text-align:right;font-size:13px;max-width:130px;color:#555;','Due date')+'</span>'
+        +'</div>':'')
+        +(f.kind==='invoice'?'<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Terms</span><span style="font-size:13px;color:#555;font-weight:400;">'+((d.terms)||_customerTerms(c).label)+'</span></div>':'')
+        +(f.kind!=='invoice'?'<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:10px;"><span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">PO</span><span style="flex:1;display:flex;justify-content:flex-end;">'+fld(d.poNumber,'poNumber','text-align:right;font-size:13px;max-width:120px;color:#555;','PO')+'</span></div>':'')
+      +'</div>'
     +'</div>'
-    // JOB SITE ADDRESS
-    +'<div style="background:#F5F4F1;border-left:3px solid '+accent+';border-radius:6px;padding:12px 16px;margin-bottom:18px;">'
-      +'<div style="font-size:10px;font-weight:700;color:'+accent+';text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">Job Site Address</div>'
-      +'<div style="font-size:14px;color:#1f2630;">'+(addr||'')+'</div>'
-    +'</div>'
-    // STATUS
-    +'<div style="display:flex;gap:14px;align-items:center;margin-bottom:20px;">'
-      +'<span style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;">Status</span>'
-      +statusEl
-      +(f.kind==='co'?'<span style="font-size:11px;color:#999;margin-left:auto;">Change order to '+(d.originalEst||'')+'</span>':'')
-      +(f.kind==='invoice'&&d.originalEst?'<span style="font-size:11px;color:#999;margin-left:auto;">For '+(d.originalEst||'')+'</span>':'')
-    +'</div>'
-    // SCOPE OF WORK table
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:8px;">'+(f.kind==='invoice'?'Items':'Scope of work')+'</div>'
-    +'<table style="width:100%;border-collapse:collapse;table-layout:fixed;">'
-      +'<thead><tr>'
-        +'<th style="width:40%;text-align:left;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 6px 8px 0;border-bottom:2px solid #ddd;">Description</th>'
-        +'<th style="text-align:right;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Qty</th>'
-        +'<th style="text-align:center;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit</th>'
-        +'<th style="text-align:right;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit price</th>'
-        +'<th style="text-align:right;font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Total</th>'
-        +'<th style="border-bottom:2px solid #ddd;width:30px;"></th>'
-      +'</tr></thead>'
+    // separator line between customer info and the scope
+    +'<div style="border-top:1px solid #e5e5e5;margin:0 0 12px;"></div>'
+    // PROJECT NAME — full width line above the scope
+    +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"><span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Project</span>'+(ed?'<span style="flex:1;">'+fld((d.projectName||job.projectName||''),'projectName','text-align:left;font-size:14px;color:#333;','Project name')+'</span>':'<span style="flex:1;font-size:14px;color:#333;font-weight:600;">'+esc(d.projectName||job.projectName||'—')+'</span>')+'</div>'
+    // reference note (change order / invoice belongs to an estimate)
+    +((f.kind==='co'&&d.originalEst)?'<div style="font-size:11px;color:#999;margin-bottom:12px;">Change order to '+d.originalEst+'</div>':'')
+    +((f.kind==='invoice'&&d.originalEst)?'<div style="font-size:11px;color:#999;margin-bottom:12px;">For '+d.originalEst+'</div>':'')
+    // SCOPE OF WORK / WORK COMPLETED table
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:8px;background:#F5F4F1;padding:8px 12px;border-radius:6px;border-left:3px solid '+accent+';">'+(f.kind==='invoice'?'Work Completed':'Proposed Scope of Work')+'</div>'
+    +'<table style="width:100%;border-collapse:collapse;'+(ed?'':'border-top:2px solid #ddd;')+'">'
+      +(ed?('<thead><tr>'
+        +'<th style="text-align:left;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 8px 0;border-bottom:2px solid #ddd;">Description</th>'
+        +'<th style="width:50px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Qty</th>'
+        +'<th style="width:56px;text-align:center;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit</th>'
+        +'<th style="width:90px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit price</th>'
+        +'<th style="width:110px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Total</th>'
+        +'<th style="width:20px;border-bottom:2px solid #ddd;"></th>'
+      +'</tr></thead>'):'')
       +'<tbody>'+lineRows+'</tbody></table>'
     +(ed?'<button onclick="docAddLine(\''+ref+'\')" style="margin-top:8px;padding:6px 12px;border:1px dashed '+accent+';border-radius:7px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">+ Add line item</button>':'')
     // CONTRACT SCOPE REFERENCE (item descriptions only, no prices) — shown before the total
@@ -2967,10 +3092,7 @@ function editableDocSheet(ref){
     // ACTION BAR
     +actionBar
   +'</div>'
-  // PAYMENT SUMMARY (invoices only)
-  +(f.kind==='invoice'?_invPaymentSummary(f):'')
-  // ACTIVITY LOG (below the editable document)
-  +_docActivityLog(f);
+  +'</div>'; // close the page-background wrapper (PDF sheet only — side panels are added by the caller)
 }
 
 // Contract summary block for a progress-billing invoice (shown inside the PDF, client-facing)
@@ -3189,9 +3311,20 @@ function _recordPaymentSave(invRef){
   _reopenDoc(invRef);
 }
 
+// Toggle the Terms & Conditions block open/closed inside a PDF
+function _toggleTermsBlock(tid, ref){
+  var body=document.getElementById(tid+'-body');
+  var chev=document.getElementById(tid+'-chev');
+  if(!body) return;
+  var isHidden=(body.style.display==='none');
+  body.style.display=isHidden?'block':'none';
+  if(chev) chev.innerHTML=isHidden?'<span style="font-size:11px;">Hide</span>▴':'<span style="font-size:11px;">Show</span>▾';
+  var f=_findDoc(ref); if(f) f.doc._termsOpen=isHidden;
+}
+
 // Build an activity log for a document (estimate / change order / invoice)
 function _docActivityLog(f){
-  var d=f.doc, job=f.job, kind=f.kind, accent={estimate:'#B8922A', co:'#C8822A', invoice:'#16a34a'}[kind];
+  var d=f.doc, job=f.job, kind=f.kind, accent='#B8922A';
   var events=[];
   var push=function(date,label,by,icon){ if(date) events.push({date:date, label:label, by:by||'', icon:icon||'dot', _s:_txDate(date)}); };
   var kindName={estimate:'Estimate', co:'Change order', invoice:'Invoice'}[kind]||'Document';
@@ -3251,7 +3384,7 @@ function _docActivityLog(f){
       +'</div>';
     }).join('');
   }
-  return '<div style="margin-top:16px;border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);">'
+  return '<div style="border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);position:sticky;top:8px;">'
     +'<div style="font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Activity Log</div>'
     +rows
   +'</div>';
@@ -3309,12 +3442,36 @@ function txGoToDoc(ref){
 function _estStageInfo(status){
   var s=(status||'').toLowerCase();
   // Returns {step, label, color} — mirrors the Estimates module lifecycle
+  if(/payment received/.test(s)) return {step:7,label:'Payment Received',color:'#3A9E6A'};
   if(/paid/.test(s) && !/unpaid/.test(s)) return {step:7,label:'Payment Received',color:'#3A9E6A'};
   if(/invoice|sent.*ar|billed/.test(s)) return {step:6,label:'Invoice Sent',color:'#3A7ED4'};
   if(/ready.*bill|complete/.test(s)) return {step:5,label:'Ready to Bill',color:'#D94F4F'};
   if(/progress/.test(s)) return {step:4,label:'Job in Progress',color:'#C8822A'};
   if(/approv/.test(s)) return {step:3,label:'Approved',color:'#B8922A'};
   if(/pending|sent/.test(s)) return {step:2,label:'Pending Approval',color:'#3A7ED4'};
+  return {step:1,label:'Estimate Pending',color:'#777'};
+}
+// Compute an estimate's lifecycle stage automatically from its billing & collection,
+// so it can never show an invoice-only status like "Paid".
+// Early stages (Draft/Pending/Approved/In progress) come from the saved status;
+// once there are invoices, the stage is driven by billed vs collected.
+function _estComputedStage(job, estId, savedStatus){
+  var s=_estSummary(job, estId);
+  var raw=(savedStatus||'').toLowerCase();
+  // Fully collected → Payment Received
+  if(s.billed>0.5 && s.outstanding<=0.5 && s.remainingToBill<=0.5){
+    return {step:7,label:'Payment Received',color:'#3A9E6A'};
+  }
+  // Something billed but not fully collected → Invoice Sent
+  if(s.billed>0.5){
+    return {step:6,label:'Invoice Sent',color:'#3A7ED4'};
+  }
+  // Nothing billed yet → use the saved lifecycle status, but never "Paid"
+  if(/ready.*bill|complete/.test(raw)) return {step:5,label:'Ready to Bill',color:'#D94F4F'};
+  if(/progress/.test(raw)) return {step:4,label:'Job in Progress',color:'#C8822A'};
+  if(/approv/.test(raw)) return {step:3,label:'Approved',color:'#B8922A'};
+  if(/pending|sent/.test(raw)) return {step:2,label:'Pending Approval',color:'#3A7ED4'};
+  if(/paid|payment received/.test(raw)) return {step:3,label:'Approved',color:'#B8922A'}; // stale 'Paid' with no invoices → treat as Approved
   return {step:1,label:'Estimate Pending',color:'#777'};
 }
 
@@ -3326,7 +3483,8 @@ function renderEstimateDetail(customerId, jobEst, estId){
   if(!job){ renderDetail(parseInt(customerId)); return; }
   var est=(job.estimates||[]).find(function(e){return e.est===estId;});
   if(!est){ renderJobInfo(customerId, jobEst); return; }
-  var stage=_estStageInfo(est.status);
+  var f0=_findDoc(est.est) || {doc:est, kind:'estimate', job:job, cust:c};
+  var stage=_estComputedStage(job, est.est, est.status);
   var cos=(job.changeOrders||[]).filter(function(co){return co.originalEst===est.est;});
   var invs=(job.invoices||[]).filter(function(iv){return iv.originalEst===est.est;});
 
@@ -3349,25 +3507,42 @@ function renderEstimateDetail(customerId, jobEst, estId){
       +'</div>';
   }).join('') : '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;text-align:center;">No invoices for this estimate</div>';
 
-  pr.innerHTML='<div style="padding:2px 2px 24px;">'
-    // toolbar
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2630;border-radius:10px 10px 0 0;">'
-      +'<div style="display:flex;align-items:center;gap:9px;color:#fff;font-size:14px;font-weight:600;">'
-        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e0b94a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
-        +est.est+' · '+c.name
-        +'<span style="padding:2px 10px;border-radius:12px;background:'+stage.color+';color:#fff;font-size:11px;font-weight:700;margin-left:4px;">'+stage.label+'</span>'
+  pr.innerHTML='<div style="padding:2px 2px 24px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">'
+    // LEFT COLUMN: black toolbar + the editable PDF sheet
+    +'<div style="flex:1 1 620px;min-width:0;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2630;border-radius:10px 10px 0 0;">'
+        +'<div style="display:flex;align-items:center;gap:9px;color:#fff;font-size:14px;font-weight:600;">'
+          +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e0b94a" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+          +est.est+' · '+c.name
+          +'<span style="padding:2px 10px;border-radius:12px;background:'+stage.color+';color:#fff;font-size:11px;font-weight:700;margin-left:4px;">'+stage.label+'</span>'
+        +'</div>'
+        +(_estSummary(job, est.est).remainingToBill>0.5
+            ? '<button onclick="_jdInvoiceMode(\''+est.est+'\')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate invoice</button>'
+            : '')
       +'</div>'
-      +(_estSummary(job, est.est).remainingToBill>0.5
-          ? '<button onclick="_jdInvoiceMode(\''+est.est+'\')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate invoice</button>'
-          : '')
+      +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(est.est,{noSidebar:true})+'</div>'
     +'</div>'
-    // native editable estimate document
-    +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(est.est)+'</div>'
-    // FINANCIAL SUMMARY: billed vs total, remaining to bill, collected
-    +_estFinancialPanel(job, est.est, invList)
+    // RIGHT COLUMN: activity log + billing summary — fully OUTSIDE the black toolbar
+    +'<div style="flex:0 0 330px;max-width:370px;min-width:290px;display:flex;flex-direction:column;gap:14px;">'
+      +_docActivityLog(f0)
+      +_estFinancialPanel(job, est.est, _estInvoiceListHTML(job, est.est))
+    +'</div>'
   +'</div>';
 }
 
+// Reusable HTML list of invoices generated for an estimate
+function _estInvoiceListHTML(job, estId){
+  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft;});
+  if(!invs.length) return '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;text-align:center;">No invoices for this estimate</div>';
+  return invs.map(function(iv){
+    var paid=/paid/i.test(iv.status)&&!/unpaid/i.test(iv.status);
+    return '<div onclick="selectDoc(\'invoice\',\''+iv.est+'\')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;background:var(--surface);transition:all .15s;" onmouseover="this.style.borderColor=\'#16a34a\';this.style.background=\'rgba(22,163,74,.04)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.background=\'var(--surface)\'">'
+      +'<div style="width:30px;height:30px;border-radius:7px;background:rgba(22,163,74,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+iv.est+'</div><div style="font-size:12px;color:var(--muted);">'+(iv.date||'')+(iv.due?' · due '+iv.due:'')+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0;"><div style="font-size:13px;font-weight:700;">'+(iv.amount||'')+'</div><div style="font-size:11px;"><span style="padding:1px 7px;border-radius:9px;font-weight:700;background:'+(paid?'rgba(22,163,74,.14)':'rgba(58,126,212,.14)')+';color:'+(paid?'#16a34a':'#2563eb')+';">'+(iv.status||'')+'</span></div></div>'
+      +'</div>';
+  }).join('');
+}
 // Financial summary panel for an estimate (shown in its detail view)
 function _estFinancialPanel(job, estId, invListHtml){
   var s=_estSummary(job, estId);
@@ -3394,9 +3569,21 @@ function _estFinancialPanel(job, estId, invListHtml){
       +(s.retention>0?'<div style="width:1px;background:var(--border);"></div>'+box('Retention', s.retention, '#B8922A'):'')
     +'</div>'
     +(canBill?'<div style="margin-top:12px;padding:10px 14px;border-radius:9px;background:rgba(200,130,42,.08);border:1px solid rgba(200,130,42,.25);font-size:13px;color:#8a6414;"><b>'+_moneyStr(s.remainingToBill)+'</b> remaining to bill on this estimate.</div>':'<div style="margin-top:12px;padding:10px 14px;border-radius:9px;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.25);font-size:13px;color:#15803d;">This estimate is fully billed.</div>')
-    +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px;">Invoices generated ('+s.invoices.length+')</div>'
-    +invListHtml
+    +'<div id="_invgen-'+estId.replace(/[^A-Za-z0-9]/g,'')+'-hdr" onclick="_toggleInvGen(\''+estId.replace(/[^A-Za-z0-9]/g,'')+'\')" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px;">'
+      +'<span>Invoices generated ('+s.invoices.length+')</span>'
+      +'<span id="_invgen-'+estId.replace(/[^A-Za-z0-9]/g,'')+'-chev" style="color:var(--gold);display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:800;"><span style="font-size:11px;">Hide</span>▴</span>'
+    +'</div>'
+    +'<div id="_invgen-'+estId.replace(/[^A-Za-z0-9]/g,'')+'-body">'+invListHtml+'</div>'
   +'</div>';
+}
+// Toggle the "Invoices generated" list open/closed
+function _toggleInvGen(idKey){
+  var body=document.getElementById('_invgen-'+idKey+'-body');
+  var chev=document.getElementById('_invgen-'+idKey+'-chev');
+  if(!body) return;
+  var hidden=(body.style.display==='none');
+  body.style.display=hidden?'block':'none';
+  if(chev) chev.innerHTML=hidden?'<span>Hide</span>▴':'<span>Show</span>▾';
 }
 
 // Popup with NATIVE editable PDF (change order or invoice)
@@ -3438,17 +3625,23 @@ function renderDocDetail(kind, ref){
   var accent = kind==='invoice' ? '#16a34a' : '#C8822A';
   var label = kind==='invoice' ? 'Invoice' : 'Change Order';
   var paid=/paid/i.test(f.doc.status||'')&&!/unpaid/i.test(f.doc.status||'');
-  pr.innerHTML='<div style="padding:2px 2px 24px;">'
-    // toolbar
-    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2630;border-radius:10px 10px 0 0;">'
-      +'<div style="display:flex;align-items:center;gap:9px;color:#fff;font-size:14px;font-weight:600;">'
-        +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2">'+(kind==='invoice'?'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>')+'</svg>'
-        +label+' · '+ref+' · '+f.cust.name
+  pr.innerHTML='<div style="padding:2px 2px 24px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">'
+    // LEFT COLUMN: black toolbar + editable PDF sheet
+    +'<div style="flex:1 1 620px;min-width:0;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1f2630;border-radius:10px 10px 0 0;">'
+        +'<div style="display:flex;align-items:center;gap:9px;color:#fff;font-size:14px;font-weight:600;">'
+          +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2">'+(kind==='invoice'?'<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>':'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>')+'</svg>'
+          +label+' · '+ref+' · '+f.cust.name
+        +'</div>'
+        +'<button onclick="selectEstimate('+f.cust.id+',\''+f.job.est+'\',\''+(activeEstimateId||f.job.est)+'\')" style="padding:6px 12px;border:1px solid rgba(255,255,255,.3);border-radius:7px;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">← Back to estimate</button>'
       +'</div>'
-      +'<button onclick="selectEstimate('+f.cust.id+',\''+f.job.est+'\',\''+(activeEstimateId||f.job.est)+'\')" style="padding:6px 12px;border:1px solid rgba(255,255,255,.3);border-radius:7px;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">← Back to estimate</button>'
+      +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(ref,{noSidebar:true})+'</div>'
     +'</div>'
-    // native editable document
-    +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(ref)+'</div>'
+    // RIGHT COLUMN: activity log (+ payment summary for invoices) — outside the black toolbar
+    +'<div style="flex:0 0 330px;max-width:370px;min-width:290px;display:flex;flex-direction:column;gap:14px;">'
+      +_docActivityLog(f)
+      +(kind==='invoice'?_invPaymentSummary(f):'')
+    +'</div>'
   +'</div>';
 }
 
@@ -3945,12 +4138,20 @@ function _jdInvoicePercent(estId, estTotal){
 function _jdItemPickerBlock(estId){
   var f=_findDoc(estId); if(!f) return '';
   var lines=_ensureLines(f).filter(function(l){ return String(l.desc||'').trim() && (Number(l.amount)||0)>0; });
+  // Fallback: if the estimate has no priced line items, use its scope + total as a single billable item
   if(!lines.length){
-    return '<div style="border:1.5px dashed var(--border2);border-radius:12px;padding:14px;color:var(--muted2);font-size:13px;font-style:italic;">Add priced items to the estimate to bill by item.</div>';
+    var d=f.doc, tot=_money(d.amount);
+    if(tot>0){
+      var label=d.scope||d.description||d.projectName||'Scope of work';
+      lines=[{desc:label, qty:1, unit:'', unitPrice:tot, amount:tot}];
+    }
+  }
+  if(!lines.length){
+    return '<div style="border:1.5px dashed var(--border2);border-radius:12px;padding:14px;color:var(--muted2);font-size:13px;font-style:italic;">Add a priced scope to the estimate to bill by item.</div>';
   }
   var rows=lines.map(function(l,i){
     return '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:6px;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
-      +'<input type="checkbox" class="_jdItemChk" data-amt="'+(Number(l.amount)||0)+'" data-idx="'+i+'" onchange="_jdItemToggle()" style="width:17px;height:17px;accent-color:#16a34a;flex-shrink:0;">'
+      +'<input type="checkbox" class="_jdItemChk" data-amt="'+(Number(l.amount)||0)+'" data-idx="'+i+'" data-desc="'+esc_(l.desc).replace(/"/g,'&quot;')+'" onchange="_jdItemToggle()" style="width:17px;height:17px;accent-color:#16a34a;flex-shrink:0;">'
       +'<span style="flex:1;font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc_(l.desc)+'</span>'
       +'<span style="font-size:13px;font-weight:700;color:#16a34a;white-space:nowrap;">'+_moneyStr(l.amount)+'</span>'
     +'</label>';
@@ -3981,9 +4182,15 @@ function _jdItemToggle(){
 function _jdInvoiceFromItems(estId){
   var chks=document.querySelectorAll('._jdItemChk');
   var f=_findDoc(estId); if(!f) return;
-  var lines=_ensureLines(f);
   var picked=[], total=0;
-  chks.forEach(function(ch){ if(ch.checked){ var idx=parseInt(ch.getAttribute('data-idx')); if(lines[idx]){ picked.push(lines[idx]); total+=Number(lines[idx].amount)||0; } } });
+  chks.forEach(function(ch){
+    if(ch.checked){
+      var amt=parseFloat(ch.getAttribute('data-amt'))||0;
+      var desc=ch.getAttribute('data-desc')||'Item';
+      picked.push({desc:desc, qty:1, unit:'', unitPrice:amt, amount:amt});
+      total+=amt;
+    }
+  });
   if(!picked.length) return;
   // determine if this covers the full estimate or is partial
   var s=_estSummary(f.job, estId);
@@ -4166,7 +4373,7 @@ function jobBillingContactsBlock(c, job){
         +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>'
         +'Billing Contacts <span style="color:var(--muted);font-weight:600;">('+totalBills+')</span>'
       +'</div>'
-      +'<span id="jbill-chev-'+c.id+'" style="font-size:14px;color:var(--muted);transition:transform .15s;">▸</span>'
+      +'<span id="jbill-chev-'+c.id+'" style="font-size:18px;color:var(--gold);transition:transform .15s;font-weight:700;">▸</span>'
     +'</div>'
     +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">Recipients for invoices and billing emails on this job.</div>'
     +'<div id="jbill-body-'+c.id+'" style="display:none;margin-top:12px;">'+groupsHTML+'</div>'
@@ -4307,7 +4514,7 @@ function renderDetail(id, pmFilter){
         </div>
         <div class="cc-right">
           <div>${ct.jobs.length} job${ct.jobs.length!==1?'s':''}</div>
-          <div id="exp-${ct.id}" style="margin-top:2px;">${ct.jobs.length?'▾ show':''}</div>
+          <div id="exp-${ct.id}" style="margin-top:3px;font-size:14px;font-weight:800;color:var(--gold);">${ct.jobs.length?'▾ show':''}</div>
         </div>
       </div>
       <div id="jobs-${ct.id}" style="display:none;" class="cc-jobs-wrap">
@@ -4491,7 +4698,7 @@ function renderDetail(id, pmFilter){
           +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
           +'Archived Job <span style="color:var(--muted);font-weight:600;opacity:.8;">('+pmArchLines.length+')</span>'
         +'</div>'
-        +'<span id="arch-chev-pm'+c.id+'" style="font-size:14px;color:var(--muted);transition:transform .15s;">▸</span>'
+        +'<span id="arch-chev-pm'+c.id+'" style="font-size:18px;color:var(--gold);transition:transform .15s;font-weight:700;">▸</span>'
       +'</div>'
       +'<div style="font-size:11px;color:var(--muted);opacity:.85;margin-top:2px;">Jobs where every estimate and change order is fully invoiced and paid.</div>'
       +'<div id="arch-body-pm'+c.id+'" style="display:none;margin-top:12px;">'
@@ -4512,7 +4719,7 @@ function renderDetail(id, pmFilter){
           +'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
           +'Archived Job <span style="color:var(--muted);font-weight:600;opacity:.8;">('+archivedLines.length+')</span>'
         +'</div>'
-        +'<span id="arch-chev-'+c.id+'" style="font-size:14px;color:var(--muted);transition:transform .15s;">▸</span>'
+        +'<span id="arch-chev-'+c.id+'" style="font-size:18px;color:var(--gold);transition:transform .15s;font-weight:700;">▸</span>'
       +'</div>'
       +'<div style="font-size:11px;color:var(--muted);opacity:.85;margin-top:2px;">Jobs where every estimate and change order is fully invoiced and paid.</div>'
       +'<div id="arch-body-'+c.id+'" style="display:none;margin-top:12px;">'
@@ -4566,7 +4773,7 @@ function renderDetail(id, pmFilter){
         ? '<div id="ccpm-body-'+ccid+'" style="display:none;margin:8px 0 0 56px;padding-left:12px;border-left:2px solid var(--border);">'+jobsInner+'</div>'
         : '';
       var nameClick = isPM ? ' style="cursor:pointer;" onclick="toggleContactJobs(\''+ccid+'\')"' : '';
-      var chev = isPM ? '<span id="ccpm-chev-'+ccid+'" style="font-size:11px;color:var(--muted);transition:transform .15s;display:inline-block;margin-right:4px;">▸</span>' : '';
+      var chev = isPM ? '<span id="ccpm-chev-'+ccid+'" style="font-size:17px;color:var(--gold);transition:transform .15s;display:inline-block;margin-right:6px;font-weight:700;">▸</span>' : '';
       return `
       <div class="contact-simple" style="justify-content:space-between;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -4683,7 +4890,7 @@ function renderDetail(id, pmFilter){
         <div onclick="toggleBillingJob('${sid}')" style="padding:11px 16px;background:var(--surface2);cursor:pointer;user-select:none;">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
             <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-              <span id="billjob-chev-${sid}" style="font-size:12px;color:var(--muted);transition:transform .15s;flex-shrink:0;">▸</span>
+              <span id="billjob-chev-${sid}" style="font-size:18px;color:var(--gold);transition:transform .15s;flex-shrink:0;font-weight:700;">▸</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               <span style="font-size:14px;font-weight:800;">${g.label}</span>
               ${g.jobs.length>1?'<span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px;background:rgba(58,126,212,.12);color:#2563eb;">'+g.jobs.length+' jobs</span>':''}
@@ -4735,7 +4942,7 @@ function renderDetail(id, pmFilter){
         return '<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;">'
           +'<div onclick="toggleDocJob(\''+did+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:var(--surface2);cursor:pointer;user-select:none;">'
             +'<div style="display:flex;align-items:center;gap:8px;min-width:0;">'
-              +'<span id="'+did+'-chev" style="font-size:12px;color:var(--muted);transition:transform .15s;flex-shrink:0;">▸</span>'
+              +'<span id="'+did+'-chev" style="font-size:18px;color:var(--gold);transition:transform .15s;flex-shrink:0;font-weight:700;">▸</span>'
               +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
               +'<span style="font-size:13px;font-weight:700;">'+(j.jobName||j.projectName||j.address||'Job')+'</span>'
               +'<span style="font-size:11px;color:var(--muted2);margin-left:4px;">· '+docCount+' document'+(docCount===1?'':'s')+'</span>'
@@ -4934,6 +5141,7 @@ function _makeCardsCollapsible(){
     // wrap everything currently inside the card into a body container
     var body=document.createElement('div');
     body.className='card-collapse-body';
+    body.style.cssText='padding:18px 22px;';
     while(card.firstChild){ body.appendChild(card.firstChild); }
 
     // toolbar: title (left) + Expand/Minimize button (right)
@@ -4948,13 +5156,13 @@ function _makeCardsCollapsible(){
 
     var btn=document.createElement('button');
     btn.type='button';
-    btn.style.cssText='display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);flex-shrink:0;';
+    btn.style.cssText='display:inline-flex;align-items:center;gap:7px;background:var(--gold-dim2,rgba(184,146,42,.12));border:1.5px solid var(--gold);border-radius:8px;padding:6px 14px;cursor:pointer;font-family:Barlow,sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);flex-shrink:0;';
     function paint(){
       body.style.display=collapsed?'none':'block';
       bar.style.borderBottom=collapsed?'none':'1px solid var(--border)';
       btn.innerHTML=(collapsed
-        ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Expand'
-        : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg> Minimize');
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg> Expand'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg> Minimize');
     }
     btn.onclick=function(){ collapsed=!collapsed; _cardCollapseState[key]=collapsed; paint(); };
     bar.appendChild(titleSpan);
@@ -5827,7 +6035,7 @@ function openJobAssignPanel(customerId, contactId, estFilter){
           +'<div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--success);">'
             +'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/></svg>'
             +'Archived <span style="color:var(--success);">('+archivedIdx.length+')</span>'
-          +'</div><span id="_jap_arch_chev" style="font-size:13px;color:var(--muted);transition:transform .15s;">▸</span>'
+          +'</div><span id="_jap_arch_chev" style="font-size:18px;color:var(--gold);transition:transform .15s;font-weight:700;">▸</span>'
         +'</div>'
         +'<div id="_jap_arch_body" style="display:none;padding:12px 14px 2px;">'+archivedIdx.map(function(idx){return jobCard(jobs[idx],idx,false);}).join('')+'</div>'
       +'</div>';

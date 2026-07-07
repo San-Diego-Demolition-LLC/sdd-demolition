@@ -6,7 +6,7 @@
    - Each module reads/writes through window.SDD.
    ============================================================ */
 (function(){
-  var STORAGE_KEY = 'sdd_data_v3';
+  var STORAGE_KEY = 'sdd_data_v5';
 
   // ---- DEFAULT SEED DATA (used the first time, before anything is saved) ----
   var SEED = {
@@ -171,13 +171,50 @@
           ]},
       ]},
    ]},
+  {id:5, name:'Coronado Development Group', city:'Coronado, CA',
+   address:'1201 Orange Ave, Coronado CA 92118', phone:'(619) 555-0350',
+   since:'2024', type:'commercial', waiver:'conditional', portal:false, notes:'Large multi-scope demolition — sample with detailed line items.', specialInstructions:false, paymentTerms:'net-30', billingMethod:'direct-email', sov:true, sovEstimates:[],
+   contacts:[
+     {id:'cd1', name:'Laura Kim', initials:'LK', color:'av-info', role:'billing',
+      email:'billing@coronadodev.com', phone:'(619) 555-0351', title:'Billing Manager', jobs:[]},
+     {id:'cd2', name:'David Fuentes', initials:'DF', color:'av-gold', role:'project-manager',
+      email:'d.fuentes@coronadodev.com', phone:'(619) 555-0352', title:'Project Manager',
+      jobs:[
+        {est:'EST-080', address:'1201 Orange Ave', city:'Coronado CA 92118', status:'Approved', amount:'$78,450', date:'May 20, 2026', jobName:'Orange Ave Full Demolition', projectName:'Coronado Mixed-Use Redevelopment', streetOnly:'1201 Orange Ave', siteId:'SITE-1201-ORANGE',
+          estimates:[
+            {est:'EST-080',amount:'$78,450',status:'Approved',date:'May 20, 2026',scope:'Full Site Demolition - Detailed Scope',projectName:'Coronado Mixed-Use Redevelopment',
+             lines:[
+               {desc:'Site mobilization & temporary fencing setup', qty:1, unit:'job', unitPrice:3200, total:3200},
+               {desc:'Asbestos abatement - floor tile & mastic (east wing)', qty:2400, unit:'sqft', unitPrice:3.25, total:7800},
+               {desc:'Hazardous material disposal & manifest documentation', qty:1, unit:'job', unitPrice:4100, total:4100},
+               {desc:'Interior soft demolition - drywall, fixtures, cabinetry', qty:5800, unit:'sqft', unitPrice:1.15, total:6670},
+               {desc:'Mechanical, electrical & plumbing disconnection', qty:1, unit:'job', unitPrice:2850, total:2850},
+               {desc:'Structural steel cutting & removal', qty:12, unit:'ton', unitPrice:420, total:5040},
+               {desc:'Concrete slab demolition - main floor', qty:3200, unit:'sqft', unitPrice:2.40, total:7680},
+               {desc:'Concrete foundation & footing removal', qty:1, unit:'job', unitPrice:5600, total:5600},
+               {desc:'Masonry & CMU wall demolition', qty:1800, unit:'sqft', unitPrice:1.85, total:3330},
+               {desc:'Roof structure teardown & disposal', qty:4200, unit:'sqft', unitPrice:1.30, total:5460},
+               {desc:'Excavation & backfill - foundation area', qty:180, unit:'cyd', unitPrice:38, total:6840},
+               {desc:'Concrete crushing & on-site recycling', qty:90, unit:'ton', unitPrice:22, total:1980},
+               {desc:'Debris haul-off - roll-off dumpsters (40 yd)', qty:14, unit:'load', unitPrice:485, total:6790},
+               {desc:'Dust control & water truck service', qty:6, unit:'day', unitPrice:340, total:2040},
+               {desc:'Erosion control & SWPPP compliance', qty:1, unit:'job', unitPrice:1450, total:1450},
+               {desc:'Utility capping & sewer line plugging', qty:1, unit:'job', unitPrice:1900, total:1900},
+               {desc:'Final site grading & compaction', qty:1, unit:'job', unitPrice:2760, total:2760},
+               {desc:'Permits, inspections & agency coordination', qty:1, unit:'job', unitPrice:2960, total:2960}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]}
+      ]},
+   ]},
 ],
     estimates: [
   {id:1, num:'EST-047', isChangeOrder:false, customer:'ABC Construction Corp',
    contact:'James Torres', createdBy:'Carlos Mendez',
    address:'1420 Harbor Blvd, San Diego', jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
    companyAddress:'4500 Main St, San Diego CA 92103',
-   jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', requiresSOV:true, requiresWaivers:true, termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', requiresSOV:true, requiresWaivers:true, termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Demolition, LLC Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
    status:'in-progress', amount:13150, date:'May 2, 2026',
    lines:[
      {desc:'Interior demolition — 2nd floor',    qty:1800, unit:'sq ft', unitPrice:5.00,  total:9000},
@@ -211,7 +248,7 @@
    contact:'James Torres', createdBy:'Ana Rivera',
    address:'880 5th Ave, San Diego', jobAddress:'880 5th Ave, San Diego CA 92103',
    companyAddress:'4500 Main St, San Diego CA 92103',
-   jobName:'5th Ave Teardown', poNumber:'PO-5102', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Deconstruction & Demolition Is Not Responsible For Obtaining Permits, All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   jobName:'5th Ave Teardown', poNumber:'PO-5102', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Demolition, LLC Is Not Responsible For Obtaining Permits, All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. Payment In Full Is Due Net/15 From The Day Of Completion.',
    status:'pending-approval', amount:9850,
    lines:[
      {desc:'Selective interior demo — kitchen & bathrooms', qty:1200, unit:'sq ft', unitPrice:4.50, total:5400},
@@ -229,7 +266,7 @@
    contact:'Sandra Lee', createdBy:'Carlos Mendez',
    address:'342 Third Ave, Chula Vista', jobAddress:'342 Third Ave, Chula Vista CA 91910',
    companyAddress:'4500 Main St, San Diego CA 92103',
-   jobName:'Chula Vista Interior Demo', poNumber:'', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Deconstruction & Demolition Is Not Responsible For Obtaining Permits. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   jobName:'Chula Vista Interior Demo', poNumber:'', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Demolition, LLC Is Not Responsible For Obtaining Permits. Payment In Full Is Due Net/15 From The Day Of Completion.',
    status:'approved', amount:22500,
    lines:[
      {desc:'Full interior demolition — 3 floors',    qty:4500, unit:'sq ft', unitPrice:3.80, total:17100},
@@ -249,7 +286,7 @@
    contact:'Robert Park', createdBy:'Ana Rivera',
    address:'7700 Mission Valley Rd, San Diego', jobAddress:'7700 Mission Valley Rd, San Diego CA 92108',
    companyAddress:'4500 Main St, San Diego CA 92103',
-   jobName:'Mission Valley Commercial Demo', poNumber:'PO-6010', termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Deconstruction & Demolition Is Not Responsible For Construction fencing. Payment In Full Is Due Net/15 From The Day Of Completion.',
+   jobName:'Mission Valley Commercial Demo', poNumber:'PO-6010', termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Demolition, LLC Is Not Responsible For Construction fencing. Payment In Full Is Due Net/15 From The Day Of Completion.',
    status:'ready-to-bill', amount:31200,
    lines:[
      {desc:'Full building demolition — Mission Valley',  qty:8000, unit:'sq ft', unitPrice:3.10, total:24800},
@@ -629,7 +666,7 @@
   window.SDD = {
     // ===== Company profile (single source of truth for letterheads) =====
     COMPANY: {
-      name: 'San Diego Deconstruction & Demolition',
+      name: 'San Diego Demolition, LLC',
       shortName: 'SDD Demolition',
       license: '1082669',
       address1: '5755 Oberlin Drive, Suite 301',
