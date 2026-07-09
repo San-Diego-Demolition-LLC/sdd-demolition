@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SDD — Customers</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
@@ -904,6 +904,72 @@ var CUSTOMERS_SEED = [
                {desc:'Utility capping & sewer line plugging', qty:1, unit:'job', unitPrice:1900, total:1900},
                {desc:'Final site grading & compaction', qty:1, unit:'job', unitPrice:2760, total:2760},
                {desc:'Permits, inspections & agency coordination', qty:1, unit:'job', unitPrice:2960, total:2960}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]},
+        {est:'EST-081', address:'845 Coronado Bay Rd', city:'Coronado CA 92118', status:'Pending approval', amount:'$41,875', date:'Jun 15, 2026', jobName:'Bayfront Warehouse Demolition', projectName:'Coronado Bayfront Logistics Center', streetOnly:'845 Coronado Bay Rd', siteId:'SITE-845-BAYRD',
+          estimates:[
+            {est:'EST-081',amount:'$41,875',status:'Pending approval',date:'Jun 15, 2026',scope:'Warehouse Demolition - Detailed Scope',projectName:'Coronado Bayfront Logistics Center',
+             lines:[
+               {desc:'Site Mobilization & Safety Setup', qty:1, unit:'job', unitPrice:2800, total:2800},
+               {desc:'Interior Demolition & Fixture Removal', qty:8500, unit:'square feet', unitPrice:0.95, total:8075},
+               {desc:'Mechanical & Electrical Disconnect', qty:1, unit:'job', unitPrice:2400, total:2400},
+               {desc:'Steel Frame Cutting & Removal', qty:18, unit:'tons', unitPrice:410, total:7380},
+               {desc:'Concrete Slab Demolition', qty:6200, unit:'square feet', unitPrice:2.25, total:13950},
+               {desc:'Debris Haul-Off', qty:9, unit:'loads', unitPrice:475, total:4275},
+               {desc:'Dust Control & Water Service', qty:5, unit:'per', unitPrice:320, total:1600},
+               {desc:'Permits & Inspections', qty:1, unit:'job', unitPrice:1395, total:1395}
+             ],
+             alternates:[
+               {name:'Alternate 1 — Underground Storage Tank Removal', approved:false, lines:[
+                 {desc:'Excavation & UST Extraction', qty:1, unit:'job', unitPrice:6800, total:6800},
+                 {desc:'Contaminated Soil Testing & Disposal', qty:40, unit:'tons', unitPrice:95, total:3800}
+               ]},
+               {name:'Alternate 2 — Asphalt Parking Lot Removal', approved:false, lines:[
+                 {desc:'Asphalt Demolition & Removal', qty:12000, unit:'square feet', unitPrice:0.85, total:10200},
+                 {desc:'Base Grading & Compaction', qty:1, unit:'job', unitPrice:2400, total:2400}
+               ]}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]},
+        {est:'EST-082', address:'2400 Coronado Industrial Blvd', city:'Coronado CA 92118', status:'Approved', amount:'$207,075', date:'Jun 20, 2026', jobName:'Industrial Complex Full Demolition', projectName:'Coronado Industrial Park Redevelopment', streetOnly:'2400 Coronado Industrial Blvd', siteId:'SITE-2400-IND',
+          estimates:[
+            {est:'EST-082',amount:'$207,075',status:'Approved',date:'Jun 20, 2026',scope:'Full Industrial Demolition - Detailed Scope',projectName:'Coronado Industrial Park Redevelopment',
+             lines:[
+               {desc:'Site Mobilization & Temporary Fencing', qty:1, unit:'job', unitPrice:4200, total:4200},
+               {desc:'Pre-Demolition Survey & Documentation', qty:1, unit:'job', unitPrice:1800, total:1800},
+               {desc:'Asbestos Abatement - Floor Tile', qty:3200, unit:'square feet', unitPrice:3.25, total:10400},
+               {desc:'Asbestos Abatement - Pipe Insulation', qty:480, unit:'linear feet', unitPrice:12.5, total:6000},
+               {desc:'Lead Paint Remediation', qty:2100, unit:'square feet', unitPrice:4.1, total:8610},
+               {desc:'Hazardous Material Disposal & Manifest', qty:1, unit:'job', unitPrice:5400, total:5400},
+               {desc:'Interior Soft Demolition - Drywall', qty:8200, unit:'square feet', unitPrice:1.15, total:9430},
+               {desc:'Interior Soft Demolition - Ceilings', qty:6400, unit:'square feet', unitPrice:0.95, total:6080},
+               {desc:'Cabinetry & Millwork Removal', qty:1, unit:'job', unitPrice:3200, total:3200},
+               {desc:'Flooring Removal - Concrete Prep', qty:4800, unit:'square feet', unitPrice:1.4, total:6720},
+               {desc:'Mechanical System Disconnect', qty:1, unit:'job', unitPrice:2850, total:2850},
+               {desc:'Electrical System Disconnect', qty:1, unit:'job', unitPrice:2400, total:2400},
+               {desc:'Plumbing System Disconnect & Capping', qty:1, unit:'job', unitPrice:2650, total:2650},
+               {desc:'HVAC Equipment Removal', qty:1, unit:'job', unitPrice:3800, total:3800},
+               {desc:'Structural Steel Cutting', qty:22, unit:'tons', unitPrice:420, total:9240},
+               {desc:'Steel Beam Removal & Haul', qty:18, unit:'tons', unitPrice:380, total:6840},
+               {desc:'Concrete Slab Demolition - Ground Floor', qty:5200, unit:'square feet', unitPrice:2.4, total:12480},
+               {desc:'Concrete Slab Demolition - Second Floor', qty:4100, unit:'square feet', unitPrice:2.65, total:10865},
+               {desc:'Concrete Foundation Removal', qty:1, unit:'job', unitPrice:6800, total:6800},
+               {desc:'Concrete Footing Removal', qty:1, unit:'job', unitPrice:3400, total:3400},
+               {desc:'Masonry Wall Demolition', qty:2400, unit:'square feet', unitPrice:1.85, total:4440},
+               {desc:'CMU Block Wall Removal', qty:1600, unit:'square feet', unitPrice:2.1, total:3360},
+               {desc:'Roof Structure Teardown', qty:5400, unit:'square feet', unitPrice:1.3, total:7020},
+               {desc:'Roofing Material Disposal', qty:5400, unit:'square feet', unitPrice:0.65, total:3510},
+               {desc:'Excavation - Foundation Area', qty:220, unit:'loads', unitPrice:95, total:20900},
+               {desc:'Backfill & Compaction', qty:180, unit:'loads', unitPrice:78, total:14040},
+               {desc:'Concrete Crushing & Recycling', qty:140, unit:'tons', unitPrice:22, total:3080},
+               {desc:'Debris Haul-Off - Roll-Off Containers', qty:28, unit:'loads', unitPrice:485, total:13580},
+               {desc:'Dust Control & Water Truck Service', qty:12, unit:'trips', unitPrice:340, total:4080},
+               {desc:'Erosion Control & SWPPP Compliance', qty:1, unit:'job', unitPrice:2200, total:2200},
+               {desc:'Final Site Grading', qty:1, unit:'job', unitPrice:3600, total:3600},
+               {desc:'Permits, Inspections & Agency Coordination', qty:1, unit:'job', unitPrice:4100, total:4100}
              ]}
           ],
           changeOrders:[],
@@ -2577,7 +2643,7 @@ function _estSummary(job, estId){
   var src=(job.estimates||[]).find(function(e){return e.est===estId;})
         ||(job.changeOrders||[]).find(function(o){return o.est===estId;});
   var estTotal=src?_money(src.amount):0;
-  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft;});
+  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft && !iv._void;});
   var billed=invs.reduce(function(s,iv){return s+_money(iv.amount);},0);
   var collected=invs.reduce(function(s,iv){return s+_invPaid(iv);},0);
   var retention=invs.reduce(function(s,iv){return s+_invRetention(iv);},0);
@@ -2637,6 +2703,7 @@ function _fullJobSite(job){
 // Change orders and any doc with remaining work stay editable.
 function _docIsLocked(f){
   if(!f) return false;
+  if(f.doc && f.doc._void) return true; // voided documents are locked (read-only)
   if(f.kind==='invoice'){ return _invSummary(f.doc).fullyPaid; }
   if(f.kind==='estimate'){
     var s=_estSummary(f.job, f.doc.est);
@@ -2645,8 +2712,174 @@ function _docIsLocked(f){
   }
   return false;
 }
+// Void / un-void a document (estimate, invoice, change order)
+// Whether a document is eligible for Void:
+// - Estimate: up to "Invoice Sent" (stages 1-6); NOT once Payment Received (stage 7)
+// - Invoice: only while Unpaid (no payment received)
+// - Change Order: always (Pending or Approved)
+function _canVoid(f){
+  if(!f || !f.doc) return false;
+  if(f.doc._void) return false; // already void
+  if(f.kind==='estimate'){
+    return _estComputedStage(f.job, f.doc.est, f.doc.status).step < 7;
+  }
+  if(f.kind==='invoice'){
+    var s=_invSummary(f.doc);
+    return !(s.paid>0.5) && !s.fullyPaid; // no payment received
+  }
+  // change order: always voidable
+  return true;
+}
+function docVoid(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var kindWord=f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate');
+  _confirmDoc('Void this '+kindWord+'?', function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    ff.doc._void=true;
+    ff.doc._prevStatus=ff.doc.status||''; // remember status to restore on un-void
+    ff.doc.status='Void';
+    ff.doc.dateVoided=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    if(window.SDD && SDD.save) SDD.save();
+    _flashDoc('⊘ '+ref+' voided');
+    renderList();
+    _reopenDoc(ref);
+  }, 'Yes, void', 'A voided '+kindWord+' is kept for history but excluded from all totals and the dashboard.');
+}
+function docUnvoid(ref){
+  var f=_findDoc(ref); if(!f) return;
+  _confirmDoc('Restore this document from Void?', function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    ff.doc._void=false;
+    ff.doc.status=ff.doc._prevStatus||'';
+    delete ff.doc.dateVoided;
+    if(window.SDD && SDD.save) SDD.save();
+    _flashDoc('✓ '+ref+' restored');
+    renderList();
+    _reopenDoc(ref);
+  }, 'Yes, restore', 'The document returns to its previous status and counts in totals again.');
+}
 
 // Ensure the doc has an editable lines array (built from scope/description if missing)
+// ── ALTERNATE WORK (optional add-on scopes the client can approve) ──
+// Structure: d._alternates = [{ name, approved:bool, lines:[{desc,qty,unit,unitPrice,amount}] }]
+function _ensureAlternates(found){
+  var d=found.doc;
+  if(!d._alternates){
+    if(d.alternates && d.alternates.length){
+      d._alternates=d.alternates.map(function(a){
+        return {
+          name:a.name||'Alternate',
+          approved:!!a.approved,
+          lines:(a.lines||[]).map(function(l){
+            var amt=_money(l.total!=null?l.total:l.amount);
+            return {desc:l.desc||'', qty:(l.qty!=null?l.qty:1), unit:(l.unit||'job'), unitPrice:(l.unitPrice!=null?l.unitPrice:amt), amount:amt};
+          })
+        };
+      });
+    } else {
+      d._alternates=[];
+    }
+  }
+  return d._alternates;
+}
+function _altSubtotal(a){
+  return (a.lines||[]).reduce(function(s,l){return s+(Number(l.amount)||0);},0);
+}
+// Base scope total (lines only, no alternates)
+function _docBaseTotal(f){
+  var lines=_ensureLines(f);
+  return lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
+}
+// Grand total = base + approved alternate LINES (each line can be toggled individually)
+function _docGrandTotal(f){
+  var t=_docBaseTotal(f);
+  _ensureAlternates(f).forEach(function(a){
+    (a.lines||[]).forEach(function(l){ if(l._approved) t+=(Number(l.amount)||0); });
+  });
+  return Math.round(t*100)/100;
+}
+function _syncDocAmount(f){
+  f.doc.amount=_moneyStr(_docGrandTotal(f));
+}
+function docAddAlternate(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f);
+  alts.push({name:'Alternate '+(alts.length+1), approved:false, lines:[{desc:'', qty:1, unit:'job', unitPrice:0, amount:0}]});
+  if(window.SDD && SDD.save) SDD.save();
+  _reopenDoc(ref);
+}
+function docAltNameSave(ref, ai, val){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]) return;
+  alts[ai].name=val;
+  if(window.SDD && SDD.save) SDD.save();
+}
+function docAltAddLine(ref, ai){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]) return;
+  var lns=alts[ai].lines;
+  var last=lns[lns.length-1];
+  if(last && !String(last.desc||'').trim() && !(Number(last.unitPrice)||0) && !(Number(last.amount)||0)){
+    _flashDoc && _flashDoc('Fill in the current line before adding another');
+    return;
+  }
+  lns.push({desc:'', qty:1, unit:'job', unitPrice:0, amount:0});
+  if(window.SDD && SDD.save) SDD.save();
+  _reopenDoc(ref);
+}
+function docAltLineSave(ref, ai, li, field, val){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]||!alts[ai].lines[li]) return;
+  var round2=function(n){return Math.round((Number(n)||0)*100)/100;};
+  var L=alts[ai].lines[li];
+  if(field==='qty'||field==='unitPrice'){
+    var num=parseFloat(String(val).replace(/[^0-9.\-]/g,'')); if(isNaN(num)) num=0;
+    L[field]=num;
+    L.amount=round2((Number(L.qty)||0)*(Number(L.unitPrice)||0));
+  } else {
+    L[field]=val;
+  }
+  _syncDocAmount(f);
+  if(window.SDD && SDD.save) SDD.save();
+  // update displayed subtotal + grand total live
+  var sub=document.getElementById('altSub-'+ai);
+  if(sub) sub.textContent='$'+_altSubtotal(alts[ai]).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var lt=document.getElementById('altLineTot-'+ai+'-'+li);
+  if(lt) lt.textContent='$'+Number(L.amount).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var gt=document.getElementById('docGrandTot');
+  if(gt) gt.textContent='$'+_docGrandTotal(f).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function docAltDeleteLine(ref, ai, li){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]||!alts[ai].lines[li]) return;
+  var desc=String(alts[ai].lines[li].desc||'').trim();
+  var label=desc?('"'+(desc.length>40?desc.slice(0,40)+'…':desc)+'"'):'this line';
+  _confirmDoc('Delete '+label+'?', function(){
+    var ff=_findDoc(ref); var a=_ensureAlternates(ff);
+    if(a[ai]&&a[ai].lines[li]){ a[ai].lines.splice(li,1); _syncDocAmount(ff); if(window.SDD&&SDD.save)SDD.save(); _reopenDoc(ref); }
+  }, 'Yes, delete', 'This line will be removed from the alternate.');
+}
+function docDeleteAlternate(ref, ai){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]) return;
+  _confirmDoc('Delete "'+(alts[ai].name||'this alternate')+'"?', function(){
+    var ff=_findDoc(ref); var a=_ensureAlternates(ff);
+    a.splice(ai,1); _syncDocAmount(ff); if(window.SDD&&SDD.save)SDD.save(); _reopenDoc(ref);
+  }, 'Yes, delete', 'The entire alternate and its lines will be removed.');
+}
+// Toggle a single alternate LINE as approved (adds/removes just that line from the total)
+function docToggleAltLine(ref, ai, li, checked){
+  var f=_findDoc(ref); if(!f) return;
+  var alts=_ensureAlternates(f); if(!alts[ai]||!alts[ai].lines[li]) return;
+  alts[ai].lines[li]._approved=!!checked;
+  _syncDocAmount(f);
+  if(window.SDD && SDD.save) SDD.save();
+  // If the client preview is open, re-render it (so the total updates there);
+  // otherwise re-render the normal detail view.
+  var prev=document.getElementById('_clientPrevBg');
+  if(prev){ docPreviewForClient(ref, (window._clientPrevMode||'preview')); }
+  else { _reopenDoc(ref); }
+}
 function _ensureLines(found){
   var d=found.doc;
   if(!d._lines){
@@ -2751,6 +2984,12 @@ function docLineSave(ref, idx, field, val){
 function docAddLine(ref){
   var f=_findDoc(ref); if(!f) return;
   var lines=_ensureLines(f);
+  // Don't allow a new line if the last one is empty (no description AND no price)
+  var last=lines[lines.length-1];
+  if(last && !String(last.desc||'').trim() && !(Number(last.unitPrice)||0) && !(Number(last.amount)||0)){
+    _flashDoc && _flashDoc('Fill in the current line before adding another');
+    return;
+  }
   lines.push({desc:'',qty:1,unit:'',unitPrice:0,amount:0});
   if(window.SDD && SDD.save) SDD.save();
   _reopenDoc(ref);
@@ -2758,11 +2997,18 @@ function docAddLine(ref){
 function docDeleteLine(ref, idx){
   var f=_findDoc(ref); if(!f) return;
   var lines=_ensureLines(f);
-  lines.splice(idx,1);
-  var total=lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
-  f.doc.amount=_moneyStr(total);
-  if(window.SDD && SDD.save) SDD.save();
-  _reopenDoc(ref);
+  if(!lines[idx]) return;
+  var desc=String(lines[idx].desc||'').trim();
+  var label=desc ? ('"'+(desc.length>40?desc.slice(0,40)+'…':desc)+'"') : 'this line';
+  _confirmDoc('Delete '+label+'?', function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    var lns=_ensureLines(ff);
+    lns.splice(idx,1);
+    var total=lns.reduce(function(s,l){return s+(Number(l.amount)||0);},0);
+    ff.doc.amount=_moneyStr(total);
+    if(window.SDD && SDD.save) SDD.save();
+    _reopenDoc(ref);
+  }, 'Yes, delete', 'This line item will be removed from the document. This can\'t be undone.');
 }
 function docSave(ref){
   var f=_findDoc(ref); if(!f) return;
@@ -2775,7 +3021,7 @@ function docSave(ref){
       return;
     }
   }
-  _confirmDoc(isDraft?('Create '+ref+'?'):('Save changes to '+ref+'?'), function(){
+  _confirmDoc(isDraft?('Create '+ref+' with these details?'):('Save '+ref+' with the changes you made?'), function(){
     var ff=_findDoc(ref); if(!ff) return;
     // Confirm the draft → it becomes a real document
     if(ff.doc._draft){ delete ff.doc._draft; delete ff.doc._isNew; }
@@ -2787,6 +3033,13 @@ function docSave(ref){
   }, isDraft?'Yes, create':'Yes, save');
 }
 // Enter edit mode for the PDF (fields become editable)
+// Toggle a document's price view (standard = totals only, full = show all line prices). Read-only.
+function _setPriceView(ref, mode){
+  var f=_findDoc(ref); if(!f) return;
+  f.doc._priceView=(mode==='full')?'full':'standard';
+  if(window.SDD && SDD.save) SDD.save();
+  _reopenDoc(ref);
+}
 function docEnterEdit(ref){
   var f=_findDoc(ref);
   if(_docIsLocked(f)){ _flashDoc && _flashDoc(f.kind==='estimate'?'This estimate is fully billed and paid; it can\'t be edited':'This invoice is paid in full and can\'t be edited'); return; }
@@ -2794,20 +3047,455 @@ function docEnterEdit(ref){
   _reopenDoc(ref);
 }
 // Send the document to the client (confirmation + status update)
-function docSendToClient(ref){
+// ── CLIENT SCHEDULING REQUESTS (demo: shared via localStorage 'sdd_schedule_requests') ──
+var _SCHED_KEY='sdd_schedule_requests';
+var _APPROVAL_KEY='sdd_client_approvals'; // client signatures from the separate client link
+function _loadClientApproval(estNum){
+  try{ var all=JSON.parse(localStorage.getItem(_APPROVAL_KEY)||'{}'); return all[estNum]||null; }catch(e){ return null; }
+}
+// Panel shown in the system when the client has approved & signed via their link
+function _clientApprovalPanelHTML(f, ref){
+  if(f.kind!=='estimate') return '';
+  var estNum=f.doc.est||f.doc.num; if(!estNum) return '';
+  var ap=_loadClientApproval(estNum); if(!ap || !ap.image) return '';
+  var esc=function(v){return String(v==null?'':v).replace(/</g,'&lt;');};
+  return '<div style="background:#EAF6EF;border:1.5px solid #3A9E6A;border-radius:10px;padding:16px 18px;margin:16px 0;">'
+    +'<div style="font-size:12px;font-weight:800;color:#1f6b43;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1f6b43" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Estimate Approved by Client</div>'
+    +'<div style="font-size:14px;color:#1f6b43;margin-bottom:10px;">The client reviewed and signed this estimate through their secure link on <b>'+esc(ap.date)+'</b>.</div>'
+    +'<img src="'+ap.image+'" style="max-height:70px;display:block;margin-bottom:2px;">'
+    +'<div style="border-top:1px solid #1f6b43;padding-top:4px;width:260px;font-size:13px;color:#1f6b43;">'+esc(ap.name||'')+' — '+esc(ap.date||'')+'</div>'
+  +'</div>';
+}
+function _loadScheduleReq(estNum){
+  try{ var all=JSON.parse(localStorage.getItem(_SCHED_KEY)||'{}'); return all[estNum]||null; }catch(e){ return null; }
+}
+function _saveScheduleReq(estNum, obj){
+  var all={};
+  try{ all=JSON.parse(localStorage.getItem(_SCHED_KEY)||'{}'); }catch(e){}
+  if(obj===null){ delete all[estNum]; } else { all[estNum]=obj; }
+  localStorage.setItem(_SCHED_KEY, JSON.stringify(all));
+}
+// Pedro approves the client's requested date
+// Open the separate client-facing view (demo of the future no-login client link)
+// Preview a customer's client portal (opens the client-facing view for that customer)
+// Preview a customer's client portal inside a modal (no pop-up needed)
+function _previewClientPortal(customerId){
+  if(customerId==null){ _flashDoc && _flashDoc('Could not identify the client'); return; }
+  var url='sdd-client-view.html?client='+encodeURIComponent(customerId);
+  var ex=document.getElementById('_clientPortalBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_clientPortalBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100200;display:flex;flex-direction:column;padding:0;';
+  bg.innerHTML=''
+    +'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#1f2630;color:#fff;flex-shrink:0;">'
+      +'<div style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e0b94a" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Client portal preview — this is exactly what the client sees</div>'
+      +'<div style="display:flex;gap:10px;align-items:center;">'
+        +'<a href="'+url+'" target="_blank" style="font-size:12px;color:#e0b94a;text-decoration:none;font-weight:700;">Open in new tab ↗</a>'
+        +'<button onclick="document.getElementById(\'_clientPortalBg\').remove();" style="background:none;border:none;color:#fff;font-size:24px;line-height:1;cursor:pointer;">&times;</button>'
+      +'</div>'
+    +'</div>'
+    +'<iframe src="'+url+'" style="flex:1;width:100%;border:none;background:#e8e6e0;"></iframe>';
+  document.body.appendChild(bg);
+}
+function _openClientLink(ref){
   var f=_findDoc(ref); if(!f) return;
-  var kindWord=f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate');
-  _confirmDoc('Send this '+kindWord+' to the client?', function(){
-    var ff=_findDoc(ref); if(!ff) return;
-    // mark as sent (estimate/CO → "Sent / Pending approval"; invoice → "Sent")
-    if(ff.kind==='invoice'){ if(!/paid/i.test(ff.doc.status||'')) ff.doc.status='Sent'; }
-    else { if(/pending|draft|^$/i.test(ff.doc.status||'')||!ff.doc.status) ff.doc.status='Pending approval'; }
-    ff.doc.dateSent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    if(window.SDD && SDD.save) SDD.save();
-    _flashDoc('✉ '+ref+' sent to client');
-    renderList();
-    _reopenDoc(ref);
-  }, 'Yes, send');
+  // Open the full client portal (all of the customer's documents), not just this estimate
+  var clientKey=(f.cust && (f.cust.id!=null)) ? f.cust.id : (f.cust ? f.cust.name : (f.doc.est||f.doc.num));
+  if(clientKey==null){ _flashDoc('Could not identify the client'); return; }
+  _previewClientPortal(clientKey);
+}
+function docApproveSchedule(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var estNum=f.doc.est||f.doc.num; if(!estNum) return;
+  var req=_loadScheduleReq(estNum); if(!req) return;
+  req.status='approved';
+  req.approvedAt=new Date().toISOString();
+  _saveScheduleReq(estNum, req);
+  _flashDoc('✓ Schedule confirmed for '+req.date);
+  _reopenDoc(ref);
+}
+// Build the scheduling panel shown inside the estimate (for Pedro) when a request exists
+function _scheduleReqPanelHTML(f, ref){
+  if(f.kind!=='estimate') return '';
+  var estNum=f.doc.est||f.doc.num; if(!estNum) return '';
+  var req=_loadScheduleReq(estNum); if(!req) return '';
+  var esc=function(v){return String(v==null?'':v).replace(/</g,'&lt;');};
+  if(req.status==='approved'){
+    return '<div style="background:#EAF6EF;border:1.5px solid #3A9E6A;border-radius:10px;padding:14px 16px;margin:16px 0;">'
+      +'<div style="font-size:12px;font-weight:800;color:#1f6b43;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Schedule Confirmed</div>'
+      +'<div style="font-size:14px;color:#1f6b43;">The client\'s requested start date <b>'+esc(req.date)+'</b> has been approved and confirmed.</div>'
+    +'</div>';
+  }
+  return '<div style="background:#FFF8E6;border:1.5px solid #E0B94A;border-radius:10px;padding:14px 16px;margin:16px 0;">'
+    +'<div style="font-size:12px;font-weight:800;color:#8a6414;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a6414" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Client Scheduling Request</div>'
+    +'<div style="font-size:14px;color:#5c4a1a;margin-bottom:12px;">The client requested a tentative start date of <b>'+esc(req.date)+'</b>. Review and confirm to lock it in.</div>'
+    +'<button onclick="docApproveSchedule(\''+ref+'\')" style="padding:10px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Approve &amp; confirm date</button>'
+  +'</div>';
+}
+function docPreviewForClient(ref, mode){
+  window._clientPrevMode=mode;
+  var f=_findDoc(ref); if(!f) return;
+  var d=f.doc, job=f.job, c=f.cust;
+  var isEst=(f.kind==='estimate');
+  var sig=d._signature||{};
+  // Special billing instructions
+  var siText=(job && job.hasSpecialInstructions && job.specialInstructions)?job.specialInstructions:'';
+  var custSI=(c && c.specialInstructions && c.specialInstructionsText)?c.specialInstructionsText:'';
+  var allSI=[siText,custSI].filter(function(x){return String(x||'').trim();}).join('\n\n');
+
+  var ex=document.getElementById('_clientPrevBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_clientPrevBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100120;display:flex;flex-direction:column;padding:0;overflow:hidden;';
+
+  var siBlock=(mode==='send' && allSI)?(
+    '<div style="background:#FFF8E6;border:1.5px solid #E0B94A;border-radius:10px;padding:14px 16px;margin:16px auto;max-width:210mm;">'
+      +'<div style="font-size:13px;font-weight:800;color:#8a6414;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Special Billing Instructions</div>'
+      +'<div style="font-size:13px;color:#5c4a1a;line-height:1.5;white-space:pre-wrap;">'+String(allSI).replace(/</g,'&lt;')+'</div>'
+      +'<label style="display:flex;align-items:center;gap:9px;margin-top:12px;cursor:pointer;font-size:13px;font-weight:700;color:#1f2630;"><input type="checkbox" id="_siAck" onchange="var b=document.getElementById(\'_prevSendBtn\');b.disabled=!this.checked;b.style.opacity=this.checked?\'1\':\'.5\';b.style.cursor=this.checked?\'pointer\':\'not-allowed\';" style="width:18px;height:18px;accent-color:#16a34a;">I have read and acknowledge these billing instructions.</label>'
+    +'</div>'
+  ):'';
+
+  // Signature area (button that opens the pad; shows saved signature if present) — estimates only
+  var sigArea = isEst ? (
+    '<div style="background:#fff;border:1.5px solid #ddd;border-radius:10px;padding:16px;margin:16px auto;max-width:210mm;">'
+      +'<div style="font-size:13px;font-weight:800;color:#1f2630;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Client Signature</div>'
+      +(sig.image
+        ? '<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+String(sig.name||'').replace(/</g,'&lt;')+' — '+String(sig.date||'').replace(/</g,'&lt;')+'</div>'
+        : '<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
+          +'<button onclick="_openSignaturePad(\''+ref+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign here</button>')
+    +'</div>'
+  ) : '';
+
+  // Header bar
+  var headerBar='<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:#1f2630;color:#fff;flex-shrink:0;">'
+    +'<div style="display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e0b94a" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Client preview — this is what '+(c?c.name:'the client')+' will receive</div>'
+    +'<span id="_prevPageCount" style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;background:#5a6270;white-space:nowrap;">…</span>'
+  +'</div>';
+
+  // Footer
+  var footer='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 22px;border-top:1px solid #333;background:#252d38;flex-shrink:0;flex-wrap:wrap;">'
+    +'<button onclick="document.getElementById(\'_clientPrevBg\').remove();" style="padding:10px 20px;border-radius:9px;border:1px solid #555;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close</button>'
+    +'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+      +'<button onclick="_openSignedPdf(\''+ref+'\')" style="padding:10px 18px;border-radius:9px;border:1px solid #555;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button>'
+      +'<button onclick="_openSignedPdf(\''+ref+'\')" style="padding:10px 18px;border-radius:9px;border:1px solid #555;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print</button>'
+      +'<button id="_prevSendBtn" '+(allSI?'disabled style="opacity:.5;cursor:not-allowed;':'style="')+'padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;" onclick="'+(isEst?'_signAndApprove(\''+ref+'\')':'_doSendToClient(\''+ref+'\')')+'">'+(isEst?(sig.image?'Saved and approved':'Sign &amp; send to client'):'Send to client')+'</button>'
+    +'</div>'
+  +'</div>';
+
+  // Paginated pages container (built after mount by measuring). Signature is now inside the pages.
+  bg.innerHTML=headerBar
+    +'<div id="_prevScroll" style="flex:1;overflow:auto;background:#e8e6e0;padding:20px;">'
+      +'<div id="_prevPages"></div>'
+      +siBlock
+    +'</div>'
+    +footer
+    +'<div id="_prevMeasure" style="position:absolute;visibility:hidden;width:178mm;left:-9999px;top:0;"></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  _buildClientPreviewPages(ref);
+}
+// Build the document content as an array of HTML blocks (shared by preview & PDF)
+function _docContentBlocks(f){
+  var d=f.doc, c=f.cust, job=f.job;
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var full=(d._priceView==='full');
+  var lines=_ensureLines(f);
+  var rowHTML=function(l){
+    if(full){ return '<table class="tbl"><tr><td class="d">'+esc(l.desc)+'</td><td class="n">'+esc(l.qty)+'</td><td class="u">'+esc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr></table>'; }
+    return '<table class="tbl"><tr><td class="d" colspan="5">'+esc(l.desc)+'</td></tr></table>';
+  };
+  var scopeTitle=(f.kind==='invoice'?'Work Completed':'Proposed Scope of Work');
+  // Each block: {html, scopeTitle} — scopeTitle set on scope line rows so it can repeat at page tops
+  var blocks=[];
+  blocks.push({html:'<div class="scope">'+scopeTitle+'</div>'});
+  lines.forEach(function(l){ blocks.push({html:rowHTML(l), scopeTitle:scopeTitle}); });
+  var hasAlt=false;
+  _ensureAlternates(f).forEach(function(a){
+    var approved=(a.lines||[]).filter(function(l){return l._approved;});
+    if(!approved.length) return;
+    if(!hasAlt){ blocks.push({html:'<div class="scope alt">Approved Alternate Work</div>'}); hasAlt=true; }
+    blocks.push({html:'<div class="altname">'+esc(a.name)+'</div>', scopeTitle:'Approved Alternate Work'});
+    approved.forEach(function(l){ blocks.push({html:rowHTML(l), scopeTitle:'Approved Alternate Work'}); });
+  });
+  blocks.push({html:'<div class="total"><span>Total</span><span class="a">'+money(_docGrandTotal(f))+'</span></div>'});
+  if(typeof TERMS_AND_CONDITIONS!=='undefined'){
+    var tkey=d.termsType||Object.keys(TERMS_AND_CONDITIONS)[0];
+    var tpl=TERMS_AND_CONDITIONS[tkey];
+    if(tpl){
+      var sel=d.selectedClauses||tpl.clauses.map(function(cl){return cl.id;});
+      var items=tpl.clauses.filter(function(cl){return sel.indexOf(cl.id)!==-1;}).map(function(cl){return '<div class="clause"><b>'+esc(cl.ltr)+'.</b> '+esc(cl.text)+'</div>';}).join('');
+      if(items) blocks.push({html:'<div class="terms"><div class="scope">Terms &amp; Conditions</div>'+items+'</div>'});
+    }
+  }
+  // Signature block — inside the document (last), estimates only
+  if(f.kind==='estimate'){
+    var sig=d._signature;
+    var sigHTML='<div class="sigblock" style="margin-top:20px;border:1.5px solid #ddd;border-radius:10px;padding:16px;">'
+      +'<div style="font-size:13px;font-weight:800;color:#1f2630;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Client Signature</div>'
+      +'<div style="font-size:12px;color:#555;line-height:1.5;margin-bottom:12px;font-style:italic;">By signing this document, you accept the terms and conditions stated in this estimate.</div>';
+    if(sig && sig.image){
+      sigHTML+='<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+esc(sig.name||'')+' — '+esc(sig.date||'')+'</div>';
+    } else {
+      sigHTML+='<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
+        +'<button onclick="_openSignaturePad(\''+(f.doc.est||f.doc.num||'')+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign here</button>';
+    }
+    sigHTML+='</div>';
+    blocks.push({html:sigHTML});
+  }
+  return blocks;
+}
+// Document header HTML (repeated on each page) — matches the system PDF header (logo + 3 columns)
+function _docHeaderHTML(f){
+  var d=f.doc, c=f.cust, job=f.job;
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Demolition, LLC',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467'};
+  var logo=(typeof SDD_LOGO!=='undefined')?SDD_LOGO:'';
+  var kindBig=_docKindName(f.kind).toUpperCase();
+  var num=f.doc.est||f.doc.num||'';
+  var isInv=(f.kind==='invoice');
+  return '<div class="hd">'
+      +'<div style="max-width:55%;">'
+        +(logo?'<img src="'+logo+'" style="height:52px;display:block;margin-bottom:10px;">':'')
+        +'<div class="co">'+esc(CO.name)+'</div>'
+        +'<div class="ci">License Number #'+esc(CO.license)+'<br>'+esc(CO.address1)+'<br>'+esc(CO.address2)+'<br>'+esc(CO.phone)+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;"><div class="big">'+kindBig+'</div><div class="num">#'+esc(num)+'</div>'
+        +'<div style="margin-top:14px;font-size:11px;"><span class="t">Status</span> <span style="font-weight:800;color:#B8922A;font-size:13px;">'+esc(d.status||'')+'</span></div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="cols">'
+      +'<div style="flex:1;"><div class="t">Customer Info</div><div class="v">'+esc(c.name)+'<br>'+esc(_addrLine1(c.address||''))+'<br>'+esc(_addrLine2(c.address||''))+'</div></div>'
+      +'<div style="flex:1;"><div class="t">Job Site Address</div><div class="v">'+esc(_addrLine1(_fullJobSite(job)))+'<br>'+esc(_addrLine2(_fullJobSite(job)))+'</div></div>'
+      +'<div style="flex:1;"><div class="t">'+_docKindName(f.kind)+' Date</div><div class="v">'+esc(d.date||'')+'</div>'
+        +(isInv?'':'<div class="t" style="margin-top:6px;">PO</div><div class="v">'+esc(d.po||'')+'</div>')+'</div>'
+    +'</div>'
+    +((d.projectName||job.projectName)?'<div style="border-top:1px solid #eee;padding-top:8px;margin-bottom:8px;"><span class="t">Project</span> <span class="v" style="font-weight:700;font-size:13px;">'+esc(d.projectName||job.projectName)+'</span></div>':'');
+}
+// Shared CSS for A4 page rendering (used by preview & PDF window)
+function _docPageCSS(){
+  return '.page{width:210mm;min-height:297mm;background:#fff;margin:0 auto 20px;padding:16mm;box-shadow:0 4px 18px rgba(0,0,0,.15);display:flex;flex-direction:column;box-sizing:border-box;font-family:Barlow,Arial,sans-serif;color:#1f2630;}'
+    +'.pagebody{flex:1;}.pfoot{text-align:center;font-size:10px;color:#999;padding-top:8px;border-top:1px solid #eee;margin-top:10px;}'
+    +'.hd{display:flex;justify-content:space-between;border-bottom:3px solid #B8922A;padding-bottom:12px;margin-bottom:14px;}.co{font-size:18px;font-weight:800;}.ci{font-size:10px;color:#888;line-height:1.4;margin-top:4px;}.big{font-family:\'Barlow Condensed\',Barlow,sans-serif;font-size:48px;font-weight:800;color:#B8922A;text-align:right;line-height:1;letter-spacing:.03em;}.num{font-size:16px;font-weight:800;color:#555;text-align:right;margin-top:4px;}'
+    +'.cols{display:flex;justify-content:space-between;gap:20px;margin-bottom:8px;}.cols .t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}.cols .v{font-size:12px;color:#555;}.t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;}.v{font-size:12px;color:#555;}'
+    +'.scope{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#F5F4F1;border-left:3px solid #B8922A;padding:7px 10px;border-radius:5px;margin:6px 0;}'
+    +'.tbl{width:100%;border-collapse:collapse;}.tbl td{padding:5px 4px;border-bottom:1px solid #eee;font-size:12px;}.tbl td.n{text-align:right;}.tbl td.u{text-align:center;}.tbl td.b{font-weight:700;}'
+    +'.altname{font-weight:700;color:#B8922A;padding:8px 4px 2px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}'
+    +'.total{display:flex;justify-content:space-between;border-top:2px solid #B8922A;background:#F8F6F2;padding:10px 6px;font-size:16px;font-weight:800;margin-top:8px;}.total .a{color:#B8922A;}'
+    +'.terms{margin-top:8px;}.terms .clause{font-size:10px;color:#555;margin-bottom:6px;line-height:1.45;}';
+}
+// Paginate blocks into A4 pages inside the preview modal (by measuring heights)
+function _buildClientPreviewPages(ref){
+  var f=_findDoc(ref); if(!f) return;
+  // inject shared CSS once
+  if(!document.getElementById('_prevPageCSS')){
+    var st=document.createElement('style'); st.id='_prevPageCSS'; st.textContent=_docPageCSS(); document.head.appendChild(st);
+  }
+  var header=_docHeaderHTML(f);
+  var blocks=_docContentBlocks(f);
+  var measure=document.getElementById('_prevMeasure');
+  function mh(html){ measure.innerHTML=html; return measure.scrollHeight; }
+  var PX=3.7795; // mm→px
+  var CONTENT_H=(297-2*16)*PX - 48;
+  var headerH=mh(header);
+  var avail=CONTENT_H-headerH;
+  var pages=[], cur=[], curH=0;
+  function push(){ pages.push(cur); cur=[]; curH=0; }
+  for(var i=0;i<blocks.length;i++){
+    var h=mh(blocks[i].html);
+    if(curH+h>avail && cur.length){ push(); }
+    cur.push(blocks[i]); curH+=h;
+  }
+  if(cur.length) push();
+  if(!pages.length) pages.push([]);
+  var N=pages.length, out='';
+  for(var p=0;p<N;p++){
+    var pageHTML=pages[p].map(function(b){return b.html;}).join('');
+    // If the NEXT page continues the same scope section, add a "continued" note at the END of this page
+    if(p<N-1){
+      var lastBlk=pages[p][pages[p].length-1];
+      var nextFirst=pages[p+1][0];
+      if(lastBlk && nextFirst && lastBlk.scopeTitle && nextFirst.scopeTitle===lastBlk.scopeTitle){
+        pageHTML+='<div style="text-align:right;font-size:10px;color:#999;font-style:italic;margin-top:6px;">'+lastBlk.scopeTitle+' continued on next page…</div>';
+      }
+    }
+    out+='<div class="page"><div class="pagebody">'+header+pageHTML+'</div><div class="pfoot">Page '+(p+1)+' of '+N+'</div></div>';
+  }
+  var pc=document.getElementById('_prevPages'); if(pc) pc.innerHTML=out;
+  var badge=document.getElementById('_prevPageCount'); if(badge) badge.textContent=(N===1?'1 page':(N+' pages'));
+}
+
+// ── Signature canvas ──
+var _sigDrawing=false, _sigHasInk=false;
+function _initSignatureCanvas(){
+  var cv=document.getElementById('_sigCanvas'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#1f2630';
+  _sigHasInk=false;
+  function pos(e){
+    var r=cv.getBoundingClientRect();
+    var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    var y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    return {x:x*(cv.width/r.width), y:y*(cv.height/r.height)};
+  }
+  function start(e){ e.preventDefault(); _sigDrawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); var h=document.getElementById('_sigHint'); if(h)h.style.display='none'; }
+  function move(e){ if(!_sigDrawing)return; e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); _sigHasInk=true; }
+  function end(e){ _sigDrawing=false; }
+  cv.onmousedown=start; cv.onmousemove=move; cv.onmouseup=end; cv.onmouseleave=end;
+  cv.ontouchstart=start; cv.ontouchmove=move; cv.ontouchend=end;
+}
+function _clearSignature(){
+  var cv=document.getElementById('_sigCanvas'); if(!cv)return;
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  _sigHasInk=false;
+  var h=document.getElementById('_sigHint'); if(h)h.style.display='flex';
+}
+// Actually mark as sent (called from the preview's Send button)
+function _doSendToClient(ref){
+  var bg=document.getElementById('_clientPrevBg'); if(bg) bg.remove();
+  var ff=_findDoc(ref); if(!ff) return;
+  if(ff.kind==='invoice'){ if(!/paid/i.test(ff.doc.status||'')) ff.doc.status='Sent'; }
+  else { if(/pending|draft|^$/i.test(ff.doc.status||'')||!ff.doc.status) ff.doc.status='Pending approval'; }
+  ff.doc.dateSent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(window.SDD && SDD.save) SDD.save();
+  _flashDoc('✉ '+ref+' sent to client');
+  renderList();
+  _reopenDoc(ref);
+}
+// Client signs & approves the estimate → save signature + approved alternates, then open printable PDF
+function _signAndApprove(ref){
+  var cv=document.getElementById('_sigCanvas');
+  var nameEl=document.getElementById('_sigName');
+  var name=nameEl?String(nameEl.value||'').trim():'';
+  if(!_sigHasInk){ _flashDoc('Please sign in the box before approving'); return; }
+  if(!name){ _flashDoc('Please type your full name'); if(nameEl)nameEl.focus(); return; }
+  var f=_findDoc(ref); if(!f) return;
+  var sigData=cv?cv.toDataURL('image/png'):'';
+  var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  f.doc._signature={name:name, image:sigData, date:today};
+  f.doc.status='Approved';
+  f.doc.dateApproved=today;
+  if(window.SDD && SDD.save) SDD.save();
+  var bg=document.getElementById('_clientPrevBg'); if(bg) bg.remove();
+  _flashDoc('\u2713 '+ref+' approved & signed');
+  renderList();
+  _reopenDoc(ref);
+  _openSignedPdf(ref);
+}
+// Rough estimate of how many A4 pages the printed document will span
+function _estimatePageCount(f){
+  var lines=_ensureLines(f).length;
+  var altLines=0;
+  _ensureAlternates(f).forEach(function(a){ altLines+=(a.lines||[]).filter(function(l){return l._approved;}).length; });
+  // terms clauses
+  var termsCount=0;
+  if(typeof TERMS_AND_CONDITIONS!=='undefined'){
+    var tkey=(f.doc.termsType)||Object.keys(TERMS_AND_CONDITIONS)[0];
+    var tpl=TERMS_AND_CONDITIONS[tkey];
+    if(tpl){ var sel=f.doc.selectedClauses||tpl.clauses.map(function(cl){return cl.id;}); termsCount=tpl.clauses.filter(function(cl){return sel.indexOf(cl.id)!==-1;}).length; }
+  }
+  // ~32 line-rows fit on the first page after the header; ~40 on later pages; terms ~ 3 clauses per remaining space
+  var firstPageRows=30;
+  var laterPageRows=42;
+  var totalRows=lines+altLines;
+  var pages=1;
+  if(totalRows>firstPageRows){ pages+=Math.ceil((totalRows-firstPageRows)/laterPageRows); }
+  // terms roughly add height; if they don't fit at the end, one more page
+  var termsHeight=termsCount*2; // each clause ~ 2 "rows" tall
+  var lastPageUsed=(totalRows<=firstPageRows)?totalRows:((totalRows-firstPageRows)%laterPageRows);
+  if(lastPageUsed+termsHeight>laterPageRows){ pages+=1; }
+  return Math.max(1,pages);
+}
+function _openSignedPdf(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var d=f.doc, c=f.cust, job=f.job;
+  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Demolition, LLC',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467'};
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var lines=_ensureLines(f);
+  var full=(d._priceView==='full');
+  var grand=_docGrandTotal(f);
+  var sig=d._signature||{};
+  // Build content blocks as an array; the print window paginates them by measured height.
+  var rowHTML=function(l){
+    if(full){ return '<tr><td class="d">'+esc(l.desc)+'</td><td class="n">'+esc(l.qty)+'</td><td class="u">'+esc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr>'; }
+    return '<tr><td class="d" colspan="5">'+esc(l.desc)+'</td></tr>';
+  };
+  var blocks=[];
+  blocks.push({html:'<div class="scope">Proposed Scope of Work</div>'});
+  var headRow=full?'<tr class="hdr"><th class="d">Description</th><th class="n">Qty</th><th class="u">Unit</th><th class="n">Unit Price</th><th class="n">Total</th></tr>':'';
+  lines.forEach(function(l){ blocks.push({html:'<table class="tbl">'+headRow+rowHTML(l)+'</table>', scopeTitle:'Proposed Scope of Work'}); });
+  // approved alternates
+  var hasAlt=false;
+  _ensureAlternates(f).forEach(function(a){
+    var approved=(a.lines||[]).filter(function(l){return l._approved;});
+    if(!approved.length) return;
+    if(!hasAlt){ blocks.push({html:'<div class="scope alt">Approved Alternate Work</div>'}); hasAlt=true; }
+    blocks.push({html:'<div class="altname">'+esc(a.name)+'</div>', scopeTitle:'Approved Alternate Work'});
+    approved.forEach(function(l){ blocks.push({html:'<table class="tbl">'+rowHTML(l)+'</table>', scopeTitle:'Approved Alternate Work'}); });
+  });
+  blocks.push({html:'<div class="total"><span>Total</span><span class="a">'+money(grand)+'</span></div>'});
+  if(sig.image){ blocks.push({html:'<div class="sig"><div style="font-size:11px;color:#555;font-style:italic;margin-bottom:10px;">By signing this document, you accept the terms and conditions stated in this estimate.</div><div class="t">Approved &amp; Signed by Client</div><img src="'+sig.image+'"><div class="ln">'+esc(sig.name||'')+' - '+esc(sig.date||'')+'</div></div>'}); }
+  // Terms & Conditions block (always last)
+  var termsHTML='';
+  if(typeof TERMS_AND_CONDITIONS!=='undefined'){
+    var tkey=d.termsType||Object.keys(TERMS_AND_CONDITIONS)[0];
+    var tpl=TERMS_AND_CONDITIONS[tkey];
+    if(tpl){
+      var sel=d.selectedClauses||tpl.clauses.map(function(cl){return cl.id;});
+      var items=tpl.clauses.filter(function(cl){return sel.indexOf(cl.id)!==-1;}).map(function(cl){return '<div class="clause"><b>'+esc(cl.ltr)+'.</b> '+esc(cl.text)+'</div>';}).join('');
+      termsHTML='<div class="terms"><div class="scope">Terms &amp; Conditions</div>'+items+'</div>';
+    }
+  }
+  var headerHTML=_docHeaderHTML(f);
+  var css='*{box-sizing:border-box;}body{font-family:Barlow,Arial,Helvetica,sans-serif;color:#1f2630;margin:0;background:#e8e6e0;font-size:12px;line-height:1.5;}'
+    +'.toolbar{background:#1f2630;padding:12px;text-align:center;position:sticky;top:0;z-index:9;}.toolbar button{padding:9px 20px;margin:0 5px;border:none;border-radius:7px;font-family:Barlow,Arial;font-size:14px;font-weight:700;cursor:pointer;color:#fff;}.pr{background:#B8922A;}.dl{background:#3A9E6A;}'
+    +'.page{width:210mm;min-height:297mm;background:#fff;margin:16px auto;padding:16mm;box-shadow:0 4px 18px rgba(0,0,0,.15);position:relative;display:flex;flex-direction:column;}'
+    +'.pagebody{flex:1;}'
+    +'.pfoot{text-align:center;font-size:10px;color:#999;padding-top:8px;border-top:1px solid #eee;margin-top:10px;}'
+    +'.hd{display:flex;justify-content:space-between;border-bottom:3px solid #B8922A;padding-bottom:12px;margin-bottom:14px;}.co{font-size:18px;font-weight:800;}.ci{font-size:10px;color:#888;line-height:1.4;margin-top:4px;}.big{font-family:\'Barlow Condensed\',Barlow,sans-serif;font-size:48px;font-weight:800;color:#B8922A;text-align:right;line-height:1;letter-spacing:.03em;}.num{font-size:16px;font-weight:800;color:#555;text-align:right;margin-top:4px;}'
+    +'.cols{display:flex;justify-content:space-between;gap:20px;margin-bottom:14px;}.cols .t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}.cols .v{font-size:12px;color:#555;}'
+    +'.scope{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#F5F4F1;border-left:3px solid #B8922A;padding:7px 10px;border-radius:5px;margin:6px 0;}'
+    +'.tbl{width:100%;border-collapse:collapse;}.hdr th{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#999;text-align:left;border-bottom:2px solid #ddd;padding:4px;}.tbl th.n,.tbl td.n{text-align:right;}.tbl th.u,.tbl td.u{text-align:center;}.tbl td{padding:5px 4px;border-bottom:1px solid #eee;font-size:12px;}.tbl td.b{font-weight:700;}'
+    +'.altname{font-weight:700;color:#B8922A;padding:8px 4px 2px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}'
+    +'.total{display:flex;justify-content:space-between;border-top:2px solid #B8922A;background:#F8F6F2;padding:10px 6px;font-size:16px;font-weight:800;margin-top:8px;}.total .a{color:#B8922A;}'
+    +'.sig{margin-top:24px;border-top:1px solid #ddd;padding-top:14px;}.sig .t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}.sig img{max-height:80px;display:block;margin-bottom:4px;}.sig .ln{border-top:1px solid #333;padding-top:4px;font-size:12px;width:280px;}'
+    +'.terms .clause{font-size:10px;color:#555;margin-bottom:6px;line-height:1.45;}'
+    +'@media print{body{background:#fff;}.toolbar{display:none;}.page{margin:0;box-shadow:none;width:auto;min-height:auto;page-break-after:always;}@page{size:A4;margin:0;}}';
+  // The window paginates by measuring block heights into A4 pages
+  var doc='<!doctype html><html><head><meta charset="utf-8"><title>'+esc(ref)+' - '+esc(c.name)+'</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet"><style>'+css+'</style></head><body>'
+    +'<div class="toolbar"><button class="pr" onclick="window.print()">Print</button><button class="dl" onclick="window.print()">Save as PDF</button></div>'
+    +'<div id="pages"></div>'
+    +'<div id="measure" style="position:absolute;visibility:hidden;width:178mm;left:-9999px;"></div>'
+    +'<script>'
+    +'var HEADER='+JSON.stringify(headerHTML)+';'
+    +'var BLOCKS='+JSON.stringify(blocks)+';'
+    +'var TERMS='+JSON.stringify(termsHTML)+';'
+    +'if(TERMS){BLOCKS.push({html:TERMS});}'
+    +'function measure(html){var m=document.getElementById("measure");m.innerHTML=html;return m.scrollHeight;}'
+    +'function build(){'
+    +'  var CONTENT_H=(297-2*16)*3.7795-48;'
+    +'  var headerH=measure(HEADER);'
+    +'  var avail=CONTENT_H-headerH;'
+    +'  var pages=[], cur=[], curH=0;'
+    +'  function push(){ pages.push(cur); cur=[]; curH=0; }'
+    +'  for(var i=0;i<BLOCKS.length;i++){ var h=measure(BLOCKS[i].html); if(curH+h>avail && cur.length){ push(); } cur.push(BLOCKS[i]); curH+=h; }'
+    +'  if(cur.length) push();'
+    +'  if(!pages.length) pages.push([]);'
+    +'  var N=pages.length; var out="";'
+    +'  for(var p=0;p<N;p++){ var ph=pages[p].map(function(b){return b.html;}).join(""); if(p<N-1){ var lb=pages[p][pages[p].length-1]; var nf=pages[p+1][0]; if(lb&&nf&&lb.scopeTitle&&nf.scopeTitle===lb.scopeTitle){ ph+=\'<div style="text-align:right;font-size:10px;color:#999;font-style:italic;margin-top:6px;">\'+lb.scopeTitle+\' continued on next page…</div>\'; } } out+=\'<div class="page"><div class="pagebody">\'+HEADER+ph+\'</div><div class="pfoot">Page \'+(p+1)+\' of \'+N+\'</div></div>\'; }'
+    +'  document.getElementById("pages").innerHTML=out;'
+    +'}'
+    +'if(document.fonts&&document.fonts.ready){document.fonts.ready.then(build);setTimeout(build,400);}else{build();}'
+    +'<\/script>'
+    +'</body></html>';
+  var w=window.open('','_blank');
+  if(w){ w.document.write(doc); w.document.close(); } else { _flashDoc('Allow pop-ups to view the PDF'); }
+}
+function docSendToClient(ref){
+  // Open the client preview in "send" mode (shows billing instructions + Send button)
+  docPreviewForClient(ref, 'send');
 }
 // Cancel edit mode. If this is an unsaved draft, discard it entirely.
 function docCancelEdit(ref){
@@ -2857,14 +3545,14 @@ function docToggleClause(ref, clauseId, checked){
   if(window.SDD && SDD.save) SDD.save();
 }
 // In-page Yes/No confirmation popup (window.confirm is blocked in this environment)
-function _confirmDoc(msg, onYes, yesLabel){
+function _confirmDoc(msg, onYes, yesLabel, subText){
   var ex=document.getElementById('_docConfirmBg'); if(ex) ex.remove();
   var bg=document.createElement('div');
   bg.id='_docConfirmBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100100;display:flex;align-items:center;justify-content:center;padding:24px;';
   bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);overflow:hidden;font-family:Barlow,sans-serif;">'
     +'<div style="padding:24px 24px 8px;font-size:16px;font-weight:700;color:#1f2630;">'+msg+'</div>'
-    +'<div style="padding:0 24px 12px;font-size:13px;color:#777;">This will update the record across the whole system.</div>'
+    +'<div style="padding:0 24px 12px;font-size:13px;color:#777;">'+(subText||'This will update the record across the whole system.')+'</div>'
     +'<div style="display:flex;gap:10px;justify-content:flex-end;padding:14px 24px 20px;">'
       +'<button id="_dcNo" style="padding:9px 22px;border-radius:9px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">No</button>'
       +'<button id="_dcYes" style="padding:9px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">'+(yesLabel||'Yes, save')+'</button>'
@@ -2912,6 +3600,8 @@ function editableDocSheet(ref, opts){
   var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Demolition, LLC',shortName:'SDD Demolition',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
   var locked=_docIsLocked(f);           // paid-in-full invoices are locked
   var ed=docEditMode && !locked;        // edit mode on/off (never editable when locked)
+  var _priceView=(d._priceView==='full')?'full':'standard'; // read-only price view mode
+  var showPrices = ed || _priceView==='full'; // Standard read view hides per-line prices
 
   var inCss='font-family:Barlow,sans-serif;font-size:18px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:9px 11px;width:100%;box-sizing:border-box;background:#fff;transition:all .12s;';
   var esc=function(v){return String(v==null?'':v).replace(/"/g,'&quot;');};
@@ -2937,6 +3627,10 @@ function editableDocSheet(ref, opts){
         +'<td style="padding:3px 0 3px 6px;width:20px;text-align:center;"><button onclick="docDeleteLine(\''+ref+'\','+i+')" title="Delete" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:17px;line-height:1;">×</button></td>'
         +'</tr>'
         +(needs?'<tr><td colspan="6" style="padding:0 6px 6px 0;"><span style="font-size:11px;color:#D94F4F;font-weight:600;">← Add the service for this estimate to get started.</span></td></tr>':'');
+    }
+    if(!showPrices){
+      // STANDARD read view: description only, no per-line prices
+      return '<tr><td style="padding:6px 10px 6px 0;font-size:15px;border-bottom:1px solid #F4F4F4;">'+(esc(l.desc)||'')+'</td></tr>';
     }
     return '<tr>'
       +'<td style="padding:4px 10px 4px 0;font-size:15px;border-bottom:1px solid #F4F4F4;">'+(esc(l.desc)||'')+'</td>'
@@ -2991,7 +3685,15 @@ function editableDocSheet(ref, opts){
   }
 
   // ── Action bar: Edit + Send (read mode) OR Cancel/Save (edit mode) ──
-  var actionBar = ed
+  var isVoid = !!(d && d._void);
+  var _showVoid = _canVoid(f);
+  var voidBtn = _showVoid ? '<button onclick="docVoid(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #D94F4F;background:#fff;color:#D94F4F;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D94F4F" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>Void</button>' : '';
+  var actionBar = isVoid
+    ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+        +'<div style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#D94F4F;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D94F4F" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.9" y1="4.9" x2="19.1" y2="19.1"/></svg>Voided'+(d.dateVoided?(' on '+d.dateVoided):'')+' — kept for history, excluded from totals</div>'
+        +'<button onclick="docUnvoid(\''+ref+'\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Restore</button>'
+      +'</div>'
+    : (ed
     ? '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
         +'<button onclick="docCancelEdit(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
         +'<button onclick="docSave(\''+ref+'\')" style="padding:11px 32px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);">✓ Save</button>'
@@ -2999,24 +3701,36 @@ function editableDocSheet(ref, opts){
     : (locked
       ? '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
           +'<div style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#16a34a;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Locked — '+(f.kind==='estimate'?'this estimate is fully billed and paid; it can\'t be edited':'this invoice is paid in full and can\'t be edited')+'</div>'
-          +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'+(f.kind==='estimate'?'Resend copy':'Resend receipt')+'</button>'
+          +'<div style="display:flex;gap:10px;">'+voidBtn
+          +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'+(f.kind==='estimate'?'Resend copy':'Resend receipt')+'</button></div>'
         +'</div>'
       : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+        +voidBtn
         +(( f.kind==='estimate' && _estComputedStage(job,d.est,d.status).step>=3 ) ? '' : '<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>')
+        +'<button onclick="docPreviewForClient(\''+ref+'\',\'preview\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button>'
+        +((f.kind==='estimate')?'<button onclick="_openClientLink(\''+ref+'\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Client portal</button>':'')
         +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to client</button>'
-      +'</div>');
+      +'</div>'));
 
   // status badge (read) vs input (edit)
   var _estStage = (f.kind==='estimate') ? _estComputedStage(job, d.est, d.status) : null;
   var statusEl = ed
     ? '<input value="'+esc(d.status)+'" oninput="docFieldSave(\''+ref+'\',\'status\',this.value)" style="'+inCss+'max-width:200px;font-weight:600;">'
-    : (_estStage
+    : (isVoid
+        ? '<span style="font-size:13px;font-weight:800;color:#D94F4F;">Void</span>'
+        : (_estStage
         ? '<span style="font-size:13px;font-weight:700;color:'+_estStage.color+';">'+_estStage.label+'</span>'
-        : '<span style="font-size:13px;font-weight:700;color:'+accent+';">'+(esc(d.status)||'—')+'</span>');
+        : '<span style="font-size:13px;font-weight:700;color:'+accent+';">'+(esc(d.status)||'—')+'</span>'));
 
-  var modeBadge = ed
-    ? '<div style="font-size:11px;color:'+accent+';display:flex;align-items:center;gap:6px;font-weight:700;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editing — fields unlocked</div>'
-    : '<div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Read-only · press Edit to change</div>';
+  var _kindLabel = _docKindName(f.kind); // Estimate / Invoice / Change Order
+  var modeBadge = opts.clientView
+    ? '' // client preview: no internal Standard/Full$ toggle
+    : (ed
+    ? '<div style="font-size:11px;color:'+accent+';display:flex;align-items:center;gap:6px;font-weight:700;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editing — all prices visible</div>'
+    : ('<div style="display:inline-flex;align-items:center;background:#f0eee8;border:1px solid #ddd8cc;border-radius:999px;padding:3px;gap:2px;">'
+        +'<button onclick="_setPriceView(\''+ref+'\',\'standard\')" style="border:none;cursor:pointer;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;white-space:nowrap;'+(_priceView==='standard'?'background:'+accent+';color:#fff;':'background:transparent;color:#8a8578;')+'">Standard '+_kindLabel+'</button>'
+        +'<button onclick="_setPriceView(\''+ref+'\',\'full\')" style="border:none;cursor:pointer;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;white-space:nowrap;'+(_priceView==='full'?'background:'+accent+';color:#fff;':'background:transparent;color:#8a8578;')+'">Full $ '+_kindLabel+'</button>'
+      +'</div>'));
 
   return '<div style="background:'+(ed?'#ece9e2':'#f0eee8')+';padding:'+(ed?'20px':'16px')+';border-radius:12px;">'
     +'<div style="background:#fff;padding:36px 56px 48px;font-family:Barlow,sans-serif;font-size:19px;line-height:1.65;color:#1f2630;max-width:820px;width:100%;margin:0 auto;box-sizing:border-box;'
@@ -3082,19 +3796,186 @@ function editableDocSheet(ref, opts){
     +(ed?'<button onclick="docAddLine(\''+ref+'\')" style="margin-top:8px;padding:6px 12px;border:1px dashed '+accent+';border-radius:7px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">+ Add line item</button>':'')
     // CONTRACT SCOPE REFERENCE (item descriptions only, no prices) — shown before the total
     +(f.kind==='invoice'?_invoiceScopeReference(f, accent):'')
-    +'<div style="border-top:2px solid '+accent+';display:flex;justify-content:space-between;padding:14px 4px 2px;margin-top:10px;font-size:18px;font-weight:800;background:#F8F6F2;"><span style="padding-left:6px;">Total</span><span style="color:'+accent+';padding-right:6px;" id="docGrandTot">'+f2(total)+'</span></div>'
+    // BASE TOTAL (shown right after the main scope, before alternates)
+    +(function(){
+      if(f.kind==='invoice'){
+        return '<div style="border-top:2px solid '+accent+';display:flex;justify-content:space-between;padding:14px 4px 2px;margin-top:10px;font-size:18px;font-weight:800;background:#F8F6F2;"><span style="padding-left:6px;">Total</span><span style="color:'+accent+';padding-right:6px;" id="docGrandTot">'+f2(total)+'</span></div>';
+      }
+      var base=_docBaseTotal(f);
+      var hasAlts=_ensureAlternates(f).length>0;
+      // Base label depends on whether alternates exist
+      return '<div style="border-top:2px solid '+accent+';display:flex;justify-content:space-between;padding:14px 4px 2px;margin-top:10px;font-size:18px;font-weight:800;background:#F8F6F2;"><span style="padding-left:6px;">'+(hasAlts?'Base Total':'Total')+'</span><span style="color:'+accent+';padding-right:6px;">'+f2(base)+'</span></div>';
+    })()
+    // ALTERNATE WORK section (estimates & change orders only)
+    +(f.kind!=='invoice'?_altSectionHTML(f, ref, ed, true, accent):'')
+    // GRAND TOTAL (only when there are alternates; sums base + approved alternate lines)
+    +(function(){
+      if(f.kind==='invoice') return '';
+      var alts=_ensureAlternates(f);
+      if(!alts.length) return '';
+      var base=_docBaseTotal(f);
+      var approvedAlt=0;
+      alts.forEach(function(a){(a.lines||[]).forEach(function(l){ if(l._approved) approvedAlt+=(Number(l.amount)||0); });});
+      var grand=_docGrandTotal(f);
+      return '<div style="border-top:2px solid '+accent+';margin-top:14px;background:#F2EEE4;padding:12px 8px;border-radius:0 0 4px 4px;">'
+        +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:#555;"><span>Base scope</span><span>'+f2(base)+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px;color:'+(approvedAlt>0?'#3A9E6A':'#999')+';font-weight:700;"><span>Approved alternates</span><span>'+(approvedAlt>0?'+ '+f2(approvedAlt):'$0.00')+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;padding:10px 0 2px;margin-top:4px;border-top:1.5px solid '+accent+';font-size:20px;font-weight:800;"><span>Grand Total</span><span style="color:'+accent+';" id="docGrandTot">'+f2(grand)+'</span></div>'
+      +'</div>';
+    })()
     // CONTRACT SUMMARY (progress-billing invoices tied to an estimate)
     +(f.kind==='invoice'?_invoiceContractSummary(f, accent):'')
     // CLIENT PAYMENT SECTION (invoices only, read-only, inside the PDF)
     +(f.kind==='invoice'?_invoicePdfPayments(f, accent):'')
+    // SIGNATURE BLOCK (estimates) — shows the saved signature only (never in client preview; that has its own pad)
+    +((f.kind==='estimate' && !opts.clientView)?_signatureBlockHTML(f, ref, ed, accent, opts.clientView):'')
     // TERMS & CONDITIONS
     +termsBlock
-    // ACTION BAR
-    +actionBar
+    // ACTION BAR (hidden in the client preview — the preview has its own buttons)
+    // CLIENT APPROVAL (signed via their link) + SCHEDULING REQUEST (for Pedro — system view only)
+    +(opts.clientView?'':_clientApprovalPanelHTML(f, ref))
+    +(opts.clientView?'':_scheduleReqPanelHTML(f, ref))
+    +(opts.clientView?'':actionBar)
   +'</div>'
   +'</div>'; // close the page-background wrapper (PDF sheet only — side panels are added by the caller)
 }
 
+// Signature block shown inside the PDF (estimates). Shows saved signature, or a Sign action.
+function _signatureBlockHTML(f, ref, ed, accent, clientView){
+  var d=f.doc;
+  var sig=d._signature;
+  var esc=function(v){return String(v==null?'':v).replace(/</g,'&lt;');};
+  // Only render a signature block once the client has actually signed.
+  if(sig && sig.image){
+    return '<div style="margin-top:24px;border-top:1px solid #e5e5e5;padding-top:14px;">'
+      +'<div style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Approved &amp; Signed by Client</div>'
+      +'<img src="'+sig.image+'" alt="signature" style="max-height:80px;display:block;margin-bottom:2px;">'
+      +'<div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;color:#1f2630;">'+esc(sig.name||'')+' — '+esc(sig.date||'')+'</div>'
+    +'</div>';
+  }
+  // Not signed yet → render nothing in the system PDF (client signs from the preview)
+  return '';
+}
+// Open a standalone signature pad modal (from the normal PDF, not the client preview)
+function _openSignaturePad(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var ex=document.getElementById('_sigPadBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_sigPadBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100130;display:flex;align-items:center;justify-content:center;padding:24px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:560px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.35);overflow:hidden;font-family:Barlow,sans-serif;">'
+    +'<div style="padding:16px 22px;background:#1f2630;color:#fff;font-size:15px;font-weight:700;">Sign estimate '+ref+'</div>'
+    +'<div style="padding:20px 22px;">'
+      +'<div style="border:1.5px dashed #bbb;border-radius:8px;background:#fafafa;position:relative;">'
+        +'<canvas id="_sigCanvas" width="820" height="150" style="width:100%;height:150px;touch-action:none;cursor:crosshair;display:block;border-radius:8px;"></canvas>'
+        +'<div id="_sigHint" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;pointer-events:none;">Sign here with your mouse or finger</div>'
+      +'</div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:12px;">'
+        +'<input id="_sigName" placeholder="Type your full name" style="flex:1;font-family:Barlow,sans-serif;font-size:14px;border:1px solid #ccc;border-radius:7px;padding:9px 11px;box-sizing:border-box;">'
+        +'<button onclick="_clearSignature()" style="padding:8px 16px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:#777;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Clear</button>'
+      +'</div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;gap:10px;padding:14px 22px;border-top:1px solid #eee;background:#fafafa;">'
+      +'<button onclick="document.getElementById(\'_sigPadBg\').remove();" style="padding:10px 20px;border-radius:9px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_saveSignaturePad(\''+ref+'\')" style="padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Save signature</button>'
+    +'</div>'
+  +'</div>';
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  document.body.appendChild(bg);
+  _initSignatureCanvas();
+}
+function _saveSignaturePad(ref){
+  var cv=document.getElementById('_sigCanvas');
+  var nameEl=document.getElementById('_sigName');
+  var name=nameEl?String(nameEl.value||'').trim():'';
+  if(!_sigHasInk){ _flashDoc('Please sign in the box first'); return; }
+  if(!name){ _flashDoc('Please type your full name'); if(nameEl)nameEl.focus(); return; }
+  var f=_findDoc(ref); if(!f) return;
+  var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  f.doc._signature={name:name, image:(cv?cv.toDataURL('image/png'):''), date:today};
+  if(window.SDD && SDD.save) SDD.save();
+  var bg=document.getElementById('_sigPadBg'); if(bg) bg.remove();
+  _flashDoc('✓ Signature saved');
+  // If the client preview is open, refresh it so the signature shows there
+  if(document.getElementById('_clientPrevBg')){ docPreviewForClient(ref, window._clientPrevMode||'preview'); }
+  else { _reopenDoc(ref); }
+}
+// Render the "Alternate Work" section. Respects Standard/Full$ (showPrices) and edit mode.
+function _altSectionHTML(f, ref, ed, showPrices, accent){
+  var alts=_ensureAlternates(f);
+  // In read mode with no alternates, render nothing
+  if(!ed && (!alts || !alts.length)) return '';
+  var esc=function(v){return String(v==null?'':v).replace(/"/g,'&quot;');};
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var inCss='font-family:Barlow,sans-serif;font-size:15px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:7px 9px;width:100%;box-sizing:border-box;background:#fff;';
+
+  var html='<div style="margin-top:22px;">'
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:4px;background:#F1EEE6;padding:8px 12px;border-radius:6px;border-left:3px solid '+accent+';">Alternate Work <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#888;font-size:12px;">— optional add-ons, only added to the total if approved</span></div>';
+
+  alts.forEach(function(a, ai){
+    // header row: name only (no group checkbox)
+    html+='<div style="border:1px solid #e5e2da;border-radius:9px;padding:12px 14px;margin:10px 0;background:#fff;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;">'
+        +(ed
+            ? '<input value="'+esc(a.name)+'" oninput="docAltNameSave(\''+ref+'\','+ai+',this.value)" style="'+inCss+'font-weight:700;flex:1;max-width:420px;">'
+            : '<span style="font-size:15px;font-weight:700;color:#1f2630;flex:1;">'+esc(a.name)+'</span>')
+        +(ed?'<button onclick="docDeleteAlternate(\''+ref+'\','+ai+')" title="Remove alternate" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:18px;line-height:1;">×</button>':'')
+      +'</div>';
+
+    // lines
+    if(ed){
+      html+='<table style="width:100%;border-collapse:collapse;margin-top:4px;"><tbody>';
+      (a.lines||[]).forEach(function(l, li){
+        html+='<tr>'
+          +'<td style="padding:3px 8px 3px 0;"><input value="'+esc(l.desc)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" onblur="this.value=_titleCase(this.value);docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" placeholder="Description" style="'+inCss+'"></td>'
+          +'<td style="padding:3px 4px;width:50px;"><input value="'+esc(l.qty)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
+          +'<td style="padding:3px 4px;width:110px;">'+_unitDropdown2(ref,ai,li,l.unit)+'</td>'
+          +'<td style="padding:3px 4px;width:90px;"><input value="'+esc(l.unitPrice)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
+          +'<td style="padding:3px 4px;width:100px;text-align:right;font-weight:700;white-space:nowrap;" id="altLineTot-'+ai+'-'+li+'">'+money(l.amount)+'</td>'
+          +'<td style="width:20px;text-align:center;"><button onclick="docAltDeleteLine(\''+ref+'\','+ai+','+li+')" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:16px;line-height:1;">×</button></td>'
+        +'</tr>';
+      });
+      html+='</tbody></table>'
+        +'<button onclick="docAltAddLine(\''+ref+'\','+ai+')" style="margin-top:6px;padding:5px 10px;border:1px dashed '+accent+';border-radius:6px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:11px;font-weight:600;cursor:pointer;">+ Add line</button>';
+    } else {
+      // read mode: each line has its own checkbox to add it to the total; prices only in Full$
+      html+='<table style="width:100%;border-collapse:collapse;margin-top:4px;"><tbody>';
+      (a.lines||[]).forEach(function(l, li){
+        var chk='<input type="checkbox" '+(l._approved?'checked':'')+' onchange="docToggleAltLine(\''+ref+'\','+ai+','+li+',this.checked)" style="width:17px;height:17px;accent-color:#3A9E6A;flex-shrink:0;cursor:pointer;">';
+        var added=l._approved?'<span style="font-size:10px;font-weight:700;color:#3A9E6A;background:rgba(58,158,106,.12);padding:1px 8px;border-radius:999px;white-space:nowrap;margin-left:8px;">Added</span>':'';
+        if(showPrices){
+          html+='<tr style="background:'+(l._approved?'rgba(58,158,106,.05)':'transparent')+';">'
+            +'<td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td>'
+            +'<td style="padding:5px 4px;width:50px;font-size:14px;text-align:right;color:#444;">'+esc(l.qty)+'</td>'
+            +'<td style="padding:5px 4px;width:100px;font-size:14px;text-align:center;color:#444;">'+esc(l.unit)+'</td>'
+            +'<td style="padding:5px 4px;width:90px;font-size:14px;text-align:right;color:#444;">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td>'
+            +'<td style="padding:5px 4px;width:100px;font-size:14px;text-align:right;font-weight:700;white-space:nowrap;color:'+(l._approved?'#3A9E6A':'#444')+';">'+money(l.amount)+'</td>'
+          +'</tr>';
+        } else {
+          html+='<tr style="background:'+(l._approved?'rgba(58,158,106,.05)':'transparent')+';"><td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td></tr>';
+        }
+      });
+      html+='</tbody></table>';
+    }
+    html+='</div>';
+  });
+
+  if(ed){
+    html+='<button onclick="docAddAlternate(\''+ref+'\')" style="margin-top:6px;padding:8px 14px;border:1.5px dashed '+accent+';border-radius:8px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ Add alternate</button>';
+  }
+  html+='</div>';
+  return html;
+}
+// Unit dropdown variant for alternate lines
+function _unitDropdown2(ref, ai, li, current){
+  var units=['square feet','linear feet','each','per','loads','pounds','tons','trips','job'];
+  var cur=String(current||'').toLowerCase();
+  var norm={sqft:'square feet','sq ft':'square feet',lf:'linear feet',ea:'each',lb:'pounds',lbs:'pounds',ton:'tons',trip:'trips',load:'loads'};
+  if(norm[cur]) cur=norm[cur];
+  if(cur && units.indexOf(cur)<0) units.unshift(cur);
+  var opts=units.map(function(u){return '<option value="'+u+'"'+(u===cur?' selected':'')+'>'+u+'</option>';}).join('');
+  return '<select onchange="docAltLineSave(\''+ref+'\','+ai+','+li+',\'unit\',this.value)" style="font-family:Barlow,sans-serif;font-size:14px;color:#1f2630;border:1px solid #B8922A;border-radius:5px;padding:7px 5px;width:100%;box-sizing:border-box;background:#fff;cursor:pointer;">'+opts+'</select>';
+}
 // Contract summary block for a progress-billing invoice (shown inside the PDF, client-facing)
 // Shows: contract total, previously billed, this invoice, total billed to date, remaining on contract.
 function _invoiceContractSummary(f, accent){
@@ -3447,8 +4328,8 @@ function _estStageInfo(status){
   if(/invoice|sent.*ar|billed/.test(s)) return {step:6,label:'Invoice Sent',color:'#3A7ED4'};
   if(/ready.*bill|complete/.test(s)) return {step:5,label:'Ready to Bill',color:'#D94F4F'};
   if(/progress/.test(s)) return {step:4,label:'Job in Progress',color:'#C8822A'};
-  if(/approv/.test(s)) return {step:3,label:'Approved',color:'#B8922A'};
   if(/pending|sent/.test(s)) return {step:2,label:'Pending Approval',color:'#3A7ED4'};
+  if(/approv/.test(s)) return {step:3,label:'Approved',color:'#B8922A'};
   return {step:1,label:'Estimate Pending',color:'#777'};
 }
 // Compute an estimate's lifecycle stage automatically from its billing & collection,
@@ -3469,8 +4350,8 @@ function _estComputedStage(job, estId, savedStatus){
   // Nothing billed yet → use the saved lifecycle status, but never "Paid"
   if(/ready.*bill|complete/.test(raw)) return {step:5,label:'Ready to Bill',color:'#D94F4F'};
   if(/progress/.test(raw)) return {step:4,label:'Job in Progress',color:'#C8822A'};
-  if(/approv/.test(raw)) return {step:3,label:'Approved',color:'#B8922A'};
   if(/pending|sent/.test(raw)) return {step:2,label:'Pending Approval',color:'#3A7ED4'};
+  if(/approv/.test(raw)) return {step:3,label:'Approved',color:'#B8922A'};
   if(/paid|payment received/.test(raw)) return {step:3,label:'Approved',color:'#B8922A'}; // stale 'Paid' with no invoices → treat as Approved
   return {step:1,label:'Estimate Pending',color:'#777'};
 }
@@ -3532,7 +4413,7 @@ function renderEstimateDetail(customerId, jobEst, estId){
 
 // Reusable HTML list of invoices generated for an estimate
 function _estInvoiceListHTML(job, estId){
-  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft;});
+  var invs=(job.invoices||[]).filter(function(iv){return (iv.originalEst||'')===estId && !iv._draft && !iv._void;});
   if(!invs.length) return '<div style="padding:14px;font-size:13px;color:var(--muted2);font-style:italic;text-align:center;">No invoices for this estimate</div>';
   return invs.map(function(iv){
     var paid=/paid/i.test(iv.status)&&!/unpaid/i.test(iv.status);
@@ -5004,6 +5885,12 @@ function renderDetail(id, pmFilter){
           <button class="btn btn-gold btn-sm" onclick="openAddJobModal(${c.id}${_pmContact ? `,'${_pmContact.id}'` : ''})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add New Job
+          </button>
+        </div>
+        <div style="margin-bottom:12px;">
+          <button class="btn btn-ghost btn-sm" onclick="_previewClientPortal(${c.id})" style="font-size:12px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border2);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview client portal — see exactly what ${c.name.replace(/"/g,'&quot;')} sees
           </button>
         </div>
         <div style="padding-bottom:20px;">

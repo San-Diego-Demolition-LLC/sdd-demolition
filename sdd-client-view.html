@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client Portal — San Diego Demolition, LLC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Barlow',Arial,sans-serif;background:#e8e6e0;color:#1f2630;line-height:1.5;}
+  .topbar{background:#1f2630;color:#fff;padding:16px 20px;text-align:center;}
+  .topbar .lock{font-size:11px;color:#9aa3af;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 16px 60px;}
+  .hello{background:#fff;border-radius:14px;padding:24px 26px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,.08);border-top:4px solid #B8922A;}
+  .hello h1{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;margin-bottom:4px;}
+  .hello p{font-size:15px;color:#555;}
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px;}
+  .stat{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 3px 12px rgba(0,0,0,.06);}
+  .stat .lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:6px;}
+  .stat .val{font-size:26px;font-weight:800;color:#1f2630;font-family:'Barlow Condensed',sans-serif;}
+  .stat.gold .val{color:#B8922A;}.stat.red .val{color:#D94F4F;}.stat.green .val{color:#3A9E6A;}
+  .stat .sub{font-size:12px;color:#999;margin-top:2px;}
+  .section{background:#fff;border-radius:14px;padding:22px 24px;margin-bottom:20px;box-shadow:0 4px 18px rgba(0,0,0,.08);}
+  .section h2{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px;}
+  .section .subtitle{font-size:13px;color:#999;margin-bottom:16px;}
+  .doc-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #eee;flex-wrap:wrap;}
+  .doc-row:last-child{border-bottom:none;}
+  .doc-info{flex:1;min-width:200px;}
+  .doc-info .name{font-size:15px;font-weight:700;color:#1f2630;}
+  .doc-info .meta{font-size:13px;color:#888;margin-top:2px;}
+  .doc-amt{font-size:17px;font-weight:800;color:#B8922A;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;}
+  .doc-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap;}
+  .badge.approved,.badge.paid,.badge.signed{background:#EAF6EF;color:#1f6b43;}
+  .badge.pending{background:#FFF4E0;color:#8a6414;}
+  .badge.unpaid{background:#FDECEC;color:#a33;}
+  .btn{padding:9px 16px;border-radius:8px;border:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none;}
+  .btn-gold{background:#B8922A;color:#fff;}.btn-green{background:#3A9E6A;color:#fff;}.btn-outline{background:#fff;color:#555;border:1.5px solid #ccc;}
+  .empty{font-size:14px;color:#aaa;padding:14px 0;font-style:italic;}
+  .foot{text-align:center;font-size:12px;color:#999;margin-top:30px;}
+  .err{background:#FDECEC;border:1px solid #E5A5A5;color:#a33;padding:20px;border-radius:12px;text-align:center;font-size:15px;}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow:auto;}
+  .modal-bg.show{display:flex;}
+  .modal{background:#fff;border-radius:14px;max-width:820px;width:100%;margin:auto;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;}
+  .modal-head{background:#1f2630;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;}
+  .modal-head .x{cursor:pointer;font-size:22px;line-height:1;background:none;border:none;color:#fff;}
+  .modal-body{padding:22px 24px;max-height:70vh;overflow:auto;}
+  .modal-foot{padding:14px 20px;border-top:1px solid #eee;background:#fafafa;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+  .doc-head{display:flex;justify-content:space-between;border-bottom:3px solid #B8922A;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .doc-head .big{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:800;color:#B8922A;line-height:1;}
+  .co{font-size:16px;font-weight:800;}.ci{font-size:10px;color:#888;line-height:1.4;margin-top:4px;}
+  .scope-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#F5F4F1;border-left:3px solid #B8922A;padding:7px 10px;border-radius:5px;margin:12px 0 6px;}
+  .dtable{width:100%;border-collapse:collapse;}.dtable td{padding:6px 4px;border-bottom:1px solid #eee;font-size:13px;}.dtable td.n{text-align:right;}.dtable td.u{text-align:center;}.dtable td.b{font-weight:700;}
+  .dtotal{display:flex;justify-content:space-between;border-top:2px solid #B8922A;background:#F8F6F2;padding:10px 6px;font-size:16px;font-weight:800;margin-top:8px;}.dtotal .a{color:#B8922A;}
+  .sigwrap{border:1.5px dashed #bbb;border-radius:8px;background:#fafafa;position:relative;margin-top:8px;}
+  .sigwrap canvas{width:100%;height:150px;touch-action:none;cursor:crosshair;display:block;border-radius:8px;}
+  .sighint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;pointer-events:none;}
+  @media print{.topbar,.hello,.summary,.section,.foot,.modal-head,.modal-foot{display:none!important;}.modal-bg{position:static;background:none;padding:0;display:block!important;}.modal{box-shadow:none;max-width:none;}.modal-body{max-height:none;overflow:visible;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="font-size:15px;font-weight:700;">San Diego Demolition, LLC</div>
+  <div class="lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9aa3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure client portal — you only see your own documents</div>
+</div>
+<div class="wrap" id="root"><div class="err">Loading…</div></div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalInner"></div></div>
+
+<script>
+/* Embedded demo data — used as a fallback when sdd-data.js is not available (e.g. Claude chat preview). */
+window._SDD_EMBED={"customers": [{"id": 1, "name": "ABC Construction Corp", "city": "San Diego, CA", "address": "4500 Main St, San Diego CA 92103", "phone": "(619) 555-0142", "since": "2023", "type": "commercial", "waiver": "conditional", "portal": false, "notes": "", "specialInstructions": false, "paymentTerms": "net-30", "billingMethod": "direct-email", "sov": true, "sovEstimates": [], "contacts": [{"id": "c1", "name": "Maria Rodriguez", "initials": "MR", "color": "av-info", "role": "billing", "email": "billing@abcconstruction.com", "phone": "(619) 555-0101", "title": "Billing Manager", "jobs": []}, {"id": "c2", "name": "James Torres", "initials": "JT", "color": "av-gold", "role": "project-manager", "email": "j.torres@abcconstruction.com", "phone": "(619) 555-0102", "title": "Project Manager", "jobs": [{"est": "EST-047", "address": "1420 Harbor Blvd", "city": "San Diego CA 92101", "status": "In progress", "startDate": "May 13, 2026", "endDate": "May 22, 2026", "scheduledBy": "Leontina", "amount": "$14,301", "date": "May 2, 2026", "jobName": "Harbor Blvd Demolition", "projectName": "Harbor District Redevelopment", "streetOnly": "1420 Harbor Blvd", "siteId": "SITE-1420-HARBOR-BLVD", "hasSpecialInstructions": true, "specialInstructions": "Client requires 48h notice before any demolition. Dust containment mandatory on east side.", "documents": [{"name": "Harbor - Master Contract.pdf", "date": "May 1, 2026", "category": "Contract"}], "estimates": [{"est": "EST-047", "amount": "$14,301", "status": "Paid", "date": "May 2, 2026", "scope": "Original Scope - Demolition", "projectName": "Harbor District Redevelopment"}, {"est": "EST-052", "amount": "$8,200", "status": "Approved", "date": "May 5, 2026", "scope": "Revised Scope - Debris Removal", "projectName": "Harbor Phase 2 - Site Cleanup"}], "changeOrders": [{"est": "EST-CO047-1", "originalEst": "EST-047", "amount": "$2,100", "status": "Approved", "date": "May 10, 2026", "description": "Additional haul-off - 3 loads"}, {"est": "EST-CO052-1", "originalEst": "EST-052", "amount": "$950", "status": "Pending", "date": "May 12, 2026", "description": "Hazmat disposal - asbestos tile"}], "invoices": [{"est": "INV-047P1", "originalEst": "EST-047", "amount": "$4,000", "status": "Paid", "date": "Apr 18, 2026", "due": "May 18, 2026", "payments": [{"id": "PMT-047P1", "date": "Apr 20, 2026", "amount": "$4,000", "method": "ACH", "ref": "Chase ACH #88101", "note": "Partial payment 1 of 4"}]}, {"est": "INV-047P2", "originalEst": "EST-047", "amount": "$4,000", "status": "Paid", "date": "Apr 25, 2026", "due": "May 25, 2026", "payments": [{"id": "PMT-047P2", "date": "Apr 28, 2026", "amount": "$4,000", "method": "Check", "ref": "Check #10455", "note": "Partial payment 2 of 4"}]}, {"est": "INV-047P3", "originalEst": "EST-047", "amount": "$3,500", "status": "Paid", "date": "May 3, 2026", "due": "Jun 2, 2026", "payments": [{"id": "PMT-047P3", "date": "May 6, 2026", "amount": "$3,500", "method": "Credit Card", "ref": "Visa ····4821", "note": "Partial payment 3 of 4"}]}, {"est": "INV-047P4", "originalEst": "EST-047", "amount": "$2,801", "status": "Paid", "date": "May 15, 2026", "due": "Jun 14, 2026", "payments": [{"id": "PMT-047P4", "date": "May 17, 2026", "amount": "$2,801", "method": "Credit Card", "ref": "Visa ····4821", "note": "Partial payment 4 of 4 - final"}]}, {"est": "INV-CO047-1", "originalEst": "EST-CO047-1", "amount": "$2,100", "status": "Paid", "date": "May 18, 2026", "due": "Jun 17, 2026", "payments": [{"id": "PMT-CO047-1", "date": "May 18, 2026", "amount": "$2,100", "method": "ACH", "ref": "Chase ACH #88213", "note": "Paid in full"}]}]}, {"est": "EST-051", "address": "880 5th Ave", "city": "San Diego CA 92101", "status": "Pending approval", "dateSent": "May 8, 2026", "amount": "$9,850", "date": "May 8, 2026", "jobName": "5th Ave Demo", "projectName": "Gaslamp Quarter Mixed-Use", "streetOnly": "880 5th Ave", "estimates": [{"est": "EST-051", "amount": "$9,850", "status": "Pending approval", "date": "May 8, 2026", "scope": "Site Demo - Full Clearance"}], "changeOrders": [{"est": "EST-CO051-1", "originalEst": "EST-051", "amount": "$1,400", "status": "Pending", "date": "May 14, 2026", "description": "Underground pipe removal"}], "invoices": []}, {"est": "EST-044", "address": "210 Market St", "city": "San Diego CA 92101", "status": "Completed", "dateCompleted": "Mar 24, 2026", "dateSentToClient": "Mar 25, 2026", "notifications": [{"type": "Invoice sent", "date": "Mar 25, 2026", "by": "Leontina"}, {"type": "Payment reminder", "date": "Apr 5, 2026", "by": "Leontina"}], "amount": "$18,750", "date": "Mar 12, 2026", "jobName": "Market St Teardown", "projectName": "East Village Tower Site", "streetOnly": "210 Market St", "billing": [{"id": "c1", "name": "Maria Rodriguez", "email": "billing@abcconstruction.com", "phone": "(619) 555-0101"}, {"id": "c4", "name": "Robert Park", "email": "r.park@abcconstruction.com", "phone": "(619) 555-0104"}], "pendingBilling": false, "estimates": [{"est": "EST-044", "amount": "$18,750", "status": "Paid", "date": "Mar 12, 2026", "scope": "Full Structure Demolition"}], "changeOrders": [{"est": "EST-CO044-1", "originalEst": "EST-044", "amount": "$3,200", "status": "Approved", "date": "Mar 20, 2026", "description": "Concrete slab breakout"}], "invoices": [{"est": "INV-044", "originalEst": "EST-044", "amount": "$18,750", "status": "Paid", "date": "Mar 25, 2026", "due": "Apr 24, 2026", "payments": [{"id": "PMT-044", "date": "Mar 25, 2026", "amount": "$18,750", "method": "Check", "ref": "Check #10428", "note": "Paid in full"}]}, {"est": "INV-CO044-1", "originalEst": "EST-CO044-1", "amount": "$3,200", "status": "Paid", "date": "Mar 28, 2026", "due": "Apr 27, 2026", "payments": [{"id": "PMT-CO044-1", "date": "Mar 28, 2026", "amount": "$3,200", "method": "Credit Card", "ref": "Amex ····3377", "note": "Paid in full"}]}]}]}, {"id": "c3", "name": "Sandra Lee", "initials": "SL", "color": "av-warning", "role": "project-manager", "email": "s.lee@abcconstruction.com", "phone": "(619) 555-0103", "title": "Site Supervisor", "jobs": [{"est": "EST-058", "address": "1420 Harbor Blvd", "city": "San Diego CA 92101", "status": "In progress", "startDate": "May 14, 2026", "endDate": "May 20, 2026", "scheduledBy": "Leontina", "amount": "$6,400", "date": "May 6, 2026", "jobName": "Harbor Blvd Demolition", "projectName": "Harbor District Redevelopment", "streetOnly": "1420 Harbor Blvd", "siteId": "SITE-1420-HARBOR-BLVD", "billing": [{"id": "c1", "name": "Maria Rodriguez", "email": "billing@abcconstruction.com", "phone": "(619) 555-0101", "role": "main"}], "pendingBilling": false, "estimates": [{"est": "EST-058", "amount": "$6,400", "status": "Approved", "date": "May 6, 2026", "scope": "Grading & Site Preparation", "projectName": "Harbor District Redevelopment"}], "changeOrders": [], "invoices": [{"est": "INV-058", "originalEst": "EST-058", "amount": "$6,400", "status": "Unpaid", "date": "May 18, 2026", "due": "Jun 17, 2026"}]}, {"est": "EST-055", "address": "342 Third Ave", "city": "Chula Vista CA 91910", "status": "Pending scheduled", "dateApproved": "Apr 28, 2026", "amount": "$22,500", "date": "Apr 28, 2026", "jobName": "342 Third Ave Demo", "projectName": "Chula Vista Retail Plaza", "streetOnly": "342 Third Ave", "estimates": [{"est": "EST-055", "amount": "$22,500", "status": "Approved", "date": "Apr 28, 2026", "scope": "Site Demolition & Grading", "projectName": "Chula Vista Retail Plaza"}], "changeOrders": [], "invoices": []}]}, {"id": "c4", "name": "Robert Park", "initials": "RP", "color": "av-success", "role": "additional", "email": "r.park@abcconstruction.com", "phone": "(619) 555-0104", "title": "Director", "jobs": [{"est": "EST-060", "address": "7700 Mission Valley Rd", "city": "San Diego CA 92108", "status": "Ready to bill", "completedBy": "Leontina", "completionNotes": "Demo finished, site cleared and swept. Ready to invoice.", "amount": "$31,200", "date": "Apr 10, 2026", "jobName": "Mission Valley Demo", "projectName": "Mission Valley Office Park", "streetOnly": "7700 Mission Valley Rd", "estimates": [{"est": "EST-060", "amount": "$31,200", "status": "Approved", "date": "Apr 10, 2026", "scope": "Commercial Building Demolition", "projectName": "Mission Valley Office Park"}], "changeOrders": [], "invoices": []}, {"est": "EST-031", "address": "915 Broadway", "city": "San Diego CA 92101", "status": "Approved", "dateApproved": "Apr 22, 2026", "amount": "$12,800", "date": "Feb 15, 2025", "jobName": "Broadway Lot Demo", "projectName": "Broadway Parking Structure", "streetOnly": "915 Broadway", "estimates": [{"est": "EST-031", "amount": "$12,800", "status": "Approved", "date": "Feb 15, 2025", "scope": "Parking Lot Demolition", "projectName": "Broadway Parking Structure"}], "changeOrders": [], "invoices": []}]}]}, {"id": 2, "name": "Coastal Builders Inc", "city": "Carlsbad, CA", "address": "2100 Palomar Airport Rd, Carlsbad CA 92011", "phone": "(760) 555-0188", "since": "2024", "type": "commercial", "waiver": "conditional", "portal": false, "notes": "", "specialInstructions": false, "paymentTerms": "net-15", "billingMethod": "direct-email", "sov": true, "sovEstimates": [], "contacts": [{"id": "cb1", "name": "Elena Marsh", "initials": "EM", "color": "av-info", "role": "billing", "email": "billing@coastalbuilders.com", "phone": "(760) 555-0181", "title": "Billing Manager", "jobs": []}, {"id": "cb2", "name": "Daniel Cruz", "initials": "DC", "color": "av-gold", "role": "project-manager", "email": "d.cruz@coastalbuilders.com", "phone": "(760) 555-0182", "title": "Project Manager", "jobs": [{"est": "EST-070", "address": "650 Grand Ave", "city": "Carlsbad CA 92008", "status": "In progress", "startDate": "May 4, 2026", "endDate": "May 16, 2026", "scheduledBy": "Ana Rivera", "amount": "$26,400", "date": "May 4, 2026", "jobName": "Grand Ave Commercial Demo", "projectName": "Carlsbad Village Center", "streetOnly": "650 Grand Ave", "billing": [{"id": "cb1", "name": "Elena Marsh", "email": "billing@coastalbuilders.com", "phone": "(760) 555-0181"}], "pendingBilling": false, "estimates": [{"est": "EST-070", "amount": "$26,400", "status": "Paid", "date": "May 4, 2026", "scope": "Commercial Structure Demolition"}], "changeOrders": [{"est": "EST-CO070-1", "originalEst": "EST-070", "amount": "$4,500", "status": "Approved", "date": "May 9, 2026", "description": "Additional asbestos abatement"}], "invoices": [{"est": "INV-070P1", "originalEst": "EST-070", "amount": "$12,400", "status": "Sent", "date": "May 4, 2026", "due": "May 19, 2026"}, {"est": "INV-070P3", "originalEst": "EST-070", "amount": "$15,600", "status": "Sent", "date": "May 17, 2026", "due": "Jun 1, 2026"}, {"est": "INV-070P5", "originalEst": "EST-070", "amount": "$8,900", "status": "Sent", "date": "May 26, 2026", "due": "Jun 10, 2026"}, {"est": "INV-070P2", "originalEst": "EST-070", "amount": "$13,200", "status": "Paid", "date": "May 12, 2026", "due": "Jun 11, 2026", "payments": [{"id": "PMT-070P2", "date": "May 12, 2026", "amount": "$13,200", "method": "ACH", "ref": "Wells Fargo ACH #55021", "note": "Paid in full"}]}, {"est": "INV-070P4", "originalEst": "EST-070", "amount": "$13,200", "status": "Unpaid", "date": "May 20, 2026", "due": "Jun 19, 2026"}]}, {"est": "EST-066", "address": "1820 Coast Hwy", "city": "Oceanside CA 92054", "status": "Completed", "dateCompleted": "Apr 18, 2026", "dateSentToClient": "Apr 20, 2026", "notifications": [{"type": "Invoice sent", "date": "Apr 20, 2026", "by": "Leontina"}], "amount": "$15,900", "date": "Feb 8, 2026", "jobName": "Coast Hwy Teardown", "projectName": "Coast Hwy Teardown", "streetOnly": "1820 Coast Hwy", "billing": [{"id": "cb1", "name": "Elena Marsh", "email": "billing@coastalbuilders.com", "phone": "(760) 555-0181"}, {"id": "cb2", "name": "Daniel Cruz", "email": "d.cruz@coastalbuilders.com", "phone": "(760) 555-0182"}], "pendingBilling": false, "estimates": [{"est": "EST-066", "amount": "$15,900", "status": "Paid", "date": "Feb 8, 2026", "scope": "Full Site Teardown & Haul-off"}], "changeOrders": [{"est": "EST-CO066-1", "originalEst": "EST-066", "amount": "$2,800", "status": "Paid", "date": "Feb 14, 2026", "description": "Extra dumpster rentals"}], "invoices": [{"est": "INV-066", "originalEst": "EST-066", "amount": "$15,900", "status": "Paid", "date": "Feb 18, 2026", "due": "Mar 20, 2026", "payments": [{"id": "PMT-066", "date": "Feb 18, 2026", "amount": "$15,900", "method": "Check", "ref": "Check #10391", "note": "Paid in full"}]}, {"est": "INV-CO066-1", "originalEst": "EST-CO066-1", "amount": "$2,800", "status": "Paid", "date": "Feb 20, 2026", "due": "Mar 22, 2026", "payments": [{"id": "PMT-CO066-1", "date": "Feb 20, 2026", "amount": "$2,800", "method": "Cash", "ref": "Cash receipt #204", "note": "Paid in full"}]}]}]}]}, {"id": 3, "name": "Pacific Demo Partners", "city": "San Diego, CA", "customerStatus": "inactive", "address": "780 Industrial Way, San Diego CA 92110", "phone": "(619) 555-0211", "since": "2022", "type": "commercial", "waiver": "conditional", "portal": false, "notes": "Account inactive — no active jobs.", "specialInstructions": false, "paymentTerms": "net-30", "billingMethod": "direct-email", "sov": false, "sovEstimates": [], "contacts": [{"id": "pd1", "name": "Greg Holt", "initials": "GH", "color": "av-info", "role": "billing", "email": "billing@pacificdemo.com", "phone": "(619) 555-0210", "title": "Billing Manager", "jobs": []}, {"id": "pd2", "name": "Laura Kim", "initials": "LK", "color": "av-gold", "role": "project-manager", "email": "l.kim@pacificdemo.com", "phone": "(619) 555-0212", "title": "Project Manager", "jobs": [{"est": "EST-040", "address": "780 Industrial Way", "city": "San Diego CA 92110", "status": "Completed", "dateCompleted": "Apr 10, 2026", "dateSentToClient": "Apr 12, 2026", "notifications": [{"type": "Invoice sent", "date": "Apr 12, 2026", "by": "Ana Rivera"}, {"type": "Payment reminder", "date": "Apr 22, 2026", "by": "Leontina"}, {"type": "Statement sent", "date": "May 1, 2026", "by": "Leontina"}], "amount": "$19,200", "date": "Nov 3, 2025", "jobName": "Industrial Way Demo", "projectName": "Pacific Industrial Site", "streetOnly": "780 Industrial Way", "billing": [{"id": "pd1", "name": "Greg Holt", "email": "billing@pacificdemo.com", "phone": "(619) 555-0210"}], "pendingBilling": false, "estimates": [{"est": "EST-040", "amount": "$19,200", "status": "Paid", "date": "Nov 3, 2025", "scope": "Full Structure Demolition"}], "changeOrders": [], "invoices": [{"est": "INV-040P2", "originalEst": "EST-040", "amount": "$9,800", "status": "Sent", "date": "Apr 26, 2026", "due": "May 26, 2026"}, {"est": "INV-040P3", "originalEst": "EST-040", "amount": "$11,200", "status": "Sent", "date": "May 9, 2026", "due": "Jun 8, 2026"}, {"est": "INV-040P1", "originalEst": "EST-040", "amount": "$19,200", "status": "Paid", "date": "Nov 15, 2025", "due": "Dec 15, 2025", "payments": [{"id": "PMT-040P1", "date": "Nov 15, 2025", "amount": "$19,200", "method": "Credit Card", "ref": "Visa ····4821", "note": "Paid in full"}]}]}]}]}, {"id": 4, "name": "Summit Contractors LLC", "city": "El Cajon, CA", "customerStatus": "collections", "address": "1290 Fletcher Pkwy, El Cajon CA 92020", "phone": "(619) 555-0277", "since": "2023", "type": "commercial", "waiver": "conditional", "portal": false, "notes": "Sent to collections — overdue balance.", "specialInstructions": false, "paymentTerms": "net-15", "billingMethod": "direct-email", "sov": false, "sovEstimates": [], "contacts": [{"id": "sc1", "name": "Nina Brooks", "initials": "NB", "color": "av-info", "role": "billing", "email": "billing@summitcontractors.com", "phone": "(619) 555-0276", "title": "Billing Manager", "jobs": []}, {"id": "sc2", "name": "Marcus Reed", "initials": "MR", "color": "av-gold", "role": "project-manager", "email": "m.reed@summitcontractors.com", "phone": "(619) 555-0278", "title": "Project Manager", "jobs": [{"est": "EST-038", "address": "1290 Fletcher Pkwy", "city": "El Cajon CA 92020", "status": "Ready to bill", "completedBy": "Ana Rivera", "completionNotes": "Final walkthrough done with client. All debris hauled.", "dateCompleted": "Dec 5, 2025", "dateSentToClient": "Dec 8, 2025", "notifications": [{"type": "Invoice sent", "date": "Dec 8, 2025", "by": "Leontina"}, {"type": "Payment reminder", "date": "Dec 20, 2025", "by": "Leontina"}, {"type": "Past-due notice", "date": "Jan 5, 2026", "by": "Leontina"}], "amount": "$24,800", "date": "Dec 12, 2025", "jobName": "Fletcher Pkwy Demo", "projectName": "Summit Retail Demo", "streetOnly": "1290 Fletcher Pkwy", "billing": [{"id": "sc1", "name": "Nina Brooks", "email": "billing@summitcontractors.com", "phone": "(619) 555-0276"}], "pendingBilling": false, "estimates": [{"est": "EST-038", "amount": "$24,800", "status": "Approved", "date": "Dec 12, 2025", "scope": "Commercial Demolition"}], "changeOrders": [], "invoices": [{"est": "INV-038P2", "originalEst": "EST-038", "amount": "$4,500", "status": "Sent", "date": "May 12, 2026", "due": "May 27, 2026"}, {"est": "INV-038P3", "originalEst": "EST-038", "amount": "$5,400", "status": "Sent", "date": "May 25, 2026", "due": "Jun 9, 2026"}, {"est": "INV-038P1", "originalEst": "EST-038", "amount": "$24,800", "status": "Past due", "date": "Dec 20, 2025", "due": "Jan 19, 2026"}]}]}]}, {"id": 5, "name": "Coronado Development Group", "city": "Coronado, CA", "address": "1201 Orange Ave, Coronado CA 92118", "phone": "(619) 555-0350", "since": "2024", "type": "commercial", "waiver": "conditional", "portal": false, "notes": "Large multi-scope demolition — sample with detailed line items.", "specialInstructions": false, "paymentTerms": "net-30", "billingMethod": "direct-email", "sov": true, "sovEstimates": [], "contacts": [{"id": "cd1", "name": "Laura Kim", "initials": "LK", "color": "av-info", "role": "billing", "email": "billing@coronadodev.com", "phone": "(619) 555-0351", "title": "Billing Manager", "jobs": []}, {"id": "cd2", "name": "David Fuentes", "initials": "DF", "color": "av-gold", "role": "project-manager", "email": "d.fuentes@coronadodev.com", "phone": "(619) 555-0352", "title": "Project Manager", "jobs": [{"est": "EST-080", "address": "1201 Orange Ave", "city": "Coronado CA 92118", "status": "Approved", "amount": "$78,450", "date": "May 20, 2026", "jobName": "Orange Ave Full Demolition", "projectName": "Coronado Mixed-Use Redevelopment", "streetOnly": "1201 Orange Ave", "siteId": "SITE-1201-ORANGE", "estimates": [{"est": "EST-080", "amount": "$78,450", "status": "Approved", "date": "May 20, 2026", "scope": "Full Site Demolition - Detailed Scope", "projectName": "Coronado Mixed-Use Redevelopment", "lines": [{"desc": "Site mobilization & temporary fencing setup", "qty": 1, "unit": "job", "unitPrice": 3200, "total": 3200}, {"desc": "Asbestos abatement - floor tile & mastic (east wing)", "qty": 2400, "unit": "sqft", "unitPrice": 3.25, "total": 7800}, {"desc": "Hazardous material disposal & manifest documentation", "qty": 1, "unit": "job", "unitPrice": 4100, "total": 4100}, {"desc": "Interior soft demolition - drywall, fixtures, cabinetry", "qty": 5800, "unit": "sqft", "unitPrice": 1.15, "total": 6670}, {"desc": "Mechanical, electrical & plumbing disconnection", "qty": 1, "unit": "job", "unitPrice": 2850, "total": 2850}, {"desc": "Structural steel cutting & removal", "qty": 12, "unit": "ton", "unitPrice": 420, "total": 5040}, {"desc": "Concrete slab demolition - main floor", "qty": 3200, "unit": "sqft", "unitPrice": 2.4, "total": 7680}, {"desc": "Concrete foundation & footing removal", "qty": 1, "unit": "job", "unitPrice": 5600, "total": 5600}, {"desc": "Masonry & CMU wall demolition", "qty": 1800, "unit": "sqft", "unitPrice": 1.85, "total": 3330}, {"desc": "Roof structure teardown & disposal", "qty": 4200, "unit": "sqft", "unitPrice": 1.3, "total": 5460}, {"desc": "Excavation & backfill - foundation area", "qty": 180, "unit": "cyd", "unitPrice": 38, "total": 6840}, {"desc": "Concrete crushing & on-site recycling", "qty": 90, "unit": "ton", "unitPrice": 22, "total": 1980}, {"desc": "Debris haul-off - roll-off dumpsters (40 yd)", "qty": 14, "unit": "load", "unitPrice": 485, "total": 6790}, {"desc": "Dust control & water truck service", "qty": 6, "unit": "day", "unitPrice": 340, "total": 2040}, {"desc": "Erosion control & SWPPP compliance", "qty": 1, "unit": "job", "unitPrice": 1450, "total": 1450}, {"desc": "Utility capping & sewer line plugging", "qty": 1, "unit": "job", "unitPrice": 1900, "total": 1900}, {"desc": "Final site grading & compaction", "qty": 1, "unit": "job", "unitPrice": 2760, "total": 2760}, {"desc": "Permits, inspections & agency coordination", "qty": 1, "unit": "job", "unitPrice": 2960, "total": 2960}]}], "changeOrders": [], "invoices": []}, {"est": "EST-081", "address": "845 Coronado Bay Rd", "city": "Coronado CA 92118", "status": "Pending approval", "amount": "$41,875", "date": "Jun 15, 2026", "jobName": "Bayfront Warehouse Demolition", "projectName": "Coronado Bayfront Logistics Center", "streetOnly": "845 Coronado Bay Rd", "siteId": "SITE-845-BAYRD", "estimates": [{"est": "EST-081", "amount": "$41,875", "status": "Pending approval", "date": "Jun 15, 2026", "scope": "Warehouse Demolition - Detailed Scope", "projectName": "Coronado Bayfront Logistics Center", "lines": [{"desc": "Site Mobilization & Safety Setup", "qty": 1, "unit": "job", "unitPrice": 2800, "total": 2800}, {"desc": "Interior Demolition & Fixture Removal", "qty": 8500, "unit": "square feet", "unitPrice": 0.95, "total": 8075}, {"desc": "Mechanical & Electrical Disconnect", "qty": 1, "unit": "job", "unitPrice": 2400, "total": 2400}, {"desc": "Steel Frame Cutting & Removal", "qty": 18, "unit": "tons", "unitPrice": 410, "total": 7380}, {"desc": "Concrete Slab Demolition", "qty": 6200, "unit": "square feet", "unitPrice": 2.25, "total": 13950}, {"desc": "Debris Haul-Off", "qty": 9, "unit": "loads", "unitPrice": 475, "total": 4275}, {"desc": "Dust Control & Water Service", "qty": 5, "unit": "per", "unitPrice": 320, "total": 1600}, {"desc": "Permits & Inspections", "qty": 1, "unit": "job", "unitPrice": 1395, "total": 1395}], "alternates": [{"name": "Alternate 1 — Underground Storage Tank Removal", "approved": false, "lines": [{"desc": "Excavation & UST Extraction", "qty": 1, "unit": "job", "unitPrice": 6800, "total": 6800}, {"desc": "Contaminated Soil Testing & Disposal", "qty": 40, "unit": "tons", "unitPrice": 95, "total": 3800}]}, {"name": "Alternate 2 — Asphalt Parking Lot Removal", "approved": false, "lines": [{"desc": "Asphalt Demolition & Removal", "qty": 12000, "unit": "square feet", "unitPrice": 0.85, "total": 10200}, {"desc": "Base Grading & Compaction", "qty": 1, "unit": "job", "unitPrice": 2400, "total": 2400}]}]}], "changeOrders": [], "invoices": []}, {"est": "EST-082", "address": "2400 Coronado Industrial Blvd", "city": "Coronado CA 92118", "status": "Approved", "amount": "$207,075", "date": "Jun 20, 2026", "jobName": "Industrial Complex Full Demolition", "projectName": "Coronado Industrial Park Redevelopment", "streetOnly": "2400 Coronado Industrial Blvd", "siteId": "SITE-2400-IND", "estimates": [{"est": "EST-082", "amount": "$207,075", "status": "Approved", "date": "Jun 20, 2026", "scope": "Full Industrial Demolition - Detailed Scope", "projectName": "Coronado Industrial Park Redevelopment", "lines": [{"desc": "Site Mobilization & Temporary Fencing", "qty": 1, "unit": "job", "unitPrice": 4200, "total": 4200}, {"desc": "Pre-Demolition Survey & Documentation", "qty": 1, "unit": "job", "unitPrice": 1800, "total": 1800}, {"desc": "Asbestos Abatement - Floor Tile", "qty": 3200, "unit": "square feet", "unitPrice": 3.25, "total": 10400}, {"desc": "Asbestos Abatement - Pipe Insulation", "qty": 480, "unit": "linear feet", "unitPrice": 12.5, "total": 6000}, {"desc": "Lead Paint Remediation", "qty": 2100, "unit": "square feet", "unitPrice": 4.1, "total": 8610}, {"desc": "Hazardous Material Disposal & Manifest", "qty": 1, "unit": "job", "unitPrice": 5400, "total": 5400}, {"desc": "Interior Soft Demolition - Drywall", "qty": 8200, "unit": "square feet", "unitPrice": 1.15, "total": 9430}, {"desc": "Interior Soft Demolition - Ceilings", "qty": 6400, "unit": "square feet", "unitPrice": 0.95, "total": 6080}, {"desc": "Cabinetry & Millwork Removal", "qty": 1, "unit": "job", "unitPrice": 3200, "total": 3200}, {"desc": "Flooring Removal - Concrete Prep", "qty": 4800, "unit": "square feet", "unitPrice": 1.4, "total": 6720}, {"desc": "Mechanical System Disconnect", "qty": 1, "unit": "job", "unitPrice": 2850, "total": 2850}, {"desc": "Electrical System Disconnect", "qty": 1, "unit": "job", "unitPrice": 2400, "total": 2400}, {"desc": "Plumbing System Disconnect & Capping", "qty": 1, "unit": "job", "unitPrice": 2650, "total": 2650}, {"desc": "HVAC Equipment Removal", "qty": 1, "unit": "job", "unitPrice": 3800, "total": 3800}, {"desc": "Structural Steel Cutting", "qty": 22, "unit": "tons", "unitPrice": 420, "total": 9240}, {"desc": "Steel Beam Removal & Haul", "qty": 18, "unit": "tons", "unitPrice": 380, "total": 6840}, {"desc": "Concrete Slab Demolition - Ground Floor", "qty": 5200, "unit": "square feet", "unitPrice": 2.4, "total": 12480}, {"desc": "Concrete Slab Demolition - Second Floor", "qty": 4100, "unit": "square feet", "unitPrice": 2.65, "total": 10865}, {"desc": "Concrete Foundation Removal", "qty": 1, "unit": "job", "unitPrice": 6800, "total": 6800}, {"desc": "Concrete Footing Removal", "qty": 1, "unit": "job", "unitPrice": 3400, "total": 3400}, {"desc": "Masonry Wall Demolition", "qty": 2400, "unit": "square feet", "unitPrice": 1.85, "total": 4440}, {"desc": "CMU Block Wall Removal", "qty": 1600, "unit": "square feet", "unitPrice": 2.1, "total": 3360}, {"desc": "Roof Structure Teardown", "qty": 5400, "unit": "square feet", "unitPrice": 1.3, "total": 7020}, {"desc": "Roofing Material Disposal", "qty": 5400, "unit": "square feet", "unitPrice": 0.65, "total": 3510}, {"desc": "Excavation - Foundation Area", "qty": 220, "unit": "loads", "unitPrice": 95, "total": 20900}, {"desc": "Backfill & Compaction", "qty": 180, "unit": "loads", "unitPrice": 78, "total": 14040}, {"desc": "Concrete Crushing & Recycling", "qty": 140, "unit": "tons", "unitPrice": 22, "total": 3080}, {"desc": "Debris Haul-Off - Roll-Off Containers", "qty": 28, "unit": "loads", "unitPrice": 485, "total": 13580}, {"desc": "Dust Control & Water Truck Service", "qty": 12, "unit": "trips", "unitPrice": 340, "total": 4080}, {"desc": "Erosion Control & SWPPP Compliance", "qty": 1, "unit": "job", "unitPrice": 2200, "total": 2200}, {"desc": "Final Site Grading", "qty": 1, "unit": "job", "unitPrice": 3600, "total": 3600}, {"desc": "Permits, Inspections & Agency Coordination", "qty": 1, "unit": "job", "unitPrice": 4100, "total": 4100}]}], "changeOrders": [], "invoices": []}]}]}], "COMPANY": {"name": "San Diego Demolition, LLC", "shortName": "SDD Demolition", "license": "1082669", "address1": "5755 Oberlin Drive, Suite 301", "address2": "San Diego, CA 92121", "addressOneLine": "5755 Oberlin Drive, Suite 301, San Diego, CA 92121", "phone": "619-273-3467", "email": "info@sandiegodemolition.com"}};
+</script>
+<script src="sdd-data.js"></script>
+<script>
+(function(){
+  if(!window.SDD && window._SDD_EMBED){ window.SDD=window._SDD_EMBED; }
+  var APPROVAL_KEY='sdd_client_approvals';
+  function money(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  function num(v){return parseFloat(String(v||'').replace(/[$,]/g,''))||0;}
+  function getParam(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}
+  function loadApproval(id){try{var a=JSON.parse(localStorage.getItem(APPROVAL_KEY)||'{}');return a[id]||null;}catch(e){return null;}}
+  function saveApproval(id,o){var a={};try{a=JSON.parse(localStorage.getItem(APPROVAL_KEY)||'{}');}catch(e){}a[id]=o;localStorage.setItem(APPROVAL_KEY,JSON.stringify(a));}
+  var CO=(window.SDD&&SDD.COMPANY)?SDD.COMPANY:{name:'San Diego Demolition, LLC',license:'1082669',address1:'5755 Oberlin Drive, Suite 301',address2:'San Diego, CA 92121',phone:'619-273-3467',email:'info@sandiegodemolition.com'};
+
+  function gatherClient(idOrName){
+    if(!window.SDD || !SDD.customers) return null;
+    var c=SDD.customers.filter(function(x){return String(x.id)===String(idOrName)||x.name===idOrName;})[0];
+    if(!c) return null;
+    var estimates=[],changeOrders=[],invoices=[];
+    (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(job){
+      (job.estimates||[]).forEach(function(e){estimates.push({doc:e,job:job});});
+      (job.changeOrders||[]).forEach(function(co){changeOrders.push({doc:co,job:job});});
+      (job.invoices||[]).forEach(function(iv){invoices.push({doc:iv,job:job});});
+    });});
+    return {cust:c,estimates:estimates,changeOrders:changeOrders,invoices:invoices};
+  }
+  var CLIENT=null;
+
+  // Demo helper: when opened without ?client=, let the tester pick a customer
+  function renderClientPicker(){
+    var root=document.getElementById('root');
+    if(!window.SDD || !SDD.customers || !SDD.customers.length){
+      root.innerHTML='<div class="err">No customer data available.</div>'; return;
+    }
+    var rows=SDD.customers.map(function(c){
+      // count docs
+      var ne=0,nc=0,ni=0;
+      (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(j){ne+=(j.estimates||[]).length;nc+=(j.changeOrders||[]).length;ni+=(j.invoices||[]).length;});});
+      return '<div class="doc-row"><div class="doc-info"><div class="name">'+esc(c.name)+'</div><div class="meta">'+ne+' estimates · '+nc+' change orders · '+ni+' invoices</div></div>'
+        +'<div class="doc-actions"><a class="btn btn-gold" href="?client='+encodeURIComponent(c.id)+'">Open portal</a></div></div>';
+    }).join('');
+    root.innerHTML='<div class="hello"><h1>Client Portal — Demo</h1><p>This screen only appears when the portal is opened without a client link. In real use, each client gets their own secure link. Pick a client below to preview their portal.</p></div>'
+      +'<div class="section"><h2>Select a client</h2><div class="subtitle">For testing — choose whose portal to view.</div>'+rows+'</div>';
+  }
+
+  function render(){
+    var key=getParam('client')||getParam('est');
+    var root=document.getElementById('root');
+    if(!key){ renderClientPicker(); return; }
+    var data=gatherClient(key);
+    if(!data){
+      var found=null;
+      (SDD.customers||[]).forEach(function(c){(c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(j){(j.estimates||[]).forEach(function(e){if(e.est===key)found=c;});});});});
+      if(found) data=gatherClient(found.id);
+    }
+    if(!data){root.innerHTML='<div class="err">We couldn\'t find your records. Please contact us for a new link.</div>';return;}
+    CLIENT=data;
+
+    var pendingSign=data.estimates.filter(function(e){return !loadApproval(e.doc.est) && !/void/i.test(e.doc.status||'');}).length;
+    var estTotal=data.estimates.reduce(function(s,e){return s+num(e.doc.amount);},0);
+    var invUnpaid=0,invCount=data.invoices.length;
+    data.invoices.forEach(function(iv){var total=num(iv.doc.amount);var paid=(iv.doc.payments||[]).reduce(function(s,p){return s+num(p.amount);},0);invUnpaid+=Math.max(0,total-paid);});
+
+    var html='<div class="hello"><h1>Welcome, '+esc(data.cust.name)+'</h1><p>Here are all your documents with San Diego Demolition, LLC. Review, download, sign what\'s pending, and check your balances.</p></div>';
+    html+='<div class="summary">'
+      +'<div class="stat gold"><div class="lbl">Estimates</div><div class="val">'+data.estimates.length+'</div><div class="sub">'+money(estTotal)+' total</div></div>'
+      +'<div class="stat '+(pendingSign>0?'red':'green')+'"><div class="lbl">Awaiting your signature</div><div class="val">'+pendingSign+'</div><div class="sub">'+(pendingSign>0?'action needed':'all signed')+'</div></div>'
+      +'<div class="stat"><div class="lbl">Change Orders</div><div class="val">'+data.changeOrders.length+'</div></div>'
+      +'<div class="stat '+(invUnpaid>0.5?'red':'green')+'"><div class="lbl">Balance due</div><div class="val">'+money(invUnpaid)+'</div><div class="sub">'+invCount+' invoice'+(invCount===1?'':'s')+'</div></div>'
+    +'</div>';
+
+    html+='<div class="section"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</h2><div class="subtitle">Your project estimates. Sign the ones awaiting your approval.</div>';
+    if(!data.estimates.length){html+='<div class="empty">No estimates yet.</div>';}
+    data.estimates.forEach(function(e,i){
+      var ap=loadApproval(e.doc.est);var isVoid=/void/i.test(e.doc.status||'');
+      var badge=isVoid?'<span class="badge unpaid">Void</span>':(ap?'<span class="badge signed">Signed</span>':'<span class="badge pending">Awaiting signature</span>');
+      html+='<div class="doc-row"><div class="doc-info"><div class="name">'+esc(e.doc.est)+' · '+esc(e.job.jobName||e.doc.scope||'Estimate')+'</div><div class="meta">'+esc(e.doc.date||'')+' · '+esc(e.job.projectName||'')+'</div></div>'
+        +'<div style="text-align:right;"><div class="doc-amt">'+esc(e.doc.amount||'')+'</div>'+badge+'</div>'
+        +'<div class="doc-actions"><button class="btn btn-outline" onclick="window._openDoc(\'est\','+i+')">View</button>'
+        +((!ap&&!isVoid)?'<button class="btn btn-green" onclick="window._openDoc(\'est\','+i+',true)">Sign</button>':'')+'</div></div>';
+    });
+    html+='</div>';
+
+    html+='<div class="section"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Change Orders</h2><div class="subtitle">Changes to the original scope of your projects.</div>';
+    if(!data.changeOrders.length){html+='<div class="empty">No change orders.</div>';}
+    data.changeOrders.forEach(function(co,i){
+      html+='<div class="doc-row"><div class="doc-info"><div class="name">'+esc(co.doc.num||co.doc.co||'Change Order')+' · '+esc(co.job.jobName||'')+'</div><div class="meta">'+esc(co.doc.date||'')+'</div></div>'
+        +'<div style="text-align:right;"><div class="doc-amt">'+esc(co.doc.amount||'')+'</div><span class="badge pending">'+esc(co.doc.status||'')+'</span></div>'
+        +'<div class="doc-actions"><button class="btn btn-outline" onclick="window._openDoc(\'co\','+i+')">View</button></div></div>';
+    });
+    html+='</div>';
+
+    html+='<div class="section"><h2><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>Invoices</h2><div class="subtitle">Your invoices and payment status.</div>';
+    if(!data.invoices.length){html+='<div class="empty">No invoices yet.</div>';}
+    data.invoices.forEach(function(iv,i){
+      var total=num(iv.doc.amount);var paid=(iv.doc.payments||[]).reduce(function(s,p){return s+num(p.amount);},0);var bal=Math.max(0,total-paid);var paidUp=bal<=0.5;
+      var badge=paidUp?'<span class="badge paid">Paid</span>':(paid>0.5?'<span class="badge unpaid">Balance '+money(bal)+'</span>':'<span class="badge unpaid">Unpaid</span>');
+      html+='<div class="doc-row"><div class="doc-info"><div class="name">'+esc(iv.doc.num||iv.doc.inv||'Invoice')+' · '+esc(iv.job.jobName||'')+'</div><div class="meta">'+esc(iv.doc.date||'')+(iv.doc.dueDate?(' · Due '+esc(iv.doc.dueDate)):'')+'</div></div>'
+        +'<div style="text-align:right;"><div class="doc-amt">'+esc(iv.doc.amount||'')+'</div>'+badge+'</div>'
+        +'<div class="doc-actions"><button class="btn btn-outline" onclick="window._openDoc(\'inv\','+i+')">View</button></div></div>';
+    });
+    html+='</div>';
+
+    html+='<div class="foot">This is a secure client portal. You can only see your own documents — no other account information is accessible.<br>Questions? Contact us at '+esc(CO.phone)+(CO.email?' · '+esc(CO.email):'')+'</div>';
+    root.innerHTML=html;
+  }
+
+  function docKindWord(kind){return kind==='inv'?'INVOICE':(kind==='co'?'CHANGE ORDER':'ESTIMATE');}
+  window._openDoc=function(kind,idx){
+    var arr=kind==='est'?CLIENT.estimates:(kind==='co'?CLIENT.changeOrders:CLIENT.invoices);
+    var item=arr[idx];if(!item)return;
+    var d=item.doc,job=item.job;
+    var lines=d.lines||[];
+    var rows=lines.map(function(l){return '<tr><td>'+esc(l.desc)+'</td><td class="n">'+esc(l.qty)+'</td><td class="u">'+esc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.total)+'</td></tr>';}).join('');
+    var total=lines.reduce(function(s,l){return s+(Number(l.total)||0);},0)||num(d.amount);
+    var estId=d.est||d.num||d.inv;
+    var ap=(kind==='est')?loadApproval(estId):null;
+    var canSign=(kind==='est')&&!ap&&!/void/i.test(d.status||'');
+
+    var body='<div class="doc-head"><div><div class="co">'+esc(CO.name)+'</div><div class="ci">License #'+esc(CO.license)+'<br>'+esc(CO.address1)+'<br>'+esc(CO.address2)+'<br>'+esc(CO.phone)+'</div></div>'
+      +'<div style="text-align:right;"><div class="big">'+docKindWord(kind)+'</div><div style="font-size:15px;font-weight:800;color:#555;">#'+esc(estId)+'</div></div></div>'
+      +'<div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px;font-size:13px;color:#555;"><div><b>Project:</b> '+esc(d.projectName||job.projectName||'')+'</div><div><b>Date:</b> '+esc(d.date||'')+'</div></div>'
+      +'<div class="scope-title">'+(kind==='inv'?'Work Completed':'Proposed Scope of Work')+'</div>'
+      +'<table class="dtable"><tbody>'+rows+'</tbody></table>'
+      +'<div class="dtotal"><span>Total</span><span class="a">'+money(total)+'</span></div>';
+    if(kind==='inv'){
+      var paid=(d.payments||[]).reduce(function(s,p){return s+num(p.amount);},0);var bal=Math.max(0,num(d.amount)-paid);
+      body+='<div style="margin-top:14px;padding:14px;border-radius:10px;background:'+(bal<=0.5?'#EAF6EF':'#FDECEC')+';font-size:14px;color:'+(bal<=0.5?'#1f6b43':'#a33')+';font-weight:700;">'+(bal<=0.5?'✓ This invoice is paid in full. Thank you!':'Balance due: '+money(bal)+' of '+money(num(d.amount)))+'</div>';
+    }
+    if(kind==='est'){
+      if(ap&&ap.image){
+        body+='<div style="margin-top:20px;border-top:1px solid #eee;padding-top:14px;"><div style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Approved &amp; Signed</div><img src="'+ap.image+'" style="max-height:80px;display:block;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+esc(ap.name||'')+' — '+esc(ap.date||'')+'</div></div>';
+      } else if(canSign){
+        body+='<div style="margin-top:20px;border-top:1px solid #eee;padding-top:14px;"><div style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Your Signature</div>'
+          +'<p style="font-size:12px;color:#555;font-style:italic;margin-bottom:8px;">By signing below, you accept the terms and conditions stated in this estimate and approve the work described above.</p>'
+          +'<div class="sigwrap"><canvas id="cvSig" width="820" height="150"></canvas><div class="sighint" id="cvHint">Sign here with your mouse or finger</div></div>'
+          +'<div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;"><input id="sigName" placeholder="Type your full name" style="flex:1;min-width:180px;font-family:Barlow,sans-serif;font-size:15px;padding:9px 11px;border:1px solid #ccc;border-radius:8px;"><button class="btn btn-outline" onclick="window._clearSig()">Clear</button></div></div>';
+      }
+    }
+    var foot='<button class="btn btn-outline" onclick="window._closeModal()">Close</button>'
+      +'<button class="btn btn-gold" onclick="window.print()">Download / Print</button>'
+      +(canSign?'<button class="btn btn-green" onclick="window._signDoc(\''+esc(estId)+'\')">Approve &amp; sign</button>':'');
+    document.getElementById('modalInner').innerHTML='<div class="modal-head"><span style="font-weight:700;">'+docKindWord(kind)+' #'+esc(estId)+'</span><button class="x" onclick="window._closeModal()">&times;</button></div><div class="modal-body">'+body+'</div><div class="modal-foot">'+foot+'</div>';
+    document.getElementById('modalBg').classList.add('show');
+    if(canSign){initSigCanvas();}
+  };
+  window._closeModal=function(){document.getElementById('modalBg').classList.remove('show');};
+
+  var _drawing=false,_hasInk=false;
+  function initSigCanvas(){
+    var cv=document.getElementById('cvSig');if(!cv)return;
+    var ctx=cv.getContext('2d');ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1f2630';_hasInk=false;
+    function pos(e){var r=cv.getBoundingClientRect();var x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;var y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;return{x:x*(cv.width/r.width),y:y*(cv.height/r.height)};}
+    function start(e){e.preventDefault();_drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);var h=document.getElementById('cvHint');if(h)h.style.display='none';}
+    function move(e){if(!_drawing)return;e.preventDefault();var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();_hasInk=true;}
+    function end(){_drawing=false;}
+    cv.onmousedown=start;cv.onmousemove=move;cv.onmouseup=end;cv.onmouseleave=end;cv.ontouchstart=start;cv.ontouchmove=move;cv.ontouchend=end;
+  }
+  window._clearSig=function(){var cv=document.getElementById('cvSig');if(!cv)return;cv.getContext('2d').clearRect(0,0,cv.width,cv.height);_hasInk=false;var h=document.getElementById('cvHint');if(h)h.style.display='flex';};
+  window._signDoc=function(estId){
+    var cv=document.getElementById('cvSig'),nameEl=document.getElementById('sigName');
+    var name=nameEl?String(nameEl.value||'').trim():'';
+    if(!_hasInk){alert('Please sign in the box before approving.');return;}
+    if(!name){alert('Please type your full name.');if(nameEl)nameEl.focus();return;}
+    var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    saveApproval(estId,{name:name,image:(cv?cv.toDataURL('image/png'):''),date:today,approvedAt:new Date().toISOString(),status:'approved'});
+    window._closeModal();render();
+    alert('Thank you! Your estimate has been approved and signed. Our team has been notified.');
+  };
+  render();
+})();
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@
    - Each module reads/writes through window.SDD.
    ============================================================ */
 (function(){
-  var STORAGE_KEY = 'sdd_data_v5';
+  var STORAGE_KEY = 'sdd_data_v8';
 
   // ---- DEFAULT SEED DATA (used the first time, before anything is saved) ----
   var SEED = {
@@ -202,6 +202,72 @@
                {desc:'Utility capping & sewer line plugging', qty:1, unit:'job', unitPrice:1900, total:1900},
                {desc:'Final site grading & compaction', qty:1, unit:'job', unitPrice:2760, total:2760},
                {desc:'Permits, inspections & agency coordination', qty:1, unit:'job', unitPrice:2960, total:2960}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]},
+        {est:'EST-081', address:'845 Coronado Bay Rd', city:'Coronado CA 92118', status:'Pending approval', amount:'$41,875', date:'Jun 15, 2026', jobName:'Bayfront Warehouse Demolition', projectName:'Coronado Bayfront Logistics Center', streetOnly:'845 Coronado Bay Rd', siteId:'SITE-845-BAYRD',
+          estimates:[
+            {est:'EST-081',amount:'$41,875',status:'Pending approval',date:'Jun 15, 2026',scope:'Warehouse Demolition - Detailed Scope',projectName:'Coronado Bayfront Logistics Center',
+             lines:[
+               {desc:'Site Mobilization & Safety Setup', qty:1, unit:'job', unitPrice:2800, total:2800},
+               {desc:'Interior Demolition & Fixture Removal', qty:8500, unit:'square feet', unitPrice:0.95, total:8075},
+               {desc:'Mechanical & Electrical Disconnect', qty:1, unit:'job', unitPrice:2400, total:2400},
+               {desc:'Steel Frame Cutting & Removal', qty:18, unit:'tons', unitPrice:410, total:7380},
+               {desc:'Concrete Slab Demolition', qty:6200, unit:'square feet', unitPrice:2.25, total:13950},
+               {desc:'Debris Haul-Off', qty:9, unit:'loads', unitPrice:475, total:4275},
+               {desc:'Dust Control & Water Service', qty:5, unit:'per', unitPrice:320, total:1600},
+               {desc:'Permits & Inspections', qty:1, unit:'job', unitPrice:1395, total:1395}
+             ],
+             alternates:[
+               {name:'Alternate 1 — Underground Storage Tank Removal', approved:false, lines:[
+                 {desc:'Excavation & UST Extraction', qty:1, unit:'job', unitPrice:6800, total:6800},
+                 {desc:'Contaminated Soil Testing & Disposal', qty:40, unit:'tons', unitPrice:95, total:3800}
+               ]},
+               {name:'Alternate 2 — Asphalt Parking Lot Removal', approved:false, lines:[
+                 {desc:'Asphalt Demolition & Removal', qty:12000, unit:'square feet', unitPrice:0.85, total:10200},
+                 {desc:'Base Grading & Compaction', qty:1, unit:'job', unitPrice:2400, total:2400}
+               ]}
+             ]}
+          ],
+          changeOrders:[],
+          invoices:[]},
+        {est:'EST-082', address:'2400 Coronado Industrial Blvd', city:'Coronado CA 92118', status:'Approved', amount:'$207,075', date:'Jun 20, 2026', jobName:'Industrial Complex Full Demolition', projectName:'Coronado Industrial Park Redevelopment', streetOnly:'2400 Coronado Industrial Blvd', siteId:'SITE-2400-IND',
+          estimates:[
+            {est:'EST-082',amount:'$207,075',status:'Approved',date:'Jun 20, 2026',scope:'Full Industrial Demolition - Detailed Scope',projectName:'Coronado Industrial Park Redevelopment',
+             lines:[
+               {desc:'Site Mobilization & Temporary Fencing', qty:1, unit:'job', unitPrice:4200, total:4200},
+               {desc:'Pre-Demolition Survey & Documentation', qty:1, unit:'job', unitPrice:1800, total:1800},
+               {desc:'Asbestos Abatement - Floor Tile', qty:3200, unit:'square feet', unitPrice:3.25, total:10400},
+               {desc:'Asbestos Abatement - Pipe Insulation', qty:480, unit:'linear feet', unitPrice:12.5, total:6000},
+               {desc:'Lead Paint Remediation', qty:2100, unit:'square feet', unitPrice:4.1, total:8610},
+               {desc:'Hazardous Material Disposal & Manifest', qty:1, unit:'job', unitPrice:5400, total:5400},
+               {desc:'Interior Soft Demolition - Drywall', qty:8200, unit:'square feet', unitPrice:1.15, total:9430},
+               {desc:'Interior Soft Demolition - Ceilings', qty:6400, unit:'square feet', unitPrice:0.95, total:6080},
+               {desc:'Cabinetry & Millwork Removal', qty:1, unit:'job', unitPrice:3200, total:3200},
+               {desc:'Flooring Removal - Concrete Prep', qty:4800, unit:'square feet', unitPrice:1.4, total:6720},
+               {desc:'Mechanical System Disconnect', qty:1, unit:'job', unitPrice:2850, total:2850},
+               {desc:'Electrical System Disconnect', qty:1, unit:'job', unitPrice:2400, total:2400},
+               {desc:'Plumbing System Disconnect & Capping', qty:1, unit:'job', unitPrice:2650, total:2650},
+               {desc:'HVAC Equipment Removal', qty:1, unit:'job', unitPrice:3800, total:3800},
+               {desc:'Structural Steel Cutting', qty:22, unit:'tons', unitPrice:420, total:9240},
+               {desc:'Steel Beam Removal & Haul', qty:18, unit:'tons', unitPrice:380, total:6840},
+               {desc:'Concrete Slab Demolition - Ground Floor', qty:5200, unit:'square feet', unitPrice:2.4, total:12480},
+               {desc:'Concrete Slab Demolition - Second Floor', qty:4100, unit:'square feet', unitPrice:2.65, total:10865},
+               {desc:'Concrete Foundation Removal', qty:1, unit:'job', unitPrice:6800, total:6800},
+               {desc:'Concrete Footing Removal', qty:1, unit:'job', unitPrice:3400, total:3400},
+               {desc:'Masonry Wall Demolition', qty:2400, unit:'square feet', unitPrice:1.85, total:4440},
+               {desc:'CMU Block Wall Removal', qty:1600, unit:'square feet', unitPrice:2.1, total:3360},
+               {desc:'Roof Structure Teardown', qty:5400, unit:'square feet', unitPrice:1.3, total:7020},
+               {desc:'Roofing Material Disposal', qty:5400, unit:'square feet', unitPrice:0.65, total:3510},
+               {desc:'Excavation - Foundation Area', qty:220, unit:'loads', unitPrice:95, total:20900},
+               {desc:'Backfill & Compaction', qty:180, unit:'loads', unitPrice:78, total:14040},
+               {desc:'Concrete Crushing & Recycling', qty:140, unit:'tons', unitPrice:22, total:3080},
+               {desc:'Debris Haul-Off - Roll-Off Containers', qty:28, unit:'loads', unitPrice:485, total:13580},
+               {desc:'Dust Control & Water Truck Service', qty:12, unit:'trips', unitPrice:340, total:4080},
+               {desc:'Erosion Control & SWPPP Compliance', qty:1, unit:'job', unitPrice:2200, total:2200},
+               {desc:'Final Site Grading', qty:1, unit:'job', unitPrice:3600, total:3600},
+               {desc:'Permits, Inspections & Agency Coordination', qty:1, unit:'job', unitPrice:4100, total:4100}
              ]}
           ],
           changeOrders:[],
