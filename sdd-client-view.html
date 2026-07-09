@@ -57,7 +57,20 @@
   .sigwrap{border:1.5px dashed #bbb;border-radius:8px;background:#fafafa;position:relative;margin-top:8px;}
   .sigwrap canvas{width:100%;height:150px;touch-action:none;cursor:crosshair;display:block;border-radius:8px;}
   .sighint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;pointer-events:none;}
-  @media print{.topbar,.hello,.summary,.section,.foot,.modal-head,.modal-foot{display:none!important;}.modal-bg{position:static;background:none;padding:0;display:block!important;}.modal{box-shadow:none;max-width:none;}.modal-body{max-height:none;overflow:visible;}}
+  @media print{
+    @page{size:A4;margin:0;}
+    body{background:#fff!important;}
+    .topbar,.hello,.summary,.section,.foot,.modal-head,.modal-foot{display:none!important;}
+    .modal-bg{position:static!important;background:none!important;padding:0!important;display:block!important;overflow:visible!important;}
+    .modal{box-shadow:none!important;max-width:none!important;width:auto!important;border-radius:0!important;}
+    .modal-body{max-height:none!important;overflow:visible!important;padding:0!important;}
+    /* The paginated A4 pages print one per sheet, at true size, no shadow/margins */
+    #_pcPages{background:none!important;padding:0!important;}
+    #_pcPages .page{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;page-break-after:always;break-after:page;}
+    #_pcPages .page:last-child{page-break-after:auto;break-after:auto;}
+    /* Hide the signature capture area when printing */
+    .sigwrap,#cvHint{display:none!important;}
+  }
 </style>
 </head>
 <body>
@@ -218,7 +231,18 @@ function _pcHeaderHTML(f){
 function _pcContentBlocks(f){
   var d=f.doc;
   var lines=d.lines||[];
-  var rowHTML=function(l){return '<table class="tbl"><tr><td class="d">'+_pcEsc(l.desc)+'</td><td class="n">'+_pcEsc(l.qty)+'</td><td class="u">'+_pcEsc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+_pcMoney(l.total)+'</td></tr></table>';};
+  // Price visibility: invoices & change orders always show prices; estimates respect the document's _priceView (system default 'standard' = descriptions only)
+  var showPrices;
+  if(f.kind==='invoice' || f.kind==='co'){ showPrices=true; }
+  else { showPrices=(d._priceView==='full'); }
+  var rowHTML=function(l){
+    if(showPrices){
+      return '<table class="tbl"><colgroup><col style="width:auto"><col style="width:52px"><col style="width:52px"><col style="width:72px"><col style="width:82px"></colgroup>'
+        +'<tr><td class="d">'+_pcEsc(l.desc)+'</td><td class="n">'+_pcEsc(l.qty)+'</td><td class="u">'+_pcEsc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+_pcMoney(l.total)+'</td></tr></table>';
+    }
+    // Standard view: descriptions only
+    return '<table class="tbl"><tr><td class="d">'+_pcEsc(l.desc)+'</td></tr></table>';
+  };
   var scopeTitle=(f.kind==='invoice'?'Work Completed':'Proposed Scope of Work');
   var blocks=[];
   blocks.push({html:'<div class="scope">'+scopeTitle+'</div>'});
@@ -273,7 +297,7 @@ function _pcPageCSS(){
     +'#_pcPages .hd{display:flex;justify-content:space-between;border-bottom:3px solid #B8922A;padding-bottom:12px;margin-bottom:14px;}#_pcPages .co{font-size:18px;font-weight:800;}#_pcPages .ci{font-size:10px;color:#888;line-height:1.4;margin-top:4px;}#_pcPages .big{font-family:"Barlow Condensed",Barlow,sans-serif;font-size:48px;font-weight:800;color:#B8922A;text-align:right;line-height:1;letter-spacing:.03em;}#_pcPages .num{font-size:16px;font-weight:800;color:#555;text-align:right;margin-top:4px;}'
     +'#_pcPages .cols{display:flex;justify-content:space-between;gap:20px;margin-bottom:8px;}#_pcPages .cols .t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}#_pcPages .cols .v{font-size:12px;color:#555;}#_pcPages .t{font-size:10px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;}#_pcPages .v{font-size:12px;color:#555;}'
     +'#_pcPages .scope{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:#F5F4F1;border-left:3px solid #B8922A;padding:7px 10px;border-radius:5px;margin:6px 0;}'
-    +'#_pcPages .tbl{width:100%;border-collapse:collapse;}#_pcPages .tbl td{padding:5px 4px;border-bottom:1px solid #eee;font-size:12px;}#_pcPages .tbl td.n{text-align:right;}#_pcPages .tbl td.u{text-align:center;}#_pcPages .tbl td.b{font-weight:700;}'
+    +'#_pcPages .tbl{width:100%;border-collapse:collapse;table-layout:fixed;}#_pcPages .tbl td{padding:5px 4px;border-bottom:1px solid #eee;font-size:12px;overflow:hidden;text-overflow:ellipsis;}#_pcPages .tbl td.d{white-space:normal;word-wrap:break-word;}#_pcPages .tbl td.n{text-align:right;}#_pcPages .tbl td.u{text-align:center;}#_pcPages .tbl td.b{font-weight:700;}'
     +'#_pcPages .altname{font-weight:700;color:#B8922A;padding:8px 4px 2px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;}'
     +'#_pcPages .total{display:flex;justify-content:space-between;border-top:2px solid #B8922A;background:#F8F6F2;padding:10px 6px;font-size:16px;font-weight:800;margin-top:8px;}#_pcPages .total .a{color:#B8922A;}'
     +'#_pcPages .terms{margin-top:8px;}#_pcPages .terms .clause{font-size:10px;color:#555;margin-bottom:6px;line-height:1.45;}'
