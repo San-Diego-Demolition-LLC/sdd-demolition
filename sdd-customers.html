@@ -318,7 +318,6 @@ svg{display:block;}
     <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item active" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-estimates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Estimates</a>
     <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
     <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
@@ -341,6 +340,10 @@ svg{display:block;}
       <button class="btn btn-gold" id="btnNewCustomer" onclick="openModal()" style="width:100%;justify-content:center;margin-top:10px;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Customer
+      </button>
+      <button class="btn btn-ghost" onclick="openServiceCatalog()" style="width:100%;justify-content:center;margin-top:8px;border:1px solid var(--border2);font-size:13px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Service Catalog
       </button>
       <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
         <label for="sortFilter" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap;">Sort by</label>
@@ -1356,8 +1359,8 @@ function openTxPdf(rowKey){
   // Modify target depends on transaction type
   var modifyTarget, modifyLabel;
   if(r.kind==='Invoice'||r.kind==='Payment'){ modifyTarget="/sdd-invoices.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Invoices'; }
-  else if(r.kind==='Change Order'){ modifyTarget="/sdd-estimates.html?openCO="+encodeURIComponent(r.num); modifyLabel='Modify in Estimates'; }
-  else { modifyTarget="/sdd-estimates.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Estimates'; }
+  else if(r.kind==='Change Order'){ modifyTarget="/sdd-customers.html?openCO="+encodeURIComponent(r.num); modifyLabel='Modify'; }
+  else { modifyTarget="/sdd-customers.html?open="+encodeURIComponent(r.num); modifyLabel='Modify'; }
   var bg=document.createElement('div');
   bg.id='_txPdfBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100050;display:flex;align-items:center;justify-content:center;padding:20px;';
@@ -1994,7 +1997,7 @@ function jdNewEstimate(pn, customer, addr){
   window._cnGo=function(kind){
     document.getElementById('_createNewBg').remove();
     var param = kind==='co' ? 'changeOrderFor' : 'newFor';
-    window.location.href='/sdd-estimates.html?'+param+'='+pn+'&customer='+customer+'&addr='+addr;
+    window.location.href='/sdd-customers.html?'+param+'='+pn+'&customer='+customer+'&addr='+addr;
   };
 }
 // Inactivate the job → only allowed when every estimate AND change order has been
@@ -2057,7 +2060,7 @@ function jdInactivateJob(customerId, estNum){
     +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">All estimates and change orders are invoiced and paid. The job will move to the bottom of the list as an inactive (Paid) job.</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
       +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, make inactive</button>'
+      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, Make Inactive</button>'
     +'</div></div>';
   document.body.appendChild(cf);
   document.getElementById('_jdCancel').onclick=function(){ cf.remove(); };
@@ -2099,7 +2102,7 @@ function jdActivateJob(customerId, estNum){
     +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">We\'ll confirm the project manager and billing information before activating.</div>'
     +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
       +'<button id="_jdCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, continue</button>'
+      +'<button id="_jdOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, Continue</button>'
     +'</div></div>';
   document.body.appendChild(cf);
   document.getElementById('_jdCancel').onclick=function(){ cf.remove(); };
@@ -2738,12 +2741,13 @@ function docVoid(ref){
     ff.doc._void=true;
     ff.doc._prevStatus=ff.doc.status||''; // remember status to restore on un-void
     ff.doc.status='Void';
+    _addTimeline(ref, _docKindName(ff.kind)+' voided', 'Leontina', '#D94F4F');
     ff.doc.dateVoided=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     if(window.SDD && SDD.save) SDD.save();
     _flashDoc('⊘ '+ref+' voided');
     renderList();
     _reopenDoc(ref);
-  }, 'Yes, void', 'A voided '+kindWord+' is kept for history but excluded from all totals and the dashboard.');
+  }, 'Yes, Void', 'A voided '+kindWord+' is kept for history but excluded from all totals and the dashboard.');
 }
 function docUnvoid(ref){
   var f=_findDoc(ref); if(!f) return;
@@ -2756,7 +2760,7 @@ function docUnvoid(ref){
     _flashDoc('✓ '+ref+' restored');
     renderList();
     _reopenDoc(ref);
-  }, 'Yes, restore', 'The document returns to its previous status and counts in totals again.');
+  }, 'Yes, Restore', 'The document returns to its previous status and counts in totals again.');
 }
 
 // Ensure the doc has an editable lines array (built from scope/description if missing)
@@ -2857,7 +2861,7 @@ function docAltDeleteLine(ref, ai, li){
   _confirmDoc('Delete '+label+'?', function(){
     var ff=_findDoc(ref); var a=_ensureAlternates(ff);
     if(a[ai]&&a[ai].lines[li]){ a[ai].lines.splice(li,1); _syncDocAmount(ff); if(window.SDD&&SDD.save)SDD.save(); _reopenDoc(ref); }
-  }, 'Yes, delete', 'This line will be removed from the alternate.');
+  }, 'Yes, Delete', 'This line will be removed from the alternate.');
 }
 function docDeleteAlternate(ref, ai){
   var f=_findDoc(ref); if(!f) return;
@@ -2865,7 +2869,7 @@ function docDeleteAlternate(ref, ai){
   _confirmDoc('Delete "'+(alts[ai].name||'this alternate')+'"?', function(){
     var ff=_findDoc(ref); var a=_ensureAlternates(ff);
     a.splice(ai,1); _syncDocAmount(ff); if(window.SDD&&SDD.save)SDD.save(); _reopenDoc(ref);
-  }, 'Yes, delete', 'The entire alternate and its lines will be removed.');
+  }, 'Yes, Delete', 'The entire alternate and its lines will be removed.');
 }
 // Toggle a single alternate LINE as approved (adds/removes just that line from the total)
 function docToggleAltLine(ref, ai, li, checked){
@@ -2932,23 +2936,247 @@ function _addrLine2(addr){
   return rest;
 }
 // Capitalize the first letter of each word (Title Case), preserving small joining words lightly
+// Description field: always show the full text on multiple lines (never truncate)
+function _descAutoGrow(el){
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight)+'px';
+}
+function _descCollapse(el){ /* deprecated — descriptions now always stay expanded */ _descAutoGrow(el); }
+// Auto-grow all description textareas after the document renders
+function _growAllDesc(){
+  try{
+    var tas=document.querySelectorAll('textarea');
+    for(var i=0;i<tas.length;i++){ tas[i].style.height='auto'; tas[i].style.height=(tas[i].scrollHeight)+'px'; }
+  }catch(e){}
+}
 function _titleCase(s){
   return String(s||'').replace(/\b([a-zà-ÿ])([a-zà-ÿ']*)/gi, function(m,first,rest){
     return first.toUpperCase()+rest;
   });
 }
 // Unit dropdown for line items (editable mode)
+// Normalize any legacy/long unit value to the short display code (SF, LF, EA, ...)
+function _normUnit(u){
+  var s=String(u||'').toUpperCase().trim();
+  var map={'SQUARE FEET':'SF','SQ FT':'SF','SQFT':'SF','LINEAR FEET':'LF','LIN FT':'LF','EACH':'EA','POUNDS':'LBS','LB':'LBS','TON':'TONS','TRIP':'TRIPS','LOAD':'LOADS','DAY':'EA','CYD':'EA','JOB':''};
+  if(map[s]!==undefined) return map[s];
+  return s;
+}
 function _unitDropdown(ref, idx, current){
-  var units=['square feet','linear feet','each','per','loads','pounds','tons','trips','job'];
-  var cur=String(current||'').toLowerCase();
-  // normalize common abbreviations to the full label
-  var norm={sqft:'square feet','sq ft':'square feet',lf:'linear feet','lin ft':'linear feet',ea:'each',lb:'pounds',lbs:'pounds',ton:'tons',trip:'trips',load:'loads'};
-  if(norm[cur]) cur=norm[cur];
+  var units=['SF','LF','EA','PER','LOADS','LBS','TONS','TRIPS'];
+  var cur=String(current||'').toUpperCase();
+  // normalize old/long labels and common abbreviations to the new short codes
+  var norm={'SQUARE FEET':'SF','SQ FT':'SF','SQFT':'SF','LINEAR FEET':'LF','LIN FT':'LF','EACH':'EA','POUNDS':'LBS','LB':'LBS','TON':'TONS','TRIP':'TRIPS','LOAD':'LOADS','JOB':'','CYD':'EA'};
+  if(norm[cur]!==undefined) cur=norm[cur];
   if(cur && units.indexOf(cur)<0) units.unshift(cur); // keep any custom existing value
   var opts=units.map(function(u){
     return '<option value="'+u+'"'+(u===cur?' selected':'')+'>'+u+'</option>';
   }).join('');
   return '<select onchange="docLineSave(\''+ref+'\','+idx+',\'unit\',this.value)" style="font-family:Barlow,sans-serif;font-size:15px;color:#1f2630;border:1px solid #B8922A;border-radius:5px;padding:8px 6px;width:100%;box-sizing:border-box;background:#fff;cursor:pointer;">'+opts+'</select>';
+}
+// ── Service Catalog management modal (admin) ──
+function openServiceCatalog(){
+  var ex=document.getElementById('_svcCatBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_svcCatBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100300;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:760px;width:100%;margin:auto;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;">'
+    +'<div style="background:#1f2630;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">'
+      +'<div style="font-weight:700;font-size:15px;">Service Catalog</div>'
+      +'<button onclick="document.getElementById(\'_svcCatBg\').remove();" style="background:none;border:none;color:#fff;font-size:24px;line-height:1;cursor:pointer;">&times;</button>'
+    +'</div>'
+    +'<div style="padding:20px 22px;max-height:70vh;overflow:auto;">'
+      +'<p style="font-size:13px;color:#666;margin-bottom:16px;">Manage reusable services. These appear as suggestions when typing a line description in an estimate. (Admin only — permission control will be added with login.)</p>'
+      +'<div id="_svcCatList"></div>'
+      +'<div style="border-top:1px solid #eee;margin-top:16px;padding-top:16px;">'
+        +'<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-bottom:10px;">Add new service</div>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">'
+          +'<div style="flex:2;min-width:180px;"><label style="font-size:11px;color:#888;">Description</label><input id="_ncDesc" placeholder="Service description" style="width:100%;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;"></div>'
+          +'<div style="width:70px;"><label style="font-size:11px;color:#888;">Qty</label><input id="_ncQty" value="1" style="width:100%;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;"></div>'
+          +'<div style="width:80px;"><label style="font-size:11px;color:#888;">Unit</label><input id="_ncUnit" placeholder="job" style="width:100%;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;"></div>'
+          +'<div style="width:100px;"><label style="font-size:11px;color:#888;">Unit Price</label><input id="_ncPrice" placeholder="0.00" style="width:100%;padding:9px 10px;border:1px solid #ccc;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;"></div>'
+          +'<button onclick="_svcCatAddNew()" style="padding:10px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Add</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  _renderSvcCatList();
+}
+function _renderSvcCatList(){
+  var el=document.getElementById('_svcCatList'); if(!el) return;
+  var arr=_loadCatalog();
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  if(!arr.length){ el.innerHTML='<div style="color:#aaa;font-style:italic;font-size:14px;padding:8px 0;">No services yet. Add one below.</div>'; return; }
+  el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="text-align:left;color:#888;font-size:11px;text-transform:uppercase;letter-spacing:.04em;"><th style="padding:6px 4px;">Description</th><th style="padding:6px 4px;width:50px;">Qty</th><th style="padding:6px 4px;width:60px;">Unit</th><th style="padding:6px 4px;width:90px;text-align:right;">Price</th><th style="width:70px;"></th></tr></thead><tbody>'
+    +arr.map(function(s,i){
+      return '<tr style="border-top:1px solid #eee;">'
+        +'<td style="padding:7px 4px;"><input value="'+esc(s.desc)+'" onchange="_svcCatEdit('+i+',\'desc\',this.value)" style="width:100%;border:none;background:transparent;font-family:Barlow,sans-serif;font-size:13px;"></td>'
+        +'<td style="padding:7px 4px;"><input value="'+esc(s.qty)+'" onchange="_svcCatEdit('+i+',\'qty\',this.value)" style="width:100%;border:none;background:transparent;font-family:Barlow,sans-serif;font-size:13px;"></td>'
+        +'<td style="padding:7px 4px;"><input value="'+esc(s.unit)+'" onchange="_svcCatEdit('+i+',\'unit\',this.value)" style="width:100%;border:none;background:transparent;font-family:Barlow,sans-serif;font-size:13px;"></td>'
+        +'<td style="padding:7px 4px;text-align:right;"><input value="'+esc(s.unitPrice)+'" onchange="_svcCatEdit('+i+',\'unitPrice\',this.value)" style="width:100%;border:none;background:transparent;font-family:Barlow,sans-serif;font-size:13px;text-align:right;"></td>'
+        +'<td style="text-align:right;"><button onclick="_svcCatDel('+i+')" style="background:none;border:none;color:#c33;cursor:pointer;font-size:12px;font-weight:700;">Delete</button></td>'
+      +'</tr>';
+    }).join('')+'</tbody></table>';
+}
+function _svcCatAddNew(){
+  var d=document.getElementById('_ncDesc'), q=document.getElementById('_ncQty'), u=document.getElementById('_ncUnit'), p=document.getElementById('_ncPrice');
+  if(!d || !String(d.value||'').trim()){ if(d)d.focus(); return; }
+  _catalogAdd({desc:d.value.trim(), qty:q?q.value:1, unit:u?u.value:'', unitPrice:p?p.value:0});
+  d.value=''; if(q)q.value='1'; if(u)u.value=''; if(p)p.value='';
+  _renderSvcCatList(); if(d)d.focus();
+}
+function _svcCatEdit(idx, field, val){
+  var arr=_loadCatalog(); if(!arr[idx]) return;
+  arr[idx][field]=(field==='qty'||field==='unitPrice')?(parseFloat(String(val).replace(/[^0-9.\-]/g,''))||0):val;
+  _saveCatalog(arr);
+}
+function _svcCatDel(idx){
+  _catalogDelete(idx); _renderSvcCatList();
+}
+// ── SERVICE CATALOG (admin-managed list of reusable line items) ──
+var _CATALOG_KEY='sdd_service_catalog';
+var _CATALOG_SEED=[
+  {desc:'Site Mobilization & Temporary Fencing', qty:1, unit:'EA', unitPrice:3200},
+  {desc:'Interior Soft Demolition', qty:1, unit:'SF', unitPrice:1.15},
+  {desc:'Concrete Slab Demolition', qty:1, unit:'SF', unitPrice:2.4},
+  {desc:'Structural Steel Cutting & Removal', qty:1, unit:'TONS', unitPrice:420},
+  {desc:'Debris Haul-Off - Roll-Off Dumpsters (40 yd)', qty:1, unit:'LOADS', unitPrice:485},
+  {desc:'Dust Control & Water Truck Service', qty:1, unit:'EA', unitPrice:340},
+  {desc:'Asbestos Abatement - Floor Tile', qty:1, unit:'SF', unitPrice:3.25},
+  {desc:'Hazardous Material Disposal & Manifest', qty:1, unit:'EA', unitPrice:4100},
+  {desc:'Excavation & Backfill', qty:1, unit:'EA', unitPrice:38},
+  {desc:'Permits & Inspections', qty:1, unit:'EA', unitPrice:1450}
+];
+function _loadCatalog(){
+  try{ var raw=localStorage.getItem(_CATALOG_KEY); if(raw){ var arr=JSON.parse(raw); if(Array.isArray(arr)) return arr; } }catch(e){}
+  // seed on first use
+  _saveCatalog(_CATALOG_SEED.slice());
+  return _CATALOG_SEED.slice();
+}
+function _saveCatalog(arr){
+  try{ localStorage.setItem(_CATALOG_KEY, JSON.stringify(arr||[])); }catch(e){}
+}
+function _catalogAdd(item){
+  var arr=_loadCatalog();
+  arr.push({desc:item.desc||'', qty:Number(item.qty)||1, unit:item.unit||'', unitPrice:Number(item.unitPrice)||0});
+  _saveCatalog(arr); return arr;
+}
+function _catalogUpdate(idx, item){
+  var arr=_loadCatalog(); if(!arr[idx]) return arr;
+  arr[idx]={desc:item.desc||'', qty:Number(item.qty)||1, unit:item.unit||'', unitPrice:Number(item.unitPrice)||0};
+  _saveCatalog(arr); return arr;
+}
+function _catalogDelete(idx){
+  var arr=_loadCatalog(); arr.splice(idx,1); _saveCatalog(arr); return arr;
+}
+// Fill a document line from a catalog service (matched by exact description)
+function _applyCatalogToLine(ref, idx, desc){
+  var f=_findDoc(ref); if(!f) return;
+  var svc=_loadCatalog().filter(function(s){return s.desc===desc;})[0];
+  if(!svc) return;
+  var lines=_ensureLines(f); if(!lines[idx]) return;
+  var round2=function(n){return Math.round((Number(n)||0)*100)/100;};
+  lines[idx].desc=svc.desc;
+  lines[idx].qty=Number(svc.qty)||1;
+  lines[idx].unit=svc.unit||'';
+  lines[idx].unitPrice=Number(svc.unitPrice)||0;
+  lines[idx].amount=round2((Number(lines[idx].qty)||0)*(Number(lines[idx].unitPrice)||0));
+  if(lines[idx]._needsService) delete lines[idx]._needsService;
+  if(f.doc._isNew) delete f.doc._isNew;
+  var total=round2(lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0));
+  f.doc.amount=_moneyStr(total);
+  if(window.SDD && SDD.save) SDD.save();
+  _reopenDoc(ref);
+}
+function _catalogDatalistHTML(){
+  var arr=_loadCatalog();
+  return '<datalist id="_svcCatalogList">'+arr.map(function(s){
+    var label=s.desc+(s.unitPrice?('  —  $'+Number(s.unitPrice).toLocaleString('en-US')+(s.unit?('/'+s.unit):'')):'');
+    return '<option value="'+String(s.desc).replace(/"/g,'&quot;')+'">'+String(label).replace(/"/g,'&quot;')+'</option>';
+  }).join('')+'</datalist>';
+}
+// Service catalog picker — opens a dropdown from the "Add service from catalog" button.
+// Picking a service ADDS it as a new line to the document.
+function _svcCatalogPickerFor(ref, btnEl){
+  var ex=document.getElementById('_svcSuggestBox'); if(ex){ ex.remove(); return; } // toggle
+  var arr=_loadCatalog();
+  if(!arr.length){ _flashDoc && _flashDoc('No services in the catalog yet'); return; }
+  var rect=btnEl.getBoundingClientRect();
+  var box=document.createElement('div');
+  box.id='_svcSuggestBox';
+  box.setAttribute('data-ref', ref);
+  window._svcPickRef=ref;
+  box.style.cssText='position:fixed;z-index:100400;background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 12px 32px rgba(0,0,0,.2);max-height:320px;overflow:auto;width:360px;left:'+rect.left+'px;top:'+(rect.bottom+6)+'px;font-family:Barlow,sans-serif;';
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  box.innerHTML='<div style="padding:8px 12px;position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;">'
+      +'<input id="_svcPickSearch" placeholder="Search services…" autocomplete="off" oninput="_svcPickFilter(this.value)" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-family:Barlow,sans-serif;font-size:13px;">'
+    +'</div>'
+    +'<div id="_svcPickRows">'+_svcPickRowsHTML(arr, ref)+'</div>';
+  document.body.appendChild(box);
+  var s=document.getElementById('_svcPickSearch'); if(s) s.focus();
+  // close on outside click
+  setTimeout(function(){
+    document.addEventListener('mousedown', _svcPickOutside);
+  },0);
+}
+function _svcPickOutside(e){
+  var box=document.getElementById('_svcSuggestBox');
+  if(box && !box.contains(e.target)){ box.remove(); document.removeEventListener('mousedown', _svcPickOutside); }
+}
+function _svcPickRowsHTML(arr, ref){
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');};
+  var full=_loadCatalog();
+  if(!arr.length) return '<div style="padding:14px;color:#aaa;font-style:italic;font-size:13px;">No matching services.</div>';
+  return arr.map(function(s){
+    var realIdx=full.indexOf(s);
+    return '<div onmousedown="_svcAddLineFromCatalog(\''+ref+'\','+realIdx+')" style="padding:10px 12px;cursor:pointer;border-bottom:1px solid #f2f2f2;display:flex;justify-content:space-between;gap:10px;" onmouseover="this.style.background=\'#F8F6F2\'" onmouseout="this.style.background=\'#fff\'">'
+      +'<span style="font-size:13px;color:#1f2630;">'+esc(s.desc)+'</span>'
+      +'<span style="font-size:12px;color:#B8922A;font-weight:700;white-space:nowrap;">'+money(s.unitPrice)+(s.unit?('/'+esc(s.unit)):'')+'</span>'
+    +'</div>';
+  }).join('');
+}
+function _svcPickFilter(q){
+  q=String(q||'').trim().toLowerCase();
+  var arr=_loadCatalog().filter(function(s){ return !q || String(s.desc).toLowerCase().indexOf(q)!==-1; });
+  var rows=document.getElementById('_svcPickRows');
+  // ref is stored on the box via first row; simpler: re-read from a data attribute
+  var box=document.getElementById('_svcSuggestBox');
+  var ref=box?box.getAttribute('data-ref'):'';
+  if(rows) rows.innerHTML=_svcPickRowsHTML(arr, ref||window._svcPickRef||'');
+}
+// Add a catalog service as a NEW line in the document
+function _svcAddLineFromCatalog(ref, catIdx){
+  var f=_findDoc(ref); if(!f) return;
+  var svc=_loadCatalog()[catIdx]; if(!svc) return;
+  var lines=_ensureLines(f);
+  var round2=function(n){return Math.round((Number(n)||0)*100)/100;};
+  // If the last line is empty, fill it; otherwise push a new line
+  var last=lines[lines.length-1];
+  var target;
+  if(last && !String(last.desc||'').trim() && !(Number(last.unitPrice)||0) && !(Number(last.amount)||0)){
+    target=last;
+  } else { target={desc:'',qty:1,unit:'',unitPrice:0,amount:0}; lines.push(target); }
+  target.desc=svc.desc;
+  target.qty=Number(svc.qty)||1;
+  target.unit=svc.unit||'';
+  target.unitPrice=Number(svc.unitPrice)||0;
+  target.amount=round2((Number(target.qty)||0)*(Number(target.unitPrice)||0));
+  if(target._needsService) delete target._needsService;
+  if(f.doc._isNew) delete f.doc._isNew;
+  var total=round2(lines.reduce(function(s,l){return s+(Number(l.amount)||0);},0));
+  f.doc.amount=_moneyStr(total);
+  if(window.SDD && SDD.save) SDD.save();
+  var box=document.getElementById('_svcSuggestBox'); if(box) box.remove();
+  document.removeEventListener('mousedown', _svcPickOutside);
+  _reopenDoc(ref);
+}
+function _maybeApplyCatalog(ref, idx, val){
+  var match=_loadCatalog().filter(function(s){return s.desc===val;})[0];
+  if(match){ _applyCatalogToLine(ref, idx, val); }
 }
 function docLineSave(ref, idx, field, val){
   var f=_findDoc(ref); if(!f) return;
@@ -3008,11 +3236,16 @@ function docDeleteLine(ref, idx){
     ff.doc.amount=_moneyStr(total);
     if(window.SDD && SDD.save) SDD.save();
     _reopenDoc(ref);
-  }, 'Yes, delete', 'This line item will be removed from the document. This can\'t be undone.');
+  }, 'Yes, Delete', 'This line item will be removed from the document. This can\'t be undone.');
 }
 function docSave(ref){
   var f=_findDoc(ref); if(!f) return;
   var isDraft=!!f.doc._draft;
+  // Project Name is mandatory for estimates (and any doc) before saving
+  if(!String(f.doc.projectName||'').trim()){
+    _flashDoc && _flashDoc('Project name is required — please fill it in');
+    return;
+  }
   // For a brand-new draft, require at least one real service line before saving
   if(isDraft){
     var lines=_ensureLines(f).filter(function(l){ return String(l.desc||'').trim() && (Number(l.amount)||0)>0; });
@@ -3024,7 +3257,9 @@ function docSave(ref){
   _confirmDoc(isDraft?('Create '+ref+' with these details?'):('Save '+ref+' with the changes you made?'), function(){
     var ff=_findDoc(ref); if(!ff) return;
     // Confirm the draft → it becomes a real document
+    var wasDraft=!!ff.doc._draft;
     if(ff.doc._draft){ delete ff.doc._draft; delete ff.doc._isNew; }
+    _addTimeline(ref, wasDraft?(_docKindName(ff.kind)+' created'):(_docKindName(ff.kind)+' updated'), 'Leontina', wasDraft?'#B8922A':'#888');
     if(window.SDD && SDD.save) SDD.save();
     docEditMode=false; // back to read-only after saving
     _flashDoc(isDraft?('✓ '+ref+' created'):('✓ '+ref+' saved'));
@@ -3129,7 +3364,7 @@ function _scheduleReqPanelHTML(f, ref){
   return '<div style="background:#FFF8E6;border:1.5px solid #E0B94A;border-radius:10px;padding:14px 16px;margin:16px 0;">'
     +'<div style="font-size:12px;font-weight:800;color:#8a6414;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a6414" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Client Scheduling Request</div>'
     +'<div style="font-size:14px;color:#5c4a1a;margin-bottom:12px;">The client requested a tentative start date of <b>'+esc(req.date)+'</b>. Review and confirm to lock it in.</div>'
-    +'<button onclick="docApproveSchedule(\''+ref+'\')" style="padding:10px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Approve &amp; confirm date</button>'
+    +'<button onclick="docApproveSchedule(\''+ref+'\')" style="padding:10px 22px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Approve &amp; Confirm Date</button>'
   +'</div>';
 }
 function docPreviewForClient(ref, mode){
@@ -3163,7 +3398,7 @@ function docPreviewForClient(ref, mode){
       +(sig.image
         ? '<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+String(sig.name||'').replace(/</g,'&lt;')+' — '+String(sig.date||'').replace(/</g,'&lt;')+'</div>'
         : '<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
-          +'<button onclick="_openSignaturePad(\''+ref+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign here</button>')
+          +'<button onclick="_openSignaturePad(\''+ref+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign Here</button>')
     +'</div>'
   ) : '';
 
@@ -3203,7 +3438,7 @@ function _docContentBlocks(f){
   var full=(d._priceView==='full');
   var lines=_ensureLines(f);
   var rowHTML=function(l){
-    if(full){ return '<table class="tbl"><tr><td class="d">'+esc(l.desc)+'</td><td class="n">'+esc(l.qty)+'</td><td class="u">'+esc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr></table>'; }
+    if(full){ return '<table class="tbl"><tr><td class="d">'+esc(l.desc)+'</td><td class="u">'+esc(_normUnit(l.unit))+'</td><td class="n">'+esc(l.qty)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr></table>'; }
     return '<table class="tbl"><tr><td class="d" colspan="5">'+esc(l.desc)+'</td></tr></table>';
   };
   var scopeTitle=(f.kind==='invoice'?'Work Completed':'Proposed Scope of Work');
@@ -3239,7 +3474,7 @@ function _docContentBlocks(f){
       sigHTML+='<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+esc(sig.name||'')+' — '+esc(sig.date||'')+'</div>';
     } else {
       sigHTML+='<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
-        +'<button onclick="_openSignaturePad(\''+(f.doc.est||f.doc.num||'')+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign here</button>';
+        +'<button onclick="_openSignaturePad(\''+(f.doc.est||f.doc.num||'')+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign Here</button>';
     }
     sigHTML+='</div>';
     blocks.push({html:sigHTML});
@@ -3419,12 +3654,12 @@ function _openSignedPdf(ref){
   var sig=d._signature||{};
   // Build content blocks as an array; the print window paginates them by measured height.
   var rowHTML=function(l){
-    if(full){ return '<tr><td class="d">'+esc(l.desc)+'</td><td class="n">'+esc(l.qty)+'</td><td class="u">'+esc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr>'; }
+    if(full){ return '<tr><td class="d">'+esc(l.desc)+'</td><td class="u">'+esc(_normUnit(l.unit))+'</td><td class="n">'+esc(l.qty)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+money(l.amount)+'</td></tr>'; }
     return '<tr><td class="d" colspan="5">'+esc(l.desc)+'</td></tr>';
   };
   var blocks=[];
   blocks.push({html:'<div class="scope">Proposed Scope of Work</div>'});
-  var headRow=full?'<tr class="hdr"><th class="d">Description</th><th class="n">Qty</th><th class="u">Unit</th><th class="n">Unit Price</th><th class="n">Total</th></tr>':'';
+  var headRow=full?'<tr class="hdr"><th class="d">Description</th><th class="u">Unit</th><th class="n">Qty</th><th class="n">Unit Price</th><th class="n">Total</th></tr>':'';
   lines.forEach(function(l){ blocks.push({html:'<table class="tbl">'+headRow+rowHTML(l)+'</table>', scopeTitle:'Proposed Scope of Work'}); });
   // approved alternates
   var hasAlt=false;
@@ -3503,7 +3738,7 @@ function docCancelEdit(ref){
   if(f && f.doc._draft){
     _confirmDoc('Discard this new '+(f.kind==='co'?'change order':f.kind)+'? It won\'t be created.', function(){
       _discardDraft(ref);
-    }, 'Yes, discard');
+    }, 'Yes, Discard');
     return;
   }
   docEditMode=false;
@@ -3574,6 +3809,8 @@ function _reopenDoc(ref){
   } else if(activeDocRef===ref){
     renderDocDetail(f.kind==='invoice'?'invoice':'co', ref);
   }
+  // After render, expand all description textareas so full text is visible
+  setTimeout(_growAllDesc, 0);
 }
 
 // Build an editable PDF sheet (letterhead) for any doc kind. Returns HTML.
@@ -3619,11 +3856,11 @@ function editableDocSheet(ref, opts){
       var descCss=inCss + (needs?'border:1.5px solid #D94F4F;background:#FFF5F5;':'');
       var descPlaceholder=needs?' placeholder="⚠ Add a service — describe the work"':'';
       return '<tr>'
-        +'<td style="padding:3px 10px 3px 0;"><input value="'+esc(l.desc)+'"'+descPlaceholder+' oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" onblur="this.value=_titleCase(this.value);docLineSave(\''+ref+'\','+i+',\'desc\',this.value)" style="'+descCss+'"></td>'
-        +'<td style="padding:3px 4px;width:50px;"><input value="'+esc(l.qty)+'" oninput="docLineSave(\''+ref+'\','+i+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
-        +'<td style="padding:3px 4px;width:110px;">'+_unitDropdown(ref,i,l.unit)+'</td>'
-        +'<td style="padding:3px 4px;width:90px;"><input value="'+esc(l.unitPrice)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
-        +'<td style="padding:3px 4px;width:110px;text-align:right;font-weight:700;white-space:nowrap;" id="docLineTot-'+i+'">'+f2(l.amount)+'</td>'
+        +'<td style="padding:3px 10px 3px 0;position:relative;"><textarea rows="1"'+descPlaceholder+' autocomplete="off" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" oninput="docLineSave(\''+ref+'\','+i+',\'desc\',this.value);_descAutoGrow(this)" onfocus="_descAutoGrow(this)" onblur="this.value=_titleCase(this.value);docLineSave(\''+ref+'\','+i+',\'desc\',this.value);_descAutoGrow(this)" style="'+descCss+'resize:none;overflow:hidden;white-space:pre-wrap;word-wrap:break-word;line-height:1.1;padding-top:6px;padding-bottom:6px;font-family:Barlow,sans-serif;">'+esc(l.desc)+'</textarea></td>'
+        +'<td style="padding:3px 3px;width:54px;">'+_unitDropdown(ref,i,l.unit)+'</td>'
+        +'<td style="padding:3px 3px;width:44px;"><input value="'+esc(l.qty)+'" oninput="docLineSave(\''+ref+'\','+i+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
+        +'<td style="padding:3px 3px;width:74px;"><input value="'+esc(l.unitPrice)+'" oninput="docLineSave(\''+ref+'\','+i+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
+        +'<td style="padding:3px 3px;width:88px;text-align:right;font-weight:700;white-space:nowrap;" id="docLineTot-'+i+'">'+f2(l.amount)+'</td>'
         +'<td style="padding:3px 0 3px 6px;width:20px;text-align:center;"><button onclick="docDeleteLine(\''+ref+'\','+i+')" title="Delete" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:17px;line-height:1;">×</button></td>'
         +'</tr>'
         +(needs?'<tr><td colspan="6" style="padding:0 6px 6px 0;"><span style="font-size:11px;color:#D94F4F;font-weight:600;">← Add the service for this estimate to get started.</span></td></tr>':'');
@@ -3634,8 +3871,8 @@ function editableDocSheet(ref, opts){
     }
     return '<tr>'
       +'<td style="padding:4px 10px 4px 0;font-size:15px;border-bottom:1px solid #F4F4F4;">'+(esc(l.desc)||'')+'</td>'
+      +'<td style="padding:4px 4px;width:56px;font-size:15px;text-align:center;border-bottom:1px solid #F4F4F4;">'+(esc(_normUnit(l.unit))||'')+'</td>'
       +'<td style="padding:4px 4px;width:50px;font-size:15px;text-align:right;border-bottom:1px solid #F4F4F4;">'+(esc(l.qty)||'')+'</td>'
-      +'<td style="padding:4px 4px;width:56px;font-size:15px;text-align:center;border-bottom:1px solid #F4F4F4;">'+(esc(l.unit)||'')+'</td>'
       +'<td style="padding:4px 4px;width:90px;font-size:15px;text-align:right;border-bottom:1px solid #F4F4F4;">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td>'
       +'<td style="padding:4px 4px;width:110px;font-size:15px;text-align:right;font-weight:700;white-space:nowrap;border-bottom:1px solid #F4F4F4;">'+f2(l.amount)+'</td>'
       +'<td style="width:20px;border-bottom:1px solid #F4F4F4;"></td>'
@@ -3704,12 +3941,16 @@ function editableDocSheet(ref, opts){
           +'<div style="display:flex;gap:10px;">'+voidBtn
           +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 24px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'+(f.kind==='estimate'?'Resend copy':'Resend receipt')+'</button></div>'
         +'</div>'
-      : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;">'
+      : '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid #eee;flex-wrap:wrap;">'
+        // Reopen (when rejected) / Reject (estimates & COs not yet billed)
+        +((/reject/i.test(d.status||'')) ? '<button onclick="docReopen(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #7C5CBF;background:#fff;color:#7C5CBF;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reopen</button>' : ((f.kind!=='invoice') ? '<button onclick="docReject(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #D94F4F;background:#fff;color:#D94F4F;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D94F4F" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Rejected</button>' : ''))
+        // Mark job completed (approved estimates whose job isn't done yet)
+        +(( f.kind==='estimate' && /approv/i.test(d.status||'') && job && !/complet|ready to bill/i.test(job.status||'') ) ? '<button onclick="docMarkJobCompleted(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #16a34a;background:#fff;color:#16a34a;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Job Completed</button>' : '')
         +voidBtn
         +(( f.kind==='estimate' && _estComputedStage(job,d.est,d.status).step>=3 ) ? '' : '<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>')
         +'<button onclick="docPreviewForClient(\''+ref+'\',\'preview\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button>'
-        +((f.kind==='estimate')?'<button onclick="_openClientLink(\''+ref+'\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Client portal</button>':'')
-        +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to client</button>'
+        +((f.kind==='estimate')?'<button onclick="_openClientLink(\''+ref+'\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Client Portal</button>':'')
+        +'<button onclick="docSendToClient(\''+ref+'\')" style="padding:11px 28px;border-radius:10px;border:none;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send to Client</button>'
       +'</div>'));
 
   // status badge (read) vs input (edit)
@@ -3776,8 +4017,13 @@ function editableDocSheet(ref, opts){
     +'</div>'
     // separator line between customer info and the scope
     +'<div style="border-top:1px solid #e5e5e5;margin:0 0 12px;"></div>'
-    // PROJECT NAME — full width line above the scope
-    +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"><span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Project</span>'+(ed?'<span style="flex:1;">'+fld((d.projectName||job.projectName||''),'projectName','text-align:left;font-size:14px;color:#333;','Project name')+'</span>':'<span style="flex:1;font-size:14px;color:#333;font-weight:600;">'+esc(d.projectName||job.projectName||'—')+'</span>')+'</div>'
+    // PROJECT NAME — full width line above the scope (mandatory; red alert when empty; does NOT inherit job name)
+    +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;"><span style="font-size:11px;font-weight:800;color:#666;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Project</span>'
+      +(ed
+        ? '<span style="flex:1;"><input value="'+esc(d.projectName||'')+'" oninput="docFieldSave(\''+ref+'\',\'projectName\',this.value);_projectNameCheck(this)" style="'+inCss+'text-align:left;font-size:14px;color:#333;'+(String(d.projectName||'').trim()?'':'border:1.5px solid #D94F4F;background:#FFF5F5;')+'" placeholder="⚠ Project name is required"></span>'
+           +(String(d.projectName||'').trim()?'':'<span id="_projReq-'+esc(ref)+'" style="font-size:11px;color:#D94F4F;font-weight:600;white-space:nowrap;">Required</span>')
+        : '<span style="flex:1;font-size:14px;color:#333;font-weight:600;">'+esc(d.projectName||'—')+'</span>')
+    +'</div>'
     // reference note (change order / invoice belongs to an estimate)
     +((f.kind==='co'&&d.originalEst)?'<div style="font-size:11px;color:#999;margin-bottom:12px;">Change order to '+d.originalEst+'</div>':'')
     +((f.kind==='invoice'&&d.originalEst)?'<div style="font-size:11px;color:#999;margin-bottom:12px;">For '+d.originalEst+'</div>':'')
@@ -3786,14 +4032,18 @@ function editableDocSheet(ref, opts){
     +'<table style="width:100%;border-collapse:collapse;'+(ed?'':'border-top:2px solid #ddd;')+'">'
       +(ed?('<thead><tr>'
         +'<th style="text-align:left;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 10px 8px 0;border-bottom:2px solid #ddd;">Description</th>'
-        +'<th style="width:50px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Qty</th>'
-        +'<th style="width:56px;text-align:center;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit</th>'
-        +'<th style="width:90px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Unit price</th>'
-        +'<th style="width:110px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 4px 8px;border-bottom:2px solid #ddd;">Total</th>'
+        +'<th style="width:54px;text-align:center;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 3px 8px;border-bottom:2px solid #ddd;">Unit</th>'
+        +'<th style="width:44px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 3px 8px;border-bottom:2px solid #ddd;">Qty</th>'
+        +'<th style="width:74px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 3px 8px;border-bottom:2px solid #ddd;">Unit price</th>'
+        +'<th style="width:88px;text-align:right;font-size:12px;color:#999;text-transform:uppercase;letter-spacing:.06em;padding:0 3px 8px;border-bottom:2px solid #ddd;">Total</th>'
         +'<th style="width:20px;border-bottom:2px solid #ddd;"></th>'
       +'</tr></thead>'):'')
       +'<tbody>'+lineRows+'</tbody></table>'
-    +(ed?'<button onclick="docAddLine(\''+ref+'\')" style="margin-top:8px;padding:6px 12px;border:1px dashed '+accent+';border-radius:7px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">+ Add line item</button>':'')
+    +(ed?'':'')
+    +(ed?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">'
+      +'<button onclick="docAddLine(\''+ref+'\')" style="padding:6px 12px;border:1px dashed '+accent+';border-radius:7px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">+ Add line item</button>'
+      +'<button onclick="_svcCatalogPickerFor(\''+ref+'\',this)" style="padding:6px 12px;border:1px solid '+accent+';border-radius:7px;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Add Service from Catalog</button>'
+    +'</div>':'')
     // CONTRACT SCOPE REFERENCE (item descriptions only, no prices) — shown before the total
     +(f.kind==='invoice'?_invoiceScopeReference(f, accent):'')
     // BASE TOTAL (shown right after the main scope, before alternates)
@@ -3877,7 +4127,7 @@ function _openSignaturePad(ref){
     +'</div>'
     +'<div style="display:flex;justify-content:space-between;gap:10px;padding:14px 22px;border-top:1px solid #eee;background:#fafafa;">'
       +'<button onclick="document.getElementById(\'_sigPadBg\').remove();" style="padding:10px 20px;border-radius:9px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
-      +'<button onclick="_saveSignaturePad(\''+ref+'\')" style="padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Save signature</button>'
+      +'<button onclick="_saveSignaturePad(\''+ref+'\')" style="padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Save Signature</button>'
     +'</div>'
   +'</div>';
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
@@ -3910,7 +4160,7 @@ function _altSectionHTML(f, ref, ed, showPrices, accent){
   var inCss='font-family:Barlow,sans-serif;font-size:15px;color:#1f2630;border:1px solid '+accent+';border-radius:5px;padding:7px 9px;width:100%;box-sizing:border-box;background:#fff;';
 
   var html='<div style="margin-top:22px;">'
-    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:4px;background:#F1EEE6;padding:8px 12px;border-radius:6px;border-left:3px solid '+accent+';">Alternate Work <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#888;font-size:12px;">— optional add-ons, only added to the total if approved</span></div>';
+    +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;margin-bottom:4px;background:#F1EEE6;padding:8px 12px;border-radius:6px;border-left:3px solid '+accent+';">Alternate Work <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#888;font-size:12px;">— optional add-ons, only added to the total if approved'+(ed?'':' · press Edit to approve or modify')+'</span></div>';
 
   alts.forEach(function(a, ai){
     // header row: name only (no group checkbox)
@@ -3926,10 +4176,11 @@ function _altSectionHTML(f, ref, ed, showPrices, accent){
     if(ed){
       html+='<table style="width:100%;border-collapse:collapse;margin-top:4px;"><tbody>';
       (a.lines||[]).forEach(function(l, li){
-        html+='<tr>'
-          +'<td style="padding:3px 8px 3px 0;"><input value="'+esc(l.desc)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" onblur="this.value=_titleCase(this.value);docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" placeholder="Description" style="'+inCss+'"></td>'
-          +'<td style="padding:3px 4px;width:50px;"><input value="'+esc(l.qty)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
+        var chkEd='<input type="checkbox" '+(l._approved?'checked':'')+' onchange="docToggleAltLine(\''+ref+'\','+ai+','+li+',this.checked)" title="Approve this alternate line" style="width:17px;height:17px;accent-color:#3A9E6A;flex-shrink:0;cursor:pointer;">';
+        html+='<tr'+(l._approved?' style="background:rgba(58,158,106,.05);"':'')+'>'
+          +'<td style="padding:3px 8px 3px 0;"><div style="display:flex;align-items:center;gap:9px;">'+chkEd+'<input value="'+esc(l.desc)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" onblur="this.value=_titleCase(this.value);docAltLineSave(\''+ref+'\','+ai+','+li+',\'desc\',this.value)" placeholder="Description" style="'+inCss+'"></div></td>'
           +'<td style="padding:3px 4px;width:110px;">'+_unitDropdown2(ref,ai,li,l.unit)+'</td>'
+          +'<td style="padding:3px 4px;width:50px;"><input value="'+esc(l.qty)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'qty\',this.value)" style="'+inCss+'text-align:right;"></td>'
           +'<td style="padding:3px 4px;width:90px;"><input value="'+esc(l.unitPrice)+'" oninput="docAltLineSave(\''+ref+'\','+ai+','+li+',\'unitPrice\',this.value)" style="'+inCss+'text-align:right;"></td>'
           +'<td style="padding:3px 4px;width:100px;text-align:right;font-weight:700;white-space:nowrap;" id="altLineTot-'+ai+'-'+li+'">'+money(l.amount)+'</td>'
           +'<td style="width:20px;text-align:center;"><button onclick="docAltDeleteLine(\''+ref+'\','+ai+','+li+')" style="border:none;background:none;cursor:pointer;color:#D94F4F;font-size:16px;line-height:1;">×</button></td>'
@@ -3938,21 +4189,21 @@ function _altSectionHTML(f, ref, ed, showPrices, accent){
       html+='</tbody></table>'
         +'<button onclick="docAltAddLine(\''+ref+'\','+ai+')" style="margin-top:6px;padding:5px 10px;border:1px dashed '+accent+';border-radius:6px;background:transparent;color:'+accent+';font-family:Barlow,sans-serif;font-size:11px;font-weight:600;cursor:pointer;">+ Add line</button>';
     } else {
-      // read mode: each line has its own checkbox to add it to the total; prices only in Full$
+      // read mode: alternates are LOCKED — press Edit to approve/modify them
       html+='<table style="width:100%;border-collapse:collapse;margin-top:4px;"><tbody>';
       (a.lines||[]).forEach(function(l, li){
-        var chk='<input type="checkbox" '+(l._approved?'checked':'')+' onchange="docToggleAltLine(\''+ref+'\','+ai+','+li+',this.checked)" style="width:17px;height:17px;accent-color:#3A9E6A;flex-shrink:0;cursor:pointer;">';
+        var chk='<input type="checkbox" '+(l._approved?'checked':'')+' disabled title="Press Edit to approve alternates" style="width:17px;height:17px;accent-color:#3A9E6A;flex-shrink:0;cursor:not-allowed;opacity:.55;">';
         var added=l._approved?'<span style="font-size:10px;font-weight:700;color:#3A9E6A;background:rgba(58,158,106,.12);padding:1px 8px;border-radius:999px;white-space:nowrap;margin-left:8px;">Added</span>':'';
         if(showPrices){
           html+='<tr style="background:'+(l._approved?'rgba(58,158,106,.05)':'transparent')+';">'
-            +'<td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td>'
+            +'<td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:default;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td>'
+            +'<td style="padding:5px 4px;width:100px;font-size:14px;text-align:center;color:#444;">'+esc(_normUnit(l.unit))+'</td>'
             +'<td style="padding:5px 4px;width:50px;font-size:14px;text-align:right;color:#444;">'+esc(l.qty)+'</td>'
-            +'<td style="padding:5px 4px;width:100px;font-size:14px;text-align:center;color:#444;">'+esc(l.unit)+'</td>'
             +'<td style="padding:5px 4px;width:90px;font-size:14px;text-align:right;color:#444;">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td>'
             +'<td style="padding:5px 4px;width:100px;font-size:14px;text-align:right;font-weight:700;white-space:nowrap;color:'+(l._approved?'#3A9E6A':'#444')+';">'+money(l.amount)+'</td>'
           +'</tr>';
         } else {
-          html+='<tr style="background:'+(l._approved?'rgba(58,158,106,.05)':'transparent')+';"><td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td></tr>';
+          html+='<tr style="background:'+(l._approved?'rgba(58,158,106,.05)':'transparent')+';"><td style="padding:5px 8px 5px 0;"><label style="display:flex;align-items:center;gap:9px;cursor:default;"><span>'+chk+'</span><span style="font-size:14px;color:#444;">'+esc(l.desc)+'</span>'+added+'</label></td></tr>';
         }
       });
       html+='</tbody></table>';
@@ -3968,10 +4219,10 @@ function _altSectionHTML(f, ref, ed, showPrices, accent){
 }
 // Unit dropdown variant for alternate lines
 function _unitDropdown2(ref, ai, li, current){
-  var units=['square feet','linear feet','each','per','loads','pounds','tons','trips','job'];
-  var cur=String(current||'').toLowerCase();
-  var norm={sqft:'square feet','sq ft':'square feet',lf:'linear feet',ea:'each',lb:'pounds',lbs:'pounds',ton:'tons',trip:'trips',load:'loads'};
-  if(norm[cur]) cur=norm[cur];
+  var units=['SF','LF','EA','PER','LOADS','LBS','TONS','TRIPS'];
+  var cur=String(current||'').toUpperCase();
+  var norm={'SQUARE FEET':'SF','SQ FT':'SF','SQFT':'SF','LINEAR FEET':'LF','LIN FT':'LF','EACH':'EA','POUNDS':'LBS','LB':'LBS','TON':'TONS','TRIP':'TRIPS','LOAD':'LOADS','JOB':'','CYD':'EA'};
+  if(norm[cur]!==undefined) cur=norm[cur];
   if(cur && units.indexOf(cur)<0) units.unshift(cur);
   var opts=units.map(function(u){return '<option value="'+u+'"'+(u===cur?' selected':'')+'>'+u+'</option>';}).join('');
   return '<select onchange="docAltLineSave(\''+ref+'\','+ai+','+li+',\'unit\',this.value)" style="font-family:Barlow,sans-serif;font-size:14px;color:#1f2630;border:1px solid #B8922A;border-radius:5px;padding:7px 5px;width:100%;box-sizing:border-box;background:#fff;cursor:pointer;">'+opts+'</select>';
@@ -4127,10 +4378,65 @@ function _invPaymentSummary(f){
           : '<button onclick="_recordPayment(\''+iv.est+'\')" style="padding:9px 16px;border:1px solid '+accent+';border-radius:8px;background:'+accent+';color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">+ Record payment</button>'
             +'<button onclick="_toggleRetention(\''+iv.est+'\')" style="margin-left:8px;padding:9px 16px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:Barlow,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">'+(s.retention>0?'Remove retention':'Add 10% retention')+'</button>')
     +'</div>'
+    // ── WAIVERS (only when the job requires them) ──
+    +_waiversSectionHTML(f)
+    // ── SOV — SCHEDULE OF VALUES ──
+    +_sovSectionHTML(f)
+    // ── VENDOR BILLS ON THIS JOB ──
+    +_vendorBillsSectionHTML(f)
+    // ── ACTIVITY / TIMELINE ──
+    +_timelineSectionHTML(f)
   +'</div>';
 }
 
-// Toggle 10% retention on an invoice
+// Waivers section — shown only if the job requires waivers.
+// Conditional waiver: always available. Unconditional: only once the invoice is fully paid.
+function _waiversSectionHTML(f){
+  if(!f || f.kind!=='invoice') return '';
+  var job=f.job||{}, cust=f.cust||{};
+  // The job's billing info ("Does this job require waivers?") takes priority;
+  // otherwise fall back to the customer-level waiver setting.
+  var requires = (job.requiresWaivers===true||job.requireWaivers===true||job.waivers===true||job.waiverRequired===true)
+              || (job.waiver && String(job.waiver).toLowerCase()!=='none' && String(job.waiver).toLowerCase()!=='no')
+              || (cust.waiver && String(cust.waiver).toLowerCase()!=='none' && String(cust.waiver).toLowerCase()!=='no');
+  if(!requires) return '';
+  var iv=f.doc, s=_invSummary(iv);
+  var ref=iv.est||iv.num;
+  var paid=s.fullyPaid;
+  var wd=iv._waiverData||{};
+  var condDone=!!wd.conditional;
+  var uncondDone=!!wd.unconditional;
+  return '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Waivers</div>'
+    // Conditional waiver — available anytime
+    +'<div class="waiver-row '+(condDone?'conditional':'pending')+'">'
+      +'<div class="waiver-icon '+(condDone?'wi-cond':'wi-pending')+'">'
+        +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>'
+      +'</div>'
+      +'<div class="waiver-info">'
+        +'<div class="waiver-title">Conditional waiver and release on final payment</div>'
+        +'<div class="waiver-sub">Conditional — effective on receipt of payment</div>'
+      +'</div>'
+      +'<button onclick="openWaiverDoc(\''+ref+'\',\'conditional\',\'view\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">View PDF</button>'
+      +'<button onclick="openWaiverDoc(\''+ref+'\',\'conditional\',\'edit\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Edit</button>'
+    +'</div>'
+    // Unconditional waiver — only after the invoice is fully paid
+    +'<div class="waiver-row '+(uncondDone?'unconditional':'pending')+'"'+(paid?'':' title="Available once the invoice is paid in full"')+'>'
+      +'<div class="waiver-icon '+(uncondDone?'wi-uncond':'wi-pending')+'">'
+        +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+      +'</div>'
+      +'<div class="waiver-info">'
+        +'<div class="waiver-title">Unconditional waiver and release on final payment</div>'
+        +'<div class="waiver-sub">'+(paid?'Unconditional — use only after payment is confirmed':'Locked — available once the invoice is paid in full')+'</div>'
+      +'</div>'
+      +(paid
+        ? '<button onclick="openWaiverDoc(\''+ref+'\',\'unconditional\',\'view\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">View PDF</button>'
+          +'<button onclick="openWaiverDoc(\''+ref+'\',\'unconditional\',\'edit\')" style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Edit</button>'
+        : '<button disabled style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#f5f5f5;color:#bbb;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:not-allowed;">View PDF</button>'
+          +'<button disabled style="padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:#f5f5f5;color:#bbb;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:not-allowed;">Edit</button>')
+    +'</div>'
+  +'</div>';
+}
 function _toggleRetention(invRef){
   var f=_findDoc(invRef); if(!f||f.kind!=='invoice') return;
   var iv=f.doc;
@@ -4164,7 +4470,7 @@ function _recordPayment(invRef){
     +'</div>'
     +'<div style="padding:8px 24px 20px;display:flex;gap:10px;justify-content:flex-end;">'
       +'<button onclick="document.getElementById(\'_recPmtBg\').remove()" style="padding:10px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-      +'<button onclick="_recordPaymentSave(\''+iv.est+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save payment</button>'
+      +'<button onclick="_recordPaymentSave(\''+iv.est+'\')" style="padding:10px 20px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Payment</button>'
     +'</div>'
   +'</div>';
   document.body.appendChild(bg);
@@ -4182,6 +4488,7 @@ function _recordPaymentSave(invRef){
   iv.payments=iv.payments||[];
   var pid='PMT-'+(iv.est||'').replace(/^INV-?/,'')+'-'+(iv.payments.length+1);
   iv.payments.push({id:pid, date:fmt(today), amount:_moneyStr(amt), method:method, ref:ref, note:'Payment recorded'});
+  _addTimeline(invRef, 'Payment recorded — '+_moneyStr(amt)+' ('+method+')', 'Leontina', '#16a34a');
   // update status
   var s=_invSummary(iv);
   iv.status = s.fullyPaid ? 'Paid' : (s.paid>0 ? 'Partial' : 'Unpaid');
@@ -4398,7 +4705,7 @@ function renderEstimateDetail(customerId, jobEst, estId){
           +'<span style="padding:2px 10px;border-radius:12px;background:'+stage.color+';color:#fff;font-size:11px;font-weight:700;margin-left:4px;">'+stage.label+'</span>'
         +'</div>'
         +(_estSummary(job, est.est).remainingToBill>0.5
-            ? '<button onclick="_jdInvoiceMode(\''+est.est+'\')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate invoice</button>'
+            ? '<button onclick="_jdInvoiceMode(\''+est.est+'\')" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Generate Invoice</button>'
             : '')
       +'</div>'
       +'<div style="border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);">'+editableDocSheet(est.est,{noSidebar:true})+'</div>'
@@ -4697,11 +5004,17 @@ function _nextEstNumber(){
 }
 function _todayStr(){ return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
 
+// Live visual check for the mandatory Project Name field
+function _projectNameCheck(inputEl){
+  var filled=String(inputEl.value||'').trim().length>0;
+  if(filled){ inputEl.style.border='1px solid var(--border2)'; inputEl.style.background='#fff'; }
+  else { inputEl.style.border='1.5px solid #D94F4F'; inputEl.style.background='#FFF5F5'; }
+}
 function _createEstimateLocal(c, job){
   var num=_nextEstNumber();
-  var pn=job.projectName||job.jobName||'';
+  // Project Name starts EMPTY — it's different from the job name and is mandatory (user must fill it in)
   var est={ est:num, amount:'$0', status:'Draft', date:_todayStr(),
-            scope:'New Scope of Work', projectName:pn, lines:[], _isNew:true, _draft:true };
+            scope:'New Scope of Work', projectName:'', lines:[], _isNew:true, _draft:true };
   job.estimates=job.estimates||[];
   job.estimates.push(est);
   // NOTE: not persisted yet — it only becomes real when the user presses Save.
@@ -4924,64 +5237,129 @@ function _jobInvoicePickPM(customerId, est, pmId){
 function _jdInvoiceMode(estId){
   var typeBg=document.getElementById('_jdInvTypeBg'); if(typeBg) typeBg.style.display='none';
   var ex=document.getElementById('_jdInvModeBg'); if(ex) ex.remove();
-  // resolve job + estimate summary for the remaining amount
   var c=CUSTOMERS.find(function(x){ return _findOriginalJob(x, estId); });
   var job=c?_findOriginalJob(c, estId):null;
   var s=job?_estSummary(job, estId):{estTotal:0,billed:0,remainingToBill:0};
   var remaining=s.remainingToBill, estTotal=s.estTotal;
+  var hasBilled=(Number(s.billed)||0)>0.5;
+  var fullyBilled=remaining<=0.5;
+
   var bg=document.createElement('div');
   bg.id='_jdInvModeBg';
-  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000070;display:flex;align-items:center;justify-content:center;padding:20px;';
-  var fullPreview=_invNumberFor(estId,false,1);
-  var partPreview=_invNumberFor(estId,true,1);
-  var fullyBilled=remaining<=0.5;
-  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:500px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
-    +'<div style="padding:20px 24px 4px;font-size:18px;font-weight:800;">Generate invoice · '+estId+'</div>'
-    +'<div style="padding:0 24px 12px;font-size:13px;color:var(--muted);">Estimate total <b>'+_moneyStr(estTotal)+'</b> · Billed <b>'+_moneyStr(s.billed)+'</b> · Remaining <b style="color:#B8922A;">'+_moneyStr(remaining)+'</b></div>'
-    +'<div style="padding:4px 24px 8px;">'
-    // Option 1: remaining (suggested) — only if there's a remainder
-    +(!fullyBilled?'<button onclick="_jdInvoiceCreate(\''+estId+'\',true,'+remaining+')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px;border:2px solid #16a34a;border-radius:12px;background:rgba(22,163,74,.04);cursor:pointer;margin-bottom:10px;">'
-        +'<div><div style="font-size:15px;font-weight:700;">Bill remaining balance <span style="font-size:11px;background:#16a34a;color:#fff;padding:1px 8px;border-radius:10px;margin-left:4px;">Suggested</span></div><div style="font-size:12px;color:var(--muted);">Invoices what\'s left to bill on this estimate.</div></div>'
-        +'<span style="font-size:15px;font-weight:800;color:#16a34a;">'+_moneyStr(remaining)+'</span>'
-      +'</button>':'')
-    // Option 2: full total
-    +'<button onclick="_jdInvoiceCreate(\''+estId+'\',false,'+estTotal+')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:14px;border:1.5px solid var(--border2);border-radius:12px;background:#fff;cursor:pointer;margin-bottom:10px;" onmouseover="this.style.borderColor=\'#16a34a\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
-        +'<div><div style="font-size:15px;font-weight:700;">Full amount (total)</div><div style="font-size:12px;color:var(--muted);">Bills the entire estimate in one invoice.</div></div>'
-        +'<span style="font-size:13px;font-weight:800;color:#16a34a;font-family:monospace;">'+fullPreview+'</span>'
-      +'</button>'
-    // Option 3: partial invoice → by amount OR by percentage of the estimate total
-    +'<div style="border:1.5px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:10px;">'
-      +'<div style="font-size:15px;font-weight:700;margin-bottom:2px;">Partial invoice ('+partPreview+', P2\u2026)</div>'
-      +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Creates an invoice for part of the estimate. The rest stays as <b>remaining to bill</b>.</div>'
-      // radio: amount vs percentage
-      +'<div style="display:flex;gap:16px;margin-bottom:10px;">'
-        +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdPartialMode" value="amount" checked onchange="_jdPartialModeSwitch()" style="accent-color:#B8922A;">By amount</label>'
-        +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdPartialMode" value="percent" onchange="_jdPartialModeSwitch()" style="accent-color:#B8922A;">By percentage</label>'
-      +'</div>'
-      // amount input
-      +'<div id="_jdAmtRow" style="display:flex;gap:8px;align-items:center;">'
-        +'<span style="font-size:12px;color:var(--muted);white-space:nowrap;">Invoice amount:</span>'
-        +'<input id="_jdCustomAmt" type="text" placeholder="0.00" style="flex:1;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;box-sizing:border-box;">'
-        +'<button onclick="_jdInvoiceCustom(\''+estId+'\')" style="padding:10px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">Create</button>'
-      +'</div>'
-      // percent input (hidden by default)
-      +'<div id="_jdPctRow" style="display:none;gap:8px;align-items:center;">'
-        +'<span style="font-size:12px;color:var(--muted);white-space:nowrap;">Percentage:</span>'
-        +'<input id="_jdCustomPct" type="text" placeholder="0" oninput="_jdPctPreview('+estTotal+')" style="width:70px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:15px;box-sizing:border-box;text-align:right;">'
-        +'<span style="font-size:15px;font-weight:700;">%</span>'
-        +'<span id="_jdPctAmt" style="flex:1;font-size:13px;color:var(--muted);white-space:nowrap;">= $0</span>'
-        +'<button onclick="_jdInvoicePercent(\''+estId+'\','+estTotal+')" style="padding:10px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">Create</button>'
-      +'</div>'
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000070;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow:auto;';
+
+  bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:560px;width:100%;margin:auto;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;display:flex;flex-direction:column;max-height:88vh;overflow:hidden;">'
+    // header
+    +'<div style="padding:20px 24px 6px;flex-shrink:0;">'
+      +'<div style="font-size:18px;font-weight:800;">Generate Invoice · '+estId+'</div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">Estimate total <b>'+_moneyStr(estTotal)+'</b> · Billed <b>'+_moneyStr(s.billed)+'</b> · Remaining <b style="color:#B8922A;">'+_moneyStr(remaining)+'</b></div>'
+      +'<div style="font-size:13px;color:var(--muted);margin-top:8px;">Choose how you want to invoice this estimate:</div>'
     +'</div>'
-      +'</div>'
+    // scrollable options
+    +'<div style="padding:6px 24px 8px;flex:1;overflow-y:auto;overflow-x:hidden;">'
+
+      // OPTION 1 — entire estimate
+      +'<label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1.5px solid var(--border2);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="_jdModeSelect(\'full\')">'
+        +'<input type="radio" name="_jdInvOpt" value="full" style="margin-top:2px;accent-color:#B8922A;width:16px;height:16px;flex-shrink:0;">'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:14px;font-weight:600;color:var(--text);">Create invoice for the entire estimate (100%).</div>'
+          +'<div id="_jdFullBody" style="display:none;margin-top:10px;">'
+            +'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">'
+              +'<span style="font-size:13px;color:var(--muted);">Invoice amount: <b style="color:var(--text);">'+_moneyStr(estTotal)+'</b></span>'
+              +'<button onclick="event.stopPropagation();_jdInvoiceCreate(\''+estId+'\',false,'+estTotal+')" style="padding:9px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create</button>'
+            +'</div>'
+          +'</div>'
+        +'</div>'
+      +'</label>'
+
+      // OPTION 1b — remaining balance (only when part was already billed)
+      +(hasBilled && !fullyBilled
+        ? '<label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1.5px solid var(--border2);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="_jdModeSelect(\'remaining\')">'
+          +'<input type="radio" name="_jdInvOpt" value="remaining" style="margin-top:2px;accent-color:#B8922A;width:16px;height:16px;flex-shrink:0;">'
+          +'<div style="flex:1;">'
+            +'<div style="font-size:14px;font-weight:600;color:var(--text);">Create invoice for the remaining balance.</div>'
+            +'<div id="_jdRemBody" style="display:none;margin-top:10px;">'
+              +'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">'
+                +'<span style="font-size:13px;color:var(--muted);">Invoice amount: <b style="color:var(--text);">'+_moneyStr(remaining)+'</b></span>'
+                +'<button onclick="event.stopPropagation();_jdInvoiceCreate(\''+estId+'\',true,'+remaining+')" style="padding:9px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create</button>'
+              +'</div>'
+            +'</div>'
+          +'</div>'
+        +'</label>'
+        : '')
+
+      // OPTION 2 — part of the estimate (by amount OR by percentage)
+      +'<label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1.5px solid var(--border2);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="_jdModeSelect(\'part\')">'
+        +'<input type="radio" name="_jdInvOpt" value="part" style="margin-top:2px;accent-color:#B8922A;width:16px;height:16px;flex-shrink:0;">'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:14px;font-weight:600;color:var(--text);">Create invoice for part of the estimate.</div>'
+          +'<div id="_jdPartBody" style="display:none;margin-top:10px;">'
+            +'<div style="display:flex;gap:16px;margin-bottom:10px;">'
+              +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><input type="radio" name="_jdPartMode" value="amount" checked onclick="event.stopPropagation();" onchange="_jdPartModeSwitch()" style="accent-color:#B8922A;">By amount</label>'
+              +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;" onclick="event.stopPropagation();"><input type="radio" name="_jdPartMode" value="percent" onclick="event.stopPropagation();" onchange="_jdPartModeSwitch()" style="accent-color:#B8922A;">By percentage</label>'
+            +'</div>'
+            // amount row
+            +'<div id="_jdPartAmtRow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
+              +'<span style="font-size:12px;color:var(--muted);">Invoice amount:</span>'
+              +'<input id="_jdCustomAmt" type="text" placeholder="0.00" onclick="event.stopPropagation();" oninput="_jdClampMax(this,'+(remaining>0?remaining:estTotal)+',false)" style="flex:1;min-width:110px;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;">'
+              +'<button onclick="event.stopPropagation();_jdInvoiceCustom(\''+estId+'\')" style="padding:9px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create</button>'
+            +'</div>'
+            // percent row
+            +'<div id="_jdPartPctRow" style="display:none;gap:8px;align-items:center;flex-wrap:wrap;">'
+              +'<span style="font-size:12px;color:var(--muted);">% of estimate:</span>'
+              +'<input id="_jdCustomPct" type="text" placeholder="0" onclick="event.stopPropagation();" oninput="_jdClampMax(this,100,true);_jdPctPreview('+estTotal+')" style="width:76px;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;text-align:right;">'
+              +'<span style="font-size:14px;font-weight:700;">%</span>'
+              +'<span id="_jdPctAmt" style="flex:1;font-size:13px;color:var(--muted);white-space:nowrap;">= $0.00</span>'
+              +'<button onclick="event.stopPropagation();_jdInvoicePercent(\''+estId+'\','+estTotal+')" style="padding:9px 18px;border:none;border-radius:8px;background:#B8922A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Create</button>'
+            +'</div>'
+          +'</div>'
+        +'</div>'
+      +'</label>'
+
+      // OPTION 3 — selected items / per-item percentages
+      +'<label style="display:flex;align-items:flex-start;gap:10px;padding:12px;border:1.5px solid var(--border2);border-radius:10px;margin-bottom:8px;cursor:pointer;" onclick="_jdModeSelect(\'items\')">'
+        +'<input type="radio" name="_jdInvOpt" value="items" style="margin-top:2px;accent-color:#B8922A;width:16px;height:16px;flex-shrink:0;">'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:14px;font-weight:600;color:var(--text);">Create invoice for selected items or for different percentages of each item.</div>'
+          +'<div id="_jdItemsBody" style="display:none;margin-top:10px;">'+_jdItemPickerBlock(estId)+'</div>'
+        +'</div>'
+      +'</label>'
+
+
     +'</div>'
-    // Option 4: select items from the estimate
-    +_jdItemPickerBlock(estId)
+    // footer
+    +'<div style="padding:12px 24px 16px;display:flex;justify-content:flex-end;border-top:1px solid var(--border);background:#fafafa;flex-shrink:0;">'
+      +'<button onclick="document.getElementById(\'_jdInvModeBg\').remove();var t=document.getElementById(\'_jdInvTypeBg\');if(t)t.style.display=\'flex\';" style="padding:9px 20px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Back</button>'
     +'</div>'
-    +'<div style="padding:10px 24px 18px;display:flex;justify-content:flex-end;"><button onclick="document.getElementById(\'_jdInvModeBg\').remove();var t=document.getElementById(\'_jdInvTypeBg\');if(t)t.style.display=\'flex\';" style="padding:9px 20px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Back</button></div>'
   +'</div>';
   document.body.appendChild(bg);
   bg.onclick=function(e){ if(e.target===bg){ bg.remove(); var t=document.getElementById('_jdInvTypeBg'); if(t) t.style.display='flex'; } };
+}
+
+// Switch the "part of the estimate" input between amount and percentage
+function _jdPartModeSwitch(){
+  var mode=(document.querySelector('input[name="_jdPartMode"]:checked')||{}).value||'amount';
+  var a=document.getElementById('_jdPartAmtRow');
+  var p=document.getElementById('_jdPartPctRow');
+  if(a) a.style.display=(mode==='amount')?'flex':'none';
+  if(p) p.style.display=(mode==='percent')?'flex':'none';
+}
+// Show only the body of the selected option; nothing is selected by default
+function _jdModeSelect(which){
+  var map={full:'_jdFullBody', remaining:'_jdRemBody', part:'_jdPartBody', items:'_jdItemsBody'};
+  Object.keys(map).forEach(function(k){
+    var el=document.getElementById(map[k]);
+    if(el) el.style.display=(k===which)?'block':'none';
+  });
+  // check the matching radio
+  var radios=document.querySelectorAll('input[name="_jdInvOpt"]');
+  for(var i=0;i<radios.length;i++){ radios[i].checked=(radios[i].value===which); }
+  // highlight the selected card
+  for(var j=0;j<radios.length;j++){
+    var card=radios[j].closest('label');
+    if(card) card.style.border=(radios[j].value===which)?'1.5px solid #B8922A':'1.5px solid var(--border2)';
+    if(card) card.style.background=(radios[j].value===which)?'#FDFBF6':'transparent';
+  }
 }
 function _jdInvoiceCustom(estId){
   var amt=_money(document.getElementById('_jdCustomAmt').value);
@@ -5031,49 +5409,201 @@ function _jdItemPickerBlock(estId){
     return '<div style="border:1.5px dashed var(--border2);border-radius:12px;padding:14px;color:var(--muted2);font-size:13px;font-style:italic;">Add a priced scope to the estimate to bill by item.</div>';
   }
   var rows=lines.map(function(l,i){
-    return '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--border);margin-bottom:6px;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'transparent\'">'
-      +'<input type="checkbox" class="_jdItemChk" data-amt="'+(Number(l.amount)||0)+'" data-idx="'+i+'" data-desc="'+esc_(l.desc).replace(/"/g,'&quot;')+'" onchange="_jdItemToggle()" style="width:17px;height:17px;accent-color:#16a34a;flex-shrink:0;">'
-      +'<span style="flex:1;font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc_(l.desc)+'</span>'
-      +'<span style="font-size:13px;font-weight:700;color:#16a34a;white-space:nowrap;">'+_moneyStr(l.amount)+'</span>'
-    +'</label>';
+    var amt=Number(l.amount)||0;
+    return '<div class="_jdItemRow" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;flex-wrap:wrap;">'
+      +'<input type="checkbox" class="_jdItemChk" data-full="'+amt+'" data-idx="'+i+'" data-desc="'+esc_(l.desc).replace(/"/g,'&quot;')+'" onclick="event.stopPropagation();" onchange="_jdItemToggle()" style="width:17px;height:17px;accent-color:#16a34a;flex-shrink:0;cursor:pointer;">'
+      +'<span style="flex:1;min-width:120px;font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc_(l.desc)+'</span>'
+      +'<span style="font-size:12px;color:var(--muted);white-space:nowrap;">of '+_moneyStr(amt)+'</span>'
+      // per-item value: amount or percent (mode chosen by the radio above)
+      +'<input type="text" class="_jdItemVal" data-idx="'+i+'" data-full="'+amt+'" value="" placeholder="'+amt.toFixed(2)+'" onclick="event.stopPropagation();" oninput="_jdItemClamp(this);_jdItemToggle()" style="width:92px;padding:7px 9px;border:1.5px solid var(--border2);border-radius:7px;font-family:inherit;font-size:13px;box-sizing:border-box;text-align:right;background:#fff;" disabled>'
+      +'<span class="_jdItemSuffix" style="font-size:12px;color:var(--muted);width:14px;"></span>'
+      +'<span class="_jdItemCalc" data-idx="'+i+'" style="font-size:12px;font-weight:700;color:#16a34a;white-space:nowrap;min-width:76px;text-align:right;">$0.00</span>'
+    +'</div>';
   }).join('');
-  return '<div style="border:1.5px solid var(--border2);border-radius:12px;padding:14px;margin-bottom:6px;">'
-    +'<div style="font-size:15px;font-weight:700;margin-bottom:2px;">Select items to bill</div>'
-    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Pick specific line items from the estimate to invoice.</div>'
+  return '<div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Leave a value empty to bill that item in full, or enter an amount / percentage to bill it partially.</div>'
+    +'<div style="display:flex;gap:16px;margin-bottom:10px;">'
+      +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdItemMode" value="amount" checked onclick="event.stopPropagation();" onchange="_jdItemModeSwitch()" style="accent-color:#B8922A;">By amount</label>'
+      +'<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;"><input type="radio" name="_jdItemMode" value="percent" onclick="event.stopPropagation();" onchange="_jdItemModeSwitch()" style="accent-color:#B8922A;">By percentage</label>'
+    +'</div>'
     +rows
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">'
-      +'<span style="font-size:13px;color:var(--muted);">Selected total: <b id="_jdItemsTotal" style="color:#16a34a;">$0</b></span>'
-      +'<button id="_jdItemsBtn" onclick="_jdInvoiceFromItems(\''+estId+'\')" disabled style="padding:10px 18px;border:none;border-radius:8px;background:#ccc;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:not-allowed;white-space:nowrap;">Create</button>'
+      +'<span style="font-size:13px;color:var(--muted);">Invoice total: <b id="_jdItemsTotal" style="color:#16a34a;">$0.00</b></span>'
+      +'<button id="_jdItemsBtn" onclick="event.stopPropagation();_jdInvoiceFromItems(\''+estId+'\')" disabled style="padding:10px 18px;border:none;border-radius:8px;background:#ccc;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:not-allowed;white-space:nowrap;">Create</button>'
     +'</div>'
   +'</div>';
 }
-function esc_(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function _jdItemToggle(){
+
+// Switch per-item inputs between amount and percentage
+function _jdItemModeSwitch(){
+  var mode=(document.querySelector('input[name="_jdItemMode"]:checked')||{}).value||'amount';
   var chks=document.querySelectorAll('._jdItemChk');
-  var total=0, any=false;
-  chks.forEach(function(ch){ if(ch.checked){ total+=parseFloat(ch.getAttribute('data-amt'))||0; any=true; } });
+  var vals=document.querySelectorAll('._jdItemVal');
+  var sufs=document.querySelectorAll('._jdItemSuffix');
+  for(var i=0;i<vals.length;i++){
+    vals[i].value='';
+    var full=Number(chks[i].getAttribute('data-full'))||0;
+    vals[i].placeholder=(mode==='percent')?'100':full.toFixed(2);
+    if(sufs[i]) sufs[i].textContent=(mode==='percent')?'%':'';
+  }
+  _jdItemToggle();
+}
+
+// Recalculate each selected item's billable amount and the invoice total
+// Generic clamp: prevent typing a value above the given maximum
+function _jdClampMax(el, max, isPct){
+  var clean=String(el.value||'').replace(/[^0-9.]/g,'');
+  var parts=clean.split('.');
+  if(parts.length>2) clean=parts[0]+'.'+parts.slice(1).join('');
+  if(clean===''){ el.value=''; return; }
+  var n=parseFloat(clean);
+  if(isNaN(n)){ el.value=''; return; }
+  if(n>max){
+    el.value='';
+    el.style.borderColor='#D94F4F';
+    el.style.background='#FFF5F5';
+    var msg=isPct
+      ? 'Maximum is 100%. Please enter a lower percentage.'
+      : 'That amount is higher than what\'s available ('+_moneyStr(max)+'). Please enter a lower amount.';
+    _jdShowClampWarning(el, msg);
+    setTimeout(function(){ el.style.borderColor='var(--border2)'; el.style.background='#fff'; }, 1500);
+  } else {
+    el.value=clean;
+  }
+}
+// Prevent typing a value above the item's own amount (or above 100%)
+function _jdItemClamp(el){
+  var mode=(document.querySelector('input[name="_jdItemMode"]:checked')||{}).value||'amount';
+  var full=Number(el.getAttribute('data-full'))||0;
+  var raw=String(el.value||'');
+  // keep only digits and a single dot
+  var clean=raw.replace(/[^0-9.]/g,'');
+  var parts=clean.split('.');
+  if(parts.length>2) clean=parts[0]+'.'+parts.slice(1).join('');
+  if(clean==='' ){ el.value=''; return; }
+  var n=parseFloat(clean);
+  if(isNaN(n)){ el.value=''; return; }
+  var max=(mode==='percent')?100:full;
+  if(n>max){
+    // Clear the field and tell the user why
+    el.value='';
+    el.style.borderColor='#D94F4F';
+    el.style.background='#FFF5F5';
+    var msg=(mode==='percent')
+      ? 'Maximum is 100%. Please enter a lower percentage.'
+      : 'That amount is higher than this item ('+_moneyStr(full)+'). Please enter a lower amount.';
+    _jdShowClampWarning(el, msg);
+    setTimeout(function(){ el.style.borderColor='var(--border2)'; el.style.background='#fff'; }, 1500);
+  } else {
+    el.value=clean;
+  }
+}
+// Small floating warning shown next to the field that exceeded its maximum
+function _jdShowClampWarning(el, msg){
+  var ex=document.getElementById('_jdClampWarn'); if(ex) ex.remove();
+  var r=el.getBoundingClientRect();
+  var w=document.createElement('div');
+  w.id='_jdClampWarn';
+  w.style.cssText='position:fixed;z-index:1000090;background:#D94F4F;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:600;padding:8px 12px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:280px;line-height:1.35;';
+  w.textContent=msg;
+  document.body.appendChild(w);
+  // position above the field (or below if not enough room)
+  var top=r.top-w.offsetHeight-8;
+  if(top<8) top=r.bottom+8;
+  var left=r.left+r.width/2-w.offsetWidth/2;
+  if(left<8) left=8;
+  if(left+w.offsetWidth>window.innerWidth-8) left=window.innerWidth-w.offsetWidth-8;
+  w.style.top=top+'px';
+  w.style.left=left+'px';
+  setTimeout(function(){ var e=document.getElementById('_jdClampWarn'); if(e) e.remove(); }, 2600);
+}
+function _jdItemToggle(){
+  var mode=(document.querySelector('input[name="_jdItemMode"]:checked')||{}).value||'amount';
+  var chks=document.querySelectorAll('._jdItemChk');
+  var vals=document.querySelectorAll('._jdItemVal');
+  var calcs=document.querySelectorAll('._jdItemCalc');
+  var total=0, anyChecked=false;
+  for(var i=0;i<chks.length;i++){
+    var on=chks[i].checked;
+    var full=Number(chks[i].getAttribute('data-full'))||0;
+    if(vals[i]){
+      vals[i].disabled=!on;
+      vals[i].style.background='#fff';
+    }
+    var amt=0;
+    if(on){
+      anyChecked=true;
+      var raw=String(vals[i]?vals[i].value:'').trim();
+      if(!raw){ amt=full; } // empty = bill the item in full
+      else if(mode==='percent'){
+        var pct=parseFloat(raw.replace(/[^0-9.]/g,''))||0;
+        if(pct<0)pct=0; if(pct>100)pct=100;
+        amt=Math.round(full*(pct/100)*100)/100;
+      } else {
+        amt=parseFloat(raw.replace(/[$,]/g,''))||0;
+        if(amt<0)amt=0; if(amt>full)amt=full; // never bill more than the item
+      }
+    }
+    if(calcs[i]) calcs[i].textContent=_moneyStr(amt);
+    total+=amt;
+  }
+  total=Math.round(total*100)/100;
   var tEl=document.getElementById('_jdItemsTotal'); if(tEl) tEl.textContent=_moneyStr(total);
   var btn=document.getElementById('_jdItemsBtn');
   if(btn){
-    btn.disabled=!any;
-    btn.style.background=any?'#16a34a':'#ccc';
-    btn.style.cursor=any?'pointer':'not-allowed';
+    var ok=anyChecked && total>0.005;
+    btn.disabled=!ok;
+    btn.style.background=ok?'#16a34a':'#ccc';
+    btn.style.cursor=ok?'pointer':'not-allowed';
   }
 }
+function esc_(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 function _jdInvoiceFromItems(estId){
-  var chks=document.querySelectorAll('._jdItemChk');
   var f=_findDoc(estId); if(!f) return;
+  var mode=(document.querySelector('input[name="_jdItemMode"]:checked')||{}).value||'amount';
+  var chks=document.querySelectorAll('._jdItemChk');
+  var vals=document.querySelectorAll('._jdItemVal');
+  // Source lines from the estimate (same fallback used by the picker)
+  var srcLines=_ensureLines(f).filter(function(l){ return String(l.desc||'').trim() && (Number(l.amount)||0)>0; });
+  if(!srcLines.length){
+    var d=f.doc, tot=_money(d.amount);
+    if(tot>0){ srcLines=[{desc:(d.scope||d.description||d.projectName||'Scope of work'), qty:1, unit:'', unitPrice:tot, amount:tot}]; }
+  }
   var picked=[], total=0;
-  chks.forEach(function(ch){
-    if(ch.checked){
-      var amt=parseFloat(ch.getAttribute('data-amt'))||0;
-      var desc=ch.getAttribute('data-desc')||'Item';
-      picked.push({desc:desc, qty:1, unit:'', unitPrice:amt, amount:amt});
-      total+=amt;
+  for(var i=0;i<chks.length;i++){
+    if(!chks[i].checked) continue;
+    var idx=parseInt(chks[i].getAttribute('data-idx'),10);
+    var full=Number(chks[i].getAttribute('data-full'))||0;
+    var src=srcLines[idx]||{desc:(chks[i].getAttribute('data-desc')||'Item'), qty:1, unit:'', unitPrice:full};
+    var raw=String(vals[i]?vals[i].value:'').trim();
+    var amt;
+    if(!raw){ amt=full; }
+    else if(mode==='percent'){
+      var pct=parseFloat(raw.replace(/[^0-9.]/g,''))||0;
+      if(pct<0)pct=0; if(pct>100)pct=100;
+      amt=Math.round(full*(pct/100)*100)/100;
+    } else {
+      amt=parseFloat(raw.replace(/[$,]/g,''))||0;
+      if(amt<0)amt=0; if(amt>full)amt=full;
     }
-  });
+    if(amt<=0.005) continue;
+    // Keep the original description/unit. If billing partially, note the portion.
+    var isPartialItem=(amt < full-0.005);
+    var pctOfItem=full>0?Math.round((amt/full)*1000)/10:0;
+    var desc=String(src.desc||'Item');
+    if(isPartialItem){ desc=desc+' ('+pctOfItem+'% of '+_moneyStr(full)+')'; }
+    picked.push({
+      desc: desc,
+      qty: isPartialItem?1:(src.qty!=null?src.qty:1),
+      unit: isPartialItem?'':(src.unit||''),
+      unitPrice: isPartialItem?amt:(src.unitPrice!=null?src.unitPrice:amt),
+      amount: amt
+    });
+    total+=amt;
+  }
   if(!picked.length) return;
-  // determine if this covers the full estimate or is partial
+  total=Math.round(total*100)/100;
   var s=_estSummary(f.job, estId);
   var isPartial = total < (s.estTotal - 0.5);
   _jdInvoiceCreate(estId, isPartial, total, picked);
@@ -6256,7 +6786,7 @@ function toggleContact(id){
 }
 
 function goToEstimate(est){
-  window.location.href = '/sdd-estimates.html?est='+encodeURIComponent(est);
+  window.location.href = '/sdd-customers.html?est='+encodeURIComponent(est);
 }
 
 function navigateFromStat(type, customerId){
@@ -6290,7 +6820,7 @@ function navigateFromStat(type, customerId){
   const STAT_CONFIGS = {
     estimates:{ title:'Approved Estimates', color:'var(--info)', bg:'rgba(58,126,212,.1)',
       items: approvedEstItems,
-      navUrl:'/sdd-estimates.html', navLabel:'View in Estimates →', emptyMsg:'No approved estimates.' },
+      navUrl:'/sdd-customers.html', navLabel:'View →', emptyMsg:'No approved estimates.' },
     active:{ title:'Active Jobs', color:'var(--warning)', bg:'rgba(200,130,42,.1)',
       items: jobs.filter(j=>!_isJobArchived(j)).map(function(j){return {est:j.est,amount:j.amount,date:j.date,address:j.projectName||j.jobName||j.address,status:j.status};}),
       navUrl:'/index.html', navLabel:'View on Dashboard →', emptyMsg:'No active jobs.' },
@@ -7401,12 +7931,12 @@ document.addEventListener('DOMContentLoaded', function(){
   on('btnGoNewEst','click',()=>{
     closeTypeSel();
     if(window._createForJob && window._createForJob._custId!=null){ _jdGoCreate('estimate'); }
-    else { window.location.href='/sdd-estimates.html'; }
+    else { window.location.href='/sdd-customers.html'; }
   });
   on('btnGoChangOrder','click',()=>{
     closeTypeSel();
     if(window._createForJob && window._createForJob._custId!=null){ _jdGoCreate('changeorder'); }
-    else { window.location.href='/sdd-estimates.html'; }
+    else { window.location.href='/sdd-customers.html'; }
   });
   on('statPopupBg','click',function(e){if(e.target===this)closeStatPopup();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeTypeSel();closeStatPopup();}});
@@ -7661,7 +8191,30 @@ function exportSOVPdf(customerId){
       .sov-section{margin-bottom:16px;}
       .sov-section-title{font-size:10px;font-weight:700;text-transform:uppercase;color:#777;margin-bottom:6px;}
       @media print{body{margin:10px;}button{display:none;}}
-    </style>
+    
+/* ===== PAYMENT HISTORY & WAIVERS (ported from Invoices module) ===== */
+.pay-row{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--border);}
+.pay-row:last-child{border-bottom:none;}
+.pay-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pi-card{background:rgba(58,126,212,.1);color:#3A7ED4;}
+.pi-ach{background:rgba(58,158,106,.1);color:#3A9E6A;}
+.pi-check{background:rgba(200,130,42,.1);color:#C8822A;}
+.pay-info{flex:1;}
+.pay-method{font-size:13px;font-weight:600;}
+.pay-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.pay-amt{font-size:14px;font-weight:700;color:#3A9E6A;}
+.waiver-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:8px;margin-bottom:8px;}
+.waiver-row.conditional{background:rgba(200,130,42,.08);border:1px solid rgba(200,130,42,.2);}
+.waiver-row.unconditional{background:rgba(58,158,106,.08);border:1px solid rgba(58,158,106,.2);}
+.waiver-row.pending{background:#F7F6F3;border:1px solid var(--border2);}
+.waiver-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.wi-cond{background:rgba(200,130,42,.15);color:#C8822A;}
+.wi-uncond{background:rgba(58,158,106,.15);color:#3A9E6A;}
+.wi-pending{background:#EFEDE8;color:var(--muted);}
+.waiver-info{flex:1;}
+.waiver-title{font-size:13px;font-weight:600;}
+.waiver-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+</style>
   </head><body>
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
       <div>
@@ -8834,7 +9387,7 @@ function ajCommitJob(skipLater){
   // If we came from the estimate form, go straight back with this job selected
   if(window._returnToEstimatesFor){
     window._returnToEstimatesFor=null;
-    window.location.href='/sdd-estimates.html?newFor='+encodeURIComponent(newJob.jobName||'')+'&customer='+encodeURIComponent(cust.name)+'&addr='+encodeURIComponent(newJob.address||'');
+    window.location.href='/sdd-customers.html?newFor='+encodeURIComponent(newJob.jobName||'')+'&customer='+encodeURIComponent(cust.name)+'&addr='+encodeURIComponent(newJob.address||'');
     return;
   }
   // Ask whether to create an estimate for this brand-new job
@@ -8861,13 +9414,13 @@ function goCreateEstimate(jobName, customer, addr){
   document.getElementById('_estAskBg') && document.getElementById('_estAskBg').remove();
   var cn=decodeURIComponent(customer||''), jn=decodeURIComponent(jobName||''), ad=decodeURIComponent(addr||'');
   var c=CUSTOMERS.find(function(x){return x.name===cn;});
-  if(!c){ window.location.href='/sdd-estimates.html'; return; }
+  if(!c){ window.location.href='/sdd-customers.html'; return; }
   // find the just-created job by name/address
   var job=null;
   (c.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(jb){
     if((jb.jobName===jn || jb.address===ad || jb.streetOnly===ad) && !job) job=jb;
   });});
-  if(!job){ window.location.href='/sdd-estimates.html'; return; }
+  if(!job){ window.location.href='/sdd-customers.html'; return; }
   _createEstimateLocal(c, job);
 }
 function saveNewJob(){
@@ -8906,6 +9459,522 @@ if(window.SDD){
   document.addEventListener('visibilitychange', function(){ if(document.hidden) window.SDD.save(); });
   setInterval(function(){ window.SDD.save(); }, 5000);
 }
+
+
+
+// ══════════ TIMELINE / ACTIVITY HISTORY (ported from Estimates) ══════════
+// Every document (estimate / CO / invoice) keeps a list of events.
+function _ensureTimeline(f){
+  if(!f || !f.doc) return [];
+  if(!Array.isArray(f.doc.timeline)) f.doc.timeline=[];
+  return f.doc.timeline;
+}
+function _addTimeline(ref, action, by, color){
+  var f=_findDoc(ref); if(!f) return;
+  var tl=_ensureTimeline(f);
+  tl.push({
+    action: action,
+    by: by || 'Leontina',
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    color: color || '#B8922A'
+  });
+  if(window.SDD && SDD.save) SDD.save();
+}
+// Activity section shown inside the document sheet
+function _timelineSectionHTML(f){
+  if(!f) return '';
+  var tl=_ensureTimeline(f);
+  if(!tl.length) return '';
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var rows=tl.slice().reverse().map(function(t,i){
+    return '<div style="display:flex;gap:12px;padding:9px 0;'+(i<tl.length-1?'border-bottom:1px solid var(--border);':'')+'">'
+      +'<div style="width:8px;height:8px;border-radius:50%;background:'+(t.color||'#B8922A')+';flex-shrink:0;margin-top:6px;"></div>'
+      +'<div style="flex:1;">'
+        +'<div style="font-size:13px;font-weight:500;color:var(--text);">'+esc(t.action)+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+esc(t.by||'')+' · '+esc(t.date||'')+'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+  return '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Activity</div>'
+    +rows
+  +'</div>';
+}
+
+
+// ══════════ REJECT / REOPEN ESTIMATE (ported from Estimates) ══════════
+function docReject(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var ex=document.getElementById('_rejBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_rejBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000080;display:flex;align-items:center;justify-content:center;padding:20px;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:18px 22px 4px;font-size:17px;font-weight:800;">Mark '+ref+' as rejected</div>'
+    +'<div style="padding:0 22px 14px;font-size:13px;color:var(--muted);">Record why the client rejected this '+_docKindName(f.kind).toLowerCase()+'.</div>'
+    +'<div style="padding:0 22px 16px;">'
+      +'<label style="font-size:12px;font-weight:700;color:var(--muted);">Reason</label>'
+      +'<select id="_rejReason" style="width:100%;margin-top:5px;margin-bottom:12px;padding:9px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;background:#fff;">'
+        +'<option>Price too high</option>'
+        +'<option>Went with another contractor</option>'
+        +'<option>Project postponed</option>'
+        +'<option>Project cancelled</option>'
+        +'<option>Scope changed</option>'
+        +'<option>No reason specified</option>'
+      +'</select>'
+      +'<label style="font-size:12px;font-weight:700;color:var(--muted);">Notes (optional)</label>'
+      +'<textarea id="_rejNotes" rows="3" placeholder="Any details worth remembering…" style="width:100%;margin-top:5px;padding:9px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;resize:vertical;"></textarea>'
+    +'</div>'
+    +'<div style="padding:12px 22px 18px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);background:#fafafa;">'
+      +'<button onclick="document.getElementById(\'_rejBg\').remove()" style="padding:9px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_docRejectSave(\''+ref+'\')" style="padding:9px 18px;border:none;border-radius:8px;background:#D94F4F;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Mark as Rejected</button>'
+    +'</div>'
+  +'</div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _docRejectSave(ref){
+  var f=_findDoc(ref); if(!f) return;
+  var reason=(document.getElementById('_rejReason')||{}).value||'No reason specified';
+  var notes=(document.getElementById('_rejNotes')||{}).value||'';
+  f.doc.status='Rejected';
+  f.doc.rejectionReason=reason;
+  f.doc.rejectionNotes=notes;
+  _addTimeline(ref, 'Client rejected — Reason: '+reason, (f.cust&&f.cust.name)||'Client', '#D94F4F');
+  if(window.SDD && SDD.save) SDD.save();
+  var bg=document.getElementById('_rejBg'); if(bg) bg.remove();
+  _flashDoc('✓ '+ref+' marked as rejected');
+  renderList();
+  _reopenDoc(ref);
+}
+function docReopen(ref){
+  var f=_findDoc(ref); if(!f) return;
+  _confirmDoc('Reopen '+ref+' for revision?', function(){
+    var ff=_findDoc(ref); if(!ff) return;
+    ff.doc.status='Draft';
+    delete ff.doc.rejectionReason;
+    delete ff.doc.rejectionNotes;
+    _addTimeline(ref, _docKindName(ff.kind)+' reopened for revision', 'Leontina', '#7C5CBF');
+    if(window.SDD && SDD.save) SDD.save();
+    _flashDoc('✓ '+ref+' reopened — edit and resend to the client');
+    renderList();
+    _reopenDoc(ref);
+  }, 'Yes, Reopen');
+}
+// ══════════ MARK JOB COMPLETED (ported from Estimates) ══════════
+function docMarkJobCompleted(ref){
+  var f=_findDoc(ref); if(!f || !f.job) return;
+  _confirmDoc('Mark this job as completed?', function(){
+    var ff=_findDoc(ref); if(!ff||!ff.job) return;
+    ff.job.status='Ready to bill';
+    ff.job.dateCompleted=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    ff.job.completedBy='Leontina';
+    _addTimeline(ref, 'Job marked as completed — ready to bill', 'Leontina', '#16a34a');
+    if(window.SDD && SDD.save) SDD.save();
+    _flashDoc('✓ Job marked as completed — ready to bill');
+    renderList();
+    _reopenDoc(ref);
+  }, 'Yes, Mark Completed', 'The job will move to "Ready to bill".');
+}
+
+
+// ══════════ SOV — SCHEDULE OF VALUES (ported from Estimates) ══════════
+// Summary of every transaction on this job: estimate + change orders + invoices.
+function _sovSectionHTML(f){
+  if(!f || !f.job) return '';
+  var job=f.job;
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var rows=[];
+  // Estimates (base contract)
+  (job.estimates||[]).forEach(function(e){
+    if(e._draft) return;
+    var tot=(e.lines||[]).reduce(function(s,l){return s+(Number(l.amount)||0);},0) || _money(e.amount);
+    rows.push({type:'Estimate', num:e.est||'', desc:e.projectName||job.jobName||'Base contract', amount:tot, status:e.status||''});
+  });
+  // Change orders
+  (job.changeOrders||[]).forEach(function(co){
+    if(co._draft) return;
+    var tot=(co.lines||[]).reduce(function(s,l){return s+(Number(l.amount)||0);},0) || _money(co.amount);
+    rows.push({type:'Change Order', num:co.num||co.est||'', desc:co.projectName||co.scope||'Change order', amount:tot, status:co.status||''});
+  });
+  // Invoices
+  (job.invoices||[]).forEach(function(iv){
+    if(iv._draft) return;
+    rows.push({type:'Invoice', num:iv.est||iv.num||'', desc:iv.projectName||'Invoice', amount:_money(iv.amount), status:iv.status||''});
+  });
+  if(!rows.length) return '';
+  var contractTotal=rows.filter(function(r){return r.type!=='Invoice';}).reduce(function(s,r){return s+(Number(r.amount)||0);},0);
+  var invoicedTotal=rows.filter(function(r){return r.type==='Invoice';}).reduce(function(s,r){return s+(Number(r.amount)||0);},0);
+  var remaining=Math.max(0, contractTotal-invoicedTotal);
+  var typeColor=function(ty){ return ty==='Estimate'?'#2563eb':(ty==='Change Order'?'#B8922A':'#16a34a'); };
+  var th='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px 6px;border-bottom:2px solid #E0E0E0;';
+  return '<div style="margin-top:22px;padding-top:18px;border-top:2px solid #B8922A;">'
+    +'<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1f2630;margin-bottom:10px;">Schedule of Values (SOV) — all transactions for this job</div>'
+    +'<table style="width:100%;border-collapse:collapse;">'
+      +'<thead><tr>'
+        +'<th style="'+th+'text-align:left;">Type</th>'
+        +'<th style="'+th+'text-align:left;">Reference</th>'
+        +'<th style="'+th+'text-align:left;">Description</th>'
+        +'<th style="'+th+'text-align:right;">Amount</th>'
+        +'<th style="'+th+'text-align:center;">Status</th>'
+      +'</tr></thead><tbody>'
+      +rows.map(function(r){
+        return '<tr>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;font-weight:700;color:'+typeColor(r.type)+';">'+esc(r.type)+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;font-family:monospace;color:#555;">'+esc(r.num)+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#333;">'+esc(r.desc)+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;text-align:right;font-weight:600;">'+money(r.amount)+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:11px;text-align:center;color:#777;">'+esc(r.status)+'</td>'
+        +'</tr>';
+      }).join('')
+      +'</tbody></table>'
+    +'<div style="margin-top:10px;display:flex;justify-content:space-between;padding:6px;font-size:13px;">'
+      +'<span style="color:#555;">Contract value (estimate + change orders)</span>'
+      +'<span style="font-weight:700;">'+money(contractTotal)+'</span>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;padding:6px;font-size:13px;">'
+      +'<span style="color:#555;">Invoiced to date</span>'
+      +'<span style="font-weight:700;color:#16a34a;">'+money(invoicedTotal)+'</span>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;padding:8px 6px;font-size:14px;border-top:1.5px solid #B8922A;margin-top:4px;">'
+      +'<span style="font-weight:700;">Remaining to bill</span>'
+      +'<span style="font-weight:800;color:#B8922A;">'+money(remaining)+'</span>'
+    +'</div>'
+  +'</div>';
+}
+
+// ══════════ VENDOR BILLS ON THIS JOB (ported from Estimates) ══════════
+// Shows supplier bills tied to this job so you can compare cost vs revenue.
+function _vendorBillsSectionHTML(f){
+  if(!f || !f.job) return '';
+  var job=f.job;
+  var bills=[];
+  // Vendor bills may live on the job, or in a global list keyed by job/estimate
+  if(Array.isArray(job.vendorBills)) bills=job.vendorBills;
+  else if(window.SDD && Array.isArray(SDD.vendorBills)){
+    var est=(f.doc&&(f.doc.est||f.doc.num))||'';
+    bills=SDD.vendorBills.filter(function(b){
+      return (b.job&&b.job===(job.jobName||job.projectName)) || (b.est&&b.est===est) || (b.siteId&&b.siteId===job.siteId);
+    });
+  }
+  if(!bills.length) return '';
+  var money=function(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var esc=function(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+  var total=bills.reduce(function(s,b){return s+_money(b.amount);},0);
+  // Revenue on this job (all non-draft invoices)
+  var revenue=(job.invoices||[]).filter(function(i){return !i._draft;}).reduce(function(s,i){return s+_money(i.amount);},0);
+  var margin=revenue-total;
+  var th='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777;padding:8px 6px;border-bottom:2px solid #E0E0E0;';
+  return '<div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--border);">'
+    +'<div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#1f2630;margin-bottom:10px;">Vendor bills on this job</div>'
+    +'<table style="width:100%;border-collapse:collapse;">'
+      +'<thead><tr>'
+        +'<th style="'+th+'text-align:left;">Vendor</th>'
+        +'<th style="'+th+'text-align:left;">Bill #</th>'
+        +'<th style="'+th+'text-align:left;">Date</th>'
+        +'<th style="'+th+'text-align:right;">Amount</th>'
+        +'<th style="'+th+'text-align:center;">Status</th>'
+      +'</tr></thead><tbody>'
+      +bills.map(function(b){
+        return '<tr>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;font-weight:600;color:#333;">'+esc(b.vendor||b.name||'')+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;font-family:monospace;color:#555;">'+esc(b.num||b.id||'')+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;color:#555;">'+esc(b.date||'')+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:12px;text-align:right;font-weight:600;color:#D94F4F;">'+money(_money(b.amount))+'</td>'
+          +'<td style="padding:8px 6px;border-bottom:1px solid #F0F0F0;font-size:11px;text-align:center;color:#777;">'+esc(b.status||'')+'</td>'
+        +'</tr>';
+      }).join('')
+      +'</tbody></table>'
+    +'<div style="margin-top:10px;display:flex;justify-content:space-between;padding:6px;font-size:13px;">'
+      +'<span style="color:#555;">Total job cost (vendor bills)</span>'
+      +'<span style="font-weight:700;color:#D94F4F;">'+money(total)+'</span>'
+    +'</div>'
+    +(revenue>0?'<div style="display:flex;justify-content:space-between;padding:6px;font-size:13px;">'
+      +'<span style="color:#555;">Revenue invoiced</span>'
+      +'<span style="font-weight:700;color:#16a34a;">'+money(revenue)+'</span>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;padding:8px 6px;font-size:14px;border-top:1.5px solid var(--border2);margin-top:4px;">'
+      +'<span style="font-weight:700;">Gross margin</span>'
+      +'<span style="font-weight:800;color:'+(margin>=0?'#16a34a':'#D94F4F')+';">'+money(margin)+'</span>'
+    +'</div>':'')
+  +'</div>';
+}
+
+/* ===== WAIVER SYSTEM (ported from Invoices) ===== */
+const SDD_COMPANY = { name:'San Diego Demolition, LLC', signerTitle:'Partner' };
+
+// Title of the person authorized to sign waivers — comes from the logged-in user (Company/Settings)
+function _waiverSignerTitle(){
+  try{
+    var u = (window.SDD && (SDD.currentUser || SDD.user)) || window.SDD_USER || null;
+    if(u){
+      var t = u.waiverTitle || u.signerTitle || u.title || u.role || u.position;
+      if(t) return String(t);
+    }
+    var co = (window.SDD && SDD.company) || window.SDD_COMPANY_SETTINGS || null;
+    if(co){
+      var ct = co.waiverSignerTitle || co.signerTitle;
+      if(ct) return String(ct);
+    }
+  }catch(e){}
+  return SDD_COMPANY.signerTitle;
+}
+
+// "Amount of Check" — outstanding balance (what the check is meant to cover)
+function _waiverCheckAmount(inv, type){
+  if(!inv) return '';
+  var bal = Number(inv.balance);
+  if(!isFinite(bal)) bal = 0;
+  // Unconditional is issued once payment cleared: the amount released is what was paid.
+  var n = (type==='unconditional' && bal<=0) ? Number(inv.paid||0) : bal;
+  if(!isFinite(n)) n = 0;
+  return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function getStoredSignature(){
+  try { return localStorage.getItem(SDD_SIG_KEY) || null; } catch(e){ return null; }
+}
+
+function setStoredSignature(dataUrl){
+  try { localStorage.setItem(SDD_SIG_KEY, dataUrl); } catch(e){}
+}
+
+function clearStoredSignature(){
+  try { localStorage.removeItem(SDD_SIG_KEY); } catch(e){}
+}
+
+function openSignaturePad(onSaved){
+  var ex = document.getElementById('_sigBg'); if(ex) ex.remove();
+  var bg = document.createElement('div');
+  bg.id = '_sigBg';
+  bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100001;display:flex;align-items:center;justify-content:center;padding:24px;';
+  bg.innerHTML =
+    '<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:\'Barlow\',sans-serif;overflow:hidden;">'
+    + '<div style="padding:18px 22px;border-bottom:1px solid var(--border);">'
+      + '<div style="font-size:18px;font-weight:700;">Sign here</div>'
+      + '<div style="font-size:12px;color:var(--muted);margin-top:4px;">Draw your signature with your mouse or finger. It will be saved and used on all waivers.</div>'
+    + '</div>'
+    + '<div style="padding:20px 22px;">'
+      + '<canvas id="_sigCanvas" width="460" height="170" style="border:1.5px dashed var(--border2);border-radius:10px;background:#fffdf5;width:100%;height:170px;touch-action:none;cursor:crosshair;display:block;"></canvas>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">'
+        + '<span style="font-size:11px;color:var(--muted2);">Sign above the line</span>'
+        + '<button onclick="sigPadClear()" style="padding:6px 12px;border:1px solid var(--border2);border-radius:7px;background:none;color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">Clear</button>'
+      + '</div>'
+    + '</div>'
+    + '<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;background:var(--surface2);">'
+      + '<button onclick="document.getElementById(\'_sigBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      + '<button onclick="sigPadSave()" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Signature</button>'
+    + '</div>'
+    + '</div>';
+  document.body.appendChild(bg);
+  _sigPadInit();
+  window._sigSavedCb = onSaved || null;
+}
+
+var _sigCtx=null, _sigDrawing=false, _sigHasInk=false;
+function _sigPadInit(){
+  var c = document.getElementById('_sigCanvas');
+  if(!c) return;
+  // Scale canvas for crisp lines
+  var rect = c.getBoundingClientRect();
+  c.width = rect.width; c.height = rect.height;
+  _sigCtx = c.getContext('2d');
+  _sigCtx.lineWidth = 2.4; _sigCtx.lineCap='round'; _sigCtx.lineJoin='round'; _sigCtx.strokeStyle='#1a3a6b';
+  _sigHasInk = false;
+  function pos(e){
+    var r=c.getBoundingClientRect();
+    var p=(e.touches&&e.touches[0])?e.touches[0]:e;
+    return {x:p.clientX-r.left, y:p.clientY-r.top};
+  }
+  function start(e){ e.preventDefault(); _sigDrawing=true; var pt=pos(e); _sigCtx.beginPath(); _sigCtx.moveTo(pt.x,pt.y); }
+  function move(e){ if(!_sigDrawing)return; e.preventDefault(); var pt=pos(e); _sigCtx.lineTo(pt.x,pt.y); _sigCtx.stroke(); _sigHasInk=true; }
+  function end(e){ _sigDrawing=false; }
+  c.onmousedown=start; c.onmousemove=move; c.onmouseup=end; c.onmouseleave=end;
+  c.ontouchstart=start; c.ontouchmove=move; c.ontouchend=end;
+}
+function sigPadClear(){
+  var c=document.getElementById('_sigCanvas');
+  if(c&&_sigCtx){ _sigCtx.clearRect(0,0,c.width,c.height); _sigHasInk=false; }
+}
+function sigPadSave(){
+  if(!_sigHasInk){ _flashDoc('Please draw your signature first'); return; }
+  var c=document.getElementById('_sigCanvas');
+  var dataUrl=c.toDataURL('image/png');
+  setStoredSignature(dataUrl);
+  var cb=window._sigSavedCb; window._sigSavedCb=null;
+  document.getElementById('_sigBg').remove();
+  _flashDoc('Signature saved');
+  if(typeof cb==='function') cb();
+}
+
+function changeSignatureFromWaiver(id, type){
+  openSignaturePad(function(){ openWaiverDoc(id, type, 'view'); });
+}
+
+
+// Adapter: build the invoice object the waiver functions expect, from a customers-module doc ref
+function _waiverInvFromRef(ref){
+  var f=_findDoc(ref); if(!f || f.kind!=='invoice') return null;
+  var d=f.doc;
+  var total=_money(d.amount);
+  var paid=(d.payments||[]).reduce(function(s,p){return s+_money(p.amount);},0);
+  // Persist waiverData on the document itself so it survives saves
+  d._waiverData = d._waiverData || {};
+  return {
+    id: ref,
+    _ref: ref,
+    _doc: d,
+    customer: (f.cust && f.cust.name) || '',
+    jobName: (f.job && (f.job.projectName || f.job.jobName)) || '',
+    address: _fullJobSite(f.job) || '',
+    total: total,
+    paid: paid,
+    balance: Math.max(0, total-paid),
+    invoiceDate: d.date || '',
+    waiverData: d._waiverData,
+    payments: d.payments || []
+  };
+}
+
+function openWaiverDoc(id, type, mode){
+  var inv = _waiverInvFromRef(id);
+  if(!inv) return;
+  // The waiver document ALWAYS opens, signed or not. Signature can be added from inside.
+  var sig = getStoredSignature();
+  inv.waiverData = inv.waiverData || {};
+  if(inv._doc){ inv._doc._waiverData = inv.waiverData; }
+  var wd = inv.waiverData[type] || {};
+  var data = {
+    claimant: wd.claimant!=null ? wd.claimant : SDD_COMPANY.name,
+    customer: wd.customer!=null ? wd.customer : (inv.customer||''),
+    jobLocation: wd.jobLocation!=null ? wd.jobLocation : (inv.jobName||inv.address||''),
+    owner: wd.owner!=null ? wd.owner : '',
+    maker: wd.maker!=null ? wd.maker : (inv.customer||''),
+    amount: wd.amount!=null ? wd.amount : _waiverCheckAmount(inv, type),
+    payableTo: wd.payableTo!=null ? wd.payableTo : SDD_COMPANY.name,
+    exceptions: wd.exceptions!=null ? wd.exceptions : '',
+    title: wd.title!=null ? wd.title : _waiverSignerTitle(),
+    sigDate: wd.sigDate!=null ? wd.sigDate : (inv.invoiceDate || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}))
+  };
+  var editable = (mode==='edit');
+  var isCond = (type==='conditional');
+  var ttl = isCond ? 'CONDITIONAL WAIVER AND RELEASE ON FINAL PAYMENT' : 'UNCONDITIONAL WAIVER AND RELEASE ON FINAL PAYMENT';
+  var notice = isCond
+    ? "NOTICE: THIS DOCUMENT WAIVES THE CLAIMANT'S LIEN, STOP PAYMENT NOTICE, AND PAYMENT BOND RIGHTS EFFECTIVE ON RECEIPT OF PAYMENT. A PERSON SHOULD NOT RELY ON THIS DOCUMENT UNLESS SATISFIED THAT THE CLAIMANT HAS RECEIVED PAYMENT."
+    : "NOTICE TO CLAIMANT: THIS DOCUMENT WAIVES AND RELEASES LIEN, STOP PAYMENT NOTICE, AND PAYMENT BOND RIGHTS UNCONDITIONALLY AND STATES THAT YOU HAVE BEEN PAID FOR GIVING UP THOSE RIGHTS. THIS DOCUMENT IS ENFORCEABLE AGAINST YOU IF YOU SIGN IT, EVEN IF YOU HAVE NOT BEEN PAID. IF YOU HAVE NOT BEEN PAID, USE A CONDITIONAL WAIVER AND RELEASE FORM.";
+  var relTitle = isCond ? 'Conditional Waiver and Release' : 'Unconditional Waiver and Release';
+  var relBody = isCond
+    ? "This document waives and releases lien, stop payment notice, and payment bond rights the claimant has for labor and service provided, and equipment and material delivered, to the customer on this job. Rights based upon labor or service provided, or equipment or material delivered, pursuant to a written change order that has been fully executed by the parties prior to the date that this document is signed by the claimant, are waived and released by this document, unless listed as an Exception below. This document is effective only on the claimant's receipt of payment from the financial institution on which the following check is drawn:"
+    : "This document waives and releases lien, stop payment notice, and payment bond rights the claimant has for all labor and service provided, and equipment and material delivered, to the customer on this job. Rights based upon labor or service provided, or equipment or material delivered, pursuant to a written change order that has been fully executed by the parties prior to the date that this document is signed by the claimant, are waived and released by this document, unless listed as an Exception below. The claimant has been paid in full.";
+
+  function fld(field, val, opts){
+    opts = opts || {};
+    var w = opts.width || '300px';
+    if(editable){
+      return '<input id="_wf_'+field+'" value="'+String(val).replace(/"/g,'&quot;')+'" style="border:none;border-bottom:1px solid #999;font-family:inherit;font-size:13px;font-weight:600;padding:1px 4px;width:'+w+';background:#fffbe9;">';
+    }
+    return '<span style="font-weight:600;">'+(val||'')+'</span>';
+  }
+  function blockFld(field, val){
+    if(editable){
+      return '<textarea id="_wf_'+field+'" rows="2" style="border:1px solid #999;font-family:inherit;font-size:13px;font-weight:600;padding:4px 6px;width:100%;box-sizing:border-box;background:#fffbe9;resize:vertical;">'+(val||'')+'</textarea>';
+    }
+    return '<span style="font-weight:600;white-space:pre-wrap;">'+(val||'')+'</span>';
+  }
+
+  var hr = '<div style="border-bottom:2px solid #000;margin:14px 0;"></div>';
+  var doc =
+    '<div id="_waiverDoc" style="background:#fff;padding:48px 56px;font-family:\'Barlow\',Arial,sans-serif;color:#1a1a1a;font-size:13px;line-height:1.5;max-width:760px;margin:0 auto;">'
+    + '<div style="text-align:center;font-size:17px;font-weight:700;letter-spacing:.3px;margin-bottom:18px;">'+ttl+'</div>'
+    + '<div style="text-align:center;font-size:13px;font-weight:700;line-height:1.55;margin-bottom:22px;">'+notice+'</div>'
+    + '<div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:2px;">Identifying Information</div>'
+    + hr
+    + '<div style="margin-bottom:10px;">Name of Claimant: &nbsp;'+fld('claimant',data.claimant,{width:'320px'})+'</div>'
+    + '<div style="margin-bottom:10px;">Name of Customer: &nbsp;'+fld('customer',data.customer,{width:'320px'})+'</div>'
+    + '<div style="margin-bottom:4px;">Job Location:</div>'
+    + '<div style="margin-bottom:10px;">'+fld('jobLocation',data.jobLocation,{width:'100%'})+'</div>'
+    + '<div style="margin-bottom:10px;">Owner: &nbsp;'+fld('owner',data.owner,{width:'320px'})+'</div>'
+    + hr
+    + '<div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:8px;">'+relTitle+'</div>'
+    + '<div style="margin-bottom:14px;text-align:justify;">'+relBody+'</div>'
+    + '<div style="margin-bottom:10px;">Maker of Check: &nbsp;'+fld('maker',data.maker,{width:'320px'})+'</div>'
+    + '<div style="margin-bottom:10px;">Amount of Check: &nbsp;'+fld('amount',data.amount,{width:'160px'})+'</div>'
+    + '<div style="margin-bottom:10px;">Check Payable To: &nbsp;'+fld('payableTo',data.payableTo,{width:'320px'})+'</div>'
+    + hr
+    + '<div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:8px;">Exceptions</div>'
+    + '<div style="margin-bottom:6px;">This document does not affect any of the following:</div>'
+    + '<div style="margin-bottom:10px;">Disputed claims for extras in the amount of: &nbsp;'+fld('exceptions',data.exceptions,{width:'260px'})+'</div>'
+    + hr
+    + '<div style="text-align:center;font-weight:700;font-size:14px;margin-bottom:14px;">Signature</div>'
+    + '<div style="display:flex;align-items:flex-end;gap:10px;margin-bottom:18px;">Claimant\'s Signature: &nbsp;'
+      + (sig
+          ? '<img src="'+sig+'" alt="signature" style="height:46px;margin-bottom:-6px;">'
+          : '<span style="display:inline-block;min-width:280px;border-bottom:1px solid #999;height:34px;"></span>'
+            + '<button class="_wSignBtn" onclick="changeSignatureFromWaiver(\''+id+'\',\''+type+'\')" style="padding:6px 12px;border:1px solid var(--gold);border-radius:6px;background:var(--gold);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:2px;">Sign</button>')
+      + '</div>'
+    + '<div style="margin-bottom:12px;">Claimant\'s Title: &nbsp;'+fld('title',data.title,{width:'200px'})+'</div>'
+    + '<div style="margin-bottom:4px;">Date of Signature: &nbsp;'+fld('sigDate',data.sigDate,{width:'200px'})+'</div>'
+    + '</div>';
+
+  var footer = editable
+    ? '<button onclick="document.getElementById(\'_waiverBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      + '<button onclick="saveWaiverDoc(\''+id+'\',\''+type+'\')" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Waiver</button>'
+    : '<button onclick="changeSignatureFromWaiver(\''+id+'\',\''+type+'\')" style="padding:10px 16px;border:1px solid '+(sig?'var(--border2)':'var(--gold)')+';border-radius:8px;background:'+(sig?'#fff':'var(--gold)')+';color:'+(sig?'var(--muted)':'#fff')+';font-family:inherit;font-size:14px;font-weight:'+(sig?'600':'700')+';cursor:pointer;">'+(sig?'Change Signature':'Add Signature')+'</button>'
+      + '<button onclick="openWaiverDoc(\''+id+'\',\''+type+'\',\'edit\')" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:#fff;color:var(--text);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Edit</button>'
+      + '<button onclick="printWaiverDoc()" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Download / Print PDF</button>';
+
+  var ex = document.getElementById('_waiverBg'); if(ex) ex.remove();
+  var bg = document.createElement('div');
+  bg.id = '_waiverBg';
+  bg.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100000;display:flex;flex-direction:column;align-items:center;padding:24px;overflow-y:auto;';
+  bg.onclick = function(ev){ if(ev.target===bg) bg.remove(); };
+  bg.innerHTML =
+    '<div style="background:#fff;border-radius:12px;max-width:820px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;margin:auto;">'
+    + '<div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2);">'
+      + '<div style="font-family:\'Barlow\',sans-serif;font-size:15px;font-weight:700;">'+(editable?'Edit waiver':'Waiver — PDF preview')+'</div>'
+      + '<button onclick="document.getElementById(\'_waiverBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    + '</div>'
+    + '<div style="max-height:64vh;overflow-y:auto;background:#f3f3f0;padding:18px;">'+doc+'</div>'
+    + '<div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;background:var(--surface2);">'+footer+'</div>'
+    + '</div>';
+  document.body.appendChild(bg);
+}
+
+function saveWaiverDoc(id, type){
+  var inv = _waiverInvFromRef(id);
+  if(!inv) return;
+  inv.waiverData = inv.waiverData || {};
+  if(inv._doc){ inv._doc._waiverData = inv.waiverData; }
+  function gv(f){ var el=document.getElementById('_wf_'+f); return el?el.value:''; }
+  inv.waiverData[type] = {
+    claimant: gv('claimant'), customer: gv('customer'), jobLocation: gv('jobLocation'),
+    owner: gv('owner'), maker: gv('maker'), amount: gv('amount'), payableTo: gv('payableTo'),
+    exceptions: gv('exceptions'), title: gv('title'), sigDate: gv('sigDate')
+  };
+  if(window.SDD) window.SDD.save();
+  _flashDoc('Waiver saved');
+  openWaiverDoc(id, type, 'view');
+}
+
+function printWaiverDoc(){
+  var node = document.getElementById('_waiverDoc');
+  if(!node) return;
+  var css = '@page{size:letter;margin:14mm;}'
+    + 'body{margin:0;font-family:Barlow,Arial,sans-serif;color:#1f2630;background:#fff;}'
+    + '#_waiverDoc{background:#fff!important;box-shadow:none!important;margin:0 auto!important;max-width:none!important;}'
+    + 'input,textarea{border:none!important;border-bottom:1px solid #999!important;background:transparent!important;font-family:inherit;font-size:13px;font-weight:600;}'
+    + 'textarea{border:1px solid #999!important;}';
+  var w = window.open('', '_blank');
+  if(!w){ _flashDoc && _flashDoc('Allow pop-ups to print the waiver'); return; }
+  w.document.write('<html><head><title>Waiver and Release</title>'
+    + '<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">'
+    + '<style>'+css+'</style></head><body>'+node.outerHTML+'</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 500);
+}
+
 </script>
 
 <!-- ══ MOBILE NAV ══ -->
@@ -8917,10 +9986,6 @@ if(window.SDD){
   <a href="/sdd-customers.html" class="active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
     Customers
-  </a>
-  <a href="/sdd-estimates.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Estimates
   </a>
   <a href="/sdd-invoices.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>

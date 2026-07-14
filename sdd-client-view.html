@@ -59,16 +59,15 @@
   .sighint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:14px;pointer-events:none;}
   @media print{
     @page{size:A4;margin:0;}
-    body{background:#fff!important;}
+    html,body{background:#fff!important;margin:0!important;padding:0!important;}
     .topbar,.hello,.summary,.section,.foot,.modal-head,.modal-foot{display:none!important;}
     .modal-bg{position:static!important;background:none!important;padding:0!important;display:block!important;overflow:visible!important;}
-    .modal{box-shadow:none!important;max-width:none!important;width:auto!important;border-radius:0!important;}
-    .modal-body{max-height:none!important;overflow:visible!important;padding:0!important;}
-    /* The paginated A4 pages print one per sheet, at true size, no shadow/margins */
-    #_pcPages{background:none!important;padding:0!important;}
-    #_pcPages .page{width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;page-break-after:always;break-after:page;}
-    #_pcPages .page:last-child{page-break-after:auto;break-after:auto;}
-    /* Hide the signature capture area when printing */
+    .modal{box-shadow:none!important;max-width:none!important;width:auto!important;border-radius:0!important;margin:0!important;}
+    .modal-body{max-height:none!important;overflow:visible!important;padding:0!important;margin:0!important;}
+    #_pcPages{background:none!important;padding:0!important;margin:0!important;}
+    /* Each .page is exactly one A4 sheet. Use fixed height (not min-height) to avoid a blank overflow page. */
+    #_pcPages .page{width:210mm!important;height:297mm!important;min-height:0!important;margin:0!important;padding:16mm!important;box-shadow:none!important;overflow:hidden!important;page-break-after:always;break-after:page;box-sizing:border-box!important;}
+    #_pcPages .page:last-child{page-break-after:avoid!important;break-after:avoid!important;}
     .sigwrap,#cvHint{display:none!important;}
   }
 </style>
@@ -200,6 +199,12 @@ function _pcNum(v){return parseFloat(String(v||'').replace(/[$,]/g,''))||0;}
 function _addrLine1(addr){var s=String(addr||'').trim();var i=s.indexOf(',');return i>=0?s.slice(0,i).trim():s;}
 function _addrLine2(addr){var s=String(addr||'').trim();var i=s.indexOf(',');var rest=i>=0?s.slice(i+1).trim():'';if(!rest)return '';return rest.replace(/^([A-Za-z .]+?)\s+([A-Z]{2}\s+\d{5})/,'$1, $2');}
 function _fullJobSite(job){if(!job)return '';if(job.address&&/,/.test(job.address))return job.address;var street=job.streetOnly||job.address||'';var city=job.city||'';return street+(city?', '+city:'');}
+function _pcNormUnit(u){
+  var s=String(u||'').toUpperCase().trim();
+  var map={'SQUARE FEET':'SF','SQ FT':'SF','SQFT':'SF','LINEAR FEET':'LF','LIN FT':'LF','EACH':'EA','POUNDS':'LBS','LB':'LBS','TON':'TONS','TRIP':'TRIPS','LOAD':'LOADS','DAY':'EA','CYD':'EA','JOB':''};
+  if(map[s]!==undefined) return map[s];
+  return s;
+}
 function _pcKindName(kind){return {estimate:'Estimate',invoice:'Invoice',co:'Change Order'}[kind]||'Document';}
 
 function _pcHeaderHTML(f){
@@ -238,7 +243,7 @@ function _pcContentBlocks(f){
   var rowHTML=function(l){
     if(showPrices){
       return '<table class="tbl"><colgroup><col style="width:auto"><col style="width:52px"><col style="width:52px"><col style="width:72px"><col style="width:82px"></colgroup>'
-        +'<tr><td class="d">'+_pcEsc(l.desc)+'</td><td class="n">'+_pcEsc(l.qty)+'</td><td class="u">'+_pcEsc(l.unit)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+_pcMoney(l.total)+'</td></tr></table>';
+        +'<tr><td class="d">'+_pcEsc(l.desc)+'</td><td class="u">'+_pcEsc(_pcNormUnit(l.unit))+'</td><td class="n">'+_pcEsc(l.qty)+'</td><td class="n">'+(l.unitPrice?Number(l.unitPrice).toLocaleString('en-US'):'')+'</td><td class="n b">'+_pcMoney(l.total)+'</td></tr></table>';
     }
     // Standard view: descriptions only
     return '<table class="tbl"><tr><td class="d">'+_pcEsc(l.desc)+'</td></tr></table>';
@@ -258,15 +263,27 @@ function _pcContentBlocks(f){
   });
   var total=lines.reduce(function(s,l){return s+(Number(l.total)||0);},0)||_pcNum(d.amount);
   blocks.push({html:'<div class="total"><span>Total</span><span class="a">'+_pcMoney(total)+'</span></div>'});
-  // Terms
+  // Terms — for estimates, keep the signature block together with Terms so they stay on the same page
+  var sigHTML='';
+  if(f.kind==='estimate'){
+    var ap=(typeof loadApproval==='function')?loadApproval(d.est||d.num):null;
+    sigHTML='<div class="sigblock" style="margin-top:20px;border:1.5px solid #ddd;border-radius:10px;padding:16px;">'
+      +'<div style="font-size:13px;font-weight:800;color:#1f2630;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Client Signature</div>'
+      +'<div style="font-size:12px;color:#555;line-height:1.5;margin-bottom:12px;font-style:italic;">By signing this document, you accept the terms and conditions stated in this estimate.</div>';
+    if(ap&&ap.image){sigHTML+='<img src="'+ap.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+_pcEsc(ap.name||'')+' — '+_pcEsc(ap.date||'')+'</div>';}
+    else{sigHTML+='<div style="font-size:13px;color:#888;">Use the "Sign" button on the portal to approve this estimate.</div>';}
+    sigHTML+='</div>';
+  }
   if(typeof TERMS_AND_CONDITIONS!=='undefined'){
     var tkey=d.termsType||Object.keys(TERMS_AND_CONDITIONS)[0];
     var tpl=TERMS_AND_CONDITIONS[tkey];
     if(tpl){
       var items=tpl.clauses.map(function(cl){return '<div class="clause"><b>'+_pcEsc(cl.ltr)+'.</b> '+_pcEsc(cl.text)+'</div>';}).join('');
-      if(items)blocks.push({html:'<div class="terms"><div class="scope">Terms &amp; Conditions</div>'+items+'</div>'});
-    }
-  }
+      // Terms + signature in ONE block so the signature is always right after Terms (same page)
+      if(items)blocks.push({html:'<div class="terms"><div class="scope">Terms &amp; Conditions</div>'+items+'</div>'+sigHTML});
+      else if(sigHTML) blocks.push({html:sigHTML});
+    } else if(sigHTML){ blocks.push({html:sigHTML}); }
+  } else if(sigHTML){ blocks.push({html:sigHTML}); }
   // WAIVERS (invoices only): show conditional + unconditional ONLY if job requires waivers AND invoice is fully paid
   if(f.kind==='invoice'){
     var paid=(d.payments||[]).reduce(function(s,p){return s+_pcNum(p.amount);},0);
@@ -276,17 +293,6 @@ function _pcContentBlocks(f){
       blocks.push({html:'<div class="scope">Conditional Waiver and Release</div><div class="waiver">'+(window._WAIVER_CONDITIONAL||'[Conditional waiver text will appear here once provided.]')+'</div>'});
       blocks.push({html:'<div class="scope">Unconditional Waiver and Release</div><div class="waiver">'+(window._WAIVER_UNCONDITIONAL||'[Unconditional waiver text will appear here once provided.]')+'</div>'});
     }
-  }
-  // Signature block (estimates only)
-  if(f.kind==='estimate'){
-    var ap=(typeof loadApproval==='function')?loadApproval(d.est||d.num):null;
-    var sigHTML='<div class="sigblock" style="margin-top:20px;border:1.5px solid #ddd;border-radius:10px;padding:16px;">'
-      +'<div style="font-size:13px;font-weight:800;color:#1f2630;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Client Signature</div>'
-      +'<div style="font-size:12px;color:#555;line-height:1.5;margin-bottom:12px;font-style:italic;">By signing this document, you accept the terms and conditions stated in this estimate.</div>';
-    if(ap&&ap.image){sigHTML+='<img src="'+ap.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+_pcEsc(ap.name||'')+' — '+_pcEsc(ap.date||'')+'</div>';}
-    else{sigHTML+='<div style="font-size:13px;color:#888;">Use the "Sign" button on the portal to approve this estimate.</div>';}
-    sigHTML+='</div>';
-    blocks.push({html:sigHTML});
   }
   return blocks;
 }
@@ -461,15 +467,18 @@ function _pcBuildPages(f, containerId, measureId){
 
     var foot='<button class="btn btn-outline" onclick="window._closeModal()">Close</button>'
       +'<button class="btn btn-gold" onclick="window.print()">Download / Print</button>'
-      +(canSign?'<button class="btn btn-green" onclick="window._signDoc(\''+esc(estId)+'\')">Approve &amp; sign</button>':'');
+      +(canSign?'<button class="btn btn-green" onclick="window._signDoc(\''+esc(estId)+'\')">Approve &amp; Sign</button>':'');
     document.getElementById('modalInner').innerHTML='<div class="modal-head"><span style="font-weight:700;">'+docKindWord(kind)+' #'+esc(estId)+'</span><button class="x" onclick="window._closeModal()">&times;</button></div><div class="modal-body">'+body+'</div><div class="modal-foot">'+foot+'</div>';
     document.getElementById('modalBg').classList.add('show');
+    // Set the page title to the document number so the downloaded/printed file is named e.g. "EST-080"
+    if(!window._origTitle){ window._origTitle=document.title; }
+    document.title=String(estId||'Document');
     // Build A4 pages (fonts may still be loading; rebuild after ready)
     _pcBuildPages(f,'_pcPages','_pcMeasure');
     if(document.fonts&&document.fonts.ready){document.fonts.ready.then(function(){_pcBuildPages(f,'_pcPages','_pcMeasure');});}
     if(canSign){initSigCanvas();}
   };
-  window._closeModal=function(){document.getElementById('modalBg').classList.remove('show');};
+  window._closeModal=function(){document.getElementById('modalBg').classList.remove('show');if(window._origTitle){document.title=window._origTitle;}};
 
   var _drawing=false,_hasInk=false;
   function initSigCanvas(){
