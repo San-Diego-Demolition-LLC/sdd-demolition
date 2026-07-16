@@ -128,7 +128,6 @@ svg{display:block;}
     <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
     <a class="nav-item active" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
     <a class="nav-item" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
@@ -179,8 +178,8 @@ svg{display:block;}
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--warning);margin-bottom:10px;">1099 vendor details (required for tax reporting)</div>
         <div class="fg2">
           <div class="ff"><label>Contact</label><input type="text" id="v_contact" placeholder="Name"></div>
-          <div class="ff"><label>Phone</label><input type="tel" id="v_phone" placeholder="(619) 555-0000"></div>
-          <div class="ff"><label>Email</label><input type="email" id="v_email" placeholder="email@company.com"></div>
+          <div class="ff"><label>Phone</label><input type="tel" id="v_phone" placeholder="(619) 555-0000" oninput="phoneInput(this)"></div>
+          <div class="ff"><label>Email</label><input type="email" id="v_email" placeholder="email@company.com" oninput="emailInput(this)"></div>
         </div>
         <div class="ff"><label>Company address</label><input type="text" id="v_address" placeholder="Street, City, State ZIP"></div>
       </div>
@@ -242,12 +241,31 @@ svg{display:block;}
 <nav class="mobile-nav">
   <a href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Home</a>
   <a href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-  <a href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg>Invoices</a>
   <a href="/sdd-vendors.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Vendors</a>
 </nav>
 
 <script src="sdd-data.js"></script>
 <script>
+// ── Shared contact formatting (phone + email), same rules as Customers ──
+function formatPhone(val){
+  if(val==null) return '';
+  var digits=String(val).replace(/\D/g,'');
+  if(!digits) return '';
+  if(digits.length===11 && digits[0]==='1') digits=digits.slice(1);
+  var a=digits.slice(0,3), b=digits.slice(3,6), c=digits.slice(6,10), extra=digits.slice(10);
+  var out=a; if(b) out+='-'+b; if(c) out+='-'+c; if(extra) out+=' x'+extra;
+  return out;
+}
+function phoneInput(el){ if(el) el.value=formatPhone(el.value); }
+function lowerEmail(v){ return v==null?'':String(v).trim().toLowerCase(); }
+function emailInput(el){
+  if(!el) return;
+  el.value=(el.value||'').toLowerCase();
+  var v=el.value.trim();
+  var ok = v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  el.style.borderColor = ok ? '' : 'var(--danger)';
+}
+
 var currentView = 'vendors';
 var activeId = null;
 var coaParentTarget = null;
@@ -295,6 +313,15 @@ var BANK_TXNS = [
   {id:13, account:'cc3377', date:'May 7, 2026',  payee:'Amazon',                 memo:'Office supplies',  amount:215,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
   {id:14, account:'cc3377', date:'May 3, 2026',  payee:'Amazon',                 memo:'Safety gear',      amount:430,   dir:'out', status:'categorized', ledger:'6030 · Office Supplies', matchType:'', matchRef:''},
   {id:15, account:'cc3377', date:'Apr 27, 2026', payee:'Amazon',                 memo:'PPE & gloves',     amount:185,   dir:'out', status:'categorized', ledger:'6030 · Office Supplies', matchType:'', matchRef:''},
+  // ── Chase Business Checking (7522) — sample data for testing sort & date filters ──
+  {id:20, account:'chk7522', date:'Jul 14, 2026', payee:'ABC Construction Corp',  memo:'Invoice payment',   amount:22801, dir:'in',  status:'review', ledger:'', matchType:'', matchRef:''},
+  {id:21, account:'chk7522', date:'Jul 12, 2026', payee:'United Rentals',         memo:'Excavator rental',  amount:1850,  dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
+  {id:22, account:'chk7522', date:'Jul 10, 2026', payee:'Home Depot',             memo:'Concrete & rebar',  amount:934,   dir:'out', status:'review', ledger:'', matchType:'', matchRef:''},
+  {id:23, account:'chk7522', date:'Jul 3, 2026',  payee:'Payroll',                memo:'Crew payroll',      amount:8400,  dir:'out', status:'categorized', ledger:'6000 · Payroll', matchType:'', matchRef:''},
+  {id:24, account:'chk7522', date:'Jun 28, 2026', payee:'Summit Contractors LLC', memo:'Deposit',           amount:15000, dir:'in',  status:'categorized', ledger:'4000 · Revenue', matchType:'', matchRef:''},
+  {id:25, account:'chk7522', date:'Jun 20, 2026', payee:'Chevron',                memo:'Fleet fuel',        amount:420,   dir:'out', status:'categorized', ledger:'6010 · Fuel', matchType:'', matchRef:''},
+  {id:26, account:'chk7522', date:'Jun 5, 2026',  payee:'City of San Diego',      memo:'Demolition permit', amount:650,   dir:'out', status:'categorized', ledger:'6040 · Permits', matchType:'', matchRef:''},
+  {id:27, account:'chk7522', date:'May 15, 2026', payee:'Coronado Builders',      memo:'Progress payment',  amount:18500, dir:'in',  status:'categorized', ledger:'4000 · Revenue', matchType:'', matchRef:''},
 ];
 // Ledger options for categorizing
 var BANK_LEDGERS = ['5010 · Disposal','5020 · Equipment','5030 · Subcontract','5040 · Permits','5050 · Materials','6010 · Fuel','6020 · Insurance','6030 · Office Supplies','6040 · Utilities','Accounts Receivable','Owner Draw','Transfer between accounts'];
@@ -747,7 +774,11 @@ function refreshCOATable(){
 }
 
 var bankActiveAcct = 'chk7522';
-var bankFilter = 'review'; // review | all | categorized
+var bankFilter = 'review'; // review | all
+var bankSort = 'all';      // all | debit | credit
+var bankDateRange = 'all'; // all | week | 30 | custom
+var bankDateFrom = '';
+var bankDateTo = '';
 // ── Import bank/card statement modal ──
 function openImportModal(){
   var ex=document.getElementById('_importBg'); if(ex) ex.remove();
@@ -925,17 +956,42 @@ function renderBankingView(){
       +'<div style="font-size:11px;color:var(--muted);margin-top:2px;">'+(a.type==='card'?'Card':'Bank')+' ····'+a.last4+(cnt>0?' &nbsp;·&nbsp; <span style="color:var(--warning);font-weight:700;">'+cnt+' to review</span>':'')+'</div>'
       +'</button>';
   }).join('');
-  var txns=BANK_TXNS.filter(function(t){return t.account===bankActiveAcct&&(bankFilter==='all'||t.status===bankFilter||(bankFilter==='categorized'&&(t.status==='categorized'||t.status==='matched')));});
+  // Base filter: which status bucket (review only, or everything)
+  var txns=BANK_TXNS.filter(function(t){ return t.account===bankActiveAcct && (bankFilter==='all'||t.status===bankFilter); });
+  // Sort filter: debit (out) / credit (in) / all
+  if(bankSort==='debit') txns=txns.filter(function(t){return t.dir==='out';});
+  else if(bankSort==='credit') txns=txns.filter(function(t){return t.dir==='in';});
+  // Date filter
+  txns=_bankApplyDateFilter(txns);
   var rows=txns.length?txns.map(bankTxnRow).join(''):'<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted2);font-style:italic;">No transactions in this view.</td></tr>';
   var reviewCount=BANK_TXNS.filter(function(t){return t.account===bankActiveAcct&&t.status==='review';}).length;
   pr.innerHTML='<div class="detail-wrap">'
     +'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:26px;font-weight:700;margin-bottom:4px;">Banking — transactions for review</div>'
     +'<div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Categorize each transaction to a Chart of Accounts category, or match it to an existing invoice/bill.</div>'
     +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;">'+acctTabs+'</div>'
-    +'<div style="display:flex;gap:8px;margin-bottom:12px;">'
+    +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">'
       +bankFilterBtn('review','For review ('+reviewCount+')')
-      +bankFilterBtn('categorized','Categorized')
       +bankFilterBtn('all','All')
+      +'<div style="width:1px;height:24px;background:var(--border);margin:0 2px;"></div>'
+      +'<label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Sort</label>'
+      +'<select onchange="bankSetSort(this.value)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;cursor:pointer;">'
+        +'<option value="all"'+(bankSort==='all'?' selected':'')+'>All</option>'
+        +'<option value="debit"'+(bankSort==='debit'?' selected':'')+'>Debit (money out)</option>'
+        +'<option value="credit"'+(bankSort==='credit'?' selected':'')+'>Credit (money in)</option>'
+      +'</select>'
+      +'<div style="width:1px;height:24px;background:var(--border);margin:0 2px;"></div>'
+      +'<label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Date</label>'
+      +'<select onchange="bankSetDateRange(this.value)" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;cursor:pointer;">'
+        +'<option value="all"'+(bankDateRange==='all'?' selected':'')+'>All dates</option>'
+        +'<option value="week"'+(bankDateRange==='week'?' selected':'')+'>Last 7 days</option>'
+        +'<option value="30"'+(bankDateRange==='30'?' selected':'')+'>Last 30 days</option>'
+        +'<option value="custom"'+(bankDateRange==='custom'?' selected':'')+'>Custom range…</option>'
+      +'</select>'
+      +(bankDateRange==='custom'
+        ? '<input type="date" value="'+(bankDateFrom||'')+'" onchange="bankSetDateFrom(this.value)" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;">'
+          +'<span style="color:var(--muted);font-size:12px;">to</span>'
+          +'<input type="date" value="'+(bankDateTo||'')+'" onchange="bankSetDateTo(this.value)" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;">'
+        : '')
     +'</div>'
     +'<div class="card" style="padding:0;overflow:hidden;">'
     +'<datalist id="_acctlist">'+bankAssignableAccounts().map(function(a){return '<option value="'+a.replace(/"/g,'&quot;')+'"></option>';}).join('')+'</datalist>'
@@ -1018,6 +1074,43 @@ function bankDeleteTxn(id){
 }
 function bankSetAcct(id){ bankActiveAcct=id; bankFilter='review'; renderBankingView(); }
 function bankSetFilter(f){ bankFilter=f; renderBankingView(); }
+function bankSetSort(s){ bankSort=s; renderBankingView(); }
+function bankSetDateRange(r){ bankDateRange=r; renderBankingView(); }
+function bankSetDateFrom(v){ bankDateFrom=v; renderBankingView(); }
+function bankSetDateTo(v){ bankDateTo=v; renderBankingView(); }
+
+// Parse a transaction's display date ("Jul 14, 2026") into a Date at local midnight
+function _bankParseDate(str){
+  if(!str) return null;
+  // input[type=date] gives YYYY-MM-DD → parse as local, not UTC, to avoid off-by-one
+  var iso=/^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+  if(iso){ return new Date(+iso[1], +iso[2]-1, +iso[3], 0,0,0,0); }
+  var d=new Date(str);
+  if(isNaN(d.getTime())) return null;
+  d.setHours(0,0,0,0);
+  return d;
+}
+// Apply the selected date range to a list of transactions
+function _bankApplyDateFilter(list){
+  if(bankDateRange==='all') return list;
+  var today=new Date(); today.setHours(0,0,0,0);
+  if(bankDateRange==='week' || bankDateRange==='30'){
+    var days=bankDateRange==='week'?7:30;
+    var cutoff=new Date(today); cutoff.setDate(cutoff.getDate()-days);
+    return list.filter(function(t){ var d=_bankParseDate(t.date); return d && d>=cutoff && d<=today; });
+  }
+  if(bankDateRange==='custom'){
+    var from=bankDateFrom?_bankParseDate(bankDateFrom):null;
+    var to=bankDateTo?_bankParseDate(bankDateTo):null;
+    return list.filter(function(t){
+      var d=_bankParseDate(t.date); if(!d) return false;
+      if(from && d<from) return false;
+      if(to && d>to) return false;
+      return true;
+    });
+  }
+  return list;
+}
 function bankSetLedger(id,val){ var t=BANK_TXNS.find(function(x){return x.id===id;}); if(t){ t.ledger=val; } }
 function bankSetVendorByName(id,name){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
@@ -1098,7 +1191,7 @@ function openMatchPicker(id){
       +'</div>'
       +'<div style="padding:14px 22px;display:flex;gap:10px;justify-content:flex-end;">'
         +'<button onclick="document.getElementById(\'_matchBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
-        +'<button onclick="bankApplyInvoiceMatch('+id+')" style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">✓ Apply payment</button>'
+        +'<button id="_m_applyBtn" onclick="bankApplyInvoiceMatch('+id+')" disabled style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:not-allowed;opacity:.5;">✓ Apply payment</button>'
       +'</div>';
   } else {
     // Money out → choose vendor, auto-fill its default account, allow override, optional estimate
@@ -1160,6 +1253,15 @@ function matchInvSum(received){
     else if(diff>0){ warnEl.innerHTML='<span style="color:var(--warning);">'+fmt(diff)+' of the payment is still unapplied.</span>'; }
     else { warnEl.innerHTML='<span style="color:var(--danger);">Applied amount exceeds the payment by '+fmt(-diff)+'.</span>'; }
   }
+  // Enable Apply only when at least one invoice is checked AND the applied total does
+  // not exceed the payment received (diff >= 0). Overpaying is blocked.
+  var applyBtn=document.getElementById('_m_applyBtn');
+  if(applyBtn){
+    var canApply = anyChecked && diff >= -0.005;
+    applyBtn.disabled = !canApply;
+    applyBtn.style.opacity = canApply ? '1' : '.5';
+    applyBtn.style.cursor = canApply ? 'pointer' : 'not-allowed';
+  }
 }
 function bankApplyInvoiceMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
@@ -1175,13 +1277,24 @@ function bankApplyInvoiceMatch(id){
     i++;
   }
   if(!picks.length){ flash('Select at least one invoice','#D94F4F'); return; }
+  // Guard: never apply more than the payment received (matches the disabled-button rule)
+  var received=(typeof t.amount==='number')?t.amount:parseFloat(String(t.amount||'').replace(/[$,]/g,''))||0;
+  if(total - received > 0.005){
+    flash('Applied amount exceeds the payment by '+fmt(total-received),'#D94F4F');
+    return;
+  }
   t.matchType='invoice';
   t.matchRef=picks.map(function(p){return p.ref;}).join(', ');
   t.appliedInvoices=picks;
   t.ledger='Accounts Receivable';
   var bg=document.getElementById('_matchBg'); if(bg) bg.remove();
   renderBankingView();
-  flash('Applied to '+picks.length+' invoice'+(picks.length>1?'s':''));
+  var leftover=received-total;
+  if(leftover>0.005){
+    flash('Applied '+fmt(total)+' to '+picks.length+' invoice'+(picks.length>1?'s':'')+' · '+fmt(leftover)+' unapplied');
+  } else {
+    flash('Applied '+fmt(total)+' to '+picks.length+' invoice'+(picks.length>1?'s':''));
+  }
 }
 function bankApplyVendorMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
@@ -1273,8 +1386,8 @@ function saveVendor(){
     accountId:acctId||'', accountName:acct?acct.name:'',
     eligible1099:is1099,billed:document.getElementById('v_billed').value,
     contact:is1099==='yes'?document.getElementById('v_contact').value:'',
-    phone:is1099==='yes'?document.getElementById('v_phone').value:'',
-    email:is1099==='yes'?document.getElementById('v_email').value:'',
+    phone:is1099==='yes'?formatPhone(document.getElementById('v_phone').value):'',
+    email:is1099==='yes'?lowerEmail(document.getElementById('v_email').value):'',
     address:is1099==='yes'?document.getElementById('v_address').value:'',
     since:new Date().getFullYear().toString(),terms:'Net 30',notes:''});
   closeModal('vendorModal');

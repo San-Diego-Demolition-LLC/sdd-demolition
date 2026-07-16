@@ -27,6 +27,10 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .app{display:flex;flex:1;overflow:hidden;height:calc(100vh - 112px);}
 .view-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .view-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;}
+/* Sub-tabs stacked vertically (full width) under the main group tabs */
+.co-subtabs-vertical{flex-direction:column;align-items:stretch;gap:3px;width:100%;max-width:280px;}
+.co-subtabs-vertical .vt-btn{text-align:left;width:100%;padding:9px 14px;}
+#co-subbar{align-items:flex-start;}
 .vt-btn{padding:5px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Barlow',sans-serif;transition:all .15s;white-space:nowrap;}
 .vt-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
 .panel-left{width:300px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:all .2s;}
@@ -93,7 +97,6 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
     <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
     <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
     <a class="nav-item active" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
@@ -106,18 +109,16 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
 
 <div class="view-bar">
   <div class="view-toggle">
-    <button class="vt-btn active" id="tab-settings" onclick="coShow('settings')">Settings</button>
-    <button class="vt-btn" id="tab-coa" onclick="coShow('coa')">Chart of Accounts</button>
-    <button class="vt-btn" id="tab-reports" onclick="coShow('reports')">Reports</button>
-    <button class="vt-btn" id="tab-ledger" onclick="coShow('ledger')">General Ledger</button>
-    <button class="vt-btn" id="tab-pnl" onclick="coShow('pnl')">P&amp;L</button>
-    <button class="vt-btn" id="tab-balance" onclick="coShow('balance')">Balance Sheet</button>
-    <button class="vt-btn" id="tab-cashflow" onclick="coShow('cashflow')">Cash Flow</button>
-    <button class="vt-btn" id="tab-users" onclick="coShow('users')">Users</button>
-    <button class="vt-btn" id="tab-fleet" onclick="coShow('fleet')">Fleet</button>
-    <button class="vt-btn" id="tab-compliance" onclick="coShow('compliance')">Compliance</button>
+    <button class="vt-btn active" id="grp-company" onclick="coShowGroup('company')">My Company</button>
+    <button class="vt-btn" id="grp-reports" onclick="coShowGroup('reports')">Reports</button>
+    <button class="vt-btn" id="grp-compliance" onclick="coShowGroup('compliance')">Compliance</button>
   </div>
 </div>
+
+<div class="view-bar" id="co-subbar" style="margin-top:8px;">
+  <div class="view-toggle co-subtabs-vertical" id="co-subtabs"></div>
+</div>
+
 
 <div style="flex:1;padding:20px 24px;max-width:1100px;width:100%;margin:0 auto;box-sizing:border-box;">
   <div id="co-content"></div>
@@ -350,6 +351,19 @@ var USERS = [
   {id:5, name:'Mike Herrera', email:'mike@sddemolition.com', role:'driver', phone:'(619) 555-0154', active:true},
   {id:6, name:'Tony Diaz', email:'tony@sddemolition.com', role:'driver', phone:'(619) 555-0155', active:false}
 ];
+// Authorized-signer signatures, persisted separately in localStorage (keyed by user id).
+var _USER_SIG_KEY='sdd_user_signatures';
+function _loadUserSignatures(){
+  try{ var raw=localStorage.getItem(_USER_SIG_KEY); return raw?JSON.parse(raw):{}; }catch(e){ return {}; }
+}
+function _saveUserSignatures(map){
+  try{ localStorage.setItem(_USER_SIG_KEY, JSON.stringify(map||{})); }catch(e){}
+}
+// Hydrate USERS with any stored signature
+(function(){
+  var sigs=_loadUserSignatures();
+  USERS.forEach(function(u){ if(sigs[u.id]) u.signature=sigs[u.id]; });
+})();
 var ROLE_PERMS = {
   admin:   {label:'Admin',   coaView:true, coaEdit:true, reports:true, users:true, fleet:true, compliance:true},
   manager: {label:'Manager', coaView:true, coaEdit:false, reports:true, users:false, fleet:true, compliance:true},
@@ -403,10 +417,64 @@ function coDocStatus(expires){
 }
 function coAcctName(id){ var a=ACCOUNTS.filter(function(x){return x.id===id;})[0]; return a?a.name:'—'; }
 
+// ===== Tab groups (3 main tabs, each with sub-tabs) =====
+var CO_GROUPS={
+  company:    { label:'My Company', tabs:[
+                  {id:'settings', label:'Company Settings'},
+                  {id:'users',    label:'Users'},
+                  {id:'coa',      label:'Chart of Accounts'} ] },
+  reports:    { label:'Reports', tabs:[
+                  {id:'reports',  label:'Account Reports'},
+                  {id:'ledger',   label:'General Ledger'},
+                  {id:'pnl',      label:'Profit & Loss'},
+                  {id:'balance',  label:'Balance Sheet'},
+                  {id:'cashflow', label:'Cash Flow'} ] },
+  compliance: { label:'Compliance', tabs:[
+                  {id:'compliance', label:'Compliance Documents'},
+                  {id:'fleet',      label:'Fleet'} ] }
+};
+// Which group a given tab belongs to
+function _coGroupOf(tab){
+  for(var g in CO_GROUPS){ if(CO_GROUPS[g].tabs.some(function(t){return t.id===tab;})) return g; }
+  return 'company';
+}
+var _coActiveTab='settings';
+
+// Click a main tab → highlight it, rebuild its sub-tabs, open its first sub-tab
+function coShowGroup(group){
+  ['company','reports','compliance'].forEach(function(g){
+    var b=document.getElementById('grp-'+g); if(b) b.classList.toggle('active', g===group);
+  });
+  var grp=CO_GROUPS[group]; if(!grp) return;
+  var sub=document.getElementById('co-subtabs');
+  if(sub){
+    sub.innerHTML=grp.tabs.map(function(t){
+      return '<button class="vt-btn" id="subtab-'+t.id+'" onclick="coShow(\''+t.id+'\')">'+t.label+'</button>';
+    }).join('');
+  }
+  // If the currently active tab is inside this group keep it, else open first
+  var stay=grp.tabs.some(function(t){return t.id===_coActiveTab;});
+  coShow(stay?_coActiveTab:grp.tabs[0].id);
+}
+
 // ===== Tab switching =====
 function coShow(tab){
-  ['settings','coa','reports','ledger','pnl','balance','cashflow','users','fleet','compliance'].forEach(function(t){
-    var b=document.getElementById('tab-'+t); if(b) b.classList.toggle('active', t===tab);
+  _coActiveTab=tab;
+  var group=_coGroupOf(tab);
+  // keep the main-tab highlight in sync (e.g. when called directly)
+  ['company','reports','compliance'].forEach(function(g){
+    var b=document.getElementById('grp-'+g); if(b) b.classList.toggle('active', g===group);
+  });
+  // rebuild sub-tabs if they don't match the group
+  var sub=document.getElementById('co-subtabs');
+  if(sub && !document.getElementById('subtab-'+tab)){
+    sub.innerHTML=CO_GROUPS[group].tabs.map(function(t){
+      return '<button class="vt-btn" id="subtab-'+t.id+'" onclick="coShow(\''+t.id+'\')">'+t.label+'</button>';
+    }).join('');
+  }
+  // highlight active sub-tab
+  CO_GROUPS[group].tabs.forEach(function(t){
+    var b=document.getElementById('subtab-'+t.id); if(b) b.classList.toggle('active', t.id===tab);
   });
   var el=document.getElementById('co-content');
   if(tab==='settings') el.innerHTML=renderSettings();
@@ -887,9 +955,15 @@ function renderCashFlow(){
 function renderUsers(){
   var rows=USERS.map(function(u){
     var rb='r-'+u.role;
+    var canSign=(u.role==='admin'||u.role==='manager');
+    var sigCell;
+    if(!canSign){ sigCell='<span style="font-size:11px;color:var(--muted2);">—</span>'; }
+    else if(u.signature){ sigCell='<img src="'+u.signature+'" alt="signature" style="max-height:28px;max-width:120px;vertical-align:middle;">'; }
+    else { sigCell='<span style="font-size:11px;color:var(--warning);font-weight:600;">Not set</span>'; }
     return '<tr><td style="font-weight:700;">'+u.name+(u.active?'':' <span style="font-size:10px;color:var(--muted2);">(inactive)</span>')+'</td>'
       +'<td>'+u.email+'</td><td>'+u.phone+'</td>'
       +'<td><span class="role-badge '+rb+'">'+ROLE_PERMS[u.role].label+'</span></td>'
+      +'<td>'+sigCell+'</td>'
       +'<td style="text-align:right;"><button class="co-btn co-btn-sm" onclick="coEditUser('+u.id+')">Edit</button></td></tr>';
   }).join('');
   // Role legend
@@ -899,11 +973,109 @@ function renderUsers(){
     return '<div style="padding:8px 0;border-bottom:1px solid var(--border);"><span class="role-badge r-'+k+'">'+p.label+'</span> <span style="font-size:12px;color:var(--muted);margin-left:8px;">'+perms.join(' · ')+'</span></div>';
   }).join('');
   return '<div class="co-card"><h3>Users <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddUser()">+ New User</button></h3>'
-    +'<table class="co-table"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>'
+    +'<table class="co-table"><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Signature</th><th style="text-align:right;">Actions</th></tr>'+rows+'</table></div>'
     +'<div class="co-card"><h3>Roles & Permissions</h3>'+legend+'</div>';
 }
 function coAddUser(){ coFlash('New user form (demo)'); }
-function coEditUser(id){ var u=USERS.filter(function(x){return x.id===id;})[0]; coFlash('Edit user: '+(u?u.name:'')); }
+
+// Edit User modal — for Admin/Manager it includes a signature pad (authorized signers).
+function coEditUser(id){
+  var u=USERS.filter(function(x){return x.id===id;})[0]; if(!u) return;
+  var canSign=(u.role==='admin'||u.role==='manager');
+  var ex=document.getElementById('_userEditBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_userEditBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:6001;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  var sigSection = canSign ? (
+    '<div style="margin-top:6px;">'
+      +'<label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:6px;">Authorized signature</label>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Draw the signature below. It will be used on documents this user authorizes.</div>'
+      +'<canvas id="_userSigPad" width="440" height="150" style="border:1.5px dashed var(--border2);border-radius:8px;background:#fff;touch-action:none;cursor:crosshair;width:100%;max-width:440px;display:block;"></canvas>'
+      +'<div style="display:flex;gap:8px;margin-top:8px;">'
+        +'<button type="button" class="co-btn" onclick="_userSigClear()">Clear</button>'
+        +(u.signature?'<span style="font-size:12px;color:#16a34a;font-weight:600;align-self:center;">✓ A signature is currently saved</span>':'')
+      +'</div>'
+    +'</div>'
+  ) : '<div style="font-size:12px;color:var(--muted2);font-style:italic;">Only Admin and Manager roles can save an authorized signature.</div>';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;max-height:92vh;display:flex;flex-direction:column;">'
+    +'<div style="padding:16px 22px;border-bottom:1px solid var(--border);font-family:\'Barlow Condensed\',sans-serif;font-size:19px;font-weight:700;display:flex;justify-content:space-between;align-items:center;">'
+      +'<span>Edit User — '+esc_(u.name)+'</span>'
+      +'<button onclick="document.getElementById(\'_userEditBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:18px 22px;overflow-y:auto;">'
+      +'<div class="ff"><label>Name</label><input id="_userEditName" value="'+esc_(u.name)+'"></div>'
+      +'<div class="ff"><label>Email</label><input id="_userEditEmail" value="'+esc_(u.email)+'" oninput="this.value=this.value.toLowerCase()"></div>'
+      +'<div class="ff"><label>Phone</label><input id="_userEditPhone" value="'+esc_(u.phone)+'"></div>'
+      +'<div class="ff"><label>Role</label><span class="role-badge r-'+u.role+'" style="margin-left:2px;">'+ROLE_PERMS[u.role].label+'</span></div>'
+      +sigSection
+    +'</div>'
+    +'<div style="padding:14px 22px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button class="co-btn" onclick="document.getElementById(\'_userEditBg\').remove()">Cancel</button>'
+      +'<button class="co-btn co-btn-gold" onclick="coSaveUser('+id+')">Save Changes</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  if(canSign) _userSigInit(u.signature);
+}
+
+// ── Signature pad (shared logic, scoped to the user modal) ──
+var _userSigCtx=null, _userSigDrawing=false, _userSigDirty=false, _userSigHasSaved=false;
+function _userSigInit(existing){
+  var cv=document.getElementById('_userSigPad'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#1f2630';
+  _userSigCtx=ctx; _userSigDirty=false; _userSigHasSaved=!!existing;
+  // preload existing signature so the user sees what's saved
+  if(existing){
+    var img=new Image();
+    img.onload=function(){ ctx.drawImage(img,0,0,cv.width,cv.height); };
+    img.src=existing;
+  }
+  var pos=function(e){
+    var r=cv.getBoundingClientRect();
+    var cx=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    var cy=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    // canvas is CSS-scaled → map back to internal coords
+    return {x:cx*(cv.width/r.width), y:cy*(cv.height/r.height)};
+  };
+  var start=function(e){ e.preventDefault(); _userSigDrawing=true; _userSigDirty=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
+  var move=function(e){ if(!_userSigDrawing)return; e.preventDefault(); var p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); };
+  var end=function(){ _userSigDrawing=false; };
+  cv.addEventListener('mousedown',start); cv.addEventListener('mousemove',move); cv.addEventListener('mouseup',end); cv.addEventListener('mouseleave',end);
+  cv.addEventListener('touchstart',start,{passive:false}); cv.addEventListener('touchmove',move,{passive:false}); cv.addEventListener('touchend',end);
+}
+function _userSigClear(){
+  var cv=document.getElementById('_userSigPad'); if(!cv||!_userSigCtx) return;
+  _userSigCtx.clearRect(0,0,cv.width,cv.height);
+  _userSigDirty=true; _userSigHasSaved=false;  // cleared → will remove saved signature on save
+}
+// Detect whether the canvas has any ink
+function _userSigIsBlank(cv){
+  var blank=document.createElement('canvas'); blank.width=cv.width; blank.height=cv.height;
+  return cv.toDataURL()===blank.toDataURL();
+}
+
+function coSaveUser(id){
+  var u=USERS.filter(function(x){return x.id===id;})[0]; if(!u) return;
+  u.name=(document.getElementById('_userEditName').value||'').trim()||u.name;
+  u.email=(document.getElementById('_userEditEmail').value||'').trim().toLowerCase()||u.email;
+  u.phone=(document.getElementById('_userEditPhone').value||'').trim()||u.phone;
+  var canSign=(u.role==='admin'||u.role==='manager');
+  if(canSign){
+    var cv=document.getElementById('_userSigPad');
+    var sigs=_loadUserSignatures();
+    if(cv && _userSigDirty){
+      if(_userSigIsBlank(cv)){ delete u.signature; delete sigs[id]; }
+      else { u.signature=cv.toDataURL('image/png'); sigs[id]=u.signature; }
+      _saveUserSignatures(sigs);
+    }
+  }
+  var bg=document.getElementById('_userEditBg'); if(bg) bg.remove();
+  coShow('users');   // re-render the users table
+  coFlash('✓ User saved: '+u.name);
+}
+
+// tiny local escaper (company page has no global esc_)
+function esc_(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ===== FLEET =====
 function renderFleet(){
@@ -997,7 +1169,7 @@ function coFlash(msg){
 }
 
 // init
-coShow('settings');
+coShowGroup('company');
 </script>
 </body>
 </html>

@@ -318,7 +318,6 @@ svg{display:block;}
     <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
     <a class="nav-item" href="/index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
     <a class="nav-item active" href="/sdd-customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Customers</a>
-    <a class="nav-item" href="/sdd-invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Invoices</a>
     <a class="nav-item" href="/sdd-vendors.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Vendors</a>
     <a class="nav-item" href="/sdd-banking.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Banking</a>
     <a class="nav-item" href="/sdd-company.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1m-1 4h1m4-4h1m-1 4h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>Company</a>
@@ -478,8 +477,8 @@ svg{display:block;}
     
     <div class="modal-foot">
       <div style="font-size:11px;color:var(--muted);">Fields marked <span style="color:var(--danger);font-weight:700;">*</span> are required</div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost" id="btnCancelModal" onclick="closeModalConfirm()">Cancel</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="modalFootBtns">
+        <button class="btn btn-ghost" id="btnCancelModal" onclick="closeModalConfirm()">Close</button>
         <button class="btn btn-gold" id="btnSaveCustomer">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           Save Customer
@@ -974,16 +973,26 @@ function saveCustomers(){ if(window.SDD){ window.SDD.save(); } }
 
 const STATUS_COLOR = {
   'In progress':'var(--warning)',
+  'In Progress':'var(--warning)',
   'Completed':'var(--success)',
   'Ready to bill':'var(--danger)',
+  'Ready to Bill':'var(--danger)',
   'Pending approval':'var(--info)',
+  'Sent - Pending Approval':'var(--info)',
+  'Approved - Pending Schedule':'var(--gold)',
   'Pending scheduled':'var(--gold)',
+  'Rejected':'var(--danger)',
+  'Void':'var(--muted2)',
 };
 const STATUS_CLASS = {
   'In progress':'sp-progress',
+  'In Progress':'sp-progress',
   'Completed':'sp-completed',
   'Ready to bill':'sp-billing',
+  'Ready to Bill':'sp-billing',
   'Pending approval':'sp-pending',
+  'Sent - Pending Approval':'sp-pending',
+  'Approved - Pending Schedule':'sp-scheduled',
   'Pending scheduled':'sp-scheduled',
 };
 
@@ -1346,7 +1355,7 @@ function openTxPdf(rowKey){
   var ex=document.getElementById('_txPdfBg'); if(ex) ex.remove();
   // Modify target depends on transaction type
   var modifyTarget, modifyLabel;
-  if(r.kind==='Invoice'||r.kind==='Payment'){ modifyTarget="/sdd-invoices.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Invoices'; }
+  if(r.kind==='Invoice'||r.kind==='Payment'){ modifyTarget="/sdd-customers.html?open="+encodeURIComponent(r.num); modifyLabel='Modify in Customers'; }
   else if(r.kind==='Change Order'){ modifyTarget="/sdd-customers.html?openCO="+encodeURIComponent(r.num); modifyLabel='Modify'; }
   else { modifyTarget="/sdd-customers.html?open="+encodeURIComponent(r.num); modifyLabel='Modify'; }
   var bg=document.createElement('div');
@@ -1387,6 +1396,14 @@ function txPdfDownload(rowKey){
 }
 function txPdfSend(rowKey){
   var r=(window._txRowCache||{})[rowKey]; if(!r) return;
+  var ref=r.num||'';
+  // Route through the standard recipient panel (TO/CC + add email), same as every other send.
+  if(ref && typeof _findDoc==='function' && _findDoc(ref) && typeof _doSendToClient==='function'){
+    var tb=document.getElementById('_txPdfBg'); if(tb) tb.remove();  // close the PDF viewer first
+    _doSendToClient(ref);
+    return;
+  }
+  // Fallback (doc not found in memory): keep the simple confirmation
   var f=document.createElement('div');
   f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:100060;box-shadow:0 6px 20px rgba(0,0,0,.25);';
   f.textContent='✉ '+r.kind+' '+(r.num||'')+' sent to '+(r.customer||'client');
@@ -1474,11 +1491,12 @@ function getTotals(c, pmContact){
     : getAllJobs(c);
   const today = new Date('2026-06-18');
 
-  // Approved estimates: estimates with status 'Approved' (client approved, not yet fully billed)
+  // Approved estimates: any estimate whose status normalizes to Approved-Pending Schedule
+  // or In Progress (i.e. approved by the client and still active, not yet billed)
   const approvedEstItems = [];
   jobs.forEach(function(j){
     (j.estimates||[]).forEach(function(e){
-      if((e.status||'').toLowerCase()==='approved') approvedEstItems.push({est:e.est,amount:e.amount,date:e.date,scope:e.scope,address:j.address,jobName:j.projectName||j.jobName,status:e.status});
+      if(estIsActive(e.status)) approvedEstItems.push({est:e.est,amount:e.amount,date:e.date,scope:e.scope,address:j.address,jobName:j.projectName||j.jobName,status:e.status});
     });
   });
   const approvedEstCount = approvedEstItems.length;
@@ -1490,7 +1508,7 @@ function getTotals(c, pmContact){
   const activeJobsTotal = activeJobs.reduce((s,j)=>s+parseMoney(j.amount),0);
 
   // Ready to bill
-  const rtbJobs = jobs.filter(j=>j.status==='Ready to bill');
+  const rtbJobs = jobs.filter(j=>normEstStatus(j.status)===EST_STATUS.READY);
   const rtbCount = rtbJobs.length;
   const rtbTotal = rtbJobs.reduce((s,j)=>s+parseMoney(j.amount),0);
 
@@ -1556,7 +1574,7 @@ function renderList(){
     if(activeFilter==='active') return (c.customerStatus||'active')==='active';
     if(activeFilter==='inactive') return c.customerStatus==='inactive';
     if(activeFilter==='collections') return c.customerStatus==='collections';
-    if(activeFilter==='billing') return getAllJobs(c).some(j=>j.status==='Ready to bill');
+    if(activeFilter==='billing') return getAllJobs(c).some(j=>normEstStatus(j.status)===EST_STATUS.READY);
     if(activeFilter==='billinfo') return getAllJobs(c).some(function(j){
       if(_isJobArchived(j)) return false;
       return _jobNeedsBilling(j);
@@ -1710,6 +1728,7 @@ function renderList(){
 function openEditCustomer(id){
   const c=CUSTOMERS.find(x=>x.id===parseInt(id)); if(!c) return;
   window._editingCustomerId=id;   // set first: duplicate check must skip this record
+  var _bClose=document.getElementById('btnCancelModal'); if(_bClose) _bClose.textContent='Cancel';
   const g=(eid,val)=>{const el=document.getElementById(eid);if(el)el.value=val||'';};
   const pm=c.contacts.find(x=>x.role==='project-manager')||c.contacts[0]||{};
   const parts=(pm.name||'').split(' ');
@@ -1761,8 +1780,15 @@ function openEditCustomer(id){
     _ecBox.innerHTML='';
     extraContactCount=0;
     const _primary=(c.contacts||[]).find(x=>x.role==='project-manager')||(c.contacts||[])[0];
+    // De-duplicate: the same person (same id, or same email/name) should appear once,
+    // even if older data accidentally stored them twice. Merge their jobs together.
+    const _seen={};
     (c.contacts||[]).forEach(function(ct){
       if(ct===_primary) return;              // the primary one lives in the section above
+      var key = ct.id ? ('i:'+ct.id) : (ct.email ? ('e:'+String(ct.email).toLowerCase()) : ('n:'+String(ct.name||'').toLowerCase()));
+      var altKey = ct.email ? ('e:'+String(ct.email).toLowerCase()) : ('n:'+String(ct.name||'').toLowerCase());
+      if(_seen[key] || _seen[altKey]) return; // already rendered this person
+      _seen[key]=true; _seen[altKey]=true;
       addExtraContact(ct);                   // renders collapsed with the edit pencil
     });
   }
@@ -1778,6 +1804,20 @@ function openEditCustomer(id){
     if(mbody) mbody.scrollTop=0;
     mb.scrollTop=0;
   }
+}
+
+// "Complete Billing" banner button: opens the customer in edit mode, retitles the modal
+// "Edit Billing", and jumps straight to adding an additional (billing) contact.
+function completeBilling(id){
+  openEditCustomer(id);
+  var t=document.getElementById('ncModalTitle');
+  if(t) t.textContent='Edit Billing';
+  // Add a fresh contact row prefilled as a billing contact, and scroll to it
+  setTimeout(function(){
+    if(typeof addExtraContact==='function') addExtraContact({role:'billing'});
+    var ec=document.getElementById('extraContacts');
+    if(ec) ec.scrollIntoView({behavior:'smooth',block:'center'});
+  }, 80);
 }
 
 // Small colored badge showing the contact's role in Company Contacts
@@ -1822,7 +1862,51 @@ function phoneInput(el){ if(el) el.value=formatPhone(el.value); }
 
 // Emails are always stored/displayed lowercase
 function lowerEmail(v){ return v==null?'':String(v).trim().toLowerCase(); }
-function emailInput(el){ if(el) el.value=(el.value||'').toLowerCase(); }
+function emailInput(el){
+  if(!el) return;
+  el.value=(el.value||'').toLowerCase();
+  var v=el.value.trim();
+  // Valid = single address, no spaces, one @, a dot in the domain. Empty is neutral.
+  var ok = v==='' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  el.style.borderColor = ok ? '' : 'var(--danger)';
+}
+
+// ══════════════ ESTIMATE STATUS — canonical set + normalizer ══════════════
+// Canonical estimate lifecycle:
+//   Draft → Sent - Pending Approval → Approved - Pending Schedule
+//        → (start date set) In Progress → (completed) Ready to Bill
+//   plus Rejected and Void (terminal/side states).
+// Older data used many spellings ('sent','pending approval','approved',
+// 'ready-to-bill', etc). normEstStatus() maps any of them to the canonical label.
+var EST_STATUS = {
+  DRAFT:'Draft',
+  SENT:'Sent - Pending Approval',
+  APPROVED:'Approved - Pending Schedule',
+  IN_PROGRESS:'In Progress',
+  READY:'Ready to Bill',
+  REJECTED:'Rejected',
+  VOID:'Void'
+};
+function normEstStatus(raw){
+  var s=(raw==null?'':String(raw)).trim().toLowerCase();
+  if(s==='') return EST_STATUS.DRAFT;
+  if(s.indexOf('void')>-1) return EST_STATUS.VOID;
+  if(s.indexOf('reject')>-1 || s.indexOf('declin')>-1) return EST_STATUS.REJECTED;
+  if(s.indexOf('draft')>-1) return EST_STATUS.DRAFT;
+  // "Ready to bill" / "ready-to-bill"
+  if(s.indexOf('ready')>-1 && s.indexOf('bill')>-1) return EST_STATUS.READY;
+  if(s==='ready-to-bill') return EST_STATUS.READY;
+  if(s.indexOf('progress')>-1 || s==='in-progress') return EST_STATUS.IN_PROGRESS;
+  // Sent / pending approval — check BEFORE "approved" because "pending approval"
+  // also contains the substring "approv".
+  if(s.indexOf('sent')>-1 || s.indexOf('pending approval')>-1 || s==='pending-approval' || s==='pending') return EST_STATUS.SENT;
+  // Approved (also "approved - pending schedule", "pending schedule", "pending scheduled")
+  if(s.indexOf('approv')>-1 || s.indexOf('schedul')>-1) return EST_STATUS.APPROVED;
+  return raw;   // unknown → leave as-is (could be an invoice/job status)
+}
+// Convenience predicates (work on any spelling)
+function estIsApproved(st){ return normEstStatus(st)===EST_STATUS.APPROVED; }
+function estIsActive(st){ var n=normEstStatus(st); return n===EST_STATUS.APPROVED||n===EST_STATUS.IN_PROGRESS; }
 
 // Unique contact IDs. Date.now() alone collides when two contacts are created in the
 // same millisecond (e.g. adding several billing contacts quickly), which made one
@@ -1924,6 +2008,11 @@ function saveEditContact(custId, contactId){
     if(err){err.textContent='First name, last name, phone and email are required.';err.style.display='block';}
     return;
   }
+  var _d=String(ph).replace(/\D/g,''); if(_d.length===11&&_d[0]==='1') _d=_d.slice(1);
+  if(_d.length<10){
+    if(err){err.textContent='Enter a complete 10-digit phone number.';err.style.display='block';}
+    return;
+  }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
     if(err){err.textContent='Please enter a valid email address.';err.style.display='block';}
     return;
@@ -1969,6 +2058,15 @@ function toggleBillingJob(bid){
   var chev=document.getElementById('billjob-chev-'+bid);
   if(!body) return;
   var open=body.style.display!=='none';
+  if(!open){
+    // Accordion: close every other open site before opening this one
+    document.querySelectorAll('[id^="billjob-body-"]').forEach(function(b){
+      if(b!==body){ b.style.display='none'; }
+    });
+    document.querySelectorAll('[id^="billjob-chev-"]').forEach(function(cv){
+      if(cv!==chev){ cv.style.transform='rotate(0deg)'; }
+    });
+  }
   body.style.display=open?'none':'block';
   if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
 }
@@ -2403,7 +2501,7 @@ function showJobPopup(e, customerId, estNum, type){
     var amt=parseFloat((amount||'0').replace(/[$,]/g,''))||0;
     return (amt-invoiced)>0.005;
   }
-  function _statusColor(st){ return st==='Approved'||st==='Paid'?'#16a34a':/pending/i.test(st||'')?'#b8922a':'#2563eb'; }
+  function _statusColor(st){ var n=normEstStatus(st); return n===EST_STATUS.APPROVED||n===EST_STATUS.READY||st==='Paid'||st==='Approved'?'#16a34a':n===EST_STATUS.SENT||/pending/i.test(st||'')?'#b8922a':n===EST_STATUS.REJECTED?'#D94F4F':'#2563eb'; }
   function _unbilledWarn(kind){ var w=kind==='co'?'change order':'estimate'; return '<div style="font-size:11px;font-weight:700;color:#D94F4F;margin-top:3px;">⚠ This '+w+' has an unbilled balance</div>'; }
   // "Billed INV-#### $amount" rows — one per invoice tied to this line
   function _billedRows(lineId){
@@ -2582,7 +2680,7 @@ function showLinePopup(e, customerId, estId, type){
 
   var rows=items.length ? items.map(function(item){
     var dest=type==='invoices'
-      ? "window.location.href='/sdd-invoices.html?est="+item.est+"'"
+      ? "window.location.href='/sdd-customers.html?est="+item.est+"'"
       : "goToEstimate('"+item.est+"')";
     var badge='';var sub='';
     if(type==='changeOrders'){
@@ -2626,6 +2724,7 @@ function showLinePopup(e, customerId, estId, type){
 
 // Select a project manager from the left panel → show their jobs filtered on the right
 function selectPM(customerId, pmId){
+  if(_guardDocEdit(function(){ selectPM(customerId, pmId); })) return;
   activeId=customerId;
   expandedCustomer=customerId;
   activePM=pmId;
@@ -2634,6 +2733,45 @@ function selectPM(customerId, pmId){
   renderDetail(customerId, pmId);
   var pr=document.getElementById('panelRight'); if(pr) pr.scrollTop=0;
 }
+
+// If a document is currently being edited (docEditMode) with a live ref, intercept a
+// left-panel navigation: pop up Save / Discard / Cancel. Returns true if it intercepted
+// (caller should stop); false to proceed normally. `proceed` re-runs the navigation
+// after the user chooses Save or Discard.
+function _guardDocEdit(proceed){
+  if(!docEditMode || !activeDocRef) return false;
+  var ref=activeDocRef;
+  var ex=document.getElementById('_navGuardBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_navGuardBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000095;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:800;color:#1f2630;">Save changes before leaving?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes to '+esc_(ref)+'. What would you like to do?</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">'
+      +'<button id="_ng_cancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep Editing</button>'
+      +'<button id="_ng_discard" style="padding:9px 16px;border:1.5px solid var(--danger);border-radius:8px;background:#fff;color:var(--danger);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Discard</button>'
+      +'<button id="_ng_save" style="padding:9px 18px;border:none;border-radius:8px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Save</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  document.getElementById('_ng_cancel').onclick=function(){ bg.remove(); };  // stay put
+  document.getElementById('_ng_discard').onclick=function(){
+    bg.remove();
+    docEditMode=false;
+    _purgeDrafts && _purgeDrafts(ref);   // drop any unsaved draft
+    if(typeof proceed==='function') proceed();
+  };
+  document.getElementById('_ng_save').onclick=function(){
+    bg.remove();
+    // docSave validates; if it passes it exits edit mode. Then continue navigating.
+    var before=docEditMode;
+    docSave(ref);
+    // docSave is async via _confirmDoc; navigate after a tick if edit mode cleared
+    setTimeout(function(){ if(!docEditMode && typeof proceed==='function') proceed(); }, 60);
+  };
+  return true;
+}
+
 function clearPMFilter(customerId){
   activePM=null;
   renderList();
@@ -2641,6 +2779,7 @@ function clearPMFilter(customerId){
 }
 // Select an active job from the left list → show its info in the right panel (dark themed)
 function selectJob(customerId, est){
+  if(_guardDocEdit(function(){ selectJob(customerId, est); })) return;
   activeId=customerId;
   expandedCustomer=customerId;
   activePM=null;
@@ -2717,7 +2856,9 @@ function renderJobInfo(customerId, est){
     // ── BLOCK 1 — Job info (DARK) ──
     +'<div style="background:#1f2630;border-radius:14px;overflow:hidden;color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.18);margin-bottom:16px;">'
       +'<div style="padding:20px 24px;background:#262f3b;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">'
-        +'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#e0b94a;margin-bottom:5px;">Job</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:21px;font-weight:800;color:#fff;">'+pn+'</div>'
+        +'<div><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;"><span style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#e0b94a;">Job</span>'
+          +'<button onclick="editJob('+c.id+',\''+est+'\')" title="Edit job" style="border:1px solid rgba(224,185,74,.5);background:rgba(224,185,74,.12);color:#e0b94a;cursor:pointer;padding:3px 7px;border-radius:6px;display:inline-flex;align-items:center;gap:5px;font-family:Barlow,sans-serif;font-size:11px;font-weight:700;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#e0b94a" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button></div>'
+          +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><div style="font-size:26px;font-weight:800;color:#fff;">'+pn+'</div>'
           +'<span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:20px;color:'+stCol+';background:'+stBg+';">'+stLbl+'</span></div>'
           +'<div style="font-size:12px;color:rgba(255,255,255,.55);margin-top:2px;">'+c.name+'</div></div>'
         +'<div style="display:flex;align-items:center;gap:8px;">'
@@ -2817,7 +2958,9 @@ function _invSummary(iv){
   var paid=_invPaid(iv);
   var ret=_invRetention(iv);
   var balance=total-paid;
-  return {total:total, paid:paid, retention:ret, balance:balance, fullyPaid:(balance<=0.5)};
+  // A $0 invoice (e.g. a brand-new standalone draft with no line items yet) is NOT
+  // "fully paid" — treating it as paid would lock it and hide the Edit button.
+  return {total:total, paid:paid, retention:ret, balance:balance, fullyPaid:(total>0.5 && balance<=0.5)};
 }
 // Estimate/CO financial picture: billed vs total, remaining to bill, collected
 function _estSummary(job, estId){
@@ -2885,6 +3028,8 @@ function _fullJobSite(job){
 function _docIsLocked(f){
   if(!f) return false;
   if(f.doc && f.doc._void) return true; // voided documents are locked (read-only)
+  // A draft or brand-new document is always editable (never locked)
+  if(f.doc && (f.doc._draft || f.doc._isNew)) return false;
   if(f.kind==='invoice'){ return _invSummary(f.doc).fullyPaid; }
   if(f.kind==='estimate'){
     var s=_estSummary(f.job, f.doc.est);
@@ -3416,12 +3561,31 @@ function docDeleteLine(ref, idx){
     _reopenDoc(ref);
   }, 'Yes, Delete', 'This line item will be removed from the document. This can\'t be undone.');
 }
+// A document "inherits" its Terms & Conditions (so the user doesn't pick them) only when
+// it's an invoice tied to an existing estimate or change order. Estimates, change orders,
+// and standalone invoices must have their terms chosen explicitly.
+function _docInheritsTerms(f){
+  if(!f || f.kind!=='invoice') return false;      // only invoices can inherit
+  if(f.doc && f.doc.standalone) return false;      // standalone invoice → must choose
+  return !!(f.doc && String(f.doc.originalEst||'').trim());  // derived from an est/CO
+}
+
 function docSave(ref){
   var f=_findDoc(ref); if(!f) return;
   var isDraft=!!f.doc._draft;
   // Project Name is mandatory for estimates (and any doc) before saving
   if(!String(f.doc.projectName||'').trim()){
     _flashDoc && _flashDoc('Project name is required — please fill it in');
+    return;
+  }
+  // Terms & Conditions must be explicitly chosen for estimates, change orders, and
+  // STANDALONE invoices. Invoices derived from an estimate/CO inherit terms, so they're
+  // exempt (see _docInheritsTerms).
+  if(!_docInheritsTerms(f) && !String(f.doc.termsType||'').trim()){
+    _flashDoc && _flashDoc('Please select the Terms & Conditions before saving');
+    // scroll the terms selector into view if present
+    var tsel=document.getElementById('_docTermsSelect');
+    if(tsel && tsel.scrollIntoView) tsel.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
   // For a brand-new draft, require at least one real service line before saving
@@ -3521,7 +3685,7 @@ function docApproveSchedule(ref){
   var f=_findDoc(ref); if(!f) return;
   var estNum=f.doc.est||f.doc.num; if(!estNum) return;
   var req=_loadScheduleReq(estNum); if(!req) return;
-  req.status='approved';
+  req.status=EST_STATUS.APPROVED;
   req.approvedAt=new Date().toISOString();
   _saveScheduleReq(estNum, req);
   _flashDoc('✓ Schedule confirmed for '+req.date);
@@ -3569,16 +3733,9 @@ function docPreviewForClient(ref, mode){
     +'</div>'
   ):'';
 
-  // Signature area (button that opens the pad; shows saved signature if present) — estimates only
-  var sigArea = isEst ? (
-    '<div style="background:#fff;border:1.5px solid #ddd;border-radius:10px;padding:16px;margin:16px auto;max-width:210mm;">'
-      +'<div style="font-size:13px;font-weight:800;color:#1f2630;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Client Signature</div>'
-      +(sig.image
-        ? '<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+String(sig.name||'').replace(/</g,'&lt;')+' — '+String(sig.date||'').replace(/</g,'&lt;')+'</div>'
-        : '<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
-          +'<button onclick="_openSignaturePad(\''+ref+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign Here</button>')
-    +'</div>'
-  ) : '';
+  // Signature is collected on the CLIENT's own link (sdd-client-view), not here.
+  // The creator only previews the PDF and sends it — no signature pad in this view.
+  var sigArea = '';
 
   // Header bar
   var headerBar='<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:#1f2630;color:#fff;flex-shrink:0;">'
@@ -3592,7 +3749,7 @@ function docPreviewForClient(ref, mode){
     +'<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
       +'<button onclick="_openSignedPdf(\''+ref+'\')" style="padding:10px 18px;border-radius:9px;border:1px solid #555;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button>'
       +'<button onclick="_openSignedPdf(\''+ref+'\')" style="padding:10px 18px;border-radius:9px;border:1px solid #555;background:transparent;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print</button>'
-      +'<button id="_prevSendBtn" '+(allSI?'disabled style="opacity:.5;cursor:not-allowed;':'style="')+'padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;" onclick="'+(isEst?'_signAndApprove(\''+ref+'\')':'_doSendToClient(\''+ref+'\')')+'">'+(isEst?(sig.image?'Saved and approved':'Sign &amp; send to client'):'Send to client')+'</button>'
+      +'<button id="_prevSendBtn" '+(allSI?'disabled style="opacity:.5;cursor:not-allowed;':'style="')+'padding:11px 26px;border-radius:9px;border:none;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:8px;" onclick="_doSendToClient(\''+ref+'\')">Send to client</button>'
     +'</div>'
   +'</div>';
 
@@ -3651,8 +3808,10 @@ function _docContentBlocks(f){
     if(sig && sig.image){
       sigHTML+='<img src="'+sig.image+'" style="max-height:80px;display:block;margin-bottom:2px;"><div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:13px;">'+esc(sig.name||'')+' — '+esc(sig.date||'')+'</div>';
     } else {
-      sigHTML+='<div style="font-size:13px;color:#888;margin-bottom:10px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
-        +'<button onclick="_openSignaturePad(\''+(f.doc.est||f.doc.num||'')+'\')" style="padding:11px 22px;border:1.5px solid #B8922A;border-radius:9px;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Sign Here</button>';
+      // No signature yet → show a blank signature line (the client signs on their own link).
+      // No "Sign Here" button here: the estimate creator only previews & sends.
+      sigHTML+='<div style="font-size:12px;color:#888;margin-bottom:34px;">The client signs here to approve this estimate'+(_ensureAlternates(f).length?' and any selected alternate work.':'.')+'</div>'
+        +'<div style="border-top:1px solid #333;padding-top:4px;width:280px;font-size:12px;color:#999;">Signature — Date</div>';
     }
     sigHTML+='</div>';
     blocks.push({html:sigHTML});
@@ -3784,8 +3943,7 @@ function _docBillingRecipients(ff){
 function _doSendToClient(ref){
   var ff=_findDoc(ref); if(!ff) return;
   var recips=_docBillingRecipients(ff);
-  // No billing contacts on the job → send straight through (nothing to CC)
-  if(!recips.length){ _commitSendToClient(ref, []); return; }
+  // Always show the panel (even with no billing contacts) so the user can add CC emails.
   var kindLabel = ff.kind==='invoice' ? 'Invoice' : (ff.kind==='co' ? 'Change Order' : 'Estimate');
   var rowsHTML=recips.map(function(r,i){
     var role = i===0 ? 'TO' : 'CC';
@@ -3805,7 +3963,15 @@ function _doSendToClient(ref){
       +'<div style="font-size:18px;font-weight:800;color:#1f2630;">Send '+kindLabel+' — '+esc_(ref)+'</div>'
       +'<div style="font-size:13px;color:#777;margin-top:3px;">These billing contacts will receive it. Uncheck anyone you want to skip.</div>'
     +'</div>'
-    +'<div style="padding:8px 24px 4px;max-height:46vh;overflow-y:auto;">'+rowsHTML+'</div>'
+    +'<div style="padding:8px 24px 4px;max-height:46vh;overflow-y:auto;" id="_sendRecipList">'+rowsHTML+'</div>'
+    +'<div style="padding:4px 24px 8px;">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;">Add another recipient (CC)</div>'
+      +'<div style="display:flex;gap:8px;">'
+        +'<input id="_sendCcInput" type="email" placeholder="name@email.com" oninput="emailInput(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();_addSendCcEmail();}" style="flex:1;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;outline:none;">'
+        +'<button onclick="_addSendCcEmail()" style="padding:9px 18px;border-radius:8px;border:1.5px solid var(--gold);background:var(--gold-dim,rgba(184,146,42,.12));color:var(--gold);font-family:Barlow,sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add</button>'
+      +'</div>'
+      +'<div id="_sendCcErr" style="display:none;color:var(--danger);font-size:11px;font-weight:600;margin-top:4px;">Please enter a valid email address.</div>'
+    +'</div>'
     +'<div id="_sendRecipWarn" style="display:none;padding:0 24px;color:var(--danger);font-size:12px;font-weight:600;">Select at least one recipient.</div>'
     +'<div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 24px 20px;">'
       +'<button onclick="document.getElementById(\'_sendRecipBg\').remove()" style="padding:9px 18px;border-radius:9px;border:1.5px solid var(--border2);background:#fff;font-family:Barlow,sans-serif;font-size:14px;cursor:pointer;">Cancel</button>'
@@ -3816,6 +3982,42 @@ function _doSendToClient(ref){
 }
 
 // Reads which recipients stayed checked, then commits the send
+// Adds a manually-typed email to the recipient list as a CC row (validated, removable)
+function _addSendCcEmail(){
+  var inp=document.getElementById('_sendCcInput');
+  var err=document.getElementById('_sendCcErr');
+  var list=document.getElementById('_sendRecipList');
+  if(!inp||!list) return;
+  var em=(inp.value||'').trim().toLowerCase();
+  // validate format (single address, no spaces)
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){
+    if(err) err.style.display='block';
+    inp.style.borderColor='var(--danger)';
+    return;
+  }
+  // avoid duplicates (case-insensitive)
+  var dup=false;
+  list.querySelectorAll('._sendrecip').forEach(function(row){
+    if((row.getAttribute('data-email')||'').toLowerCase()===em) dup=true;
+  });
+  if(dup){ if(err){ err.textContent='That email is already in the list.'; err.style.display='block'; } return; }
+  if(err){ err.style.display='none'; err.textContent='Please enter a valid email address.'; }
+  inp.style.borderColor='';
+  // build a CC row matching the existing rows, with an × to remove it
+  var row=document.createElement('label');
+  row.className='_sendrecip';
+  row.setAttribute('data-email', em);
+  row.setAttribute('data-name', '');
+  row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border2);border-radius:9px;margin-bottom:7px;cursor:pointer;background:#fff;';
+  row.innerHTML='<input type="checkbox" class="_sendrecip_cb" checked style="width:15px;height:15px;accent-color:var(--gold);cursor:pointer;">'
+    +'<span style="font-size:9px;font-weight:800;letter-spacing:.04em;padding:2px 7px;border-radius:20px;background:var(--surface3,#eee);color:var(--muted);flex-shrink:0;">CC</span>'
+    +'<span style="min-width:0;flex:1;"><span style="font-size:12px;color:var(--muted);">'+esc_(em)+'</span></span>'
+    +'<button type="button" onclick="event.preventDefault();this.closest(\'._sendrecip\').remove();" style="border:none;background:none;color:var(--muted2);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;">×</button>';
+  list.appendChild(row);
+  inp.value='';
+  inp.focus();
+}
+
 function _confirmSendRecip(ref){
   var bg=document.getElementById('_sendRecipBg'); if(!bg) return;
   var picked=[];
@@ -3833,7 +4035,7 @@ function _commitSendToClient(ref, recipients){
   var pbg=document.getElementById('_clientPrevBg'); if(pbg) pbg.remove();
   var ff=_findDoc(ref); if(!ff) return;
   if(ff.kind==='invoice'){ if(!/paid/i.test(ff.doc.status||'')) ff.doc.status='Sent'; }
-  else { if(/pending|draft|^$/i.test(ff.doc.status||'')||!ff.doc.status) ff.doc.status='Pending approval'; }
+  else { if(/pending|draft|^$/i.test(ff.doc.status||'')||!ff.doc.status) ff.doc.status=EST_STATUS.SENT; }
   ff.doc.dateSent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   if(recipients && recipients.length){
     ff.doc.sentTo = recipients[0];                 // primary recipient
@@ -3858,7 +4060,7 @@ function _signAndApprove(ref){
   var sigData=cv?cv.toDataURL('image/png'):'';
   var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   f.doc._signature={name:name, image:sigData, date:today};
-  f.doc.status='Approved';
+  f.doc.status=EST_STATUS.APPROVED;
   f.doc.dateApproved=today;
   if(window.SDD && SDD.save) SDD.save();
   var bg=document.getElementById('_clientPrevBg'); if(bg) bg.remove();
@@ -4130,17 +4332,23 @@ function editableDocSheet(ref, opts){
 
   // ── Terms & Conditions: type selector + per-clause checkboxes (like Estimates) ──
   var termsKeys=(typeof TERMS_AND_CONDITIONS!=='undefined')?Object.keys(TERMS_AND_CONDITIONS):[];
-  var selType=d.termsType||(termsKeys.length?termsKeys[0]:'');
+  // Whether the user MUST choose terms (estimate / change order / standalone invoice).
+  var _mustPickTerms = !_docInheritsTerms(f);
+  // No auto-default when a choice is required and none was made yet — force selection.
+  var selType = d.termsType || (_mustPickTerms ? '' : (termsKeys.length?termsKeys[0]:''));
   var termsBlock='';
   if(termsKeys.length){
-    var tpl=TERMS_AND_CONDITIONS[selType];
-    // default: all clauses selected
-    if(!d.selectedClauses){ d.selectedClauses = tpl?tpl.clauses.map(function(cl){return cl.id;}):[]; }
-    var selected=d.selectedClauses;
-    var opts=termsKeys.map(function(k){return '<option value="'+k+'"'+(k===selType?' selected':'')+'>'+TERMS_AND_CONDITIONS[k].label+'</option>';}).join('');
+    var tpl=selType?TERMS_AND_CONDITIONS[selType]:null;
+    // default clauses only once a template is chosen
+    if(selType && !d.selectedClauses){ d.selectedClauses = tpl?tpl.clauses.map(function(cl){return cl.id;}):[]; }
+    var selected=d.selectedClauses||[];
+    var placeholderOpt = _mustPickTerms ? '<option value=""'+(selType?'':' selected')+'>— Select Terms &amp; Conditions —</option>' : '';
+    var opts=placeholderOpt+termsKeys.map(function(k){return '<option value="'+k+'"'+(k===selType?' selected':'')+'>'+TERMS_AND_CONDITIONS[k].label+'</option>';}).join('');
+    var selBorder = (_mustPickTerms && !selType) ? '#D94F4F' : accent;   // red border until chosen
     var typeSelector = ed
-      ? '<select onchange="docSetTermsType(\''+ref+'\',this.value)" style="font-family:Barlow,sans-serif;font-size:14px;padding:11px 14px;border:1.5px solid '+accent+';border-radius:8px;background:#fff;cursor:pointer;width:100%;box-sizing:border-box;">'+opts+'</select>'
-      : '<div style="font-size:14px;font-weight:600;padding:11px 14px;border:1px solid #eee;border-radius:8px;background:#FAF9F5;">'+(tpl?tpl.label:'')+'</div>';
+      ? '<select id="_docTermsSelect" onchange="docSetTermsType(\''+ref+'\',this.value)" style="font-family:Barlow,sans-serif;font-size:14px;padding:11px 14px;border:1.5px solid '+selBorder+';border-radius:8px;background:#fff;cursor:pointer;width:100%;box-sizing:border-box;">'+opts+'</select>'
+        +((_mustPickTerms && !selType) ? '<div style="color:#D94F4F;font-size:11px;font-weight:600;margin-top:4px;">Required — pick the terms that apply to this document.</div>' : '')
+      : '<div style="font-size:14px;font-weight:600;padding:11px 14px;border:1px solid #eee;border-radius:8px;background:#FAF9F5;">'+(tpl?tpl.label:'—')+'</div>';
     var clausesHtml=(tpl&&tpl.clauses)?tpl.clauses.map(function(cl){
       var on=selected.indexOf(cl.id)!==-1;
       if(!ed && !on) return ''; // in read mode, hide unchecked clauses
@@ -4155,12 +4363,17 @@ function editableDocSheet(ref, opts){
       +'</div>';
     }).join(''):'';
     var _tid='_terms_'+String(ref).replace(/[^A-Za-z0-9]/g,'');
-    var _tcollapsed = (d._termsOpen===true) ? false : true; // minimized by default
-    termsBlock='<div style="margin-top:26px;">'
-      +'<div onclick="_toggleTermsBlock(\''+_tid+'\',\''+ref+'\')" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1f2630;border-bottom:1px solid #eee;padding-bottom:8px;margin-bottom:14px;">'
-        +'<span>Terms &amp; Conditions</span>'
+    // Expanded by default when the user still MUST pick terms (so they can't miss it);
+    // otherwise minimized unless they've opened it.
+    var _forceOpen = ed && _mustPickTerms && !selType;
+    var _tcollapsed = _forceOpen ? false : ((d._termsOpen===true) ? false : true);
+    var _headerColor = _forceOpen ? '#D94F4F' : '#1f2630';
+    termsBlock='<div style="margin-top:26px;"'+(_forceOpen?' id="'+_tid+'-wrap"':'')+'>'
+      +'<div onclick="_toggleTermsBlock(\''+_tid+'\',\''+ref+'\')" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:'+_headerColor+';border-bottom:1px solid '+(_forceOpen?'#D94F4F':'#eee')+';padding-bottom:8px;margin-bottom:14px;">'
+        +'<span>Terms &amp; Conditions'+(_forceOpen?' <span style="color:#D94F4F;">*</span>':'')+'</span>'
         +'<span id="'+_tid+'-chev" style="font-size:17px;font-weight:800;color:'+accent+';display:inline-flex;align-items:center;gap:6px;">'+(_tcollapsed?'<span style="font-size:11px;">Show</span>▾':'<span style="font-size:11px;">Hide</span>▴')+'</span>'
       +'</div>'
+      +(_forceOpen?'<div style="background:rgba(217,79,79,.06);border:1px solid rgba(217,79,79,.25);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:#D94F4F;">⚠ You must select the Terms &amp; Conditions that apply before you can save this '+(f.kind==='invoice'?'invoice':(f.kind==='co'?'change order':'estimate'))+'.</div>':'')
       +'<div id="'+_tid+'-body" style="display:'+(_tcollapsed?'none':'block')+';">'
         +'<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#999;margin-bottom:6px;">Terms type</div>'
         +typeSelector
@@ -4194,7 +4407,8 @@ function editableDocSheet(ref, opts){
         // Reopen (when rejected) / Reject (estimates & COs not yet billed)
         +((/reject/i.test(d.status||'')) ? '<button onclick="docReopen(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #7C5CBF;background:#fff;color:#7C5CBF;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Reopen</button>' : ((f.kind!=='invoice') ? '<button onclick="docReject(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #D94F4F;background:#fff;color:#D94F4F;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D94F4F" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Rejected</button>' : ''))
         // Mark job completed (approved estimates whose job isn't done yet)
-        +(( f.kind==='estimate' && /approv/i.test(d.status||'') && job && !/complet|ready to bill/i.test(job.status||'') ) ? '<button onclick="docMarkJobCompleted(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #16a34a;background:#fff;color:#16a34a;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Job Completed</button>' : '')
+        +(( f.kind==='estimate' && estIsApproved(d.status) && job && !/progress|complet|ready to bill/i.test(job.status||'') && !job.startDate ) ? '<button onclick="docScheduleStart(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #e0b94a;background:#fff;color:#B8922A;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule Start</button>' : '')
+        +(( f.kind==='estimate' && /approv|progress/i.test(d.status||'') && job && !/complet|ready to bill/i.test(job.status||'') ) ? '<button onclick="docMarkJobCompleted(\''+ref+'\')" style="padding:11px 20px;border-radius:10px;border:1.5px solid #16a34a;background:#fff;color:#16a34a;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Job Completed</button>' : '')
         +voidBtn
         +(( f.kind==='estimate' && _estComputedStage(job,d.est,d.status).step>=3 ) ? '' : '<button onclick="docEnterEdit(\''+ref+'\')" style="padding:11px 26px;border-radius:10px;border:1.5px solid '+accent+';background:#fff;color:'+accent+';font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="'+accent+'" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>')
         +'<button onclick="docPreviewForClient(\''+ref+'\',\'preview\')" style="padding:11px 22px;border-radius:10px;border:1.5px solid var(--border2);background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</button>'
@@ -4848,6 +5062,7 @@ function _purgeDrafts(exceptRef){
   });});});
 }
 function selectEstimate(customerId, jobEst, estId){
+  if(_guardDocEdit(function(){ selectEstimate(customerId, jobEst, estId); })) return;
   _purgeDrafts(estId);
   activeId=customerId;
   expandedCustomer=customerId;
@@ -5331,8 +5546,13 @@ function _openJobContactForm(customerId, est, role){
   bg.id='_jcFormBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000080;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;';
   function fld(id,label,ph,req){
+    // live formatting based on which field this is
+    var oninput='';
+    if(id==='_jcFname'||id==='_jcLname') oninput=' oninput="tcInputAddr(this)"';
+    else if(id==='_jcPhone') oninput=' oninput="phoneInput(this)"';
+    else if(id==='_jcEmail') oninput=' oninput="emailInput(this)"';
     return '<div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;">'+label+(req?' <span style="color:#d94f4f;">*</span>':'')+'</label>'
-      +'<input id="'+id+'" type="text" autocomplete="new-password" placeholder="'+ph+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>';
+      +'<input id="'+id+'" type="text" autocomplete="new-password" placeholder="'+ph+'"'+oninput+' style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>';
   }
   bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
     +'<div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
@@ -5365,7 +5585,19 @@ function _saveJobContact(customerId, est, role){
   var ph=(document.getElementById('_jcPhone').value||'').trim();
   var tEl=document.getElementById('_jcTitle');
   var ti=tEl?(tEl.value||'').trim():'';
-  if(!fn||!ln||!em||!ph){ var er=document.getElementById('_jcErr'); if(er) er.style.display='block'; return; }
+  var er=document.getElementById('_jcErr');
+  var showErr=function(msg){ if(er){ er.textContent=msg; er.style.display='block'; } };
+  // required
+  if(!fn||!ln||!em||!ph){ showErr('Please fill in all required fields.'); return; }
+  // phone must have 10 digits
+  var digits=String(ph).replace(/\D/g,''); if(digits.length===11&&digits[0]==='1') digits=digits.slice(1);
+  if(digits.length<10){ showErr('Enter a complete 10-digit phone number.'); return; }
+  // email must be a single valid address
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ showErr('Please enter a valid email address.'); return; }
+  if(er) er.style.display='none';
+  // normalize before saving
+  fn=toTitleCaseAddr(fn); ln=toTitleCaseAddr(ln);
+  em=lowerEmail(em); ph=formatPhone(ph);
   var avColors=['av-gold','av-info','av-success','av-warning','av-muted'];
   var newContact={
     id:newContactId(),
@@ -5385,12 +5617,18 @@ function _saveJobContact(customerId, est, role){
         address:srcJob.address||srcJob.streetOnly||'', streetOnly:srcJob.streetOnly||'', city:srcJob.city||'',
         status:srcJob.status||'Active', amount:srcJob.amount||'$0', date:srcJob.date||'',
         billing:[], estimates:[], changeOrders:[], invoices:[] });
+      // If this is a Project Manager, make them the job's PM so they show up as such
+      if(role==='project-manager' && !srcJob.contactId){ srcJob.contactId=newContact.id; }
     }
   }
   c.contacts.push(newContact);
+  saveCustomers();                 // persist to storage
   var bg=document.getElementById('_jcFormBg'); if(bg) bg.remove();
+  // Refresh everything: left list, the job info card, AND the customer detail card
+  // (Company Contacts) so the new contact shows everywhere.
   renderList();
-  if(est){ renderJobInfo(c.id, est); } else { renderDetail(c.id); }
+  if(est){ renderJobInfo(c.id, est); }
+  else { renderDetail(c.id); }
   var flash=document.createElement('div');
   flash.style.cssText='position:fixed;bottom:24px;right:24px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;z-index:1000099;box-shadow:0 4px 20px rgba(0,0,0,.2);';
   flash.textContent='✓ '+newContact.name+' added as '+(role==='project-manager'?'Project Manager':'Other Contact');
@@ -5905,7 +6143,18 @@ function _jdInvoiceCreate(estId, isPartial, billAmount, pickedItems, upfrontPaym
   var today=new Date();
   var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
   var due=_dueDateFor(c, today);
-  var newInv={est:newNum, originalEst:estId, amount:amount, status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, partial:!!isPartial};
+  // Project name defaults from the source doc. If the source is a change order (which has
+  // no projectName of its own), fall back to the ORIGINAL estimate it stems from.
+  var _projName='';
+  if(src && src.projectName){ _projName=src.projectName; }
+  else if(src && src.originalEst){
+    var _origEst=(job.estimates||[]).find(function(e){return e.est===src.originalEst;});
+    if(_origEst && _origEst.projectName) _projName=_origEst.projectName;
+  }
+  if(!_projName) _projName=job.projectName||job.jobName||job.address||'Invoice';
+  var newInv={est:newNum, originalEst:estId, amount:amount, status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, partial:!!isPartial,
+    projectName:_projName,
+    jobName:job.jobName||'', address:job.address||job.streetOnly||'', city:job.city||''};
   // If specific items were picked, copy them as the invoice's line items
   if(pickedItems && pickedItems.length){
     newInv.lines=pickedItems.map(function(l){
@@ -5931,6 +6180,9 @@ function _jdInvoiceCreate(estId, isPartial, billAmount, pickedItems, upfrontPaym
   }
   newInv._draft=true; // not real until the user presses Save
   job.invoices.push(newInv);
+  // Once billed, a "Ready to Bill" job becomes "Completed - Pending Payment"
+  // (this is the JOB/invoice-side status, not the estimate status).
+  if(normEstStatus(job.status)===EST_STATUS.READY){ job.status='Completed - Pending Payment'; }
   // NOTE: not persisted yet — becomes real only when the user presses Save.
   selectDoc('invoice', newNum);
   docEditMode=true;
@@ -5959,7 +6211,8 @@ function _jdInvoiceStandalone(){
   var today=new Date();
   var fmt=function(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
   var due=_dueDateFor(c, today);
-  job.invoices.push({est:newNum, originalEst:'', amount:'$0', status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, standalone:true, _draft:true, _isNew:true});
+  job.invoices.push({est:newNum, originalEst:'', amount:'$0', status:'Unpaid', date:fmt(today), due:due, terms:_customerTerms(c).label, standalone:true, _draft:true, _isNew:true,
+    projectName:job.projectName||job.jobName||job.address||'Invoice', jobName:job.jobName||'', address:job.address||job.streetOnly||'', city:job.city||''});
   // not persisted yet — becomes real only when the user presses Save.
   selectDoc('invoice', newNum);
   docEditMode=true;
@@ -6083,8 +6336,12 @@ function _openBillingForm(customerId, viewEst, pmEst, idx){
   bg.id='_bcFormBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000085;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;';
   function fld(id,label,ph,val,req){
+    var oninput='';
+    if(id==='_bcFname'||id==='_bcLname') oninput=' oninput="tcInputAddr(this)"';
+    else if(id==='_bcPhone') oninput=' oninput="phoneInput(this)"';
+    else if(id==='_bcEmail') oninput=' oninput="emailInput(this)"';
     return '<div style="margin-bottom:12px;"><label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;">'+label+(req?' <span style="color:#d94f4f;">*</span>':'')+'</label>'
-      +'<input id="'+id+'" type="text" autocomplete="new-password" value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>';
+      +'<input id="'+id+'" type="text" autocomplete="new-password" value="'+(val||'').replace(/"/g,'&quot;')+'" placeholder="'+ph+'"'+oninput+' style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;outline:none;"></div>';
   }
   bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:460px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
     +'<div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
@@ -6117,15 +6374,24 @@ function _saveBillingContact(customerId, viewEst, pmEst, idx){
   var ln=(document.getElementById('_bcLname').value||'').trim();
   var em=(document.getElementById('_bcEmail').value||'').trim();
   var ph=(document.getElementById('_bcPhone').value||'').trim();
-  if(!fn||!ln||!em){ var er=document.getElementById('_bcErr'); if(er) er.style.display='block'; return; }
+  var er=document.getElementById('_bcErr');
+  var bcErr=function(msg){ if(er){ er.textContent=msg; er.style.display='block'; } };
+  if(!fn||!ln||!em){ bcErr('First name, last name and email are required.'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ bcErr('Please enter a valid email address.'); return; }
+  if(ph){
+    var _dbc=String(ph).replace(/\D/g,''); if(_dbc.length===11&&_dbc[0]==='1') _dbc=_dbc.slice(1);
+    if(_dbc.length<10){ bcErr('Enter a complete 10-digit phone number.'); return; }
+  }
+  em=lowerEmail(em); ph=formatPhone(ph); fn=toTitleCaseAddr(fn); ln=toTitleCaseAddr(ln);
   if(idx>=0 && pmJob.billing[idx]){
     pmJob.billing[idx].name=fn+' '+ln;
     pmJob.billing[idx].email=em;
     pmJob.billing[idx].phone=ph;
   } else {
-    pmJob.billing.push({ id:'b_'+Date.now(), name:fn+' '+ln, email:em, phone:ph, role:'cc' });
+    pmJob.billing.push({ id:newContactId(), name:fn+' '+ln, email:em, phone:ph, role:'cc' });
   }
   pmJob.pendingBilling=(pmJob.billing.length===0);
+  saveCustomers();                 // persist to storage
   var bg=document.getElementById('_bcFormBg'); if(bg) bg.remove();
   renderList();
   renderJobInfo(c.id, viewEst);
@@ -6149,7 +6415,7 @@ function renderDetail(id, pmFilter){
   const _pmJobEsts = _pmContact ? (_pmContact.jobs||[]).map(function(j){return j.est;}) : null;
   function _tabJobFilter(j){ return _pmJobEsts ? _pmJobEsts.indexOf(j.est)!==-1 : true; }
   const t = getTotals(c, _pmContact);
-  const billing = allJobs.filter(j=>j.status==='Ready to bill').length;
+  const billing = allJobs.filter(j=>normEstStatus(j.status)===EST_STATUS.READY).length;
 
   const jobCardsHTML = allJobs.length ? allJobs.map(j=>`
     <div class="job-card" ${j.est?`onclick="goToEstimate('${j.est}')"`:''}>
@@ -6411,13 +6677,16 @@ function renderDetail(id, pmFilter){
     </div>` : '',
     !hasBilling ? `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(217,79,79,.06);border-bottom:1px solid rgba(217,79,79,.15);">
       <div style="font-size:13px;font-weight:600;color:var(--danger);">⚠ Billing information pending</div>
-      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="openModal()">+ Complete Billing</button>
+      <button class="btn btn-ghost btn-sm" style="border-color:var(--danger);color:var(--danger);font-size:11px;white-space:nowrap;" onclick="completeBilling(${c.id})">+ Complete Billing</button>
     </div>` : ''
   ].filter(Boolean).join('');
 
   // Company contacts list (extracted so it can live in its own block above Jobs)
   const companyContactsHTML = (()=>{
-    const allC=c.contacts.filter(x=>x.role==='project-manager'||x.role==='additional');
+    // Show ALL contacts (project managers, billing, additional). Billing contacts were
+    // being hidden before, so a billing contact added when creating a customer — before
+    // it's linked to any job — never appeared anywhere.
+    const allC=c.contacts.slice();
     if(!allC.length) return '<div style="padding:16px 0;color:var(--muted2);font-size:13px;font-style:italic;">No contacts added yet</div>';
     return allC.map((ct,cIdx)=>{
       var ctJobs=(ct.jobs||[]);
@@ -6448,7 +6717,9 @@ function renderDetail(id, pmFilter){
             <div class="cs-name"${nameClick}>${chev}${ct.name}
               ${ct.role==='project-manager'
                 ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(184,146,42,.1);color:var(--gold);margin-left:6px;">PM</span>'
-                : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>'}
+                : (ct.role==='billing'
+                    ? '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:rgba(58,158,106,.12);color:#16a34a;margin-left:6px;">Billing</span>'
+                    : '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:var(--surface3);color:var(--muted);margin-left:6px;">Contact</span>')}
               ${isPM&&ctJobs.length?'<span style="font-size:10px;color:var(--muted2);margin-left:4px;">('+ctJobs.length+' job'+(ctJobs.length===1?'':'s')+')</span>':''}
             </div>
             <div class="cs-sub">${ct.title||''} · ${ct.email} ${ct.phone?'· '+ct.phone:''}</div>
@@ -6587,28 +6858,68 @@ function renderDetail(id, pmFilter){
         </div>`;
       }
       let detail='';
-      g.estimates.forEach(function(e){
-        detail += lineRow(e.scope||e.projectName||'Estimate', e.est, e.amount, e.status, 14, '#B8922A');
-        // change orders of this estimate
-        g.changeOrders.filter(co=>co.originalEst===e.est).forEach(function(co){
-          detail += lineRow(co.description||'Change order', co.est, co.amount, co.status, 30, '#C8822A');
-          // invoices of this CO
-          g.invoices.filter(iv=>iv.originalEst===co.est).forEach(function(iv){
-            detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 46, '#16a34a');
+      // Helper: is this invoice paid?
+      var _ivPaid=function(iv){ return paidRe.test(iv.status||'') && !unpaidRe.test(iv.status||''); };
+      // Section builder: given a set of "contract" docs (estimates OR change orders) and
+      // the invoices tied to them, returns the rows + section totals.
+      function buildSection(title, contractDocs, indentBase){
+        if(!contractDocs.length) return {html:'', contract:0, paid:0, outstanding:0};
+        var secContract=0, secPaid=0, secInvoiced=0, rows='';
+        contractDocs.forEach(function(d){
+          secContract += money(d.amount);
+          var isCO = (d.originalEst!=null);
+          rows += lineRow(isCO?(d.description||'Change order'):(d.scope||d.projectName||'Original Scope'), d.est, d.amount, d.status, indentBase, isCO?'#C8822A':'#B8922A');
+          // invoices tied to this doc, nested underneath
+          g.invoices.filter(function(iv){return iv.originalEst===d.est;}).forEach(function(iv){
+            secInvoiced += money(iv.amount);
+            if(_ivPaid(iv)) secPaid += money(iv.amount);
+            rows += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, indentBase+16, '#16a34a');
           });
         });
-        // invoices directly off this estimate
-        g.invoices.filter(iv=>iv.originalEst===e.est).forEach(function(iv){
-          detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 30, '#16a34a');
-        });
-      });
-      // orphan invoices (no matching estimate/CO in this site)
+        var secOut = secContract - secPaid;
+        var totalsBar = '<div style="display:flex;flex-wrap:wrap;gap:14px;padding:8px 16px 10px '+indentBase+'px;background:var(--surface2);border-bottom:1px solid var(--border);">'
+          +'<div><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Contract</span> <span style="font-size:12px;font-weight:800;">'+fmtM(secContract)+'</span></div>'
+          +'<div><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Paid</span> <span style="font-size:12px;font-weight:800;color:#16a34a;">'+fmtM(secPaid)+'</span></div>'
+          +'<div><span style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Outstanding</span> <span style="font-size:12px;font-weight:800;color:'+(secOut>0?'#D94F4F':'var(--muted2)')+';">'+fmtM(secOut)+'</span></div>'
+          +'</div>';
+        var header = '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text);padding:10px 16px 6px '+indentBase+'px;background:var(--surface2);">'+title+'</div>';
+        return {html: header+totalsBar+rows, contract:secContract, paid:secPaid, outstanding:secOut};
+      }
+
+      // Section 1 — Original Scope (estimates + their invoices)
+      var sec1 = buildSection('Original Scope', g.estimates.slice(), 14);
+      // Section 2 — Change Orders (all COs + their invoices)
+      var sec2 = buildSection('Change Orders', g.changeOrders.slice(), 14);
+      detail = sec1.html + sec2.html;
+
+      // Orphan invoices (no matching estimate/CO on this site)
       const accountedFor = new Set();
       g.estimates.forEach(e=>accountedFor.add(e.est));
       g.changeOrders.forEach(o=>accountedFor.add(o.est));
+      var orphanRows='', orphanPaid=0, orphanContract=0;
       g.invoices.filter(iv=>!accountedFor.has(iv.originalEst)).forEach(function(iv){
-        detail += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 14, '#16a34a');
+        orphanContract += money(iv.amount);
+        if(_ivPaid(iv)) orphanPaid += money(iv.amount);
+        orphanRows += lineRow('Invoice'+(iv.due?' · due '+iv.due:''), iv.est, iv.amount, iv.status, 14, '#16a34a');
       });
+      if(orphanRows){
+        detail += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text);padding:10px 16px 6px;background:var(--surface2);">Other Invoices</div>'+orphanRows;
+      }
+
+      // Combined total (Original + Change Orders + orphans)
+      var allContract = sec1.contract + sec2.contract + orphanContract;
+      var allPaid = sec1.paid + sec2.paid + orphanPaid;
+      var allOut = allContract - allPaid;
+      if(detail){
+        detail += '<div style="display:flex;flex-wrap:wrap;gap:16px;padding:12px 16px;background:#1f2630;color:#fff;border-top:2px solid var(--gold);">'
+          +'<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#e0b94a;align-self:center;">Total</div>'
+          +'<div style="margin-left:auto;display:flex;gap:16px;flex-wrap:wrap;">'
+            +'<div><div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);">Contract</div><div style="font-size:14px;font-weight:800;">'+fmtM(allContract)+'</div></div>'
+            +'<div><div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);">Paid</div><div style="font-size:14px;font-weight:800;color:#4ade80;">'+fmtM(allPaid)+'</div></div>'
+            +'<div><div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.5);">Outstanding</div><div style="font-size:14px;font-weight:800;color:'+(allOut>0?'#ff8080':'rgba(255,255,255,.6)')+';">'+fmtM(allOut)+'</div></div>'
+          +'</div>'
+        +'</div>';
+      }
       if(!detail) detail = '<div style="padding:12px 16px;font-size:12px;color:var(--muted2);font-style:italic;">No estimates or invoices for this site yet.</div>';
 
       return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;">
@@ -6618,7 +6929,7 @@ function renderDetail(id, pmFilter){
               <span id="billjob-chev-${sid}" style="font-size:18px;color:var(--gold);transition:transform .15s;flex-shrink:0;font-weight:700;">▸</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               <span style="font-size:14px;font-weight:800;">${g.label}</span>
-              ${g.jobs.length>1?'<span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px;background:rgba(58,126,212,.12);color:#2563eb;">'+g.jobs.length+' jobs</span>':''}
+              ${(function(){ var _pm=g.pms.filter(function(p){return p._isPM;}); return _pm.length>1?'<span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:10px;background:rgba(58,126,212,.12);color:#2563eb;">'+_pm.length+' PM'+(_pm.length===1?'':'s')+'</span>':''; })()}
             </div>
             <button class="btn btn-ghost btn-sm" style="padding:5px 10px;font-size:12px;flex-shrink:0;" onclick="event.stopPropagation();editSiteBilling(${c.id},${gIdx})">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -6626,17 +6937,19 @@ function renderDetail(id, pmFilter){
             </button>
           </div>
           <div style="font-size:12px;color:var(--muted);margin:4px 0 0 22px;">${g.address||''}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0 22px;">${pmChips}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:16px;margin:10px 0 0 22px;">
-            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Contract</div><div style="font-size:14px;font-weight:800;">${fmtM(contractTotal)}</div></div>
-            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Invoiced</div><div style="font-size:14px;font-weight:800;color:#2563eb;">${fmtM(invoicedTotal)}</div></div>
-            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Paid</div><div style="font-size:14px;font-weight:800;color:#16a34a;">${fmtM(paidTotal)}</div></div>
-            <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Outstanding</div><div style="font-size:14px;font-weight:800;color:${outstanding>0?'#D94F4F':'var(--muted2)'};">${fmtM(outstanding)}</div></div>
-          </div>
         </div>
         <div id="billjob-body-${sid}" style="display:none;border-top:1px solid var(--border);">
-          <div style="padding:8px 0;">
-            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);padding:4px 16px 6px;">Schedule of Values — Estimates · Change Orders · Invoices</div>
+          <div style="padding:12px 16px 4px;">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${pmChips}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;">
+              <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Contract</div><div style="font-size:14px;font-weight:800;">${fmtM(contractTotal)}</div></div>
+              <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Invoiced</div><div style="font-size:14px;font-weight:800;color:#2563eb;">${fmtM(invoicedTotal)}</div></div>
+              <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Paid</div><div style="font-size:14px;font-weight:800;color:#16a34a;">${fmtM(paidTotal)}</div></div>
+              <div><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Outstanding</div><div style="font-size:14px;font-weight:800;color:${outstanding>0?'#D94F4F':'var(--muted2)'};">${fmtM(outstanding)}</div></div>
+            </div>
+          </div>
+          <div style="padding:8px 0;border-top:1px solid var(--border);margin-top:8px;">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);padding:4px 16px 6px;">Schedule of Values — Original Scope &amp; Change Orders</div>
             ${detail}
           </div>
         </div>
@@ -7100,6 +7413,27 @@ function toggleContact(id){
 }
 
 function goToEstimate(est){
+  // Find the customer that owns this job so we can select it in the left list
+  var owner=null;
+  (CUSTOMERS||[]).forEach(function(c){
+    (c.contacts||[]).forEach(function(ct){
+      (ct.jobs||[]).forEach(function(j){ if(!owner && String(j.est)===String(est)) owner=c; });
+    });
+  });
+  if(owner && typeof selectJob==='function'){
+    // Already on this page → select + open the job directly, no reload
+    // make sure the job passes the current filter, else reset to "active"
+    if(typeof activeFilter!=='undefined' && activeFilter!=='active' && activeFilter!=='all'){ activeFilter='active'; }
+    var si=document.getElementById('searchInput'); if(si && si.value){ si.value=''; }
+    selectJob(owner.id, est);
+    // scroll the left list to the selected customer
+    setTimeout(function(){
+      var row=document.querySelector('.customer-item[data-id="'+owner.id+'"]');
+      if(row) row.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 60);
+    return;
+  }
+  // Fallback (job not found in memory) → navigate with the param
   window.location.href = '/sdd-customers.html?est='+encodeURIComponent(est);
 }
 
@@ -7115,7 +7449,7 @@ function navigateFromStat(type, customerId){
   const approvedEstItems = [];
   jobs.forEach(function(j){
     (j.estimates||[]).forEach(function(e){
-      if((e.status||'').toLowerCase()==='approved') approvedEstItems.push({est:e.est, amount:e.amount, date:e.date, address:(e.scope||j.address), status:e.status});
+      if(estIsActive(e.status)) approvedEstItems.push({est:e.est, amount:e.amount, date:e.date, address:(e.scope||j.address), status:e.status});
     });
   });
 
@@ -7139,14 +7473,14 @@ function navigateFromStat(type, customerId){
       items: jobs.filter(j=>!_isJobArchived(j)).map(function(j){return {est:j.est,amount:j.amount,date:j.date,address:j.projectName||j.jobName||j.address,status:j.status};}),
       navUrl:'/index.html', navLabel:'View on Dashboard →', emptyMsg:'No active jobs.' },
     billing:{ title:'Ready to Bill', color:'var(--danger)', bg:'rgba(217,79,79,.1)',
-      items: jobs.filter(j=>j.status==='Ready to bill'),
+      items: jobs.filter(j=>normEstStatus(j.status)===EST_STATUS.READY),
       navUrl:'/index.html', navLabel:'View on Dashboard →', emptyMsg:'No jobs ready to bill.' },
     ar:{ title:'Accounts Receivable', color:'var(--success)', bg:'rgba(58,158,106,.1)',
       items: arItems,
-      navUrl:'/sdd-invoices.html', navLabel:'View in Invoices →', emptyMsg:'No open invoices.' },
+      navUrl:'/sdd-customers.html', navLabel:'View in Customers →', emptyMsg:'No open invoices.' },
     pastdue:{ title:'Total Past Due', color:'var(--danger)', bg:'rgba(217,79,79,.1)',
       items: pastDueItems,
-      navUrl:'/sdd-invoices.html', navLabel:'View in Invoices →', emptyMsg:'No past due invoices.' }
+      navUrl:'/sdd-customers.html', navLabel:'View in Customers →', emptyMsg:'No past due invoices.' }
   };
 
   const cfg = STAT_CONFIGS[type];
@@ -7404,6 +7738,7 @@ function openModal(){
   if(_mbody) _mbody.scrollTop=0;
   if(_mb) _mb.scrollTop=0;
   var _fco=document.getElementById('f_company'); if(_fco) _fco.focus();
+  var _bClose=document.getElementById('btnCancelModal'); if(_bClose) _bClose.textContent='Close';
 }
 
 function closeModal(){
@@ -7424,16 +7759,18 @@ function closeModalConfirm(){
   var bg=document.createElement('div');
   bg.id='_ncConfirmBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000060;display:flex;align-items:center;justify-content:center;padding:20px;';
-  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
-    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Discard unsaved changes?</div>'
-    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes in this customer. Are you sure you want to close without saving?</div>'
-    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;">'
+    +'<div style="padding:22px 24px 8px;font-size:17px;font-weight:700;">Save before closing?</div>'
+    +'<div style="padding:0 24px 18px;font-size:13px;color:var(--muted);line-height:1.5;">You have unsaved changes. Do you want to save this customer before closing?</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">'
       +'<button id="_ncCancel" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Keep Editing</button>'
-      +'<button id="_ncOk" style="padding:9px 18px;border:none;border-radius:8px;background:var(--danger);color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Close Without Saving</button>'
+      +'<button id="_ncDiscard" style="padding:9px 16px;border:1.5px solid var(--danger);border-radius:8px;background:#fff;color:var(--danger);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">No, discard</button>'
+      +'<button id="_ncSaveClose" style="padding:9px 18px;border:none;border-radius:8px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Yes, save</button>'
     +'</div></div>';
   document.body.appendChild(bg);
   document.getElementById('_ncCancel').onclick=function(){ bg.remove(); };
-  document.getElementById('_ncOk').onclick=function(){ bg.remove(); closeModal(); };
+  document.getElementById('_ncDiscard').onclick=function(){ bg.remove(); closeModal(); };
+  document.getElementById('_ncSaveClose').onclick=function(){ bg.remove(); _onSaveCustomerClick(); };
   bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
 }
 
@@ -7509,7 +7846,6 @@ function _ecJobLinkHTML(i, prefill){
     return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border2);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13px;background:#fff;">'
       +'<input type="checkbox" class="ec-joblink" value="'+j.est+'"'+(linked?' checked':'')+' style="width:15px;height:15px;accent-color:var(--gold);cursor:pointer;">'
       +'<span style="font-weight:600;">'+esc_(label)+'</span>'
-      +(j.est?'<span style="font-size:11px;color:var(--muted);">· '+j.est+'</span>':'')
       +'</label>';
   }).join('');
   var anyLinked = cid && jobs.some(function(j){ return (j.billing||[]).some(function(b){return String(b.id)===String(cid);}); });
@@ -7526,9 +7862,58 @@ function _ecJobLinkHTML(i, prefill){
   +'</div>';
 }
 
+// Small "assigned jobs" dropdown shown in the collapsed contact row. Lists the jobs
+// where this contact is a billing recipient. Only shown when editing (jobs exist) and
+// when the contact actually has job assignments.
+function _ecCollapsedJobsHTML(i, prefill){
+  if(!window._editingCustomerId || !prefill || !prefill.id) return '';
+  var jobs=_ecActiveJobs().filter(function(j){
+    return (j.billing||[]).some(function(b){ return String(b.id)===String(prefill.id); });
+  });
+  if(!jobs.length) return '';
+  var rows=jobs.map(function(j){
+    var label=(j.jobName||j.projectName||j.address||j.est||'Job');
+    return '<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11.5px;"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;"></span><span style="font-weight:600;">'+esc_(label)+'</span></div>';
+  }).join('');
+  var did='ec-cjobs-'+i;
+  return '<div class="ec-cjobs-wrap" style="margin-top:5px;">'
+    +'<button type="button" onclick="event.stopPropagation();_ecToggleCollapsedJobs(\''+did+'\')" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--gold);background:rgba(184,146,42,.08);border:none;border-radius:20px;padding:2px 10px;cursor:pointer;">'
+      +'📋 '+jobs.length+' job'+(jobs.length!==1?'s':'')+' <span id="'+did+'-caret" style="font-size:9px;">▾</span>'
+    +'</button>'
+    +'<div id="'+did+'" style="display:none;margin-top:5px;background:#fff;border:1px solid var(--border2);border-radius:8px;padding:4px 0;box-shadow:0 4px 14px rgba(0,0,0,.08);">'
+      +'<div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);padding:4px 10px 2px;">Billing on these jobs</div>'
+      +rows
+    +'</div></div>';
+}
+function _ecToggleCollapsedJobs(did){
+  var el=document.getElementById(did);
+  var caret=document.getElementById(did+'-caret');
+  if(!el) return;
+  var open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  if(caret) caret.style.transform=open?'rotate(0deg)':'rotate(180deg)';
+}
+
 function _ecToggleJobLink(i, show){
   var el=document.getElementById('ec-joblist-'+i);
   if(el) el.style.display=show?'block':'none';
+}
+
+// Delete a contact row from the editor — always asks for confirmation first, so it's
+// not too easy to remove someone by accident.
+function ecRemoveContact(i){
+  var box=document.getElementById('ec-'+i);
+  if(!box) return;
+  var g=function(cls){ var el=box.querySelector(cls); return el?el.value.trim():''; };
+  var nm=(g('.ec-fname')+' '+g('.ec-lname')).trim() || 'this contact';
+  var doRemove=function(){ var b=document.getElementById('ec-'+i); if(b) b.remove(); };
+  if(typeof _ajConfirmPopup==='function'){
+    _ajConfirmPopup('Remove contact?', 'Are you sure you want to remove "'+nm+'" from this customer? This only takes effect when you save.', 'Yes, remove', doRemove);
+  } else if(typeof _confirmDoc==='function'){
+    _confirmDoc('Remove "'+nm+'" from this customer?', doRemove);
+  } else {
+    doRemove();
+  }
 }
 
 function addExtraContact(prefill){
@@ -7572,18 +7957,19 @@ function addExtraContact(prefill){
         <div style="min-width:0;">
           <div class="ec-collapsed-name" id="ec-cname-${i}" style="font-size:14px;font-weight:600;">${pName}</div>
           <div class="ec-collapsed-role" id="ec-crole-${i}" style="font-size:11.5px;color:var(--muted);">${rm[1]}</div>
+          ${_ecCollapsedJobsHTML(i, prefill)}
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
         <button type="button" title="Edit contact" onclick="ecToggleEdit(${i})" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--muted);cursor:pointer;display:flex;align-items:center;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        <button class="ec-remove" type="button" onclick="document.getElementById('ec-${i}').remove()">×</button>
+        <button class="ec-remove" type="button" style="position:static;font-size:22px;" onclick="ecRemoveContact(${i})">×</button>
       </div>
     </div>` : `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
       <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Contact ${i}</div>
-      <button class="ec-remove" type="button" onclick="document.getElementById('ec-${i}').remove()">×</button>
+      <button class="ec-remove" type="button" onclick="ecRemoveContact(${i})">×</button>
     </div>`}
     <div class="ec-form" id="ec-form-${i}" style="display:${isExisting?'none':'block'};">
     <div class="ff" style="margin-bottom:14px;">
@@ -7684,9 +8070,9 @@ function _ecEnsureCollapsedHeader(i){
         +'<div class="ec-collapsed-name" id="ec-cname-'+i+'" style="font-size:14px;font-weight:600;"></div>'
         +'<div class="ec-collapsed-role" id="ec-crole-'+i+'" style="font-size:11.5px;color:var(--muted);"></div>'
       +'</div></div>'
-      +'<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">'
+      +'<div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">'
         +'<button type="button" title="Edit contact" onclick="ecToggleEdit('+i+')" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;background:#fff;color:var(--muted);cursor:pointer;display:flex;align-items:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>'
-        +'<button class="ec-remove" type="button" onclick="document.getElementById(\'ec-'+i+'\').remove()">×</button>'
+        +'<button class="ec-remove" type="button" style="position:static;font-size:22px;" onclick="ecRemoveContact('+i+')">×</button>'
       +'</div>';
   if(oldHead && oldHead.parentNode) oldHead.parentNode.replaceChild(head, oldHead);
 }
@@ -7713,8 +8099,45 @@ function ecCollapse(i){
   var nEl=document.getElementById('ec-cname-'+i); if(nEl) nEl.textContent=name;
   var roEl=document.getElementById('ec-crole-'+i); if(roEl) roEl.textContent=rm[1];
   var iconEl=head?head.querySelector('span'):null; if(iconEl) iconEl.textContent=rm[0];
+  // Refresh the collapsed "assigned jobs" dropdown from the currently checked boxes,
+  // so what the user picked shows immediately (even before saving the customer).
+  _ecRefreshCollapsedJobs(i);
   if(form) form.style.display='none';
   if(head) head.style.display='flex';
+}
+
+// Rebuilds the collapsed row's jobs dropdown from the checked "associate to job" boxes
+function _ecRefreshCollapsedJobs(i){
+  var box=document.getElementById('ec-'+i);
+  if(!box) return;
+  var nameEl=document.getElementById('ec-cname-'+i);
+  var container=nameEl?nameEl.parentNode:null;
+  if(!container) return;
+  // collect checked jobs (label text) from this contact's checkboxes
+  var picked=[];
+  var linkYes=box.querySelector('input[name^="ec-joblink-"][value="yes"]');
+  var wantsLink=linkYes&&linkYes.checked;
+  if(wantsLink){
+    box.querySelectorAll('.ec-joblink:checked').forEach(function(cb){
+      var lbl=cb.closest('label'); var txt=lbl?(lbl.querySelector('span')?lbl.querySelector('span').textContent:cb.value):cb.value;
+      picked.push(txt);
+    });
+  }
+  // remove any existing dropdown block
+  var old=box.querySelector('.ec-cjobs-wrap'); if(old) old.remove();
+  if(!picked.length) return;
+  var did='ec-cjobs-'+i;
+  var rows=picked.map(function(nm){
+    return '<div style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11.5px;"><span style="width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;"></span><span style="font-weight:600;">'+esc_(nm)+'</span></div>';
+  }).join('');
+  var wrap=document.createElement('div');
+  wrap.className='ec-cjobs-wrap';
+  wrap.style.marginTop='5px';
+  wrap.innerHTML='<button type="button" onclick="event.stopPropagation();_ecToggleCollapsedJobs(\''+did+'\')" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--gold);background:rgba(184,146,42,.08);border:none;border-radius:20px;padding:2px 10px;cursor:pointer;">'
+    +'📋 '+picked.length+' job'+(picked.length!==1?'s':'')+' <span id="'+did+'-caret" style="font-size:9px;">▾</span></button>'
+    +'<div id="'+did+'" style="display:none;margin-top:5px;background:#fff;border:1px solid var(--border2);border-radius:8px;padding:4px 0;box-shadow:0 4px 14px rgba(0,0,0,.08);">'
+      +'<div style="font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);padding:4px 10px 2px;">Billing on these jobs</div>'+rows+'</div>';
+  container.appendChild(wrap);
 }
 
 function reqFld(id, errId){
@@ -7854,7 +8277,7 @@ function openExistingCustomer(id){
         else if(activeFilter==='active')      _vis=(_st==='active');
         else if(activeFilter==='inactive')    _vis=(_st==='inactive');
         else if(activeFilter==='collections') _vis=(_st==='collections');
-        else if(activeFilter==='billing')     _vis=getAllJobs(_c).some(function(j){return j.status==='Ready to bill';});
+        else if(activeFilter==='billing')     _vis=getAllJobs(_c).some(function(j){return normEstStatus(j.status)===EST_STATUS.READY;});
         else if(activeFilter==='billinfo')    _vis=getAllJobs(_c).some(function(j){
           if(_isJobArchived(j)) return false;
           return _jobNeedsBilling(j);
@@ -8077,6 +8500,77 @@ function saveCustomer(){
   flash.textContent='✓ Customer created successfully';
   document.body.appendChild(flash);
   setTimeout(()=>flash.remove(),3500);
+  return newId;   // so callers (e.g. "Create Job") can open the job popup for this customer
+}
+
+// Save the new customer, then open the "Add New Job" popup pre-filled for that customer
+function saveCustomerThenJob(){
+  var newId=saveCustomer();
+  if(!newId) return;   // validation failed → saveCustomer returned undefined, stay put
+  setTimeout(function(){ if(typeof openAddJobModal==='function') openAddJobModal(newId); }, 120);
+}
+
+// Save button handler. Editing an existing customer saves directly. Creating a NEW
+// customer first validates, then shows a popup: Save / Create Job / Add Contact / Cancel.
+function _onSaveCustomerClick(){
+  if(window._editingCustomerId){ saveCustomer(); return; }
+  // New customer → validate before offering options (reuse saveCustomer's own checks by
+  // running a lightweight pre-check: required fields + incomplete contact rows)
+  var badC=(typeof _firstIncompleteContact==='function')?_firstIncompleteContact():null;
+  if(badC){ _flagIncompleteContact(badC); return; }
+  if(!_customerFormValid()){ return; }   // shows inline errors and scrolls to them
+  _showSaveOptionsPopup();
+}
+
+// Runs the same required-field validation saveCustomer uses, showing inline errors.
+function _customerFormValid(){
+  var ok=true;
+  ok=reqFld('f_company','e_company')&&ok;
+  if(!checkDuplicateCustomer()){ ok=false; var _dp=document.getElementById('dupPanel'); if(_dp) _dp.scrollIntoView({behavior:'smooth',block:'center'}); }
+  ok=reqFld('f_fname','e_fname')&&ok;
+  ok=reqFld('f_lname','e_lname')&&ok;
+  ok=reqFld('f_phone','e_phone')&&ok;
+  ok=reqFld('f_email','e_email')&&ok;
+  ok=reqFld('f_address','e_address')&&ok;
+  ok=reqFld('f_city','e_city')&&ok;
+  ok=reqFld('f_zip','e_zip')&&ok;
+  var ptSel=document.getElementById('f_payment_terms');
+  var ptErr=document.getElementById('e_payment_terms');
+  var ptOk=true;
+  if(ptSel){ var ptVal=ptSel.value;
+    if(ptVal===''){ ptOk=false; }
+    else if(ptVal==='__custom__'){ var cv=(document.getElementById('f_payment_terms_custom')||{value:''}).value.trim(); if(!cv) ptOk=false; } }
+  if(ptErr) ptErr.classList.toggle('show',!ptOk);
+  ok=ptOk&&ok;
+  if(!ok){ var fe=document.querySelector('#modalBg .err'); if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'}); }
+  return ok;
+}
+
+// Options popup shown after a valid new-customer save is requested
+function _showSaveOptionsPopup(){
+  var ex=document.getElementById('_saveOptsBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_saveOptsBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:22px 24px 6px;font-size:18px;font-weight:800;color:#1f2630;">Save this customer</div>'
+    +'<div style="padding:0 24px 16px;font-size:13px;color:var(--muted);line-height:1.5;">What would you like to do next?</div>'
+    +'<div style="padding:0 24px 18px;display:flex;flex-direction:column;gap:9px;">'
+      +'<button onclick="_saveOptsPick(\'save\')" style="width:100%;text-align:left;padding:12px 16px;border:none;border-radius:9px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✓ Save Customer<div style="font-size:11px;font-weight:500;opacity:.85;margin-top:2px;">Save and close</div></button>'
+      +'<button onclick="_saveOptsPick(\'job\')" style="width:100%;text-align:left;padding:12px 16px;border:1.5px solid var(--gold);border-radius:9px;background:var(--gold-dim,rgba(184,146,42,.1));color:var(--gold);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">+ Create Job<div style="font-size:11px;font-weight:500;opacity:.85;margin-top:2px;">Save the customer and add a job now</div></button>'
+      +'<button onclick="_saveOptsPick(\'contact\')" style="width:100%;text-align:left;padding:12px 16px;border:1.5px solid var(--border2);border-radius:9px;background:#fff;color:var(--text);font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">+ Add Additional Contact<div style="font-size:11px;font-weight:500;color:var(--muted);margin-top:2px;">Keep editing and add another contact</div></button>'
+    +'</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_saveOptsBg\').remove()" style="padding:9px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+    +'</div></div>';
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  document.body.appendChild(bg);
+}
+function _saveOptsPick(action){
+  var bg=document.getElementById('_saveOptsBg'); if(bg) bg.remove();
+  if(action==='save'){ saveCustomer(); }
+  else if(action==='job'){ saveCustomerThenJob(); }
+  else if(action==='contact'){ if(typeof addExtraContact==='function') addExtraContact(); }
 }
 
 // ══ TYPE SELECTOR ══
@@ -8475,6 +8969,7 @@ function saveJobAssignPanel(){
       }
     }
   });
+  saveCustomers();                 // persist to storage
   closeJobAssignPanel();
   renderDetail(_japCustomerId);
   renderList();
@@ -8745,6 +9240,7 @@ function saveAddContact(){
   }
 
   c.contacts.push(newContact);
+  saveCustomers();                 // persist to storage
   closeAddContactModal();
   // Return to the job info view if we came from there; otherwise the customer detail
   if(forJobEst){ window._addContactForJob=null; renderList(); renderJobInfo(c.id, forJobEst); }
@@ -8824,12 +9320,16 @@ document.addEventListener('DOMContentLoaded', function(){
   on('btnNewCustomer','click',openModal);
   on('btnCloseModal','click',closeModal);
   on('btnCancelModal','click',closeModalConfirm);
-  on('btnSaveCustomer','click',saveCustomer);
+  on('btnSaveCustomer','click',_onSaveCustomerClick);
   on('modalBg','click',function(e){if(e.target===this)closeModalConfirm();});
   on('searchInput','input',renderList);
   on('customerList','click',function(e){
     const item=e.target.closest('.customer-item');if(!item)return;
     const id=parseInt(item.dataset.id);
+    if(_guardDocEdit(function(){
+      expandedCustomer = (expandedCustomer===id) ? null : id;
+      activeId=id;activePM=null;activeJobEst=null;expandedJobEst=null;activeEstimateId=null;activeDocRef=null;activeDocKind=null;renderList();renderDetail(id);
+    })) return;
     _purgeDrafts();
     // toggle: clicking the already-expanded customer collapses its list
     expandedCustomer = (expandedCustomer===id) ? null : id;
@@ -8854,6 +9354,12 @@ document.addEventListener('DOMContentLoaded', function(){
   // If we arrived here to create a job for a specific customer (from the estimate form)
   try {
     var _p=new URLSearchParams(window.location.search);
+    // Deep-link to a specific job: ?est=EST-047 → select its customer + open the job
+    var _est=_p.get('est');
+    if(_est){
+      _est=decodeURIComponent(_est);
+      setTimeout(function(){ if(typeof goToEstimate==='function') goToEstimate(_est); }, 120);
+    }
     var njf=_p.get('newJobFor');
     if(njf){
       var nm=decodeURIComponent(njf);
@@ -9145,7 +9651,7 @@ function exportSOVPdf(customerId){
 
 
 // ══ ADD JOB MODAL ══
-let _ajCustomerId=null, _ajDuplicateConfirmed=false, _ajDuplicateJobs=[], _ajNavigateAfterSave=false, _ajPendingJobData=null, _ajSameSiteId=null, _ajDefaultPmId=null;
+let _ajCustomerId=null, _ajDuplicateConfirmed=false, _ajDuplicateJobs=[], _ajNavigateAfterSave=false, _ajPendingJobData=null, _ajSameSiteId=null, _ajDefaultPmId=null, _ajEditingJob=null;
 
 function toRoman(n){
   const v=[1000,900,500,400,100,90,50,40,10,9,5,4,1],s=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
@@ -9381,8 +9887,52 @@ function _ajJobType(){
   return r ? r.value : '';
 }
 
+// Edit an existing job: opens the same Add-Job popup, pre-filled, in edit mode.
+function editJob(cid, est){
+  openAddJobModal(cid);                 // build the popup (create layout)
+  var c=CUSTOMERS.find(function(x){return x.id===parseInt(cid);});
+  var job=c?_findOriginalJob(c, est):null;
+  if(!job){ return; }
+  _ajEditingJob=est;                    // switch to edit mode
+  // Pre-fill the fields once the popup DOM exists
+  setTimeout(function(){
+    var set=function(id,val){ var el=document.getElementById(id); if(el){ el.value=val||''; if(val){ el.style.borderColor='var(--border2)'; } } };
+    set('_aj_jobname', job.jobName||'');
+    set('_aj_projectname', job.projectName||'');
+    set('_aj_po', job.po||'');
+    // address: split street / city / zip from stored fields
+    set('_aj_street', job.streetOnly||job.address||'');
+    var cityRaw=(job.city||'').replace(/\s+[A-Z]{2}\s*\d{0,5}$/,'').trim();
+    set('_aj_city', cityRaw);
+    var zipM=(job.city||job.address||'').match(/(\d{5})\s*$/); if(zipM) set('_aj_zip', zipM[1]);
+    // job type is a radio group (name="_aj_jobtype")
+    if(job.jobType){
+      var jtr=document.querySelector('input[name="_aj_jobtype"][value="'+job.jobType+'"]');
+      if(jtr){ jtr.checked=true; }
+      var jtErr=document.getElementById('_e_aj_jobtype'); if(jtErr) jtErr.style.display='none';
+    }
+    // preselect the current PM
+    var pmSel=document.getElementById('_aj_pm');
+    if(pmSel && job.contactId){
+      var primary=c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{};
+      pmSel.value = (String(primary.id)===String(job.contactId)) ? 'primary' : 'pm_'+job.contactId;
+      if(typeof ajPMSelectDyn==='function') ajPMSelectDyn(pmSel.value);
+      pmSel.style.borderColor='var(--border2)';
+      var er=document.getElementById('_e_aj_pm'); if(er) er.style.display='none';
+    }
+    // change the title + save button label to reflect editing
+    var t=document.getElementById('addJobTitle'); if(t) t.textContent='Edit Job';
+    var ov=document.getElementById('_ajOverlay');
+    if(ov){
+      var h=ov.querySelector('div[style*="font-size:20px"]'); if(h) h.textContent='Edit Job';
+      var saveBtn=ov.querySelector('button[onclick="ajDynSave()"]'); if(saveBtn) saveBtn.textContent='✓ Save Changes';
+    }
+  }, 60);
+}
+
 function openAddJobModal(cid, defaultPmId){
   _ajCustomerId=parseInt(cid);
+  _ajEditingJob=null;   // create mode (editJob sets this for edit mode)
   _ajDefaultPmId=defaultPmId||null;
   _ajDuplicateConfirmed=false;
   _ajDuplicateJobs=[];
@@ -9613,9 +10163,9 @@ function ajAddBillingContact(){
       +'<input id="_aj_bn_fn_form" autocomplete="off" oninput="tcInput(this);ajAutofill(\'form\',this.value)" placeholder="First name *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
       +'<div id="_aj_bn_sugg_form" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:5;background:#fff;border:1px solid var(--border2);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);margin-top:2px;max-height:160px;overflow-y:auto;"></div>'
     +'</div>'
-    +'<input id="_aj_bn_ln_form" oninput="tcInput(this)" placeholder="Last name *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_ph_form" placeholder="Phone" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
-    +'<input id="_aj_bn_em_form" placeholder="Email *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_ln_form" oninput="tcInputAddr(this)" placeholder="Last name *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_ph_form" oninput="phoneInput(this)" placeholder="Phone" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
+    +'<input id="_aj_bn_em_form" oninput="emailInput(this)" placeholder="Email *" style="width:100%;padding:8px 11px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;outline:none;box-sizing:border-box;">'
     +'</div>'
     +'<div id="_aj_bn_err" style="display:none;color:var(--danger);font-size:11px;margin-top:6px;">Enter at least a name or email.</div>'
     +'<div style="display:flex;justify-content:flex-end;margin-top:10px;">'
@@ -9636,8 +10186,8 @@ function ajCancelNewContact(){
 function ajSaveNewContact(){
   var fn=(document.getElementById('_aj_bn_fn_form')||{value:''}).value.trim();
   var ln=(document.getElementById('_aj_bn_ln_form')||{value:''}).value.trim();
-  var ph=(document.getElementById('_aj_bn_ph_form')||{value:''}).value.trim();
-  var em=(document.getElementById('_aj_bn_em_form')||{value:''}).value.trim();
+  var ph=formatPhone((document.getElementById('_aj_bn_ph_form')||{value:''}).value);
+  var em=lowerEmail((document.getElementById('_aj_bn_em_form')||{value:''}).value);
   // First name, last name and email are mandatory
   var err=document.getElementById('_aj_bn_err');
   var missing=[];
@@ -9653,8 +10203,16 @@ function ajSaveNewContact(){
     if(err){ err.textContent='Please enter a valid email address.'; err.style.display='block'; }
     return;
   }
+  // If a phone was entered, it must be a complete 10-digit number
+  if(ph){
+    var _d=String(ph).replace(/\D/g,''); if(_d.length===11&&_d[0]==='1') _d=_d.slice(1);
+    if(_d.length<10){
+      if(err){ err.textContent='Enter a complete 10-digit phone number.'; err.style.display='block'; }
+      return;
+    }
+  }
   if(err) err.style.display='none';
-  var name=(fn+' '+ln).trim();
+  var name=toTitleCaseAddr((fn+' '+ln).trim());
   var key='new_'+(++_ajBillNewSeq);
   var sub=em||ph||'';
   var list=document.getElementById('_aj_bill_list');
@@ -10001,6 +10559,39 @@ function ajDynSave(){
   }
   var addr=(street+(city?', '+city:'')+(state?' '+state:'')+(zip?' '+zip:'')).trim();
   var poNum=gv('_aj_po'), jobName=gv('_aj_jobname'), projectName=gv('_aj_projectname');
+  // EDIT MODE: update the existing job in place (no new job, no billing re-flow)
+  if(_ajEditingJob){
+    var cust2=CUSTOMERS.find(function(x){return x.id===_ajCustomerId;});
+    var job=cust2?_findOriginalJob(cust2, _ajEditingJob):null;
+    if(job){
+      job.address=addr; job.streetOnly=street; job.city=(city?city+(state?' '+state:''):job.city);
+      job.po=poNum; job.jobName=jobName; job.projectName=projectName;
+      var jt=_ajJobType(); if(jt) job.jobType=jt;
+      // Reassign PM if a different one was chosen
+      var pmVal=(document.getElementById('_aj_pm')||{value:''}).value;
+      if(pmVal && pmVal!=='new'){
+        var pmId=pmVal==='primary'?(cust2.contacts.find(function(x){return x.role==='project-manager';})||cust2.contacts[0]||{}).id:pmVal.replace('pm_','');
+        if(pmId && String(pmId)!==String(job.contactId)){
+          // detach from old PM, attach to new
+          cust2.contacts.forEach(function(ct){ if(ct.jobs){ ct.jobs=ct.jobs.filter(function(j){return j!==job && j.est!==job.est;}); } });
+          var newPm=cust2.contacts.find(function(x){return String(x.id)===String(pmId);});
+          if(newPm){ if(!newPm.jobs)newPm.jobs=[]; newPm.jobs.push(job); job.contactId=newPm.id; }
+        }
+      } else if(pmVal==='new'){
+        var pfn=gv('_aj_fn'),pln=gv('_aj_ln');
+        if(pfn){ var avC2=['av-gold','av-info','av-success','av-warning']; var np={id:newContactId(),name:toTitleCaseAddr(pfn+' '+pln),initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC2[cust2.contacts.length%avC2.length],email:lowerEmail(gv('_aj_em')),phone:formatPhone(gv('_aj_ph')),title:'Project Manager',role:'project-manager',jobs:[job]}; cust2.contacts.push(np); job.contactId=np.id; }
+      }
+      if(window.SDD) window.SDD.save();
+    }
+    var wasEditing=_ajEditingJob; _ajEditingJob=null;
+    closeAddJobModal();
+    renderList();
+    renderJobInfo(_ajCustomerId, wasEditing);
+    var fl=document.createElement('div');
+    fl.style.cssText='position:fixed;bottom:24px;right:24px;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:1000000;box-shadow:0 4px 20px rgba(0,0,0,.2);background:#2ecc71;';
+    fl.textContent='✓ Job updated';document.body.appendChild(fl);setTimeout(function(){if(fl.parentNode)fl.parentNode.removeChild(fl);},3000);
+    return;
+  }
   // Stash the job data and open the Billing Information popup
   _ajPendingJobData={addr:addr,po:poNum,jobName:jobName,projectName:projectName,streetOnly:street,jobType:_ajJobType()};
   openBillingPopup();
@@ -10507,13 +11098,13 @@ function ajCommitJob(skipLater){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   if(pmVal==='new'){
     var pfn=gv('_aj_fn'),pln=gv('_aj_ln');
-    if(pfn){cust.contacts.push({id:newContactId(),name:toTitleCaseAddr(pfn+' '+pln),initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[cust.contacts.length%avC.length],email:lowerEmail(gv('_aj_em')),phone:formatPhone(gv('_aj_ph')),title:'Project Manager',role:'project-manager',jobs:[newJob]});}
-    else{var f1=cust.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
+    if(pfn){var _newPm={id:newContactId(),name:toTitleCaseAddr(pfn+' '+pln),initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[cust.contacts.length%avC.length],email:lowerEmail(gv('_aj_em')),phone:formatPhone(gv('_aj_ph')),title:'Project Manager',role:'project-manager',jobs:[newJob]};cust.contacts.push(_newPm);newJob.contactId=_newPm.id;}
+    else{var f1=cust.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);newJob.contactId=f1.id;}}
   }else{
     var pmId=pmVal==='primary'?(cust.contacts.find(function(x){return x.role==='project-manager';})||cust.contacts[0]||{}).id:pmVal.replace('pm_','');
     var pm=cust.contacts.find(function(x){return x.id===pmId;});
-    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);}
-    else{var f2=cust.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);}}
+    if(pm){if(!pm.jobs)pm.jobs=[];pm.jobs.push(newJob);newJob.contactId=pm.id;}
+    else{var f2=cust.contacts[0];if(f2){if(!f2.jobs)f2.jobs=[];f2.jobs.push(newJob);newJob.contactId=f2.id;}}
   }
   _ajPendingJobData=null;
   _ajSameSiteId=null;
@@ -10575,7 +11166,7 @@ function saveNewJob(){
   var avC=['av-gold','av-info','av-success','av-warning'];
   if(pmVal==='new'){
     var pfn=gv('aj_pm_fn'),pln=gv('aj_pm_ln'),pem=gv('aj_pm_em'),pph=gv('aj_pm_ph');
-    if(pfn){c.contacts.push({id:newContactId(),name:toTitleCaseAddr(pfn+' '+pln),initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[c.contacts.length%avC.length],email:pem,phone:pph,title:'Project Manager',role:'project-manager',jobs:[newJob]});}
+    if(pfn){c.contacts.push({id:newContactId(),name:toTitleCaseAddr(pfn+' '+pln),initials:((pfn[0]||'')+(pln[0]||'')).toUpperCase(),color:avC[c.contacts.length%avC.length],email:lowerEmail(pem),phone:formatPhone(pph),title:'Project Manager',role:'project-manager',jobs:[newJob]});}
     else{var f1=c.contacts[0];if(f1){if(!f1.jobs)f1.jobs=[];f1.jobs.push(newJob);}}
   }else{
     var pmId=pmVal==='primary'?(c.contacts.find(function(x){return x.role==='project-manager';})||c.contacts[0]||{}).id:pmVal.replace('pm_','');
@@ -10672,7 +11263,7 @@ function _docRejectSave(ref){
   var f=_findDoc(ref); if(!f) return;
   var reason=(document.getElementById('_rejReason')||{}).value||'No reason specified';
   var notes=(document.getElementById('_rejNotes')||{}).value||'';
-  f.doc.status='Rejected';
+  f.doc.status=EST_STATUS.REJECTED;
   f.doc.rejectionReason=reason;
   f.doc.rejectionNotes=notes;
   _addTimeline(ref, 'Client rejected — Reason: '+reason, (f.cust&&f.cust.name)||'Client', '#D94F4F');
@@ -10686,7 +11277,7 @@ function docReopen(ref){
   var f=_findDoc(ref); if(!f) return;
   _confirmDoc('Reopen '+ref+' for revision?', function(){
     var ff=_findDoc(ref); if(!ff) return;
-    ff.doc.status='Draft';
+    ff.doc.status=EST_STATUS.DRAFT;
     delete ff.doc.rejectionReason;
     delete ff.doc.rejectionNotes;
     _addTimeline(ref, _docKindName(ff.kind)+' reopened for revision', 'Leontina', '#7C5CBF');
@@ -10701,7 +11292,7 @@ function docMarkJobCompleted(ref){
   var f=_findDoc(ref); if(!f || !f.job) return;
   _confirmDoc('Mark this job as completed?', function(){
     var ff=_findDoc(ref); if(!ff||!ff.job) return;
-    ff.job.status='Ready to bill';
+    ff.job.status=EST_STATUS.READY;
     ff.job.dateCompleted=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     ff.job.completedBy='Leontina';
     _addTimeline(ref, 'Job marked as completed — ready to bill', 'Leontina', '#16a34a');
@@ -10709,7 +11300,55 @@ function docMarkJobCompleted(ref){
     _flashDoc('✓ Job marked as completed — ready to bill');
     renderList();
     _reopenDoc(ref);
-  }, 'Yes, Mark Completed', 'The job will move to "Ready to bill".');
+  }, 'Yes, Mark Completed', 'The job will move to "Ready to Bill".');
+}
+
+// ══════════ SCHEDULE START DATE → IN PROGRESS ══════════
+// An approved estimate ("Approved - Pending Schedule") becomes "In Progress" once a
+// start date is set. Opens a small date picker; saving sets startDate + status.
+function docScheduleStart(ref){
+  var f=_findDoc(ref); if(!f || !f.job) return;
+  var ex=document.getElementById('_schedBg'); if(ex) ex.remove();
+  var todayISO=new Date().toISOString().slice(0,10);
+  var bg=document.createElement('div');
+  bg.id='_schedBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:20px 24px 6px;font-size:17px;font-weight:800;color:#1f2630;">Schedule start date</div>'
+    +'<div style="padding:0 24px 16px;font-size:13px;color:var(--muted);line-height:1.5;">Setting a start date moves this job to <strong>In Progress</strong>.</div>'
+    +'<div style="padding:0 24px 8px;">'
+      +'<label style="display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:5px;">Start date</label>'
+      +'<input id="_schedStart" type="date" value="'+todayISO+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;">'
+      +'<label style="display:block;font-size:12px;font-weight:700;color:#333;margin:12px 0 5px;">Expected end date <span style="font-weight:500;color:var(--muted);">(optional)</span></label>'
+      +'<input id="_schedEnd" type="date" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;">'
+      +'<div id="_schedErr" style="display:none;color:var(--danger);font-size:12px;font-weight:600;margin-top:6px;">Please pick a start date.</div>'
+    +'</div>'
+    +'<div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_schedBg\').remove()" style="padding:9px 18px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_docScheduleStartSave(\''+ref+'\')" style="padding:9px 20px;border:none;border-radius:8px;background:#e0b94a;color:#1f2630;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Set — Start Job</button>'
+    +'</div></div>';
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  document.body.appendChild(bg);
+}
+function _docScheduleStartSave(ref){
+  var f=_findDoc(ref); if(!f || !f.job) return;
+  var startEl=document.getElementById('_schedStart');
+  var endEl=document.getElementById('_schedEnd');
+  var startVal=startEl?startEl.value:'';
+  if(!startVal){ var e=document.getElementById('_schedErr'); if(e) e.style.display='block'; return; }
+  var fmt=function(iso){ if(!iso) return ''; var d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); };
+  f.job.startDate=fmt(startVal);
+  if(endEl && endEl.value) f.job.endDate=fmt(endEl.value);
+  f.job.status=EST_STATUS.IN_PROGRESS;
+  f.job.scheduledBy='Leontina';
+  // also move the estimate doc itself to In Progress if it was approved
+  if(f.doc && estIsApproved(f.doc.status)) f.doc.status=EST_STATUS.IN_PROGRESS;
+  _addTimeline(ref, 'Start date set ('+f.job.startDate+') — job In Progress', 'Leontina', '#e0b94a');
+  if(window.SDD && SDD.save) SDD.save();
+  var bg=document.getElementById('_schedBg'); if(bg) bg.remove();
+  _flashDoc('✓ Job scheduled — now In Progress');
+  renderList();
+  _reopenDoc(ref);
 }
 
 
@@ -11122,10 +11761,6 @@ function printWaiverDoc(){
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
     Customers
   </a>
-  <a href="/sdd-invoices.html">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-    Invoices
-  </a>
   <a href="/sdd-vendors.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     Vendors
@@ -11159,10 +11794,10 @@ function printWaiverDoc(){
         <div id="aj_pm_fields" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:8px;">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;" id="aj_pm_fields_label">PM info</div>
           <div class="fg2">
-            <div class="ff"><label>First name</label><input type="text" id="aj_pm_fn"></div>
-            <div class="ff"><label>Last name</label><input type="text" id="aj_pm_ln"></div>
-            <div class="ff"><label>Phone</label><input type="tel" id="aj_pm_ph"></div>
-            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="aj_pm_em"></div>
+            <div class="ff"><label>First name</label><input type="text" id="aj_pm_fn" oninput="tcInputAddr(this)"></div>
+            <div class="ff"><label>Last name</label><input type="text" id="aj_pm_ln" oninput="tcInputAddr(this)"></div>
+            <div class="ff"><label>Phone</label><input type="tel" id="aj_pm_ph" oninput="phoneInput(this)"></div>
+            <div class="ff" style="margin-bottom:0;"><label>Email</label><input type="email" id="aj_pm_em" oninput="emailInput(this)"></div>
           </div>
         </div>
       </div>

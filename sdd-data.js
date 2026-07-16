@@ -20,22 +20,22 @@
      {id:'c2', name:'James Torres', initials:'JT', color:'av-gold', role:'project-manager',
       email:'j.torres@abcconstruction.com', phone:'(619) 555-0102', title:'Project Manager',
       jobs:[
-        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', startDate:'May 13, 2026', endDate:'May 22, 2026', scheduledBy:'Leontina', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
+        {est:'EST-047', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In Progress', startDate:'May 13, 2026', endDate:'May 22, 2026', scheduledBy:'Leontina', amount:'$14,301', date:'May 2, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD', hasSpecialInstructions:true, specialInstructions:'Client requires 48h notice before any demolition. Dust containment mandatory on east side.', documents:[{name:'Harbor - Master Contract.pdf', date:'May 1, 2026', category:'Contract'}],
           estimates:[
             {est:'EST-047',amount:'$14,301',status:'Paid',date:'May 2, 2026',scope:'Original Scope - Demolition',projectName:'Harbor District Redevelopment'},
-            {est:'EST-052',amount:'$8,200',status:'Approved',date:'May 5, 2026',scope:'Revised Scope - Debris Removal',projectName:'Harbor Phase 2 - Site Cleanup'}
+            {est:'EST-052',amount:'$8,200',status:'Approved - Pending Schedule',date:'May 5, 2026',scope:'Revised Scope - Debris Removal',projectName:'Harbor Phase 2 - Site Cleanup'}
           ],
           changeOrders:[
-            {est:'EST-CO047-1',originalEst:'EST-047',amount:'$2,100',status:'Approved',date:'May 10, 2026',description:'Additional haul-off - 3 loads'},
+            {est:'EST-CO047-1',originalEst:'EST-047',amount:'$2,100',status:'Approved - Pending Schedule',date:'May 10, 2026',description:'Additional haul-off - 3 loads'},
             {est:'EST-CO052-1',originalEst:'EST-052',amount:'$950',status:'Pending',date:'May 12, 2026',description:'Hazmat disposal - asbestos tile'}
           ],
           invoices:[{est:'INV-047P1',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 18, 2026',due:'May 18, 2026',payments:[{id:'PMT-047P1',date:'Apr 20, 2026',amount:'$4,000',method:'ACH',ref:'Chase ACH #88101',note:'Partial payment 1 of 4'}]},{est:'INV-047P2',originalEst:'EST-047',amount:'$4,000',status:'Paid',date:'Apr 25, 2026',due:'May 25, 2026',payments:[{id:'PMT-047P2',date:'Apr 28, 2026',amount:'$4,000',method:'Check',ref:'Check #10455',note:'Partial payment 2 of 4'}]},{est:'INV-047P3',originalEst:'EST-047',amount:'$3,500',status:'Paid',date:'May 3, 2026',due:'Jun 2, 2026',payments:[{id:'PMT-047P3',date:'May 6, 2026',amount:'$3,500',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 3 of 4'}]},
             {est:'INV-047P4',originalEst:'EST-047',amount:'$2,801',status:'Paid',date:'May 15, 2026',due:'Jun 14, 2026',payments:[{id:'PMT-047P4',date:'May 17, 2026',amount:'$2,801',method:'Credit Card',ref:'Visa ····4821',note:'Partial payment 4 of 4 - final'}]},
             {est:'INV-CO047-1',originalEst:'EST-CO047-1',amount:'$2,100',status:'Paid',date:'May 18, 2026',due:'Jun 17, 2026',payments:[{id:'PMT-CO047-1',date:'May 18, 2026',amount:'$2,100',method:'ACH',ref:'Chase ACH #88213',note:'Paid in full'}]}
           ]},
-        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Pending approval', dateSent:'May 8, 2026', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
+        {est:'EST-051', address:'880 5th Ave', city:'San Diego CA 92101', status:'Sent - Pending Approval', dateSent:'May 8, 2026', amount:'$9,850', date:'May 8, 2026', jobName:'5th Ave Demo', projectName:'Gaslamp Quarter Mixed-Use', streetOnly:'880 5th Ave',
           estimates:[
-            {est:'EST-051',amount:'$9,850',status:'Pending approval',date:'May 8, 2026',scope:'Site Demo - Full Clearance'}
+            {est:'EST-051',amount:'$9,850',status:'Sent - Pending Approval',date:'May 8, 2026',scope:'Site Demo - Full Clearance'}
           ],
           changeOrders:[
             {est:'EST-CO051-1',originalEst:'EST-051',amount:'$1,400',status:'Pending',date:'May 14, 2026',description:'Underground pipe removal'}
@@ -48,7 +48,7 @@
             {est:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 12, 2026',scope:'Full Structure Demolition'}
           ],
           changeOrders:[
-            {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved',date:'Mar 20, 2026',description:'Concrete slab breakout'}
+            {est:'EST-CO044-1',originalEst:'EST-044',amount:'$3,200',status:'Approved - Pending Schedule',date:'Mar 20, 2026',description:'Concrete slab breakout'}
           ],
           invoices:[
             {est:'INV-044',originalEst:'EST-044',amount:'$18,750',status:'Paid',date:'Mar 25, 2026',due:'Apr 24, 2026',payments:[{id:'PMT-044',date:'Mar 25, 2026',amount:'$18,750',method:'Check',ref:'Check #10428',note:'Paid in full'}]},
@@ -58,19 +58,19 @@
      {id:'c3', name:'Sandra Lee', initials:'SL', color:'av-warning', role:'project-manager',
       email:'s.lee@abcconstruction.com', phone:'(619) 555-0103', title:'Site Supervisor',
       jobs:[
-        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In progress', startDate:'May 14, 2026', endDate:'May 20, 2026', scheduledBy:'Leontina', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
+        {est:'EST-058', address:'1420 Harbor Blvd', city:'San Diego CA 92101', status:'In Progress', startDate:'May 14, 2026', endDate:'May 20, 2026', scheduledBy:'Leontina', amount:'$6,400', date:'May 6, 2026', jobName:'Harbor Blvd Demolition', projectName:'Harbor District Redevelopment', streetOnly:'1420 Harbor Blvd', siteId:'SITE-1420-HARBOR-BLVD',
           billing:[{id:'c1',name:'Maria Rodriguez',email:'billing@abcconstruction.com',phone:'(619) 555-0101',role:'main'}],
           pendingBilling:false,
           estimates:[
-            {est:'EST-058',amount:'$6,400',status:'Approved',date:'May 6, 2026',scope:'Grading & Site Preparation',projectName:'Harbor District Redevelopment'}
+            {est:'EST-058',amount:'$6,400',status:'Approved - Pending Schedule',date:'May 6, 2026',scope:'Grading & Site Preparation',projectName:'Harbor District Redevelopment'}
           ],
           changeOrders:[],
           invoices:[
             {est:'INV-058',originalEst:'EST-058',amount:'$6,400',status:'Unpaid',date:'May 18, 2026',due:'Jun 17, 2026'}
           ]},
-        {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Pending scheduled', dateApproved:'Apr 28, 2026', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
+        {est:'EST-055', address:'342 Third Ave', city:'Chula Vista CA 91910', status:'Approved - Pending Schedule', dateApproved:'Apr 28, 2026', amount:'$22,500', date:'Apr 28, 2026', jobName:'342 Third Ave Demo', projectName:'Chula Vista Retail Plaza', streetOnly:'342 Third Ave',
           estimates:[
-            {est:'EST-055',amount:'$22,500',status:'Approved',date:'Apr 28, 2026',scope:'Site Demolition & Grading',projectName:'Chula Vista Retail Plaza'}
+            {est:'EST-055',amount:'$22,500',status:'Approved - Pending Schedule',date:'Apr 28, 2026',scope:'Site Demolition & Grading',projectName:'Chula Vista Retail Plaza'}
           ],
           changeOrders:[],
           invoices:[]},
@@ -78,15 +78,15 @@
      {id:'c4', name:'Robert Park', initials:'RP', color:'av-success', role:'additional',
       email:'r.park@abcconstruction.com', phone:'(619) 555-0104', title:'Director',
       jobs:[
-        {est:'EST-060', address:'7700 Mission Valley Rd', city:'San Diego CA 92108', status:'Ready to bill', completedBy:'Leontina', completionNotes:'Demo finished, site cleared and swept. Ready to invoice.', amount:'$31,200', date:'Apr 10, 2026', jobName:'Mission Valley Demo', projectName:'Mission Valley Office Park', streetOnly:'7700 Mission Valley Rd',
+        {est:'EST-060', address:'7700 Mission Valley Rd', city:'San Diego CA 92108', status:'Ready to Bill', completedBy:'Leontina', completionNotes:'Demo finished, site cleared and swept. Ready to invoice.', amount:'$31,200', date:'Apr 10, 2026', jobName:'Mission Valley Demo', projectName:'Mission Valley Office Park', streetOnly:'7700 Mission Valley Rd',
           estimates:[
-            {est:'EST-060',amount:'$31,200',status:'Approved',date:'Apr 10, 2026',scope:'Commercial Building Demolition',projectName:'Mission Valley Office Park'}
+            {est:'EST-060',amount:'$31,200',status:'Approved - Pending Schedule',date:'Apr 10, 2026',scope:'Commercial Building Demolition',projectName:'Mission Valley Office Park'}
           ],
           changeOrders:[],
           invoices:[]},
-        {est:'EST-031', address:'915 Broadway', city:'San Diego CA 92101', status:'Approved', dateApproved:'Apr 22, 2026', amount:'$12,800', date:'Feb 15, 2025', jobName:'Broadway Lot Demo', projectName:'Broadway Parking Structure', streetOnly:'915 Broadway',
+        {est:'EST-031', address:'915 Broadway', city:'San Diego CA 92101', status:'Approved - Pending Schedule', dateApproved:'Apr 22, 2026', amount:'$12,800', date:'Feb 15, 2025', jobName:'Broadway Lot Demo', projectName:'Broadway Parking Structure', streetOnly:'915 Broadway',
           estimates:[
-            {est:'EST-031',amount:'$12,800',status:'Approved',date:'Feb 15, 2025',scope:'Parking Lot Demolition',projectName:'Broadway Parking Structure'}
+            {est:'EST-031',amount:'$12,800',status:'Approved - Pending Schedule',date:'Feb 15, 2025',scope:'Parking Lot Demolition',projectName:'Broadway Parking Structure'}
           ],
           changeOrders:[],
           invoices:[]},
@@ -101,14 +101,14 @@
      {id:'cb2', name:'Daniel Cruz', initials:'DC', color:'av-gold', role:'project-manager',
       email:'d.cruz@coastalbuilders.com', phone:'(760) 555-0182', title:'Project Manager',
       jobs:[
-        {est:'EST-070', address:'650 Grand Ave', city:'Carlsbad CA 92008', status:'In progress', startDate:'May 4, 2026', endDate:'May 16, 2026', scheduledBy:'Ana Rivera', amount:'$26,400', date:'May 4, 2026', jobName:'Grand Ave Commercial Demo', projectName:'Carlsbad Village Center', streetOnly:'650 Grand Ave',
+        {est:'EST-070', address:'650 Grand Ave', city:'Carlsbad CA 92008', status:'In Progress', startDate:'May 4, 2026', endDate:'May 16, 2026', scheduledBy:'Ana Rivera', amount:'$26,400', date:'May 4, 2026', jobName:'Grand Ave Commercial Demo', projectName:'Carlsbad Village Center', streetOnly:'650 Grand Ave',
           billing:[{id:'cb1',name:'Elena Marsh',email:'billing@coastalbuilders.com',phone:'(760) 555-0181'}],
           pendingBilling:false,
           estimates:[
             {est:'EST-070',amount:'$26,400',status:'Paid',date:'May 4, 2026',scope:'Commercial Structure Demolition'}
           ],
           changeOrders:[
-            {est:'EST-CO070-1',originalEst:'EST-070',amount:'$4,500',status:'Approved',date:'May 9, 2026',description:'Additional asbestos abatement'}
+            {est:'EST-CO070-1',originalEst:'EST-070',amount:'$4,500',status:'Approved - Pending Schedule',date:'May 9, 2026',description:'Additional asbestos abatement'}
           ],
           invoices:[{est:'INV-070P1',originalEst:'EST-070',amount:'$12,400',status:'Sent',date:'May 4, 2026',due:'May 19, 2026'},{est:'INV-070P3',originalEst:'EST-070',amount:'$15,600',status:'Sent',date:'May 17, 2026',due:'Jun 1, 2026'},{est:'INV-070P5',originalEst:'EST-070',amount:'$8,900',status:'Sent',date:'May 26, 2026',due:'Jun 10, 2026'},
             {est:'INV-070P2',originalEst:'EST-070',amount:'$13,200',status:'Paid',date:'May 12, 2026',due:'Jun 11, 2026',payments:[{id:'PMT-070P2',date:'May 12, 2026',amount:'$13,200',method:'ACH',ref:'Wells Fargo ACH #55021',note:'Paid in full'}]},
@@ -159,11 +159,11 @@
      {id:'sc2', name:'Marcus Reed', initials:'MR', color:'av-gold', role:'project-manager',
       email:'m.reed@summitcontractors.com', phone:'(619) 555-0278', title:'Project Manager',
       jobs:[
-        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to bill', completedBy:'Ana Rivera', completionNotes:'Final walkthrough done with client. All debris hauled.', dateCompleted:'Dec 5, 2025', dateSentToClient:'Dec 8, 2025', notifications:[{type:'Invoice sent',date:'Dec 8, 2025',by:'Leontina'},{type:'Payment reminder',date:'Dec 20, 2025',by:'Leontina'},{type:'Past-due notice',date:'Jan 5, 2026',by:'Leontina'}], amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
+        {est:'EST-038', address:'1290 Fletcher Pkwy', city:'El Cajon CA 92020', status:'Ready to Bill', completedBy:'Ana Rivera', completionNotes:'Final walkthrough done with client. All debris hauled.', dateCompleted:'Dec 5, 2025', dateSentToClient:'Dec 8, 2025', notifications:[{type:'Invoice sent',date:'Dec 8, 2025',by:'Leontina'},{type:'Payment reminder',date:'Dec 20, 2025',by:'Leontina'},{type:'Past-due notice',date:'Jan 5, 2026',by:'Leontina'}], amount:'$24,800', date:'Dec 12, 2025', jobName:'Fletcher Pkwy Demo', projectName:'Summit Retail Demo', streetOnly:'1290 Fletcher Pkwy',
           billing:[{id:'sc1',name:'Nina Brooks',email:'billing@summitcontractors.com',phone:'(619) 555-0276'}],
           pendingBilling:false,
           estimates:[
-            {est:'EST-038',amount:'$24,800',status:'Approved',date:'Dec 12, 2025',scope:'Commercial Demolition'}
+            {est:'EST-038',amount:'$24,800',status:'Approved - Pending Schedule',date:'Dec 12, 2025',scope:'Commercial Demolition'}
           ],
           changeOrders:[],
           invoices:[{est:'INV-038P2',originalEst:'EST-038',amount:'$4,500',status:'Sent',date:'May 12, 2026',due:'May 27, 2026'},{est:'INV-038P3',originalEst:'EST-038',amount:'$5,400',status:'Sent',date:'May 25, 2026',due:'Jun 9, 2026'},
@@ -180,9 +180,9 @@
      {id:'cd2', name:'David Fuentes', initials:'DF', color:'av-gold', role:'project-manager',
       email:'d.fuentes@coronadodev.com', phone:'(619) 555-0352', title:'Project Manager',
       jobs:[
-        {est:'EST-080', address:'1201 Orange Ave', city:'Coronado CA 92118', status:'Approved', amount:'$78,450', date:'May 20, 2026', jobName:'Orange Ave Full Demolition', projectName:'Coronado Mixed-Use Redevelopment', streetOnly:'1201 Orange Ave', siteId:'SITE-1201-ORANGE',
+        {est:'EST-080', address:'1201 Orange Ave', city:'Coronado CA 92118', status:'Approved - Pending Schedule', amount:'$78,450', date:'May 20, 2026', jobName:'Orange Ave Full Demolition', projectName:'Coronado Mixed-Use Redevelopment', streetOnly:'1201 Orange Ave', siteId:'SITE-1201-ORANGE',
           estimates:[
-            {est:'EST-080',amount:'$78,450',status:'Approved',date:'May 20, 2026',scope:'Full Site Demolition - Detailed Scope',projectName:'Coronado Mixed-Use Redevelopment',
+            {est:'EST-080',amount:'$78,450',status:'Approved - Pending Schedule',date:'May 20, 2026',scope:'Full Site Demolition - Detailed Scope',projectName:'Coronado Mixed-Use Redevelopment',
              lines:[
                {desc:'Site mobilization & temporary fencing setup', qty:1, unit:'job', unitPrice:3200, total:3200},
                {desc:'Asbestos abatement - floor tile & mastic (east wing)', qty:2400, unit:'sqft', unitPrice:3.25, total:7800},
@@ -206,9 +206,9 @@
           ],
           changeOrders:[],
           invoices:[]},
-        {est:'EST-081', address:'845 Coronado Bay Rd', city:'Coronado CA 92118', status:'Pending approval', amount:'$41,875', date:'Jun 15, 2026', jobName:'Bayfront Warehouse Demolition', projectName:'Coronado Bayfront Logistics Center', streetOnly:'845 Coronado Bay Rd', siteId:'SITE-845-BAYRD',
+        {est:'EST-081', address:'845 Coronado Bay Rd', city:'Coronado CA 92118', status:'Sent - Pending Approval', amount:'$41,875', date:'Jun 15, 2026', jobName:'Bayfront Warehouse Demolition', projectName:'Coronado Bayfront Logistics Center', streetOnly:'845 Coronado Bay Rd', siteId:'SITE-845-BAYRD',
           estimates:[
-            {est:'EST-081',amount:'$41,875',status:'Pending approval',date:'Jun 15, 2026',scope:'Warehouse Demolition - Detailed Scope',projectName:'Coronado Bayfront Logistics Center',
+            {est:'EST-081',amount:'$41,875',status:'Sent - Pending Approval',date:'Jun 15, 2026',scope:'Warehouse Demolition - Detailed Scope',projectName:'Coronado Bayfront Logistics Center',
              lines:[
                {desc:'Site Mobilization & Safety Setup', qty:1, unit:'job', unitPrice:2800, total:2800},
                {desc:'Interior Demolition & Fixture Removal', qty:8500, unit:'square feet', unitPrice:0.95, total:8075},
@@ -232,9 +232,9 @@
           ],
           changeOrders:[],
           invoices:[]},
-        {est:'EST-082', address:'2400 Coronado Industrial Blvd', city:'Coronado CA 92118', status:'Approved', amount:'$207,075', date:'Jun 20, 2026', jobName:'Industrial Complex Full Demolition', projectName:'Coronado Industrial Park Redevelopment', streetOnly:'2400 Coronado Industrial Blvd', siteId:'SITE-2400-IND',
+        {est:'EST-082', address:'2400 Coronado Industrial Blvd', city:'Coronado CA 92118', status:'Approved - Pending Schedule', amount:'$207,075', date:'Jun 20, 2026', jobName:'Industrial Complex Full Demolition', projectName:'Coronado Industrial Park Redevelopment', streetOnly:'2400 Coronado Industrial Blvd', siteId:'SITE-2400-IND',
           estimates:[
-            {est:'EST-082',amount:'$207,075',status:'Approved',date:'Jun 20, 2026',scope:'Full Industrial Demolition - Detailed Scope',projectName:'Coronado Industrial Park Redevelopment',
+            {est:'EST-082',amount:'$207,075',status:'Approved - Pending Schedule',date:'Jun 20, 2026',scope:'Full Industrial Demolition - Detailed Scope',projectName:'Coronado Industrial Park Redevelopment',
              lines:[
                {desc:'Site Mobilization & Temporary Fencing', qty:1, unit:'job', unitPrice:4200, total:4200},
                {desc:'Pre-Demolition Survey & Documentation', qty:1, unit:'job', unitPrice:1800, total:1800},
@@ -281,7 +281,7 @@
    address:'1420 Harbor Blvd, San Diego', jobAddress:'1420 Harbor Blvd, San Diego CA 92101',
    companyAddress:'4500 Main St, San Diego CA 92103',
    jobName:'Harbor Blvd Demo Phase 1', poNumber:'PO-4891', requiresSOV:true, requiresWaivers:true, termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Demolition, LLC Is Not Responsible For Construction fencing, Erosion Control. All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. SDD Is Not Responsible For Leaks. Payment In Full Is Due Net/15 From The Day Of Completion.',
-   status:'in-progress', amount:13150, date:'May 2, 2026',
+   status:'In Progress', amount:13150, date:'May 2, 2026',
    lines:[
      {desc:'Interior demolition — 2nd floor',    qty:1800, unit:'sq ft', unitPrice:5.00,  total:9000},
      {desc:'Debris removal & hauling',            qty:3,    unit:'loads', unitPrice:900,   total:2700},
@@ -315,7 +315,7 @@
    address:'880 5th Ave, San Diego', jobAddress:'880 5th Ave, San Diego CA 92103',
    companyAddress:'4500 Main St, San Diego CA 92103',
    jobName:'5th Ave Teardown', poNumber:'PO-5102', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Demolition, LLC Is Not Responsible For Obtaining Permits, All Electrical & Plumbing To Be Safed Off By G.C. Prior To Demo Starting. Payment In Full Is Due Net/15 From The Day Of Completion.',
-   status:'pending-approval', amount:9850,
+   status:'Sent - Pending Approval', amount:9850,
    lines:[
      {desc:'Selective interior demo — kitchen & bathrooms', qty:1200, unit:'sq ft', unitPrice:4.50, total:5400},
      {desc:'Debris hauling',                               qty:2,    unit:'loads', unitPrice:900,  total:1800},
@@ -333,7 +333,7 @@
    address:'342 Third Ave, Chula Vista', jobAddress:'342 Third Ave, Chula Vista CA 91910',
    companyAddress:'4500 Main St, San Diego CA 92103',
    jobName:'Chula Vista Interior Demo', poNumber:'', termsType:'interior-demolition', termsLabel:'Note - Interior Residential', termsText:'INTERIOR DEMOLITION NOTES San Diego Demolition, LLC Is Not Responsible For Obtaining Permits. Payment In Full Is Due Net/15 From The Day Of Completion.',
-   status:'approved', amount:22500,
+   status:'Approved - Pending Schedule', amount:22500,
    lines:[
      {desc:'Full interior demolition — 3 floors',    qty:4500, unit:'sq ft', unitPrice:3.80, total:17100},
      {desc:'Debris removal & hauling',               qty:4,    unit:'loads', unitPrice:900,  total:3600},
@@ -353,7 +353,7 @@
    address:'7700 Mission Valley Rd, San Diego', jobAddress:'7700 Mission Valley Rd, San Diego CA 92108',
    companyAddress:'4500 Main St, San Diego CA 92103',
    jobName:'Mission Valley Commercial Demo', poNumber:'PO-6010', termsType:'commercial-demolition', termsLabel:'Note - Commercial Tear Down', termsText:'COMMERCIAL TEAR DOWN - San Diego Demolition, LLC Is Not Responsible For Construction fencing. Payment In Full Is Due Net/15 From The Day Of Completion.',
-   status:'ready-to-bill', amount:31200,
+   status:'Ready to Bill', amount:31200,
    lines:[
      {desc:'Full building demolition — Mission Valley',  qty:8000, unit:'sq ft', unitPrice:3.10, total:24800},
      {desc:'Debris removal & hauling',                  qty:5,    unit:'loads', unitPrice:900,  total:4500},
