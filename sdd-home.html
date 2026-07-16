@@ -49,9 +49,37 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
 .wf-chip{width:13px;height:13px;border-radius:4px;display:inline-block;}
 .wf-note{font-size:12px;color:var(--muted);font-style:italic;margin-top:2px;}
 @media(max-width:900px){.nav-item span,.nav-item{font-size:12px;}.wf-node{width:88px;}}
+/* Sliding views: home slides out left, estimates list slides in from right */
+.view-stage{position:relative;overflow:hidden;min-height:70vh;}
+.view-slide{transition:transform .32s cubic-bezier(.4,0,.2,1);}
+.view-home{transform:translateX(0);}
+.view-home.slid-out{transform:translateX(-100%);}
+.est-view{position:absolute;top:0;left:0;width:100%;transform:translateX(100%);transition:transform .32s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.est-view.slid-in{transform:translateX(0);pointer-events:auto;}
+.est-back{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid var(--border2);border-radius:8px;background:#fff;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;margin-bottom:14px;}
+.est-back:hover{background:var(--surface2);}
+.est-toggle{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;}
+.est-toggle button{padding:7px 16px;border:none;background:none;border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;}
+.est-toggle button.active{background:#fff;color:var(--gold);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.est-search{width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;margin-top:12px;box-sizing:border-box;}
+.est-statusbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.est-statusbar button{padding:5px 11px;border:1px solid var(--border2);background:#fff;border-radius:20px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
+.est-statusbar button.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);}
+.est-list{margin-top:14px;}
+.est-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:background .12s,border-color .12s;background:#fff;}
+.est-row:hover{background:var(--surface2);border-color:var(--gold);}
+.est-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.est-rmain{flex:1;min-width:0;}
+.est-rnum{font-size:14px;font-weight:700;color:var(--text);}
+.est-rsub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.est-ramt{font-size:14px;font-weight:800;color:var(--text);text-align:right;flex-shrink:0;}
+.est-rstatus{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:3px;display:inline-block;}
+.est-empty{padding:40px 16px;text-align:center;color:var(--muted2);font-style:italic;font-size:13px;}
 </style>
 </head>
 <body>
+
+<script src="/sdd-data.js"></script>
 
 <div class="header">
   <div class="logo">
@@ -79,44 +107,70 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
   </div>
 </div>
 
-<div class="main">
+<div class="main view-stage" id="viewStage">
 
-  <div class="welcome-bar">
-    <div class="welcome-title">Workflow</div>
-    <div class="welcome-sub">System workflow — how work moves between modules</div>
+  <!-- HOME view (slides out to the left) -->
+  <div class="view-slide view-home" id="viewHome">
+    <div class="welcome-bar">
+      <div class="welcome-title">Workflow</div>
+      <div class="welcome-sub">System workflow — how work moves between modules</div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-title">System workflow</div>
+      <div class="wf-note" style="margin-bottom:10px;">Visual map grouped by area, like an accounting system. Each step shows how the work flows.</div>
+      <div class="wf-legend">
+        <span><i class="wf-chip" style="background:#3A9E6A;"></i> Customers / income</span>
+        <span><i class="wf-chip" style="background:#7C5CBF;"></i> Vendors / expenses</span>
+        <span><i class="wf-chip" style="background:#C8822A;"></i> Employees</span>
+        <span><i class="wf-chip" style="background:#3A7ED4;"></i> Banking</span>
+        <span><i class="wf-chip" style="background:#6B6B66;"></i> Company</span>
+      </div>
+    </div>
+    <div id="wfMap"></div>
   </div>
 
-  <div class="card" style="margin-bottom:14px;">
-    <div class="card-title">System workflow</div>
-    <div class="wf-note" style="margin-bottom:10px;">Visual map grouped by area, like an accounting system. Each step shows how the work flows.</div>
-    <div class="wf-legend">
-      <span><i class="wf-chip" style="background:#7C5CBF;"></i> Vendors / expenses</span>
-      <span><i class="wf-chip" style="background:#3A9E6A;"></i> Customers / income</span>
-      <span><i class="wf-chip" style="background:#C8822A;"></i> Employees</span>
-      <span><i class="wf-chip" style="background:#3A7ED4;"></i> Banking</span>
-      <span><i class="wf-chip" style="background:#6B6B66;"></i> Company</span>
+  <!-- ESTIMATES view (slides in from the right) -->
+  <div class="est-view" id="viewEst">
+    <button class="est-back" onclick="closeEstimatesPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar">
+      <div class="welcome-title" id="estPanelTitle">Estimates</div>
+      <div class="welcome-sub">All estimates and change orders across every customer</div>
+    </div>
+    <div class="card">
+      <div class="est-toggle">
+        <button id="estTabEst" class="active" onclick="estSetKind('estimate')">Estimates</button>
+        <button id="estTabCo" onclick="estSetKind('co')">Change Orders</button>
+      </div>
+      <input class="est-search" id="estSearch" placeholder="Search by number, project, customer…" oninput="renderEstList()">
+      <div class="est-statusbar" id="estStatusBar"></div>
+      <div class="est-list" id="estList"></div>
     </div>
   </div>
-  <div id="wfMap"></div>
 
 </div>
 
 <script>
 var WF_BANDS = [
-  { key:'vendors', label:'Vendors', color:'#7C5CBF',
-    nodes:[
-      {ico:'cart', label:'Purchase orders'},
-      {ico:'truck', label:'Receive materials', arrow:true},
-      {ico:'bill', label:'Enter bills', arrow:true},
-      {ico:'pay', label:'Pay bills', arrow:true},
-    ]},
   { key:'customers', label:'Customers', color:'#3A9E6A',
     nodes:[
-      {ico:'doc', label:'Estimates & change orders'},
+      {ico:'customer', label:'Customers', href:'/sdd-customers.html'},
+      {ico:'doc', label:'Estimates & change orders', arrow:true, onclick:'openEstimatesPanel()'},
       {ico:'invoice', label:'Invoices', arrow:true},
       {ico:'send', label:'Send / statements', arrow:true},
       {ico:'receive', label:'Receive payments', arrow:true},
       {ico:'deposit', label:'Record deposits', arrow:true},
+    ]},
+  { key:'vendors', label:'Vendors', color:'#7C5CBF',
+    nodes:[
+      {ico:'vendor', label:'Vendors', href:'/sdd-vendors.html'},
+      {ico:'cart', label:'Purchase orders', arrow:true},
+      {ico:'truck', label:'Receive materials', arrow:true},
+      {ico:'bill', label:'Enter bills', arrow:true},
+      {ico:'pay', label:'Pay bills', arrow:true},
     ]},
   { key:'employees', label:'Employees', color:'#C8822A',
     nodes:[
@@ -140,6 +194,8 @@ var WF_BANDS = [
 ];
 
 var WF_ICONS = {
+  customer:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  vendor:'<path d="M3 9l1-5h16l1 5"/><path d="M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M3 9h18"/><path d="M9 21v-6h6v6"/>',
   cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>',
   truck:'<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
   bill:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>',
@@ -173,9 +229,12 @@ function renderWorkflowMap(){
     var nodes = band.nodes.map(function(n){
       var arrow = n.arrow ? '<div class="wf-arrow">→</div>' : '';
       var ico = WF_ICONS[n.ico] || '';
+      var clickable = n.href ? ' style="cursor:pointer;" onclick="window.location.href=\''+n.href+'\'" title="Go to '+n.label+'"'
+                    : (n.onclick ? ' style="cursor:pointer;" onclick="'+n.onclick+'" title="'+n.label+'"' : '');
+      var iconRing = (n.href||n.onclick) ? 'box-shadow:0 0 0 2px '+band.color+';' : '';
       return arrow +
-        '<div class="wf-node">'+
-          '<div class="wf-ico" style="background:'+_hexToRgba(band.color,0.14)+';color:'+band.color+';">'+
+        '<div class="wf-node"'+clickable+'>'+
+          '<div class="wf-ico" style="background:'+_hexToRgba(band.color,0.14)+';color:'+band.color+';'+iconRing+'">'+
             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ico+'</svg>'+
           '</div>'+
           '<div class="wf-label">'+n.label+'</div>'+
@@ -187,6 +246,133 @@ function renderWorkflowMap(){
     '</div>';
   }).join('');
 }
+
+// ═══════════ ESTIMATES / CHANGE ORDERS SLIDE-OVER ═══════════
+var estKind='estimate';   // 'estimate' | 'co'
+var estStatusFilter='open';   // default: only open (in-progress) documents
+// Statuses considered "open" (still in progress — not closed/paid/rejected/void)
+function _estIsOpen(st){
+  var s=String(st||'').toLowerCase();
+  if(s.indexOf('paid')>-1 && s.indexOf('pending')===-1) return false;  // Paid (but not "pending payment")
+  if(s.indexOf('reject')>-1 || s.indexOf('declin')>-1) return false;
+  if(s.indexOf('void')>-1) return false;
+  if(s.indexOf('draft')>-1) return false;  // drafts aren't "open" yet
+  // open = pending approval / approved-pending schedule / in progress / ready to bill /
+  //        completed-pending payment / sent
+  return s.indexOf('pending approval')>-1 || s.indexOf('approv')>-1 || s.indexOf('schedul')>-1
+      || s.indexOf('progress')>-1 || s.indexOf('ready')>-1 || s.indexOf('bill')>-1
+      || s.indexOf('sent')>-1 || s.indexOf('completed')>-1 || s==='pending';
+}
+var EST_STATUS_COLORS={
+  'Draft':'#888','Sent - Pending Approval':'#3A7ED4','Approved - Pending Schedule':'#B8922A',
+  'In Progress':'#C8822A','Ready to Bill':'#D94F4F','Rejected':'#D94F4F','Void':'#AAA',
+  'Pending':'#3A7ED4','Approved':'#3A9E6A'
+};
+function _estMoney(v){ return parseFloat(String(v||'0').replace(/[$,]/g,''))||0; }
+function _estFmt(n){ return '$'+Math.round(n).toLocaleString(); }
+function _estColor(st){ return EST_STATUS_COLORS[st]||'#3A7ED4'; }
+
+// Use the exact same data source as the Customers page: window.SDD.customers
+// (SDD hydrates this from its seed on first load, or from saved data). This keeps the
+// list in sync with what Customers shows — the built-in sample data included.
+function _getCustomers(){
+  return (window.SDD && window.SDD.customers) ? window.SDD.customers : [];
+}
+function _gatherEstimates(kind){
+  var out=[];
+  var custs=_getCustomers();
+  custs.forEach(function(c){
+    // Jobs can live under each contact (ct.jobs) AND/OR directly on the customer (c.jobs).
+    var jobs=[];
+    (c.contacts||[]).forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ jobs.push(j); }); });
+    (c.jobs||[]).forEach(function(j){ jobs.push(j); });
+    // de-dup jobs by est (a job referenced from several contacts appears once)
+    var jseen={};
+    jobs.forEach(function(j){
+      var jkey=j.est||JSON.stringify(j.address||'')+((j.estimates||[]).length);
+      if(jseen[jkey]) return; jseen[jkey]=1;
+      var arr=(kind==='co')?(j.changeOrders||[]):(j.estimates||[]);
+      arr.forEach(function(d){
+        out.push({
+          est:d.est, amount:d.amount, status:d.status||'Draft',
+          project:(d.projectName||d.scope||d.description||j.projectName||j.jobName||''),
+          customer:c.name||'', date:d.date||'', job:(j.jobName||j.projectName||'')
+        });
+      });
+    });
+  });
+  // de-dup by est number
+  var seen={}, dedup=[];
+  out.forEach(function(o){ if(o.est && !seen[o.est]){ seen[o.est]=1; dedup.push(o); } });
+  return dedup;
+}
+
+function openEstimatesPanel(){
+  estKind='estimate'; estStatusFilter='open';
+  var s=document.getElementById('estSearch'); if(s) s.value='';
+  estSyncTabs();
+  renderEstList();
+  // slide home out to the left, estimates view in from the right
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewEst').classList.add('slid-in');
+}
+function closeEstimatesPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewEst').classList.remove('slid-in');
+}
+function estSetKind(k){ estKind=k; estStatusFilter='open'; estSyncTabs(); renderEstList(); }
+function estSyncTabs(){
+  document.getElementById('estTabEst').classList.toggle('active', estKind==='estimate');
+  document.getElementById('estTabCo').classList.toggle('active', estKind==='co');
+  document.getElementById('estPanelTitle').textContent = estKind==='co'?'Change Orders':'Estimates';
+}
+function estSetStatus(st){ estStatusFilter=st; renderEstList(); }
+
+function renderEstList(){
+  var all=_gatherEstimates(estKind);
+  var openCount=all.filter(function(o){return _estIsOpen(o.status);}).length;
+  // build the status filter bar: Open + All + each present status
+  var statuses=['open','all']; var seen={};
+  all.forEach(function(o){ if(!seen[o.status]){ seen[o.status]=1; statuses.push(o.status); } });
+  var bar=document.getElementById('estStatusBar');
+  if(bar){
+    bar.innerHTML=statuses.map(function(st){
+      var label;
+      if(st==='open') label='Open ('+openCount+')';
+      else if(st==='all') label='All ('+all.length+')';
+      else label=st;
+      return '<button class="'+(estStatusFilter===st?'active':'')+'" onclick="estSetStatus(\''+st.replace(/'/g,"\\'")+'\')">'+label+'</button>';
+    }).join('');
+  }
+  // apply search + status filters
+  var q=(document.getElementById('estSearch').value||'').toLowerCase().trim();
+  var rows=all.filter(function(o){
+    if(estStatusFilter==='open'){ if(!_estIsOpen(o.status)) return false; }
+    else if(estStatusFilter!=='all' && o.status!==estStatusFilter) return false;
+    if(q){
+      var hay=(o.est+' '+o.project+' '+o.customer+' '+o.job).toLowerCase();
+      if(hay.indexOf(q)===-1) return false;
+    }
+    return true;
+  });
+  var list=document.getElementById('estList');
+  if(!rows.length){ list.innerHTML='<div class="est-empty">No '+(estKind==='co'?'change orders':'estimates')+' found.</div>'; return; }
+  list.innerHTML=rows.map(function(o){
+    var col=_estColor(o.status);
+    return '<div class="est-row" onclick="estGoTo(\''+o.est+'\')">'
+      +'<div class="est-dot" style="background:'+col+';"></div>'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+o.est+'</div>'
+        +'<div class="est-rsub">'+(o.project?o.project+' · ':'')+o.customer+(o.date?' · '+o.date:'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;">'
+        +'<div class="est-ramt">'+_estFmt(_estMoney(o.amount))+'</div>'
+        +'<span class="est-rstatus" style="background:'+col+'22;color:'+col+';">'+o.status+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+function estGoTo(est){ window.location.href='/sdd-customers.html?est='+encodeURIComponent(est); }
 
 renderWorkflowMap();
 </script>
