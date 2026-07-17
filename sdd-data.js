@@ -620,7 +620,8 @@
   if(!_data.vendorCredits) _data.vendorCredits = [];
   if(!_data.purchaseOrders) _data.purchaseOrders = [];
   if(!_data.billPayments) _data.billPayments = [];
-  if(!_data.employees) _data.employees = [];
+  // Seed the crew if storage predates the employees feature (empty or missing)
+  if(!_data.employees || !_data.employees.length) _data.employees = JSON.parse(JSON.stringify(SEED.employees || []));
   if(!_data.timecards) _data.timecards = [];
 
   function save(){
@@ -772,6 +773,12 @@
       save();
       return emp;
     },
+    // Load the default crew from the seed (for storage that predates employees)
+    seedEmployees: function(){
+      _data.employees = JSON.parse(JSON.stringify(SEED.employees || []));
+      save();
+      return _data.employees;
+    },
     updateEmployee: function(id, patch){
       var e=(_data.employees||[]).find(function(x){ return x.id===id; });
       if(e){ Object.keys(patch||{}).forEach(function(k){ e[k]=patch[k]; }); save(); }
@@ -789,6 +796,49 @@
       if(!e.wageHistory) e.wageHistory=[];
       e.wageHistory.push({ date:date||'', oldWage:old, newWage:newWage, note:note||'' });
       e.wage=newWage;
+      save();
+      return e;
+    },
+    // Documents (name + file data-URI)
+    addEmployeeDoc: function(id, doc){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e) return null;
+      if(!e.documents) e.documents=[];
+      doc.id='DOC-'+Date.now();
+      doc.uploadedAt=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      e.documents.push(doc);
+      save();
+      return e;
+    },
+    deleteEmployeeDoc: function(id, docId){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e || !e.documents) return null;
+      e.documents=e.documents.filter(function(d){ return d.id!==docId; });
+      save();
+      return e;
+    },
+    // Bonuses
+    addBonus: function(id, bonus){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e) return null;
+      if(!e.bonuses) e.bonuses=[];
+      bonus.id='BON-'+Date.now();
+      e.bonuses.push(bonus);
+      save();
+      return e;
+    },
+    deleteBonus: function(id, bonusId){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e || !e.bonuses) return null;
+      e.bonuses=e.bonuses.filter(function(b){ return b.id!==bonusId; });
+      save();
+      return e;
+    },
+    // Compliance items (e.g. I-9, W-4, safety cert) with status + expiry
+    setCompliance: function(id, items){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e) return null;
+      e.compliance=items||[];
       save();
       return e;
     },
