@@ -200,6 +200,118 @@ body{background:#F0EEE9;color:var(--text);font-family:'Barlow',sans-serif;font-s
     </div>
   </div>
 
+  <!-- MAKE DEPOSIT view (slides in from the right) -->
+  <div class="est-view" id="viewDep">
+    <button class="est-back" onclick="closeDepositPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar">
+      <div class="welcome-title">Make Deposit</div>
+      <div class="welcome-sub">Undeposited payments — select which to deposit and where</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px;">
+        <div style="flex:1;min-width:180px;">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Deposit to account</label>
+          <select id="depAccount" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;"></select>
+        </div>
+        <div style="min-width:150px;">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Deposit date</label>
+          <input type="date" id="depDate" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;">
+        </div>
+      </div>
+      <div class="est-list" id="depList"></div>
+      <div id="depFooter" style="display:none;margin-top:14px;padding:14px 16px;background:#1f2630;border-radius:10px;color:#fff;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div><span style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.6);">Deposit total (<span id="depCount">0</span> selected)</span>
+          <div style="font-size:22px;font-weight:800;color:#e0b94a;" id="depTotal">$0</div></div>
+        <button onclick="_depConfirm()" style="padding:11px 22px;border:none;border-radius:8px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Record Deposit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURCHASE ORDERS view (slides in from the right) -->
+  <div class="est-view" id="viewPO">
+    <button class="est-back" onclick="closePOPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="welcome-title">Purchase Orders</div>
+        <div class="welcome-sub">Create purchase orders to vendors and track their history</div>
+      </div>
+      <button onclick="openPOCreate()" style="padding:10px 18px;border:none;border-radius:8px;background:#7C5CBF;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">+ New Purchase Order</button>
+    </div>
+    <div class="card">
+      <input class="est-search" id="poSearch" placeholder="Search by PO number or vendor…" oninput="renderPOList()">
+      <div class="est-statusbar" id="poStatusBar"></div>
+      <div class="est-list" id="poList" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- PAY BILLS view (slides in from the right) -->
+  <div class="est-view" id="viewPay">
+    <button class="est-back" onclick="closePayBillsPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar">
+      <div class="welcome-title">Pay Bills</div>
+      <div class="welcome-sub">Select the bills to pay and the account to pay from</div>
+    </div>
+    <div class="card">
+      <div style="margin-bottom:14px;max-width:280px;">
+        <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Pay from account</label>
+        <select id="payAccount" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:Barlow,sans-serif;font-size:13px;background:#fff;"></select>
+      </div>
+      <div class="est-list" id="payList"></div>
+      <div id="payFooter" style="display:none;margin-top:14px;padding:14px 16px;background:#1f2630;border-radius:10px;color:#fff;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div><span style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.6);">Payment total (<span id="payCount">0</span> selected)</span>
+          <div style="font-size:22px;font-weight:800;color:#e0b94a;" id="payTotal">$0</div></div>
+        <button onclick="_payConfirm()" style="padding:11px 22px;border:none;border-radius:8px;background:#D94F4F;color:#fff;font-family:Barlow,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Pay Selected Bills</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES view (slides in from the right) -->
+  <div class="est-view" id="viewEmp">
+    <button class="est-back" onclick="closeEmployeesPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="welcome-title">Employees</div>
+        <div class="welcome-sub">Manage your crew, wages, and their timecard history</div>
+      </div>
+      <button onclick="openEmployeeCreate()" style="padding:10px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Employee</button>
+    </div>
+    <div class="card">
+      <input class="est-search" id="empSearch" placeholder="Search by name or trade…" oninput="renderEmpList()">
+      <div class="est-list" id="empList" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ENTER TIME (timecards) view (slides in from the right) -->
+  <div class="est-view" id="viewTC">
+    <button class="est-back" onclick="closeTimecardPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="welcome-title">Enter Time</div>
+        <div class="welcome-sub">Create weekly timecards and export the signed PDF</div>
+      </div>
+      <button onclick="openTimecardCreate()" style="padding:10px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;">+ New Timecard</button>
+    </div>
+    <div class="card">
+      <input class="est-search" id="tcSearch" placeholder="Search by employee or week…" oninput="renderTCList()">
+      <div class="est-list" id="tcList" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -211,20 +323,19 @@ var WF_BANDS = [
       {ico:'invoice', label:'Invoices', arrow:true, onclick:'openInvoicesPanel()'},
       {ico:'send', label:'Send / statements', arrow:true, onclick:'openStatementsPanel()'},
       {ico:'receive', label:'Receive payments', arrow:true, onclick:'openReceivePanel()'},
-      {ico:'deposit', label:'Record deposits', arrow:true},
+      {ico:'deposit', label:'Record deposits', arrow:true, onclick:'openDepositPanel()'},
     ]},
   { key:'vendors', label:'Vendors', color:'#7C5CBF',
     nodes:[
       {ico:'vendor', label:'Vendors', href:'/sdd-vendors.html'},
-      {ico:'cart', label:'Purchase orders', arrow:true},
-      {ico:'truck', label:'Receive materials', arrow:true},
-      {ico:'bill', label:'Enter bills', arrow:true},
-      {ico:'pay', label:'Pay bills', arrow:true},
+      {ico:'cart', label:'Purchase orders', arrow:true, onclick:'openPOPanel()'},
+      {ico:'bill', label:'Enter bills', href:'/sdd-vendors.html?view=bills&new=1'},
+      {ico:'pay', label:'Pay bills', arrow:true, onclick:'openPayBillsPanel()'},
     ]},
   { key:'employees', label:'Employees', color:'#C8822A',
     nodes:[
-      {ico:'clock', label:'Enter time'},
-      {ico:'people', label:'Crew & roles', arrow:true},
+      {ico:'clock', label:'Enter time', arrow:true, onclick:'openTimecardPanel()'},
+      {ico:'people', label:'Employees', arrow:true, onclick:'openEmployeesPanel()'},
       {ico:'payroll', label:'Payroll', arrow:true},
     ]},
   { key:'banking', label:'Banking', color:'#3A7ED4',
@@ -480,20 +591,51 @@ function renderStatementList(){
   var list=document.getElementById('stmtList');
   if(!rows.length){ list.innerHTML='<div class="est-empty">No companies with pending invoices.</div>'; return; }
   window._stmtCache={};
+  window._stmtExpanded=window._stmtExpanded||{};
   list.innerHTML=rows.map(function(o,i){
     window._stmtCache[o.id]=o;
-    return '<div class="est-row" style="cursor:default;">'
-      +'<div class="est-dot" style="background:#D94F4F;"></div>'
-      +'<div class="est-rmain">'
-        +'<div class="est-rnum">'+o.customer+'</div>'
-        +'<div class="est-rsub">'+o.invoices.length+' pending invoice'+(o.invoices.length>1?'s':'')+'</div>'
+    var isOpen=!!window._stmtExpanded[o.id];
+    // nested invoice list (hierarchical view under the company)
+    var invRows=o.invoices.map(function(iv){
+      var col=_invColor(iv.status);
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px 8px 20px;border-top:1px solid var(--border);cursor:pointer;" onclick="estGoTo(\''+iv.est+'\')">'
+        +'<div style="width:7px;height:7px;border-radius:50%;background:'+col+';flex-shrink:0;"></div>'
+        +'<div style="flex:1;min-width:0;">'
+          +'<div style="font-size:13px;font-weight:700;color:var(--text);">'+iv.est+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(iv.project?iv.project+' · ':'')+(iv.due?'due '+iv.due:(iv.date||''))+'</div>'
+        +'</div>'
+        +'<div style="text-align:right;flex-shrink:0;">'
+          +'<div style="font-size:13px;font-weight:800;color:var(--text);">'+_estFmt(_estMoney(iv.amount))+'</div>'
+          +'<span style="font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px;background:'+col+'22;color:'+col+';">'+iv.status+'</span>'
+        +'</div>'
+      +'</div>';
+    }).join('');
+    return '<div style="border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;background:#fff;'+(isOpen?'border-color:var(--gold);':'')+'">'
+      +'<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;" onclick="_stmtToggle('+o.id+')">'
+        +'<div style="font-size:13px;color:var(--gold);transition:transform .15s;transform:rotate('+(isOpen?'90':'0')+'deg);">▶</div>'
+        +'<div class="est-dot" style="background:#D94F4F;"></div>'
+        +'<div class="est-rmain">'
+          +'<div class="est-rnum">'+o.customer+'</div>'
+          +'<div class="est-rsub">'+o.invoices.length+' pending invoice'+(o.invoices.length>1?'s':'')+' · tap to '+(isOpen?'collapse':'view invoices')+'</div>'
+        +'</div>'
+        +'<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;">'
+          +'<div class="est-ramt" style="color:#D94F4F;">'+_estFmt(o.total)+'</div>'
+          +'<button onclick="event.stopPropagation();openStatementPreview('+o.id+')" style="padding:6px 12px;border:none;border-radius:7px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Send Statement</button>'
+        +'</div>'
       +'</div>'
-      +'<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;">'
-        +'<div class="est-ramt" style="color:#D94F4F;">'+_estFmt(o.total)+'</div>'
-        +'<button onclick="openStatementPreview('+o.id+')" style="padding:6px 12px;border:none;border-radius:7px;background:#3A9E6A;color:#fff;font-family:Barlow,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">Send Statement</button>'
+      +'<div style="display:'+(isOpen?'block':'none')+';background:var(--surface2);">'+invRows
+        +'<div style="display:flex;justify-content:space-between;padding:10px 14px;border-top:2px solid var(--gold);background:#1f2630;color:#fff;">'
+          +'<span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#e0b94a;">Total Due</span>'
+          +'<span style="font-size:14px;font-weight:800;color:#e0b94a;">'+_estFmt(o.total)+'</span>'
+        +'</div>'
       +'</div>'
     +'</div>';
   }).join('');
+}
+function _stmtToggle(cid){
+  window._stmtExpanded=window._stmtExpanded||{};
+  window._stmtExpanded[cid]=!window._stmtExpanded[cid];
+  renderStatementList();
 }
 
 function estGoTo(est){ window.location.href='/sdd-customers.html?est='+encodeURIComponent(est); }
@@ -703,6 +845,854 @@ function receivePaymentFor(est){
   window.location.href='/sdd-customers.html?est='+encodeURIComponent(est)+'&pay=1';
 }
 
+// ═══════════ MAKE DEPOSIT SLIDE-OVER (QuickBooks-style) ═══════════
+// Bank/card accounts money can be deposited into (mirror of Banking's list)
+var DEP_ACCOUNTS=[
+  {id:'chk7522', name:'Chase Business Checking', last4:'7522'},
+  {id:'sav2896', name:'Chase Business Savings', last4:'2896'},
+  {id:'cc4821',  name:'Chase Business Credit Card', last4:'4821'},
+  {id:'cc3377',  name:'Amazon Amex', last4:'3377'}
+];
+var _depSelected={};
+function openDepositPanel(){
+  _depSelected={};
+  // populate account dropdown
+  var sel=document.getElementById('depAccount');
+  if(sel) sel.innerHTML=DEP_ACCOUNTS.map(function(a){return '<option value="'+a.id+'">'+a.name+' ····'+a.last4+'</option>';}).join('');
+  var dt=document.getElementById('depDate'); if(dt) dt.value=new Date().toISOString().slice(0,10);
+  renderDepList();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewDep').classList.add('slid-in');
+}
+function closeDepositPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewDep').classList.remove('slid-in');
+}
+function _depUndeposited(){
+  if(window.SDD && SDD.undepositedPayments) return SDD.undepositedPayments();
+  return [];
+}
+function renderDepList(){
+  var pays=_depUndeposited();
+  var list=document.getElementById('depList');
+  if(!pays.length){ list.innerHTML='<div class="est-empty">No undeposited payments. All received payments have been deposited.</div>'; _depUpdateFooter(); return; }
+  list.innerHTML=pays.map(function(p){
+    var checked=!!_depSelected[p.id];
+    return '<label class="est-row" style="cursor:pointer;'+(checked?'border-color:var(--gold);background:var(--surface2);':'')+'">'
+      +'<input type="checkbox" '+(checked?'checked':'')+' onchange="_depToggle(\''+p.id+'\',this.checked)" style="width:16px;height:16px;accent-color:#3A9E6A;cursor:pointer;flex-shrink:0;">'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+p.customer+' <span style="font-size:11px;color:var(--muted);font-weight:500;">· '+p.invoice+'</span></div>'
+        +'<div class="est-rsub">'+(p.method?p.method+' · ':'')+(p.ref||'')+(p.date?' · '+p.date:'')+'</div>'
+      +'</div>'
+      +'<div class="est-ramt">'+_estFmt(_estMoney(p.amount))+'</div>'
+    +'</label>';
+  }).join('');
+  _depUpdateFooter();
+}
+function _depToggle(pid,on){ if(on) _depSelected[pid]=true; else delete _depSelected[pid]; renderDepList(); }
+function _depUpdateFooter(){
+  var pays=_depUndeposited();
+  var sum=0,count=0;
+  pays.forEach(function(p){ if(_depSelected[p.id]){ sum+=_estMoney(p.amount); count++; } });
+  var f=document.getElementById('depFooter');
+  if(f) f.style.display=count>0?'flex':'none';
+  var t=document.getElementById('depTotal'); if(t) t.textContent=_estFmt(sum);
+  var c=document.getElementById('depCount'); if(c) c.textContent=count;
+}
+function _depConfirm(){
+  var pays=_depUndeposited();
+  var ids=[], sum=0;
+  pays.forEach(function(p){ if(_depSelected[p.id]){ ids.push(p.id); sum+=_estMoney(p.amount); } });
+  if(!ids.length) return;
+  var acctId=(document.getElementById('depAccount')||{}).value||DEP_ACCOUNTS[0].id;
+  var acct=DEP_ACCOUNTS.filter(function(a){return a.id===acctId;})[0]||DEP_ACCOUNTS[0];
+  var dateVal=(document.getElementById('depDate')||{}).value||new Date().toISOString().slice(0,10);
+  var dateFmt=new Date(dateVal+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(window.SDD && SDD.addDeposit){
+    SDD.addDeposit({ date:dateFmt, account:acct.id, accountName:acct.name+' ····'+acct.last4,
+      paymentIds:ids, total:sum, memo:'Deposit — '+ids.length+' payment'+(ids.length>1?'s':'') });
+  }
+  _depSelected={};
+  renderDepList();
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3A9E6A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✓ Deposited '+_estFmt(sum)+' to '+acct.name+' ('+ids.length+' payment'+(ids.length>1?'s':'')+')';
+  document.body.appendChild(f); setTimeout(function(){f.remove();},3200);
+}
+
+// ═══════════ PURCHASE ORDERS SLIDE-OVER ═══════════
+// Vendors available for POs (mirror of the Banking/Vendors seed)
+var PO_VENDORS=[
+  {id:1, name:'SoCal Equipment Rentals'},
+  {id:2, name:'SafeAir Environmental'},
+  {id:3, name:'SD Disposal & Recycling'},
+  {id:4, name:'Pacific Concrete Cutting'},
+  {id:5, name:'ADP Payroll Services'}
+];
+var PO_STATUS_COLORS={ 'Draft':'#888780','Sent':'#3A7ED4','Received':'#3A9E6A','Closed':'#5F5E5A' };
+var poStatusFilter='all';
+function _poColor(st){ return PO_STATUS_COLORS[st]||'#888780'; }
+function openPOPanel(){
+  poStatusFilter='all';
+  var s=document.getElementById('poSearch'); if(s) s.value='';
+  renderPOList();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewPO').classList.add('slid-in');
+}
+function closePOPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewPO').classList.remove('slid-in');
+}
+function _poAll(){ return (window.SDD && SDD.purchaseOrders)?SDD.purchaseOrders.slice().reverse():[]; }
+function poSetStatus(st){ poStatusFilter=st; renderPOList(); }
+function renderPOList(){
+  var all=_poAll();
+  var statuses=['all','Draft','Sent','Received','Closed'];
+  var counts={}; all.forEach(function(p){ counts[p.status]=(counts[p.status]||0)+1; });
+  var bar=document.getElementById('poStatusBar');
+  if(bar){
+    bar.innerHTML=statuses.map(function(st){
+      var label=st==='all'?('All ('+all.length+')'):(st+' ('+(counts[st]||0)+')');
+      return '<button class="'+(poStatusFilter===st?'active':'')+'" onclick="poSetStatus(\''+st+'\')">'+label+'</button>';
+    }).join('');
+  }
+  var q=(document.getElementById('poSearch').value||'').toLowerCase().trim();
+  var rows=all.filter(function(p){
+    if(poStatusFilter!=='all' && p.status!==poStatusFilter) return false;
+    if(q){ var hay=((p.id||'')+' '+(p.vendorName||'')).toLowerCase(); if(hay.indexOf(q)===-1) return false; }
+    return true;
+  });
+  var list=document.getElementById('poList');
+  if(!rows.length){ list.innerHTML='<div class="est-empty">No purchase orders yet. Create one with “New Purchase Order”.</div>'; return; }
+  list.innerHTML=rows.map(function(p){
+    var col=_poColor(p.status);
+    var nextSt={'Draft':'Sent','Sent':'Received','Received':'Closed'}[p.status];
+    var advBtn=nextSt?'<button onclick="event.stopPropagation();_poAdvance(\''+p.id+'\',\''+nextSt+'\')" style="padding:5px 10px;border:1px solid '+col+';border-radius:7px;background:none;color:'+col+';font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;">Mark '+nextSt+'</button>':'';
+    return '<div class="est-row" style="cursor:pointer;align-items:flex-start;" onclick="_poView(\''+p.id+'\')">'
+      +'<div class="est-dot" style="background:'+col+';margin-top:4px;"></div>'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+p.id+' <span style="font-size:12px;color:var(--muted);font-weight:500;">· '+(p.vendorName||'')+'</span></div>'
+        +'<div class="est-rsub">'+(p.date||'')+' · '+((p.lines||[]).length)+' line'+(((p.lines||[]).length)!==1?'s':'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;">'
+        +'<div class="est-ramt">'+_estFmt(p.total||0)+'</div>'
+        +'<span class="est-rstatus" style="background:'+col+'22;color:'+col+';">'+p.status+'</span>'
+        +advBtn
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+function _poAdvance(id,newStatus){
+  if(window.SDD && SDD.updatePurchaseOrder) SDD.updatePurchaseOrder(id,{status:newStatus});
+  renderPOList();
+}
+// ---- Create PO modal ----
+var _poLines=[];
+function openPOCreate(){
+  _poLines=[{desc:'',amount:''}];
+  var ex=document.getElementById('_poBg'); if(ex) ex.remove();
+  var vendorOpts='<option value="">— Select vendor —</option>'+PO_VENDORS.map(function(v){return '<option value="'+v.id+'">'+v.name+'</option>';}).join('');
+  var bg=document.createElement('div');
+  bg.id='_poBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px 6px;font-size:19px;font-weight:800;">New Purchase Order</div>'
+    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Order to a vendor. Lines below build the total.</div>'
+    +'<div style="padding:0 22px;overflow-y:auto;">'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">'
+        +'<div style="flex:1;min-width:180px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Vendor</label>'
+          +'<select id="_po_vendor" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'+vendorOpts+'</select></div>'
+        +'<div style="min-width:150px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Date</label>'
+          +'<input type="date" id="_po_date" value="'+new Date().toISOString().slice(0,10)+'" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"></div>'
+      +'</div>'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:6px;">Line items</label>'
+      +'<div id="_poLinesWrap"></div>'
+      +'<button onclick="_poAddLine()" style="margin-top:2px;padding:7px 12px;border:1.5px dashed var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">+ Add line</button>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:12px 14px;background:var(--surface2);border-radius:10px;">'
+        +'<span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);">Total</span>'
+        +'<span id="_poTotal" style="font-size:20px;font-weight:800;color:#7C5CBF;">$0</span></div>'
+      +'<div style="margin-top:12px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:5px;">Memo (optional)</label>'
+        +'<input type="text" id="_po_memo" placeholder="Note for this PO" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"></div>'
+      +'<div id="_po_err" style="display:none;color:#D94F4F;font-size:12px;font-weight:600;margin-top:8px;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_poBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_poSave()" style="padding:9px 20px;border:none;border-radius:8px;background:#7C5CBF;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Purchase Order</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+  _poRenderLines();
+}
+function _poRenderLines(){
+  var wrap=document.getElementById('_poLinesWrap'); if(!wrap) return;
+  wrap.innerHTML=_poLines.map(function(l,i){
+    return '<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">'
+      +'<input type="text" value="'+(l.desc||'').replace(/"/g,'&quot;')+'" placeholder="Description" oninput="_poLineChange('+i+',\'desc\',this.value)" style="flex:1;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:13px;">'
+      +'<input type="text" value="'+(l.amount||'').toString().replace(/"/g,'&quot;')+'" placeholder="$0" oninput="_poLineChange('+i+',\'amount\',this.value)" onblur="_poReformatLine('+i+')" style="width:100px;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:13px;text-align:right;">'
+      +(_poLines.length>1?'<button onclick="_poRemoveLine('+i+')" style="border:none;background:none;color:#999;font-size:18px;cursor:pointer;flex-shrink:0;">×</button>':'<span style="width:18px;flex-shrink:0;"></span>')
+    +'</div>';
+  }).join('');
+  _poUpdateTotal();
+}
+function _poLineChange(i,field,val){ if(_poLines[i]){ _poLines[i][field]=val; if(field==='amount') _poUpdateTotal(); } }
+function _poReformatLine(i){
+  if(!_poLines[i]) return;
+  var v=parseFloat(String(_poLines[i].amount||'').replace(/[$,]/g,''))||0;
+  _poLines[i].amount=v?_estFmt(v):'';
+  _poRenderLines();
+}
+function _poAddLine(){ _poLines.push({desc:'',amount:''}); _poRenderLines(); }
+function _poRemoveLine(i){ _poLines.splice(i,1); _poRenderLines(); }
+function _poTotalVal(){ return _poLines.reduce(function(s,l){ return s+(parseFloat(String(l.amount||'').replace(/[$,]/g,''))||0); },0); }
+function _poUpdateTotal(){ var t=document.getElementById('_poTotal'); if(t) t.textContent=_estFmt(_poTotalVal()); }
+function _poSave(){
+  var vid=parseInt((document.getElementById('_po_vendor')||{}).value);
+  var v=PO_VENDORS.filter(function(x){return x.id===vid;})[0];
+  var err=document.getElementById('_po_err');
+  if(!v){ if(err){ err.textContent='Select a vendor.'; err.style.display='block'; } return; }
+  var lines=_poLines.map(function(l){ return {desc:l.desc||'', amount:parseFloat(String(l.amount||'').replace(/[$,]/g,''))||0}; })
+    .filter(function(l){ return l.desc||l.amount; });
+  if(!lines.length){ if(err){ err.textContent='Add at least one line item.'; err.style.display='block'; } return; }
+  var total=lines.reduce(function(s,l){ return s+l.amount; },0);
+  var dateVal=(document.getElementById('_po_date')||{}).value||new Date().toISOString().slice(0,10);
+  var dateFmt=new Date(dateVal+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var memo=(document.getElementById('_po_memo')||{}).value||'';
+  var po=null;
+  if(window.SDD && SDD.addPurchaseOrder){
+    po=SDD.addPurchaseOrder({ vendorId:v.id, vendorName:v.name, date:dateFmt, lines:lines, total:total, status:'Draft', memo:memo });
+  }
+  var bg=document.getElementById('_poBg'); if(bg) bg.remove();
+  renderPOList();
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#7C5CBF;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✓ '+(po?po.id:'Purchase order')+' created — '+_estFmt(total)+' to '+v.name;
+  document.body.appendChild(f); setTimeout(function(){f.remove();},3200);
+}
+// ---- View PO detail ----
+function _poView(id){
+  var po=(window.SDD && SDD.purchaseOrders)?SDD.purchaseOrders.find(function(p){return p.id===id;}):null;
+  if(!po) return;
+  var col=_poColor(po.status);
+  var ex=document.getElementById('_poViewBg'); if(ex) ex.remove();
+  var lineRows=(po.lines||[]).map(function(l){
+    return '<tr><td style="padding:9px 12px;border-bottom:1px solid #eee;">'+(l.desc||'')+'</td>'
+      +'<td style="padding:9px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:700;">'+_estFmt(l.amount||0)+'</td></tr>';
+  }).join('');
+  var bg=document.createElement('div');
+  bg.id='_poViewBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;">'
+      +'<div><div style="font-size:20px;font-weight:800;">'+po.id+'</div>'
+        +'<div style="font-size:13px;color:var(--muted);margin-top:2px;">'+(po.vendorName||'')+' · '+(po.date||'')+'</div></div>'
+      +'<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:'+col+'22;color:'+col+';">'+po.status+'</span>'
+    +'</div>'
+    +'<div style="padding:16px 22px;">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:var(--surface2);">'
+        +'<th style="padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--muted);">Description</th>'
+        +'<th style="padding:8px 12px;text-align:right;font-size:10px;text-transform:uppercase;color:var(--muted);">Amount</th></tr></thead>'
+      +'<tbody>'+lineRows+'</tbody></table>'
+      +'<div style="display:flex;justify-content:space-between;margin-top:12px;padding:10px 12px;background:#1f2630;border-radius:8px;color:#fff;">'
+        +'<span style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:13px;">Total</span>'
+        +'<span style="font-weight:800;font-size:16px;color:#c3a8f0;">'+_estFmt(po.total||0)+'</span></div>'
+      +(po.memo?'<div style="margin-top:10px;font-size:12px;color:var(--muted);"><b>Memo:</b> '+po.memo+'</div>':'')
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="_poDelete(\''+po.id+'\')" style="padding:9px 14px;border:1.5px solid #D94F4F;border-radius:8px;background:#fff;color:#D94F4F;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">Delete</button>'
+      +'<button onclick="document.getElementById(\'_poViewBg\').remove()" style="padding:9px 20px;border:none;border-radius:8px;background:#7C5CBF;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Close</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _poDelete(id){
+  if(window.SDD && SDD.deletePurchaseOrder) SDD.deletePurchaseOrder(id);
+  var bg=document.getElementById('_poViewBg'); if(bg) bg.remove();
+  renderPOList();
+}
+
+// ═══════════ PAY BILLS SLIDE-OVER (QuickBooks-style) ═══════════
+var PAY_ACCOUNTS=[
+  {id:'chk7522', name:'Chase Business Checking', last4:'7522'},
+  {id:'sav2896', name:'Chase Business Savings', last4:'2896'},
+  {id:'cc4821',  name:'Chase Business Credit Card', last4:'4821'},
+  {id:'cc3377',  name:'Amazon Amex', last4:'3377'}
+];
+var _paySelected={};
+var _payVendorNames={1:'SoCal Equipment Rentals',2:'SafeAir Environmental',3:'SD Disposal & Recycling',4:'Pacific Concrete Cutting',5:'ADP Payroll Services'};
+function openPayBillsPanel(){
+  _paySelected={};
+  var sel=document.getElementById('payAccount');
+  if(sel) sel.innerHTML=PAY_ACCOUNTS.map(function(a){return '<option value="'+a.id+'">'+a.name+' ····'+a.last4+'</option>';}).join('');
+  renderPayList();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewPay').classList.add('slid-in');
+}
+function closePayBillsPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewPay').classList.remove('slid-in');
+}
+function _payUnpaid(){
+  if(window.SDD && SDD.unpaidBills) return SDD.unpaidBills();
+  return [];
+}
+function _payBillAmt(b){ return (b.netAmount!=null?b.netAmount:b.amount)||0; }
+function renderPayList(){
+  var bills=_payUnpaid();
+  var list=document.getElementById('payList');
+  if(!bills.length){ list.innerHTML='<div class="est-empty">No bills pending payment. All bills are paid.</div>'; _payUpdateFooter(); return; }
+  list.innerHTML=bills.map(function(b){
+    var on=!!_paySelected[b.id];
+    var vname=b.vendor||_payVendorNames[b.vendorId]||('Vendor '+b.vendorId);
+    var isPartial=b.status==='partial';
+    return '<label class="est-row" style="cursor:pointer;'+(on?'border-color:var(--gold);background:var(--surface2);':'')+'">'
+      +'<input type="checkbox" '+(on?'checked':'')+' onchange="_payToggle(\''+b.id+'\',this.checked)" style="width:16px;height:16px;accent-color:#D94F4F;cursor:pointer;flex-shrink:0;">'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+(b.num||('BILL-'+b.id))+' <span style="font-size:11px;color:var(--muted);font-weight:500;">· '+vname+'</span></div>'
+        +'<div class="est-rsub">'+(b.desc||'')+(b.due?' · due '+b.due:'')+(isPartial?' · <span style="color:var(--warning);font-weight:700;">partial</span>':'')+'</div>'
+      +'</div>'
+      +'<div class="est-ramt">'+_estFmt(_payBillAmt(b))+'</div>'
+    +'</label>';
+  }).join('');
+  _payUpdateFooter();
+}
+function _payToggle(id,on){ if(on) _paySelected[id]=true; else delete _paySelected[id]; renderPayList(); }
+function _payUpdateFooter(){
+  var bills=_payUnpaid();
+  var sum=0,count=0;
+  bills.forEach(function(b){ if(_paySelected[b.id]){ sum+=_payBillAmt(b); count++; } });
+  var f=document.getElementById('payFooter'); if(f) f.style.display=count>0?'flex':'none';
+  var t=document.getElementById('payTotal'); if(t) t.textContent=_estFmt(sum);
+  var c=document.getElementById('payCount'); if(c) c.textContent=count;
+}
+function _payConfirm(){
+  var bills=_payUnpaid();
+  var ids=[], sum=0;
+  bills.forEach(function(b){ if(_paySelected[b.id]){ ids.push(b.id); sum+=_payBillAmt(b); } });
+  if(!ids.length) return;
+  var acctId=(document.getElementById('payAccount')||{}).value||PAY_ACCOUNTS[0].id;
+  var acct=PAY_ACCOUNTS.filter(function(a){return a.id===acctId;})[0]||PAY_ACCOUNTS[0];
+  var dateFmt=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var res={count:ids.length,total:sum};
+  if(window.SDD && SDD.payBills){
+    res=SDD.payBills(ids, acct.id, acct.name+' ····'+acct.last4, dateFmt);
+  }
+  _paySelected={};
+  renderPayList();
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#D94F4F;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✓ Paid '+_estFmt(res.total)+' — '+res.count+' bill'+(res.count>1?'s':'')+' from '+acct.name;
+  document.body.appendChild(f); setTimeout(function(){f.remove();},3200);
+}
+
+// ═══════════ EMPLOYEES SLIDE-OVER ═══════════
+function openEmployeesPanel(){
+  var s=document.getElementById('empSearch'); if(s) s.value='';
+  renderEmpList();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewEmp').classList.add('slid-in');
+}
+function closeEmployeesPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewEmp').classList.remove('slid-in');
+}
+function _empAll(){ return (window.SDD && SDD.employees)?SDD.employees:[]; }
+function renderEmpList(){
+  var all=_empAll();
+  var q=(document.getElementById('empSearch').value||'').toLowerCase().trim();
+  var rows=all.filter(function(e){ return !q || (e.name+' '+(e.task||'')).toLowerCase().indexOf(q)>-1; });
+  var list=document.getElementById('empList');
+  if(!rows.length){ list.innerHTML='<div class="est-empty">No employees yet. Add one with “Add Employee”.</div>'; return; }
+  list.innerHTML=rows.map(function(e){
+    var tcs=(window.SDD && SDD.timecardsForEmployee)?SDD.timecardsForEmployee(e.id).length:0;
+    var col=e.status==='active'?'#3A9E6A':'#888780';
+    return '<div class="est-row" style="cursor:pointer;" onclick="_empView(\''+e.id+'\')">'
+      +'<div style="width:38px;height:38px;border-radius:50%;background:#C8822A22;color:#C8822A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">'+(e.name||'?').split(' ').map(function(w){return w[0];}).slice(0,2).join('')+'</div>'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+e.name+'</div>'
+        +'<div class="est-rsub">'+(e.task||'')+(e.taskCode?' '+e.taskCode:'')+' · '+tcs+' timecard'+(tcs!==1?'s':'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;">'
+        +'<div class="est-ramt">'+_estFmt(e.wage||0)+'<span style="font-size:11px;color:var(--muted);font-weight:500;">/hr</span></div>'
+        +'<span class="est-rstatus" style="background:'+col+'22;color:'+col+';">'+(e.status||'active')+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+// Create / edit employee modal
+var _empEditingId=null;
+function openEmployeeCreate(existing){
+  _empEditingId=existing?existing.id:null;
+  var e=existing||{};
+  var ex=document.getElementById('_empBg'); if(ex) ex.remove();
+  var f=function(label,id,val,ph,type){ return '<div style="margin-bottom:10px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">'+label+'</label>'
+    +'<input type="'+(type||'text')+'" id="'+id+'" value="'+String(val||'').replace(/"/g,'&quot;')+'" placeholder="'+(ph||'')+'" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"></div>'; };
+  var bg=document.createElement('div');
+  bg.id='_empBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px 6px;font-size:19px;font-weight:800;">'+(_empEditingId?'Edit Employee':'Add Employee')+'</div>'
+    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Employee details and wage.</div>'
+    +'<div style="padding:0 22px;overflow-y:auto;">'
+      +f('Full name *','_emp_name',e.name,'e.g. Enrique Chavez')
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;"><div style="flex:1;min-width:160px;">'+f('Phone','_emp_phone',e.phone,'(619) 555-0000')+'</div>'
+        +'<div style="flex:1;min-width:160px;">'+f('Email','_emp_email',e.email,'name@email.com','email')+'</div></div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;"><div style="flex:1;min-width:120px;">'+f('Wage ($/hr) *','_emp_wage',e.wage,'0.00')+'</div>'
+        +'<div style="flex:1;min-width:120px;">'+f('Task / trade','_emp_task',e.task,'e.g. DRYWALL')+'</div>'
+        +'<div style="flex:1;min-width:100px;">'+f('Task code','_emp_taskcode',e.taskCode,'e.g. 5446')+'</div></div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;"><div style="flex:1;min-width:150px;">'+f('Hire date','_emp_hire',e.hireDate,'Jan 1, 2026')+'</div>'
+        +'<div style="flex:1;min-width:120px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">Status</label>'
+          +'<select id="_emp_status" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"><option value="active"'+(e.status!=='inactive'?' selected':'')+'>Active</option><option value="inactive"'+(e.status==='inactive'?' selected':'')+'>Inactive</option></select></div></div>'
+      +f('Address','_emp_address',e.address,'City, State')
+      +f('SSN / ID','_emp_ssn',e.ssn,'···-··-0000')
+      +'<div style="margin-bottom:10px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">Notes</label>'
+        +'<textarea id="_emp_notes" placeholder="Optional notes" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;min-height:52px;resize:vertical;">'+String(e.notes||'').replace(/</g,'&lt;')+'</textarea></div>'
+      +'<div id="_emp_err" style="display:none;color:#D94F4F;font-size:12px;font-weight:600;margin-bottom:8px;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_empBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_empSave()" style="padding:9px 20px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Employee</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(ev){ if(ev.target===bg) bg.remove(); };
+}
+function _empSave(){
+  var val=function(id){ return (document.getElementById(id)||{}).value||''; };
+  var name=val('_emp_name').trim();
+  var wage=parseFloat(val('_emp_wage').replace(/[$,]/g,''))||0;
+  var err=document.getElementById('_emp_err');
+  if(!name){ if(err){ err.textContent='Enter the employee name.'; err.style.display='block'; } return; }
+  if(wage<=0){ if(err){ err.textContent='Enter a valid hourly wage.'; err.style.display='block'; } return; }
+  var data={ name:name, phone:val('_emp_phone'), email:val('_emp_email'), wage:wage,
+    task:val('_emp_task'), taskCode:val('_emp_taskcode'), hireDate:val('_emp_hire'),
+    status:val('_emp_status'), address:val('_emp_address'), ssn:val('_emp_ssn'), notes:val('_emp_notes') };
+  if(_empEditingId && window.SDD && SDD.updateEmployee){ SDD.updateEmployee(_empEditingId, data); }
+  else if(window.SDD && SDD.addEmployee){ SDD.addEmployee(data); }
+  var bg=document.getElementById('_empBg'); if(bg) bg.remove();
+  renderEmpList();
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#C8822A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✓ '+name+(_empEditingId?' updated':' added');
+  document.body.appendChild(f); setTimeout(function(){f.remove();},3000);
+}
+// Employee detail with wage + timecard history
+function _empView(id){
+  var e=(window.SDD && SDD.employees)?SDD.employees.find(function(x){return x.id===id;}):null;
+  if(!e) return;
+  var tcs=(window.SDD && SDD.timecardsForEmployee)?SDD.timecardsForEmployee(id):[];
+  var ex=document.getElementById('_empViewBg'); if(ex) ex.remove();
+  var histRows=tcs.length?tcs.map(function(t){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--border);cursor:pointer;" onclick="_tcPdf(\''+t.id+'\')">'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(t.weekLabel||t.id)+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);">'+(t.totalReg||0).toFixed(2)+' reg · '+(t.totalOT||0).toFixed(2)+' OT hrs</div></div>'
+      +'<div style="font-size:13px;font-weight:700;color:#C8822A;">'+_estFmt((t.totalReg||0)*(e.wage||0))+'</div>'
+      +'<span style="font-size:11px;color:var(--info);">PDF ›</span>'
+    +'</div>';
+  }).join(''):'<div style="padding:14px;color:var(--muted2);font-style:italic;font-size:13px;">No timecards yet for this employee.</div>';
+  var infoRow=function(l,v){ return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span style="font-size:12px;color:var(--muted);">'+l+'</span><span style="font-size:13px;font-weight:600;">'+(v||'—')+'</span></div>'; };
+  var bg=document.createElement('div');
+  bg.id='_empViewBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:500px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;">'
+      +'<div style="display:flex;align-items:center;gap:12px;"><div style="width:44px;height:44px;border-radius:50%;background:#C8822A22;color:#C8822A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;">'+(e.name||'?').split(' ').map(function(w){return w[0];}).slice(0,2).join('')+'</div>'
+        +'<div><div style="font-size:19px;font-weight:800;">'+e.name+'</div><div style="font-size:12px;color:var(--muted);">'+(e.task||'')+(e.taskCode?' · '+e.taskCode:'')+'</div></div></div>'
+      +'<button onclick="document.getElementById(\'_empViewBg\').remove()" style="border:none;background:none;font-size:22px;color:var(--muted);cursor:pointer;">✕</button>'
+    +'</div>'
+    +'<div style="padding:16px 22px;overflow-y:auto;">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#C8822A11;border-radius:10px;margin-bottom:6px;">'
+        +'<span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#C8822A;">Wage</span>'
+        +'<span style="font-size:18px;font-weight:800;color:#C8822A;">'+_estFmt(e.wage||0)+'/hr</span></div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:12px;">'
+        +'<button onclick="_empWageModal(\''+e.id+'\')" style="flex:1;padding:8px 12px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">+ Registrar cambio de wage</button>'
+        +((e.wageHistory&&e.wageHistory.length)?'<button onclick="_empWageToggle(\''+e.id+'\')" style="padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">History ('+e.wageHistory.length+') <span id="_whCaret_'+e.id+'">▾</span></button>':'')
+      +'</div>'
+      +'<div id="_wageHist_'+e.id+'" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
+        +((e.wageHistory&&e.wageHistory.length)?e.wageHistory.slice().reverse().map(function(w){
+          var up=(w.newWage>w.oldWage);
+          return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);">'
+            +'<span style="font-size:12px;color:var(--muted);min-width:90px;">'+(w.date||'—')+'</span>'
+            +'<span style="flex:1;font-size:13px;">'+_estFmt(w.oldWage)+' <span style="color:'+(up?'#0a7a3f':'#D94F4F')+';">'+(up?'▲':'▼')+'</span> <b>'+_estFmt(w.newWage)+'</b>'+(w.note?' <span style="color:var(--muted);font-size:11px;">· '+w.note+'</span>':'')+'</span>'
+          +'</div>';
+        }).join(''):'<div style="padding:10px;font-size:12px;color:var(--muted2);font-style:italic;">No wage changes recorded.</div>')
+      +'</div>'
+      +infoRow('Phone',e.phone)+infoRow('Email',e.email)+infoRow('Hire date',e.hireDate)+infoRow('Address',e.address)+infoRow('SSN / ID',e.ssn)+infoRow('Status',e.status)
+      +(e.notes?'<div style="margin-top:10px;font-size:12px;color:var(--muted);"><b>Notes:</b> '+e.notes+'</div>':'')
+      +'<div style="margin-top:16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);">Timecard history</div>'
+      +histRows
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="_empDelete(\''+e.id+'\')" style="padding:9px 14px;border:1.5px solid #D94F4F;border-radius:8px;background:#fff;color:#D94F4F;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">Delete</button>'
+      +'<button onclick="document.getElementById(\'_empViewBg\').remove();openEmployeeCreate('+JSON.stringify(e).replace(/"/g,'&quot;')+')" style="padding:9px 16px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Edit</button>'
+      +'<button onclick="document.getElementById(\'_empViewBg\').remove();openTimecardCreate(\''+e.id+'\')" style="padding:9px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">New Timecard</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(ev){ if(ev.target===bg) bg.remove(); };
+}
+function _empDelete(id){
+  if(window.SDD && SDD.deleteEmployee) SDD.deleteEmployee(id);
+  var bg=document.getElementById('_empViewBg'); if(bg) bg.remove();
+  renderEmpList();
+}
+// Toggle the wage-history dropdown in the employee detail
+function _empWageToggle(id){
+  var box=document.getElementById('_wageHist_'+id);
+  var caret=document.getElementById('_whCaret_'+id);
+  if(!box) return;
+  var open=box.style.display!=='none';
+  box.style.display=open?'none':'block';
+  if(caret) caret.textContent=open?'▾':'▴';
+}
+// Modal to record a wage change (date + new wage + optional note)
+function _empWageModal(id){
+  var e=(window.SDD && SDD.employees)?SDD.employees.find(function(x){return x.id===id;}):null;
+  if(!e) return;
+  var ex=document.getElementById('_wageBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_wageBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000095;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px 6px;font-size:18px;font-weight:800;">Wage change — '+e.name+'</div>'
+    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Current wage: <b>'+_estFmt(e.wage||0)+'/hr</b></div>'
+    +'<div style="padding:0 22px 8px;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">New wage ($/hr)</label>'
+      +'<input type="text" id="_wage_new" placeholder="0.00" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;text-align:right;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin:12px 0 4px;">Effective date</label>'
+      +'<input type="date" id="_wage_date" value="'+new Date().toISOString().slice(0,10)+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin:12px 0 4px;">Reason / note <span style="font-weight:500;color:var(--muted2);">(optional)</span></label>'
+      +'<input type="text" id="_wage_note" placeholder="e.g. Annual raise" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'
+      +'<div id="_wage_err" style="display:none;color:#D94F4F;font-size:12px;font-weight:600;margin-top:6px;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_wageBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_wageSave(\''+id+'\')" style="padding:9px 20px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save change</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(ev){ if(ev.target===bg) bg.remove(); };
+}
+function _wageSave(id){
+  var e=(window.SDD && SDD.employees)?SDD.employees.find(function(x){return x.id===id;}):null;
+  if(!e) return;
+  var newWage=parseFloat(((document.getElementById('_wage_new')||{}).value||'').replace(/[$,]/g,''))||0;
+  var err=document.getElementById('_wage_err');
+  if(newWage<=0){ if(err){ err.textContent='Enter a valid new wage.'; err.style.display='block'; } return; }
+  if(newWage===e.wage){ if(err){ err.textContent='New wage is the same as the current one.'; err.style.display='block'; } return; }
+  var dateVal=(document.getElementById('_wage_date')||{}).value||new Date().toISOString().slice(0,10);
+  var dateFmt=new Date(dateVal+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var note=(document.getElementById('_wage_note')||{}).value||'';
+  if(window.SDD && SDD.changeWage){ SDD.changeWage(id, newWage, dateFmt, note); }
+  var bg=document.getElementById('_wageBg'); if(bg) bg.remove();
+  // refresh the employee detail
+  var vb=document.getElementById('_empViewBg'); if(vb) vb.remove();
+  _empView(id);
+  renderEmpList();
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#C8822A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='✓ Wage updated to '+_estFmt(newWage)+'/hr for '+e.name;
+  document.body.appendChild(f); setTimeout(function(){f.remove();},3000);
+}
+
+// ═══════════ ENTER TIME (TIMECARDS) SLIDE-OVER ═══════════
+var COMPANY_INFO_TC={ name:'San Diego Demolition, LLC' };
+var _tcDays=['SATURDAY','SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY'];
+function openTimecardPanel(){
+  var s=document.getElementById('tcSearch'); if(s) s.value='';
+  renderTCList();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewTC').classList.add('slid-in');
+}
+function closeTimecardPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewTC').classList.remove('slid-in');
+}
+function renderTCList(){
+  var all=(window.SDD && SDD.timecards)?SDD.timecards.slice().reverse():[];
+  var q=(document.getElementById('tcSearch').value||'').toLowerCase().trim();
+  var rows=all.filter(function(t){ return !q || ((t.employeeName||'')+' '+(t.weekLabel||'')).toLowerCase().indexOf(q)>-1; });
+  var list=document.getElementById('tcList');
+  if(!rows.length){ list.innerHTML='<div class="est-empty">No timecards yet. Create one with “New Timecard”.</div>'; return; }
+  list.innerHTML=rows.map(function(t){
+    var signBadge=t.signed?'<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#0a7a3f22;color:#0a7a3f;">Signed</span>':'<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#C8822A22;color:#C8822A;">Awaiting sign</span>';
+    return '<div class="est-row" style="cursor:default;align-items:flex-start;">'
+      +'<div class="est-dot" style="background:#C8822A;margin-top:4px;"></div>'
+      +'<div class="est-rmain" style="cursor:pointer;" onclick="_tcPdf(\''+t.id+'\')">'
+        +'<div class="est-rnum">'+(t.employeeName||'')+'</div>'
+        +'<div class="est-rsub">'+(t.weekLabel||'')+' · '+(t.totalReg||0).toFixed(2)+' reg + '+(t.totalOT||0).toFixed(2)+' OT'+((t.perDiem||0)>0?' · '+_estFmt(t.perDiem)+' per diem':'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;">'
+        +signBadge
+        +'<div style="display:flex;gap:6px;">'
+          +'<button onclick="event.stopPropagation();_tcSignLink(\''+t.id+'\')" style="padding:5px 10px;border:1px solid #C8822A;border-radius:7px;background:none;color:#C8822A;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Sign link</button>'
+          +'<button onclick="event.stopPropagation();_tcPdf(\''+t.id+'\')" style="padding:5px 10px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">PDF</button>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+// Create timecard modal (7 days like the PDF)
+var _tcRows=[];
+var _tcEmpId=null;
+function openTimecardCreate(preEmpId){
+  var emps=(window.SDD && SDD.employees)?SDD.employees:[];
+  _tcEmpId=preEmpId||null;
+  var e=preEmpId?emps.find(function(x){return x.id===preEmpId;}):null;
+  var defTask=e?((e.task||'')+(e.wage?(' $'+e.wage):'')+(e.taskCode?(' -'+e.taskCode):'')):'';
+  _tcRows=_tcDays.map(function(d,i){
+    return { day:d, date:'', task:(i<2?'NONE':defTask), cin:(i<2?'NO WORK':'7:00 AM'), cout:(i<2?'NO WORK':'3:30 PM'),
+      lunch:(i<2?'NA':'11:00 AM'), lunchHrs:(i<2?'':'0.5'), reg:(i<2?'':'8.00'), ot:'' };
+  });
+  var ex=document.getElementById('_tcBg'); if(ex) ex.remove();
+  var empOpts='<option value="">— Select employee —</option>'+emps.map(function(x){return '<option value="'+x.id+'"'+(x.id===preEmpId?' selected':'')+'>'+x.name+'</option>';}).join('');
+  var bg=document.createElement('div');
+  bg.id='_tcBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000090;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:900px;width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:16px 22px 6px;font-size:19px;font-weight:800;">New Timecard</div>'
+    +'<div style="padding:0 22px 12px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">'
+      +'<div style="flex:1;min-width:180px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">Employee</label>'
+        +'<select id="_tc_emp" onchange="_tcEmpChanged()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'+empOpts+'</select></div>'
+      +'<div style="min-width:150px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">Week start (Sat)</label>'
+        +'<input type="date" id="_tc_weekstart" onchange="_tcWeekChanged()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"></div>'
+      +'<div style="min-width:130px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted2);margin-bottom:4px;">Per Diem / Travel ($)</label>'
+        +'<input type="text" id="_tc_perdiem" placeholder="$0.00" style="width:100%;padding:8px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;text-align:right;"></div>'
+    +'</div>'
+    +'<div style="padding:0 22px;overflow:auto;flex:1;">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:760px;"><thead><tr style="background:var(--surface2);">'
+        +['Day','Date','Task/Code','Check-in','Check-out','Lunch','Lunch hrs','Reg hrs','OT hrs'].map(function(h){return '<th style="padding:7px 6px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--muted);white-space:nowrap;">'+h+'</th>';}).join('')
+      +'</tr></thead><tbody id="_tcBody"></tbody>'
+      +'<tfoot><tr style="border-top:2px solid var(--border);"><td colspan="7" style="padding:8px 6px;text-align:right;font-weight:700;">Total</td>'
+        +'<td style="padding:8px 6px;font-weight:800;color:#C8822A;" id="_tc_totreg">0.00</td><td style="padding:8px 6px;font-weight:800;color:#C8822A;" id="_tc_totot">0.00</td></tr></tfoot>'
+      +'</table>'
+    +'</div>'
+    +'<div id="_tc_err" style="display:none;color:#D94F4F;font-size:12px;font-weight:600;padding:6px 22px;"></div>'
+    +'<div style="padding:12px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_tcBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_tcSave(true)" style="padding:9px 18px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save & Export PDF</button>'
+      +'<button onclick="_tcSave(false)" style="padding:9px 20px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Timecard</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  _tcRenderBody();
+}
+function _tcEmpChanged(){
+  var emps=(window.SDD && SDD.employees)?SDD.employees:[];
+  var id=(document.getElementById('_tc_emp')||{}).value;
+  _tcEmpId=id;
+  var e=emps.find(function(x){return x.id===id;});
+  if(e){
+    var defTask=(e.task||'')+(e.wage?(' $'+e.wage):'')+(e.taskCode?(' -'+e.taskCode):'');
+    _tcRows.forEach(function(r,i){ if(i>=2 && (!r.task||r.task==='NONE')) r.task=defTask; });
+    _tcRenderBody();
+  }
+}
+function _tcWeekChanged(){
+  var ws=(document.getElementById('_tc_weekstart')||{}).value;
+  if(!ws) return;
+  var base=new Date(ws+'T00:00:00');
+  _tcRows.forEach(function(r,i){
+    var d=new Date(base.getTime()+i*86400000);
+    r.date=(d.getMonth()+1)+'/'+d.getDate()+'/'+String(d.getFullYear()).slice(2);
+  });
+  _tcRenderBody();
+}
+function _tcRenderBody(){
+  var body=document.getElementById('_tcBody'); if(!body) return;
+  var inp=function(i,field,val,w){ return '<input value="'+String(val||'').replace(/"/g,'&quot;')+'" oninput="_tcCell('+i+',\''+field+'\',this.value)" style="width:'+(w||'100%')+';box-sizing:border-box;padding:5px 6px;border:1px solid var(--border2);border-radius:5px;font-family:inherit;font-size:12px;">'; };
+  body.innerHTML=_tcRows.map(function(r,i){
+    return '<tr>'
+      +'<td style="padding:4px 6px;font-weight:600;font-size:11px;white-space:nowrap;">'+r.day+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'date',r.date,'62px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'task',r.task)+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'cin',r.cin,'78px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'cout',r.cout,'78px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'lunch',r.lunch,'72px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'lunchHrs',r.lunchHrs,'52px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'reg',r.reg,'52px')+'</td>'
+      +'<td style="padding:4px 6px;">'+inp(i,'ot',r.ot,'52px')+'</td>'
+    +'</tr>';
+  }).join('');
+  _tcUpdateTotals();
+}
+function _tcCell(i,field,val){ if(_tcRows[i]){ _tcRows[i][field]=val; if(field==='reg'||field==='ot') _tcUpdateTotals(); } }
+function _tcTotals(){
+  var reg=0,ot=0;
+  _tcRows.forEach(function(r){ reg+=parseFloat(r.reg)||0; ot+=parseFloat(r.ot)||0; });
+  return {reg:reg,ot:ot};
+}
+function _tcUpdateTotals(){
+  var t=_tcTotals();
+  var tr=document.getElementById('_tc_totreg'); if(tr) tr.textContent=t.reg.toFixed(2);
+  var to=document.getElementById('_tc_totot'); if(to) to.textContent=t.ot.toFixed(2);
+}
+function _tcSave(exportPdf){
+  var emps=(window.SDD && SDD.employees)?SDD.employees:[];
+  var id=(document.getElementById('_tc_emp')||{}).value;
+  var e=emps.find(function(x){return x.id===id;});
+  var err=document.getElementById('_tc_err');
+  if(!e){ if(err){ err.textContent='Select an employee.'; err.style.display='block'; } return; }
+  var ws=(document.getElementById('_tc_weekstart')||{}).value;
+  var weekLabel='';
+  if(ws){ var b=new Date(ws+'T00:00:00'); var end=new Date(b.getTime()+6*86400000);
+    var f=function(d){ return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear(); };
+    weekLabel=f(b)+' to '+f(end);
+  }
+  var t=_tcTotals();
+  var perDiem=parseFloat(((document.getElementById('_tc_perdiem')||{}).value||'').replace(/[$,]/g,''))||0;
+  var tc={ employeeId:e.id, employeeName:e.name, weekLabel:weekLabel, weekStart:ws,
+    rows:_tcRows.map(function(r){return Object.assign({},r);}), totalReg:t.reg, totalOT:t.ot,
+    perDiem:perDiem, signed:false, signedDate:'', signToken:'SG-'+Math.random().toString(36).slice(2,10) };
+  if(window.SDD && SDD.addTimecard){ tc=SDD.addTimecard(tc); }
+  var bg=document.getElementById('_tcBg'); if(bg) bg.remove();
+  renderTCList();
+  if(exportPdf) _tcPdf(tc.id);
+  else {
+    var f=document.createElement('div');
+    f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#C8822A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+    f.textContent='✓ Timecard saved for '+e.name;
+    document.body.appendChild(f); setTimeout(function(){f.remove();},3000);
+  }
+}
+// SDD logo SVG (matches the app logo) for PDFs
+function _tcLogoSVG(){
+  return '<svg viewBox="0 0 120 60" width="100" height="50" xmlns="http://www.w3.org/2000/svg">'
+    +'<polygon points="28,8 58,8 42,52 12,52" fill="#e0b94a"/>'
+    +'<text x="4" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" fill="#1A1A1A">S</text>'
+    +'<text x="44" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" fill="#1A1A1A">DD</text>'
+  +'</svg>';
+}
+// Generate a signature link the manager can send to the employee
+function _tcSignLink(id){
+  var t=(window.SDD && SDD.timecards)?SDD.timecards.find(function(x){return x.id===id;}):null;
+  if(!t) return;
+  var base=window.location.origin+window.location.pathname.replace(/[^/]*$/,'');
+  var url=base+'sdd-home.html?sign='+encodeURIComponent(t.id)+'&tok='+encodeURIComponent(t.signToken||'');
+  var ex=document.getElementById('_tcSignBg'); if(ex) ex.remove();
+  var bg=document.createElement('div');
+  bg.id='_tcSignBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000095;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px 6px;font-size:18px;font-weight:800;">Signature link — '+t.employeeName+'</div>'
+    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Send this link to the employee. They will review the hours and sign electronically.</div>'
+    +'<div style="padding:0 22px 10px;"><input id="_tcSignUrl" readonly value="'+url+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface2);"></div>'
+    +'<div style="padding:0 22px 14px;">'+(t.signed?'<div style="font-size:12px;color:#0a7a3f;font-weight:700;">✓ Already signed on '+(t.signedDate||'')+'</div>':'<div style="font-size:12px;color:var(--muted);">Status: awaiting signature</div>')+'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_tcSignBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Close</button>'
+      +'<button onclick="_tcCopySignLink()" style="padding:9px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Copy link</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(ev){ if(ev.target===bg) bg.remove(); };
+}
+function _tcCopySignLink(){
+  var el=document.getElementById('_tcSignUrl'); if(!el) return;
+  el.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  var f=document.createElement('div');
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#C8822A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;';
+  f.textContent='✓ Link copied';
+  document.body.appendChild(f); setTimeout(function(){f.remove();},2000);
+}
+// Employee-facing signing page (opened via the ?sign= link)
+function _tcOpenSignPage(id, token){
+  var t=(window.SDD && SDD.timecards)?SDD.timecards.find(function(x){return x.id===id;}):null;
+  if(!t || (t.signToken && token && t.signToken!==token)){
+    document.body.innerHTML='<div style="font-family:Barlow,sans-serif;max-width:480px;margin:80px auto;text-align:center;padding:24px;"><h2>Link not valid</h2><p style="color:#777;">This signature link is invalid or has expired.</p></div>';
+    return;
+  }
+  var rowsHTML=(t.rows||[]).map(function(r){
+    return '<tr>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+r.day+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+(r.date||'')+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;font-size:11px;color:#2563eb;">'+(r.task||'')+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+(r.cin||'')+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+(r.cout||'')+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+(String(r.reg||'').trim()||'—')+'</td>'
+      +'<td style="border:1px solid #ddd;padding:7px;text-align:center;font-size:11px;">'+(r.ot||'0.00')+'</td>'
+    +'</tr>';
+  }).join('');
+  var already=t.signed;
+  document.body.innerHTML='<div style="font-family:Barlow,sans-serif;max-width:820px;margin:0 auto;padding:24px 16px;">'
+    +'<div style="display:flex;align-items:center;gap:14px;border-bottom:3px solid #e0b94a;padding-bottom:14px;margin-bottom:18px;">'
+      +_tcLogoSVG()
+      +'<div><div style="font-size:22px;font-weight:800;">Timecard for '+t.employeeName+'</div>'
+        +'<div style="font-size:13px;color:#777;">'+(t.weekLabel||'')+'</div></div></div>'
+    +'<div style="font-size:14px;color:#555;margin-bottom:14px;">Please review your hours below and sign to confirm they are accurate.</div>'
+    +'<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:640px;"><thead><tr style="background:#f2f0eb;">'
+      +['Day','Date','Task/Code','Check-in','Check-out','Reg','OT'].map(function(h){return '<th style="border:1px solid #ddd;padding:8px;font-size:10px;text-transform:uppercase;color:#777;">'+h+'</th>';}).join('')
+    +'</tr></thead><tbody>'+rowsHTML+'</tbody>'
+    +'<tfoot><tr style="background:#1f2630;color:#fff;"><td colspan="5" style="padding:8px;text-align:right;font-weight:700;">Total</td>'
+      +'<td style="padding:8px;text-align:center;font-weight:800;color:#e0b94a;">'+(t.totalReg||0).toFixed(2)+'</td>'
+      +'<td style="padding:8px;text-align:center;font-weight:800;color:#e0b94a;">'+(t.totalOT||0).toFixed(2)+'</td></tr></tfoot></table></div>'
+    +'<div style="margin-top:10px;font-size:13px;"><b>Per Diem / Travel:</b> '+_estFmt(t.perDiem||0)+'</div>'
+    +'<div style="margin-top:20px;background:#f7f6f2;border:1px solid #e5e3dc;border-radius:12px;padding:18px;">'
+      +'<div style="font-size:13px;font-weight:700;margin-bottom:10px;">I certify that the above hours are accurate and reflect all hours worked, including meal and rest breaks.</div>'
+      +(already
+        ? '<div style="font-size:15px;color:#0a7a3f;font-weight:700;">✓ Signed on '+(t.signedDate||'')+'</div>'
+        : '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+          +'<input id="_signName" placeholder="Type your full name to sign" style="flex:1;min-width:220px;padding:11px 14px;border:1.5px solid #ccc;border-radius:8px;font-family:inherit;font-size:15px;">'
+          +'<button onclick="_tcDoSign(\''+t.id+'\')" style="padding:12px 24px;border:none;border-radius:8px;background:#0a7a3f;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;">Sign timecard</button>'
+        +'</div>')
+    +'</div>'
+    +'<div id="_signDone" style="display:none;margin-top:16px;padding:14px;background:#e8f5ee;border-radius:10px;color:#0a7a3f;font-weight:700;font-size:14px;text-align:center;"></div>'
+  +'</div>';
+}
+function _tcDoSign(id){
+  var name=(document.getElementById('_signName')||{}).value||'';
+  if(!name.trim()){ alert('Please type your name to sign.'); return; }
+  var today=new Date().toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'});
+  if(window.SDD){
+    var t=(SDD.timecards||[]).find(function(x){return x.id===id;});
+    if(t){ t.signed=true; t.signedDate=today; t.signedName=name.trim(); SDD.save(); }
+  }
+  var done=document.getElementById('_signDone');
+  if(done){ done.style.display='block'; done.textContent='✓ Thank you — your timecard has been signed on '+today+'.'; }
+  var nm=document.getElementById('_signName'); if(nm){ nm.disabled=true; }
+}
+
+// Generate the timecard PDF (matches the uploaded format) in a printable window
+function _tcPdf(id){
+  var t=(window.SDD && SDD.timecards)?SDD.timecards.find(function(x){return x.id===id;}):null;
+  if(!t) return;
+  var rowsHTML=(t.rows||[]).map(function(r){
+    var isNo=(String(r.reg||'').trim()==='')||(String(r.cin||'').toUpperCase()==='NO WORK');
+    return '<tr>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+r.day+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.date||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;font-size:11px;color:#2563eb;">'+(r.task||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.cin||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.cout||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.lunch||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.lunchHrs||'')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;background:'+(isNo?'#fde8e8':'#fff')+';">'+(String(r.reg||'').trim()||'No Time')+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-size:11px;">'+(r.ot||'0.00')+'</td>'
+    +'</tr>';
+  }).join('');
+  var html='<html><head><title>Timecard — '+t.employeeName+'</title><style>body{font-family:Arial,Helvetica,sans-serif;margin:24px;color:#1a1a1a;}table{border-collapse:collapse;width:100%;}th{background:#e8e8e8;border:1px solid #ccc;padding:8px;font-size:10px;text-transform:uppercase;}</style></head><body>'
+    +'<table style="margin-bottom:0;"><tr>'
+      +'<td style="border:1px solid #ccc;padding:10px;width:130px;text-align:center;vertical-align:middle;">'+_tcLogoSVG()+'</td>'
+      +'<td style="border:1px solid #ccc;padding:14px;font-size:18px;font-weight:700;">'+t.employeeName+'</td>'
+      +'<td style="border:1px solid #ccc;padding:14px;font-size:12px;font-weight:700;">'+(t.weekLabel||'')+'</td>'
+    +'</tr></table>'
+    +'<table><thead><tr>'
+      +['','','Task/Code','Check-in time','Check-out time','Lunch Break Time','Lunch Break Hours','Total Regular Hours','Overtime Hours'].map(function(h){return '<th>'+h+'</th>';}).join('')
+    +'</tr></thead><tbody>'+rowsHTML+'</tbody>'
+    +'<tfoot><tr><td colspan="7" style="border:1px solid #ccc;padding:8px;font-weight:800;background:#d5d5d5;">Total:</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:800;background:#d5d5d5;">'+(t.totalReg||0).toFixed(2)+'</td>'
+      +'<td style="border:1px solid #ccc;padding:8px;text-align:center;font-weight:800;background:#d5d5d5;">'+(t.totalOT||0).toFixed(2)+'</td></tr></tfoot>'
+    +'</table>'
+    +'<table style="margin-top:0;width:auto;"><tr><td style="border:1px solid #ccc;padding:6px 14px;font-size:12px;font-weight:700;">Week Start Date</td><td style="border:1px solid #ccc;padding:6px 14px;font-size:12px;">'+((t.rows&&t.rows[0]&&t.rows[0].date)||'')+'</td></tr>'
+      +'<tr><td style="border:1px solid #ccc;padding:6px 14px;font-size:12px;font-weight:700;">Per Diem / Travel</td><td style="border:1px solid #ccc;padding:6px 14px;font-size:12px;font-weight:700;color:#0a7a3f;">'+_estFmt(t.perDiem||0)+'</td></tr></table>'
+    +'<div style="margin-top:20px;font-size:16px;font-weight:700;">Acknowledgment</div>'
+    +'<div style="margin-top:6px;font-size:13px;font-weight:700;">I certify that the above hours are accurate and reflect all hours worked, including meal and rest breaks.</div>'
+    +(t.signed
+      ? '<div style="margin-top:24px;font-size:14px;font-weight:700;">Employee Signature: <span style="font-family:\'Brush Script MT\',cursive;font-size:24px;color:#1a3d7c;border-bottom:1px solid #333;padding:0 30px;">'+(t.employeeName||'')+'</span> &nbsp;&nbsp; Date: <span style="border-bottom:1px solid #333;padding:0 14px;">'+(t.signedDate||'')+'</span></div>'
+        +'<div style="margin-top:6px;font-size:11px;color:#0a7a3f;font-weight:700;">✓ Signed electronically by the employee'+(t.signedDate?(' on '+t.signedDate):'')+'</div>'
+      : '<div style="margin-top:24px;font-size:14px;font-weight:700;">Employee Signature: _______________________ &nbsp;&nbsp; Date: ____________</div>')
+    +'<div style="margin-top:32px;text-align:center;color:#999;font-size:11px;">'+COMPANY_INFO_TC.name+'</div>'
+    +'<script>window.onload=function(){setTimeout(function(){window.print();},300);}<\/script>'
+    +'</body></html>';
+  var w=window.open('','_blank');
+  if(w){ w.document.write(html); w.document.close(); }
+  else { alert('Please allow popups to export the timecard PDF.'); }
+}
+
 // ═══════════ INVOICES SLIDE-OVER ═══════════
 var invStatusFilter='open';
 var INV_STATUS_COLORS={
@@ -798,6 +1788,17 @@ function renderInvList(){
 }
 
 renderWorkflowMap();
+
+// If opened via a signature link (?sign=TC-xxx&tok=...), show the employee signing page
+(function(){
+  try{
+    var _p=new URLSearchParams(window.location.search);
+    var sid=_p.get('sign');
+    if(sid && typeof _tcOpenSignPage==='function'){
+      _tcOpenSignPage(sid, _p.get('tok')||'');
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

@@ -200,7 +200,11 @@ svg{display:block;}
           <input type="hidden" id="b_vendor">
           <div id="b_vendor_drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;max-height:220px;overflow-y:auto;margin-top:2px;"></div>
         </div>
-        <div class="ff"><label>Associated estimate / change order *</label><select id="b_estimate"></select></div>
+        <div class="ff"><label>Company *</label><select id="b_company" onchange="billCompanyChanged()"><option value="">— Select company —</option></select></div>
+      </div>
+      <div class="fg2">
+        <div class="ff"><label>Job * <span style="font-weight:500;color:var(--muted2);text-transform:none;">(active jobs)</span></label><select id="b_job" onchange="billJobChanged()" disabled><option value="">— Select company first —</option></select></div>
+        <div class="ff"><label>Associated estimate / change order *</label><select id="b_estimate" disabled><option value="">— Select job first —</option></select></div>
       </div>
       <div class="fg2">
         <div class="ff" style="position:relative;"><label>Ledger account</label>
@@ -1564,14 +1568,70 @@ function saveVendor(){
 }
 
 // ── BILL MODAL ──
-function openBillModal(preVendorId){
-  // Estimate / change order dropdown
-  var eSel=document.getElementById('b_estimate');
-  var opts='<option value="">— Select estimate / change order —</option>';
-  (typeof EST_OPTIONS!=='undefined'?EST_OPTIONS:DEFAULT_EST_OPTIONS).forEach(function(o){
-    opts+='<option value="'+o.id+'">'+o.label+'</option>';
+// Gather active jobs for a company (jobs live under contacts and/or the customer)
+function _billJobsFor(custId){
+  var custs=(window.SDD && SDD.customers)?SDD.customers:[];
+  var c=custs.find(function(x){ return String(x.id)===String(custId); });
+  if(!c) return [];
+  var jobs=[], seen={};
+  (c.contacts||[]).forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ jobs.push(j); }); });
+  (c.jobs||[]).forEach(function(j){ jobs.push(j); });
+  // de-dupe and keep only active jobs (exclude completed/closed/void)
+  var out=[];
+  jobs.forEach(function(j){
+    var key=j.est||JSON.stringify(j.address||'')+(j.jobName||'');
+    if(seen[key]) return; seen[key]=1;
+    var st=String(j.status||'').toLowerCase();
+    var inactive=(st.indexOf('void')>-1||st.indexOf('closed')>-1||st.indexOf('completed - paid')>-1);
+    if(!inactive) out.push(j);
   });
-  eSel.innerHTML=opts;
+  return out;
+}
+function billCompanyChanged(){
+  var custId=(document.getElementById('b_company')||{}).value;
+  var jSel=document.getElementById('b_job');
+  var eSel=document.getElementById('b_estimate');
+  if(eSel){ eSel.innerHTML='<option value="">— Select job first —</option>'; eSel.disabled=true; eSel.style.borderColor=''; }
+  if(!jSel) return;
+  if(!custId){ jSel.innerHTML='<option value="">— Select company first —</option>'; jSel.disabled=true; return; }
+  var jobs=_billJobsFor(custId);
+  if(!jobs.length){ jSel.innerHTML='<option value="">— No active jobs —</option>'; jSel.disabled=true; return; }
+  jSel.innerHTML='<option value="">— Select job —</option>'+jobs.map(function(j,i){
+    var label=(j.jobName||j.projectName||j.address||('Job '+(i+1)));
+    return '<option value="'+i+'">'+label+'</option>';
+  }).join('');
+  jSel.disabled=false; jSel.style.borderColor='';
+  window._billActiveJobs=jobs;
+}
+function billJobChanged(){
+  var jIdx=(document.getElementById('b_job')||{}).value;
+  var eSel=document.getElementById('b_estimate');
+  if(!eSel) return;
+  var jobs=window._billActiveJobs||[];
+  var j=jobs[parseInt(jIdx)];
+  if(!j){ eSel.innerHTML='<option value="">— Select job first —</option>'; eSel.disabled=true; return; }
+  var opts=[];
+  (j.estimates||[]).forEach(function(e){ opts.push({id:e.est, label:e.est+(e.projectName?(' · '+e.projectName):'')+' (Estimate)'}); });
+  (j.changeOrders||[]).forEach(function(co){ opts.push({id:co.est, label:co.est+(co.description?(' · '+co.description.slice(0,30)):'')+' (Change Order)'}); });
+  if(!opts.length){ eSel.innerHTML='<option value="">— No estimates / change orders —</option>'; eSel.disabled=true; return; }
+  eSel.innerHTML='<option value="">— Select estimate / change order —</option>'+opts.map(function(o){
+    return '<option value="'+o.id+'">'+o.label+'</option>';
+  }).join('');
+  eSel.disabled=false; eSel.style.borderColor='';
+}
+function openBillModal(preVendorId){
+  // Company → Job → Estimate cascade (companies from the shared customer data)
+  var custs=(window.SDD && SDD.customers)?SDD.customers:[];
+  var cSel=document.getElementById('b_company');
+  if(cSel){
+    cSel.innerHTML='<option value="">— Select company —</option>'+custs.map(function(c){
+      return '<option value="'+c.id+'">'+(c.name||'')+'</option>';
+    }).join('');
+  }
+  var jSel=document.getElementById('b_job');
+  if(jSel){ jSel.innerHTML='<option value="">— Select company first —</option>'; jSel.disabled=true; }
+  var eSel=document.getElementById('b_estimate');
+  if(eSel){ eSel.innerHTML='<option value="">— Select job first —</option>'; eSel.disabled=true; }
   // Vendor autocomplete reset / preselect
   var vs=document.getElementById('b_vendor_search'); var vh=document.getElementById('b_vendor');
   if(preVendorId){ var pv=VENDORS.find(function(x){return x.id===preVendorId;}); vs.value=pv?pv.name:''; vh.value=preVendorId; }
@@ -1651,10 +1711,14 @@ function billPickAccount(a){
 }
 function saveBill(){
   var vendorId=parseInt(document.getElementById('b_vendor').value);
+  var companyId=(document.getElementById('b_company')||{}).value;
+  var jobVal=(document.getElementById('b_job')||{}).value;
   var estId=document.getElementById('b_estimate').value;
   var amount=parseFloat(document.getElementById('b_amount').value.replace(/[$,]/g,''))||0;
-  if(!vendorId||!estId||!amount){
+  if(!vendorId||!companyId||jobVal===''||!estId||!amount){
     if(!vendorId) document.getElementById('b_vendor_search').style.borderColor='var(--danger)';
+    if(!companyId) document.getElementById('b_company').style.borderColor='var(--danger)';
+    if(jobVal==='') document.getElementById('b_job').style.borderColor='var(--danger)';
     if(!estId) document.getElementById('b_estimate').style.borderColor='var(--danger)';
     if(!amount) document.getElementById('b_amount').style.borderColor='var(--danger)';
     return;
@@ -1697,6 +1761,14 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   // Banking now lives in its own module (sdd-banking.html) — this file is vendors only.
   applyModule('vendors');
+  // Deep-link from Home "Enter bills": open the Bills tab and the New bill popup
+  try{
+    var _p=new URLSearchParams(window.location.search);
+    if(_p.get('view')==='bills'){
+      setView('bills');
+      if(_p.get('new')==='1'){ setTimeout(function(){ if(typeof openBillModal==='function') openBillModal(); }, 200); }
+    }
+  }catch(e){}
 });
 function applyModule(mod){
   var bankTabs=document.getElementById('bankingTabs');

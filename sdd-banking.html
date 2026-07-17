@@ -138,6 +138,7 @@ svg{display:block;}
 <div class="view-bar">
   <div class="view-toggle" id="bankingTabs" style="display:none;">
     <button class="vt-btn active" id="btnBanking" onclick="setView('banking')">Banking</button>
+    <button class="vt-btn" id="btnDeposit" onclick="setView('deposit')">Make Deposit</button>
     <button class="vt-btn" id="btnRecon" onclick="setView('recon')">Reconciliation</button>
     <button class="vt-btn" id="btnCC" onclick="setView('cc')">Credit Cards</button>
   </div>
@@ -207,7 +208,17 @@ svg{display:block;}
           <input type="hidden" id="b_account">
           <div id="b_account_drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50;max-height:220px;overflow-y:auto;margin-top:2px;"></div>
         </div>
-        <div class="ff"><label>Amount *</label><input type="text" id="b_amount" placeholder="$0.00"></div>
+        <div class="ff"><label>Amount *</label><input type="text" id="b_amount" placeholder="$0.00" oninput="billRecalc()"></div>
+      </div>
+      <div class="fg2">
+        <div class="ff"><label>Discount ($)</label><input type="text" id="b_discount" placeholder="$0.00" oninput="billRecalc()"></div>
+        <div class="ff"><label>Apply vendor credit ($) <span id="b_credit_avail" style="font-weight:600;color:#16a34a;text-transform:none;"></span></label><input type="text" id="b_credit" placeholder="$0.00" oninput="billRecalc()"></div>
+      </div>
+      <div id="b_breakdown" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:4px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Subtotal</span><span id="b_bd_sub" style="font-weight:600;">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Discount</span><span id="b_bd_disc" style="font-weight:600;color:var(--danger);">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Vendor credit applied</span><span id="b_bd_cred" style="font-weight:600;color:#16a34a;">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:14px;border-top:1px dashed var(--border2);padding-top:6px;margin-top:6px;"><span style="font-weight:700;">Total to pay</span><span id="b_bd_total" style="font-weight:800;color:var(--gold);">$0</span></div>
       </div>
       <div class="ff"><label>Memo</label><input type="text" id="b_desc" placeholder="Memo / note for this bill"></div>
       <div class="fg2">
@@ -323,7 +334,32 @@ var BANK_TXNS = [
   {id:26, account:'chk7522', date:'Jun 5, 2026',  payee:'City of San Diego',      memo:'Demolition permit', amount:650,   dir:'out', status:'categorized', ledger:'6040 · Permits', matchType:'', matchRef:''},
   {id:27, account:'chk7522', date:'May 15, 2026', payee:'Coronado Builders',      memo:'Progress payment',  amount:18500, dir:'in',  status:'categorized', ledger:'4000 · Revenue', matchType:'', matchRef:''},
 ];
-// Ledger options for categorizing
+// Inject deposits recorded from the Home "Make Deposit" flow (persisted in SDD).
+// Each becomes an incoming bank transaction so it shows up here like in QuickBooks.
+(function(){
+  try{
+    if(window.SDD && SDD.deposits){
+      var nextId=BANK_TXNS.reduce(function(m,t){return Math.max(m,(typeof t.id==='number'?t.id:0));},100)+1;
+      SDD.deposits.forEach(function(d){
+        BANK_TXNS.push({ id:d.id||nextId++, account:d.account||'chk7522', date:d.date||'',
+          payee:'Deposit', memo:d.memo||('Deposit — '+((d.paymentIds||[]).length)+' payment(s)'),
+          amount:Math.round(d.total||0), dir:'in', status:'categorized',
+          ledger:'Undeposited Funds → '+(d.accountName||''), matchType:'deposit', matchRef:(d.id||'') });
+      });
+    }
+    // Inject bill payments recorded from the Home "Pay Bills" flow (money out).
+    if(window.SDD && SDD.billPayments){
+      var nextId2=BANK_TXNS.reduce(function(m,t){return Math.max(m,(typeof t.id==='number'?t.id:0));},200)+1;
+      SDD.billPayments.forEach(function(bp){
+        BANK_TXNS.push({ id:bp.id||nextId2++, account:bp.account||'chk7522', date:bp.date||'',
+          payee:'Bill Payment', memo:'Paid '+((bp.billIds||[]).length)+' bill(s)',
+          amount:Math.round(bp.total||0), dir:'out', status:'categorized',
+          ledger:'Accounts Payable', matchType:'bill-payment', matchRef:(bp.id||'') });
+      });
+    }
+  }catch(e){}
+})();
+
 var BANK_LEDGERS = ['5010 · Disposal','5020 · Equipment','5030 · Subcontract','5040 · Permits','5050 · Materials','6010 · Fuel','6020 · Insurance','6030 · Office Supplies','6040 · Utilities','Accounts Receivable','Owner Draw','Transfer between accounts'];
 
 var _ACCOUNTS_FALLBACK = [
@@ -536,14 +572,15 @@ function closeModal(id){ document.getElementById(id).classList.remove('open'); }
 
 function setView(v){
   currentView=v; activeId=null;
-  var map={vendors:'btnVendors',bills:'btnBills',cc:'btnCC',banking:'btnBanking',recon:'btnRecon',coa:'btnCOA'};
+  var map={vendors:'btnVendors',bills:'btnBills',cc:'btnCC',banking:'btnBanking',recon:'btnRecon',coa:'btnCOA',deposit:'btnDeposit'};
   Object.keys(map).forEach(function(k){ var el=document.getElementById(map[k]); if(el) el.classList.toggle('active',k===v); });
-  var labels={vendors:'New vendor',bills:'New bill',cc:'Add card',banking:'Import transactions',recon:'Import statement',coa:'New account'};
+  var labels={vendors:'New vendor',bills:'New bill',cc:'Add card',banking:'Import transactions',recon:'Import statement',coa:'New account',deposit:'Make deposit'};
   var lbl=document.getElementById('addBtnLabel'); if(lbl) lbl.textContent=labels[v]||'Add';
   var si=document.getElementById('searchInput'); if(si) si.value='';
   var lp=document.getElementById('leftPanel');
   if(v==='coa'){ if(lp) lp.style.display='none'; renderCOAView(); }
   else if(v==='banking'){ if(lp) lp.style.display='none'; renderBankingView(); }
+  else if(v==='deposit'){ if(lp) lp.style.display='none'; renderDepositView(); }
   else { if(lp) lp.style.display=''; renderLeft(''); renderEmptyRight(); }
 }
 
@@ -630,7 +667,16 @@ function selectVendor(id){
     +(vb.length?'<table><thead><tr><th>Bill #</th><th>Description</th><th>Date</th><th>Due</th><th>Status</th><th style="text-align:right;">Amount</th></tr></thead><tbody>'
       +vb.map(function(b){ var pc=b.status==='paid'?'pill-paid':b.status==='partial'?'pill-partial':'pill-unpaid'; return '<tr><td style="font-weight:600;">'+b.num+'</td><td>'+b.desc+'</td><td style="color:var(--muted);">'+b.date+'</td><td style="color:var(--muted);">'+b.due+'</td><td><span class="pill '+pc+'">'+b.status+'</span></td><td style="text-align:right;font-weight:600;">'+fmt(b.amount)+'</td></tr>'; }).join('')
       +'</tbody></table>':'<div style="color:var(--muted2);font-style:italic;font-size:13px;">No bills for this vendor</div>')
-    +'</div></div>';
+    +'</div>'
+    +(function(){
+        var credits=(window.SDD && SDD.vendorCredits)?SDD.vendorCredits.filter(function(c){return String(c.vendorId)===String(id);}):[];
+        var bal=(window.SDD && SDD.vendorCreditBalance)?SDD.vendorCreditBalance(id):0;
+        var rows=credits.length?('<table><thead><tr><th>Credit #</th><th>Date</th><th>Memo</th><th style="text-align:right;">Amount</th><th style="text-align:right;">Remaining</th></tr></thead><tbody>'
+          +credits.map(function(c){ return '<tr><td style="font-weight:600;">'+c.id+'</td><td style="color:var(--muted);">'+(c.date||'')+'</td><td>'+(c.memo||'')+'</td><td style="text-align:right;">'+fmt(c.amount)+'</td><td style="text-align:right;font-weight:700;color:'+((c.remaining||0)>0?'#16a34a':'var(--muted2)')+';">'+fmt(c.remaining||0)+'</td></tr>'; }).join('')
+          +'</tbody></table>'):'<div style="color:var(--muted2);font-style:italic;font-size:13px;">No vendor credits on file</div>';
+        return '<div class="card"><div class="card-title">Vendor Credits'+(bal>0?' <span style="font-size:12px;font-weight:700;color:#16a34a;">('+fmt(bal)+' available)</span>':'')+'<button class="btn btn-ghost btn-sm" onclick="openVendorCreditModal('+id+')">+ Record Vendor Credit</button></div>'+rows+'</div>';
+      })()
+    +'</div>';
 }
 
 // ── BILL DETAIL ──
@@ -1037,12 +1083,12 @@ function bankTxnRow(t){
       catCell='<div style="display:flex;flex-direction:column;gap:5px;min-width:210px;">'
         +'<input list="_venlist" id="bkven-'+t.id+'" value="'+curVenName.replace(/"/g,'&quot;')+'" placeholder="Search vendor..." oninput="bankSetVendorByName('+t.id+',this.value)" autocomplete="off" style="padding:6px 8px;border:1px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;width:100%;box-sizing:border-box;">'
         +acctInput()
-        +'<button onclick="openMatchPicker('+t.id+')" style="padding:5px 8px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;align-self:flex-start;">Match to bill / estimate…</button>'
+        +'<button onclick="openMatchPicker('+t.id+')" style="padding:5px 10px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;align-self:flex-start;white-space:nowrap;flex-shrink:0;">Match to bill / estimate…</button>'
         +'</div>';
     } else {
-      catCell='<div style="display:flex;gap:6px;align-items:center;min-width:210px;">'
+      catCell='<div style="display:flex;gap:6px;align-items:center;min-width:210px;flex-wrap:wrap;">'
         +acctInput()
-        +'<button onclick="openMatchPicker('+t.id+')" style="padding:6px 10px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">Match…</button>'
+        +'<button onclick="openMatchPicker('+t.id+')" style="padding:6px 12px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;">Match…</button>'
         +'</div>';
     }
   } else {
@@ -1175,13 +1221,29 @@ function openMatchPicker(id){
         +'<input type="checkbox" id="_minv_'+idx+'" data-total="'+c.total+'" onchange="matchInvToggle('+idx+','+t.amount+')" style="width:16px;height:16px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;">'
         +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;"><span style="color:var(--info);">'+c.ref+'</span> · '+c.client+'</div><div style="font-size:11px;color:var(--muted);">Invoice total: '+fmt(c.total)+'</div></div>'
         +'<div style="flex-shrink:0;text-align:right;"><div style="font-size:9px;color:var(--muted2);text-transform:uppercase;">Apply</div>'
-          +'<input type="text" id="_mamt_'+idx+'" value="'+c.total+'" oninput="matchInvSum('+t.amount+')" disabled style="width:90px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:13px;text-align:right;">'
+          +'<input type="text" id="_mamt_'+idx+'" value="'+fmt(c.total)+'" oninput="matchInvSum('+t.amount+')" onblur="matchInvReformat('+idx+','+t.amount+')" disabled style="width:100px;padding:5px 8px;border:1px solid var(--border2);border-radius:6px;font-family:inherit;font-size:13px;text-align:right;">'
         +'</div></div>';
     }).join('');
     bodyHTML='<div style="padding:16px 22px;max-height:46vh;overflow-y:auto;">'
+      +'<div style="display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px;gap:2px;margin-bottom:14px;">'
+        +'<button id="_mInTabCust" onclick="_matchInTab(\'cust\','+id+')" style="padding:7px 14px;border:none;border-radius:6px;background:#fff;color:var(--gold);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.1);">Customer payment</button>'
+        +'<button id="_mInTabRef" onclick="_matchInTab(\'refund\','+id+')" style="padding:7px 14px;border:none;border-radius:6px;background:none;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">Vendor refund</button>'
+      +'</div>'
+      +'<div id="_mInCust">'
       +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Apply this deposit to one or more invoices</div>'
       +'<div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">Check the invoices this payment covers. You can edit the amount applied for partial payments.</div>'
       +rowsHtml
+      +'</div>'
+      +'<div id="_mInRefund" style="display:none;">'
+        +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Refund from a vendor</div>'
+        +'<div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">Use this when a vendor returns money you overpaid. It reduces the original expense.</div>'
+        +'<div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Vendor</label>'
+          +'<select id="_mrf_vendor" onchange="_mrfVendorChanged()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"><option value="">— Select vendor —</option>'+VENDORS.map(function(v){return '<option value="'+v.id+'">'+v.name+'</option>';}).join('')+'</select></div>'
+        +'<div style="margin-bottom:12px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Expense account to reduce <span id="_mrf_hint" style="color:var(--info);font-weight:600;text-transform:none;letter-spacing:0;"></span></label>'
+          +'<select id="_mrf_account" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"><option value="">— Select account —</option>'+BANK_LEDGERS.map(function(l){return '<option value="'+l+'">'+l+'</option>';}).join('')+'</select></div>'
+        +'<div style="margin-bottom:8px;"><label style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;">Refund amount</label>'
+          +'<input type="text" id="_mrf_amount" value="'+fmt(t.amount)+'" style="width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;text-align:right;"></div>'
+        +'<div style="font-size:11px;color:var(--muted2);font-style:italic;">Accounting: reduces the expense (credit) against the bank deposit (debit).</div>'
       +'</div>'
       +'<div style="padding:12px 22px;border-top:1px solid var(--border);background:var(--surface2);">'
         +'<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;"><span style="color:var(--muted);">Payment received</span><span style="font-weight:700;">'+fmt(t.amount)+'</span></div>'
@@ -1192,6 +1254,7 @@ function openMatchPicker(id){
       +'<div style="padding:14px 22px;display:flex;gap:10px;justify-content:flex-end;">'
         +'<button onclick="document.getElementById(\'_matchBg\').remove()" style="padding:10px 16px;border:1px solid var(--border2);border-radius:8px;background:none;color:var(--muted);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
         +'<button id="_m_applyBtn" onclick="bankApplyInvoiceMatch('+id+')" disabled style="padding:10px 18px;border:none;border-radius:8px;background:var(--gold);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:not-allowed;opacity:.5;">✓ Apply payment</button>'
+        +'<button id="_m_refundBtn" onclick="bankApplyVendorRefund('+id+')" style="display:none;padding:10px 18px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">✓ Apply refund</button>'
       +'</div>';
   } else {
     // Money out → choose vendor, auto-fill its default account, allow override, optional estimate
@@ -1263,6 +1326,13 @@ function matchInvSum(received){
     applyBtn.style.cursor = canApply ? 'pointer' : 'not-allowed';
   }
 }
+// Reformat the "Apply" input to money format ($x,xxx) when the user finishes editing
+function matchInvReformat(idx, received){
+  var el=document.getElementById('_mamt_'+idx); if(!el) return;
+  var v=parseFloat((el.value||'').replace(/[$,]/g,''))||0;
+  el.value=fmt(v);
+  matchInvSum(received);
+}
 function bankApplyInvoiceMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
   var picks=[]; var total=0; var i=0;
@@ -1296,6 +1366,55 @@ function bankApplyInvoiceMatch(id){
     flash('Applied '+fmt(total)+' to '+picks.length+' invoice'+(picks.length>1?'s':''));
   }
 }
+// Toggle between "Customer payment" and "Vendor refund" inside the incoming Match modal
+function _matchInTab(which, id){
+  var cust=document.getElementById('_mInCust'), ref=document.getElementById('_mInRefund');
+  var tc=document.getElementById('_mInTabCust'), tr=document.getElementById('_mInTabRef');
+  var payBtn=document.getElementById('_m_applyBtn'), refBtn=document.getElementById('_m_refundBtn');
+  var isRef=(which==='refund');
+  if(cust) cust.style.display=isRef?'none':'block';
+  if(ref) ref.style.display=isRef?'block':'none';
+  if(tc){ tc.style.background=isRef?'none':'#fff'; tc.style.color=isRef?'var(--muted)':'var(--gold)'; tc.style.fontWeight=isRef?'600':'700'; tc.style.boxShadow=isRef?'none':'0 1px 3px rgba(0,0,0,.1)'; }
+  if(tr){ tr.style.background=isRef?'#fff':'none'; tr.style.color=isRef?'var(--gold)':'var(--muted)'; tr.style.fontWeight=isRef?'700':'600'; tr.style.boxShadow=isRef?'0 1px 3px rgba(0,0,0,.1)':'none'; }
+  if(payBtn) payBtn.style.display=isRef?'none':'inline-block';
+  if(refBtn) refBtn.style.display=isRef?'inline-block':'none';
+}
+// When a vendor is chosen for a refund, prefill its default expense account
+function _mrfVendorChanged(){
+  var vid=parseInt((document.getElementById('_mrf_vendor')||{}).value);
+  var v=VENDORS.find(function(x){return x.id===vid;});
+  var acct=document.getElementById('_mrf_account'), hint=document.getElementById('_mrf_hint');
+  if(v && v.defaultAccount && acct){
+    acct.value=v.defaultAccount;
+    if(hint) hint.textContent='(default: '+v.defaultAccount+')';
+  } else if(hint){ hint.textContent=''; }
+}
+function bankApplyVendorRefund(id){
+  var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
+  var vid=parseInt((document.getElementById('_mrf_vendor')||{}).value);
+  var v=VENDORS.find(function(x){return x.id===vid;});
+  var acct=(document.getElementById('_mrf_account')||{}).value;
+  var amt=parseFloat(((document.getElementById('_mrf_amount')||{}).value||'').replace(/[$,]/g,''))||0;
+  if(!v){ flash('Select the vendor that refunded you', 'var(--danger)'); return; }
+  if(!acct){ flash('Select the expense account to reduce', 'var(--danger)'); return; }
+  // Record on the transaction: it's a vendor refund reducing an expense account
+  t.status='categorized';
+  t.vendorId=v.id;
+  t.payee=v.name;
+  t.memo='Vendor refund — '+(t.memo||'overpayment returned');
+  t.ledger=acct+' (refund)';
+  t.matchType='vendor-refund';
+  t.matchRef=v.name;
+  // Post a journal entry through SDD if available: DR Bank / CR Expense
+  if(window.SDD && SDD.addManualEntry){
+    SDD.addManualEntry({ date:t.date, ref:'REFUND-'+id, memo:'Vendor refund from '+v.name+' (overpayment)',
+      lines:[ {account:'Bank', debit:amt, credit:0}, {account:acct, debit:0, credit:amt} ] });
+  }
+  var bg=document.getElementById('_matchBg'); if(bg) bg.remove();
+  renderBankingView();
+  flash('Recorded '+fmt(amt)+' refund from '+v.name+' — expense reduced');
+}
+
 function bankApplyVendorMatch(id){
   var t=BANK_TXNS.find(function(x){return x.id===id;}); if(!t) return;
   var vid=parseInt(document.getElementById('_m_vendor').value);
@@ -1311,6 +1430,77 @@ function bankApplyVendorMatch(id){
   t.estimate=est||'';
   var bg=document.getElementById('_matchBg'); if(bg) bg.remove();
   renderBankingView(); flash('Matched to '+v.name);
+}
+
+// ═══════════ MAKE DEPOSIT (QuickBooks-style) — same as Home ═══════════
+var _bankDepSelected={};
+function _bankDepUndeposited(){
+  if(window.SDD && SDD.undepositedPayments) return SDD.undepositedPayments();
+  return [];
+}
+function _bankDepMoney(v){ return parseFloat(String(v||'0').replace(/[$,]/g,''))||0; }
+function _bankDepFmt(n){ return '$'+Math.round(n).toLocaleString(); }
+function renderDepositView(){
+  var pr=document.getElementById('panelRight'); if(!pr) return;
+  var pays=_bankDepUndeposited();
+  var acctOpts=BANK_ACCOUNTS.map(function(a){return '<option value="'+a.id+'">'+a.name+' ····'+a.last4+'</option>';}).join('');
+  var sum=0,count=0;
+  pays.forEach(function(p){ if(_bankDepSelected[p.id]){ sum+=_bankDepMoney(p.amount); count++; } });
+  var rowsHTML = pays.length ? pays.map(function(p){
+    var on=!!_bankDepSelected[p.id];
+    return '<label style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid '+(on?'var(--gold)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;background:'+(on?'var(--gold-dim)':'#fff')+';">'
+      +'<input type="checkbox" '+(on?'checked':'')+' onchange="_bankDepToggle(\''+p.id+'\',this.checked)" style="width:16px;height:16px;accent-color:#16a34a;cursor:pointer;flex-shrink:0;">'
+      +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-size:14px;font-weight:700;color:var(--text);">'+p.customer+' <span style="font-size:11px;color:var(--muted);font-weight:500;">· '+p.invoice+'</span></div>'
+        +'<div style="font-size:12px;color:var(--muted);">'+(p.method?p.method+' · ':'')+(p.ref||'')+(p.date?' · '+p.date:'')+'</div>'
+      +'</div>'
+      +'<div style="font-size:15px;font-weight:800;color:var(--text);flex-shrink:0;">'+_bankDepFmt(_bankDepMoney(p.amount))+'</div>'
+    +'</label>';
+  }).join('') : '<div style="padding:36px;text-align:center;color:var(--muted2);font-style:italic;font-size:14px;">No undeposited payments. All received payments have been deposited.</div>';
+
+  pr.innerHTML='<div style="max-width:760px;margin:0 auto;padding:8px 4px;">'
+    +'<div style="margin-bottom:6px;"><div style="font-size:22px;font-weight:800;font-family:\'Barlow Condensed\',sans-serif;">Make deposit</div>'
+      +'<div style="font-size:13px;color:var(--muted);">Undeposited payments — select which to deposit and where.</div></div>'
+    +'<div class="card" style="padding:18px;">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px;">'
+        +'<div style="flex:1;min-width:200px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px;">Deposit to account</label>'
+          +'<select id="_bankDepAcct" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;">'+acctOpts+'</select></div>'
+        +'<div style="min-width:150px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:5px;">Deposit date</label>'
+          +'<input type="date" id="_bankDepDate" value="'+new Date().toISOString().slice(0,10)+'" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;"></div>'
+      +'</div>'
+      +'<div>'+rowsHTML+'</div>'
+      +'<div style="display:'+(count>0?'flex':'none')+';margin-top:14px;padding:14px 16px;background:#1f2630;border-radius:10px;color:#fff;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">'
+        +'<div><span style="font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.6);">Deposit total ('+count+' selected)</span>'
+          +'<div style="font-size:22px;font-weight:800;color:#e0b94a;">'+_bankDepFmt(sum)+'</div></div>'
+        +'<button onclick="_bankDepConfirm()" style="padding:11px 22px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Record Deposit</button>'
+      +'</div>'
+    +'</div></div>';
+}
+function _bankDepToggle(pid,on){ if(on) _bankDepSelected[pid]=true; else delete _bankDepSelected[pid]; renderDepositView(); }
+function _bankDepConfirm(){
+  var pays=_bankDepUndeposited();
+  var ids=[],sum=0;
+  pays.forEach(function(p){ if(_bankDepSelected[p.id]){ ids.push(p.id); sum+=_bankDepMoney(p.amount); } });
+  if(!ids.length) return;
+  var acctId=(document.getElementById('_bankDepAcct')||{}).value||BANK_ACCOUNTS[0].id;
+  var acct=BANK_ACCOUNTS.filter(function(a){return a.id===acctId;})[0]||BANK_ACCOUNTS[0];
+  var dateVal=(document.getElementById('_bankDepDate')||{}).value||new Date().toISOString().slice(0,10);
+  var dateFmt=new Date(dateVal+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var dep=null;
+  if(window.SDD && SDD.addDeposit){
+    dep=SDD.addDeposit({ date:dateFmt, account:acct.id, accountName:acct.name+' ····'+acct.last4,
+      paymentIds:ids, total:sum, memo:'Deposit — '+ids.length+' payment'+(ids.length>1?'s':'') });
+  }
+  // reflect it immediately in the Banking transactions list
+  if(dep){
+    var nextId=BANK_TXNS.reduce(function(m,t){return Math.max(m,(typeof t.id==='number'?t.id:0));},100)+1;
+    BANK_TXNS.push({ id:dep.id||nextId, account:acct.id, date:dateFmt, payee:'Deposit',
+      memo:dep.memo, amount:Math.round(sum), dir:'in', status:'categorized',
+      ledger:'Undeposited Funds → '+acct.name, matchType:'deposit', matchRef:(dep.id||'') });
+  }
+  _bankDepSelected={};
+  renderDepositView();
+  flash('Deposited '+_bankDepFmt(sum)+' to '+acct.name+' ('+ids.length+' payment'+(ids.length>1?'s':'')+')');
 }
 
 function renderCOAView(){
@@ -1396,6 +1586,58 @@ function saveVendor(){
 }
 
 // ── BILL MODAL ──
+// Record a vendor credit (overpayment / return credit toward future bills)
+function openVendorCreditModal(vendorId){
+  var v=VENDORS.find(function(x){return x.id===vendorId;}); if(!v) return;
+  var ex=document.getElementById('_vcBg'); if(ex) ex.remove();
+  var acctOpts=BANK_LEDGERS.map(function(l){return '<option value="'+l+'">'+l+'</option>';}).join('');
+  var bg=document.createElement('div');
+  bg.id='_vcBg';
+  bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000080;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
+  bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
+    +'<div style="padding:18px 22px 6px;font-size:18px;font-weight:800;">Record Vendor Credit</div>'
+    +'<div style="padding:0 22px 14px;font-size:13px;color:var(--muted);">A credit from <b>'+v.name+'</b> reduces what you owe. Apply it to a future bill.</div>'
+    +'<div style="padding:0 22px 8px;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Credit amount</label>'
+      +'<input type="text" id="_vc_amount" placeholder="$0" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;text-align:right;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin:12px 0 5px;">Date</label>'
+      +'<input type="date" id="_vc_date" value="'+new Date().toISOString().slice(0,10)+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin:12px 0 5px;">Expense account credited</label>'
+      +'<select id="_vc_account" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;"><option value="">— Select account —</option>'+acctOpts+'</select>'
+      +'<label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin:12px 0 5px;">Memo <span style="font-weight:500;color:var(--muted2);">(optional)</span></label>'
+      +'<input type="text" id="_vc_memo" placeholder="e.g. Overpaid BILL-001" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:14px;">'
+      +'<div id="_vc_err" style="display:none;color:var(--danger);font-size:12px;font-weight:600;margin-top:6px;"></div>'
+    +'</div>'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+      +'<button onclick="document.getElementById(\'_vcBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>'
+      +'<button onclick="_saveVendorCredit('+vendorId+')" style="padding:9px 20px;border:none;border-radius:8px;background:#16a34a;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Save Credit</button>'
+    +'</div></div>';
+  document.body.appendChild(bg);
+  bg.onclick=function(e){ if(e.target===bg) bg.remove(); };
+}
+function _saveVendorCredit(vendorId){
+  var v=VENDORS.find(function(x){return x.id===vendorId;}); if(!v) return;
+  var amt=parseFloat(((document.getElementById('_vc_amount')||{}).value||'').replace(/[$,]/g,''))||0;
+  var acct=(document.getElementById('_vc_account')||{}).value;
+  var dateVal=(document.getElementById('_vc_date')||{}).value||new Date().toISOString().slice(0,10);
+  var memo=(document.getElementById('_vc_memo')||{}).value||'';
+  var err=document.getElementById('_vc_err');
+  if(amt<=0){ if(err){ err.textContent='Enter a credit amount greater than zero.'; err.style.display='block'; } return; }
+  if(!acct){ if(err){ err.textContent='Select the expense account credited.'; err.style.display='block'; } return; }
+  var dateFmt=new Date(dateVal+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  if(window.SDD && SDD.addVendorCredit){
+    SDD.addVendorCredit({ vendorId:vendorId, vendorName:v.name, amount:amt, date:dateFmt, account:acct, memo:memo });
+    // Journal: DR the expense account back down / CR Accounts Payable (credit owed to us)
+    if(SDD.addManualEntry){
+      SDD.addManualEntry({ date:dateFmt, ref:'VC-'+vendorId+'-'+Date.now(), memo:'Vendor credit from '+v.name+(memo?(' — '+memo):''),
+        lines:[ {account:'Accounts Payable', debit:amt, credit:0}, {account:acct, debit:0, credit:amt} ] });
+    }
+  }
+  var bg=document.getElementById('_vcBg'); if(bg) bg.remove();
+  if(activeId===vendorId) selectVendor(vendorId);
+  flash('Recorded '+fmt(amt)+' vendor credit for '+v.name);
+}
+
 function openBillModal(preVendorId){
   // Estimate / change order dropdown
   var eSel=document.getElementById('b_estimate');
@@ -1416,6 +1658,15 @@ function openBillModal(preVendorId){
   // Other fields
   document.getElementById('b_amount').value='';
   document.getElementById('b_desc').value='';
+  document.getElementById('b_discount').value='';
+  document.getElementById('b_credit').value='';
+  var _bd=document.getElementById('b_breakdown'); if(_bd) _bd.style.display='none';
+  var _ca=document.getElementById('b_credit_avail'); if(_ca) _ca.textContent='';
+  // if a vendor was preselected, show its available credit
+  if(preVendorId && window.SDD && SDD.vendorCreditBalance){
+    var _av=SDD.vendorCreditBalance(preVendorId);
+    if(_ca) _ca.textContent=_av>0?('· '+fmt(_av)+' available'):'';
+  }
   var today=new Date();
   document.getElementById('b_date').value=today.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var due=new Date(today.getTime()+15*86400000);
@@ -1452,6 +1703,29 @@ function billPickVendor(id){
   document.getElementById('b_vendor').value=id;
   document.getElementById('b_vendor_search').style.borderColor='';
   document.getElementById('b_vendor_drop').style.display='none';
+  // Show available vendor credit for this vendor
+  var avail=(window.SDD && SDD.vendorCreditBalance)?SDD.vendorCreditBalance(id):0;
+  var lbl=document.getElementById('b_credit_avail');
+  if(lbl) lbl.textContent=avail>0?('· '+fmt(avail)+' available'):'';
+  billRecalc();
+}
+// Recalculate the bill breakdown: Subtotal − Discount − Credit = Total to pay
+function billRecalc(){
+  var money=function(el){ return parseFloat(((document.getElementById(el)||{}).value||'').replace(/[$,]/g,''))||0; };
+  var sub=money('b_amount');
+  var disc=money('b_discount');
+  var vid=parseInt((document.getElementById('b_vendor')||{}).value);
+  var avail=(vid && window.SDD && SDD.vendorCreditBalance)?SDD.vendorCreditBalance(vid):0;
+  var cred=money('b_credit');
+  // cap discount + credit so total never goes below 0, and credit never exceeds available
+  if(cred>avail) cred=avail;
+  if(disc>sub) disc=sub;
+  if(cred>sub-disc) cred=Math.max(0,sub-disc);
+  var total=Math.max(0, sub-disc-cred);
+  var bd=document.getElementById('b_breakdown');
+  if(bd) bd.style.display=(sub>0||disc>0||cred>0)?'block':'none';
+  var set=function(id,val){ var e=document.getElementById(id); if(e) e.textContent=fmt(val); };
+  set('b_bd_sub',sub); set('b_bd_disc',disc); set('b_bd_cred',cred); set('b_bd_total',total);
 }
 function billNewVendorFromBill(){
   document.getElementById('b_vendor_drop').style.display='none';
@@ -1493,12 +1767,25 @@ function saveBill(){
   }
   var newId=BILLS.reduce(function(m,b){return Math.max(m,b.id);},0)+1;
   var num='BILL-'+String(newId).padStart(3,'0');
+  var discount=parseFloat((document.getElementById('b_discount').value||'').replace(/[$,]/g,''))||0;
+  var creditReq=parseFloat((document.getElementById('b_credit').value||'').replace(/[$,]/g,''))||0;
+  if(discount>amount) discount=amount;
+  // Apply available vendor credit (capped by what's available and by the remaining amount)
+  var creditApplied=0;
+  if(creditReq>0 && window.SDD && SDD.applyVendorCredit){
+    var maxCredit=Math.max(0, amount-discount);
+    creditApplied=SDD.applyVendorCredit(vendorId, Math.min(creditReq, maxCredit));
+  }
+  var netToPay=Math.max(0, amount-discount-creditApplied);
   BILLS.push({
     id:newId, vendorId:vendorId, num:num,
     estimate:estId,
     account:document.getElementById('b_account').value,
     desc:document.getElementById('b_desc').value||('Bill for '+estId),
     amount:amount,
+    discount:discount,
+    creditApplied:creditApplied,
+    netAmount:netToPay,
     due:document.getElementById('b_due').value,
     date:document.getElementById('b_date').value,
     status:document.getElementById('b_status').value
@@ -1506,7 +1793,10 @@ function saveBill(){
   closeModal('billModal');
   if(currentView==='bills') renderLeft(''); 
   if(activeId===vendorId) selectVendor(vendorId);
-  flash('Bill '+num+' added · linked to '+estId);
+  var extra=[];
+  if(discount>0) extra.push(fmt(discount)+' discount');
+  if(creditApplied>0) extra.push(fmt(creditApplied)+' credit applied');
+  flash('Bill '+num+' added'+(extra.length?' · '+extra.join(' · '):' · linked to '+estId));
 }
 
 document.addEventListener('DOMContentLoaded',function(){

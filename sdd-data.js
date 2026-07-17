@@ -589,7 +589,15 @@
   {id:'np1',name:'Estimates',type:'Non-Posting',level:1,parent:'np'},
   {id:'np2',name:'Purchase Orders',type:'Non-Posting',level:1,parent:'np'},
   {id:'np3',name:'Sales Orders',type:'Non-Posting',level:1,parent:'np'},
-]
+],
+    employees: [
+  {id:'EMP-101',name:'Enrique Chavez',phone:'(619) 555-2101',email:'enrique@sddemolition.com',wage:21.26,task:'DRYWALL',taskCode:'5446',hireDate:'Jan 15, 2024',address:'San Diego, CA',ssn:'···-··-1234',status:'active',notes:'',createdAt:1},
+  {id:'EMP-102',name:'Alexis Corral',phone:'(619) 555-2102',email:'alexis@sddemolition.com',wage:40.10,task:'CARPENTRY',taskCode:'5403-1',hireDate:'Mar 3, 2023',address:'San Diego, CA',ssn:'···-··-2345',status:'active',notes:'',createdAt:2},
+  {id:'EMP-103',name:'Jose Gonzalez',phone:'(619) 555-2103',email:'jose@sddemolition.com',wage:40.10,task:'CARPENTRY',taskCode:'5403',hireDate:'Jun 20, 2022',address:'San Diego, CA',ssn:'···-··-3456',status:'active',notes:'',createdAt:3},
+  {id:'EMP-104',name:'Arnulfo Villa',phone:'(619) 555-2104',email:'arnulfo@sddemolition.com',wage:32.00,task:'MASONRY',taskCode:'5027-1',hireDate:'Sep 10, 2023',address:'San Diego, CA',ssn:'···-··-4567',status:'active',notes:'',createdAt:4},
+  {id:'EMP-105',name:'Ramiro Soto',phone:'(619) 555-2105',email:'ramiro@sddemolition.com',wage:26.70,task:'CONCRETE',taskCode:'5201-1',hireDate:'Nov 5, 2023',address:'San Diego, CA',ssn:'···-··-5678',status:'active',notes:'',createdAt:5}
+],
+    timecards: []
   };
 
   // ---- Load from storage or seed ----
@@ -608,6 +616,12 @@
   if(!_data.bills) _data.bills = JSON.parse(JSON.stringify(SEED.bills || []));
   if(!_data.accounts) _data.accounts = JSON.parse(JSON.stringify(SEED.accounts || []));
   if(!_data.manualEntries) _data.manualEntries = [];
+  if(!_data.deposits) _data.deposits = [];
+  if(!_data.vendorCredits) _data.vendorCredits = [];
+  if(!_data.purchaseOrders) _data.purchaseOrders = [];
+  if(!_data.billPayments) _data.billPayments = [];
+  if(!_data.employees) _data.employees = [];
+  if(!_data.timecards) _data.timecards = [];
 
   function save(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); }
@@ -745,8 +759,170 @@
     get customers(){ return _data.customers; },
     get estimates(){ return _data.estimates; },
     get bills(){ return _data.bills || []; },
+    // ===== Pay Bills (QuickBooks-style) =====
+    get billPayments(){ return _data.billPayments || []; },
+    // ===== Employees =====
+    get employees(){ return _data.employees || []; },
+    addEmployee: function(emp){
+      var n=(_data.employees||[]).length+1;
+      emp.id = emp.id || ('EMP-'+String(100+n));
+      emp.status = emp.status || 'active';
+      emp.createdAt = emp.createdAt || Date.now();
+      _data.employees.push(emp);
+      save();
+      return emp;
+    },
+    updateEmployee: function(id, patch){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(e){ Object.keys(patch||{}).forEach(function(k){ e[k]=patch[k]; }); save(); }
+      return e;
+    },
+    deleteEmployee: function(id){
+      _data.employees = (_data.employees||[]).filter(function(x){ return x.id!==id; });
+      save();
+    },
+    // Record a wage change; keeps a history array on the employee
+    changeWage: function(id, newWage, date, note){
+      var e=(_data.employees||[]).find(function(x){ return x.id===id; });
+      if(!e) return null;
+      var old=e.wage||0;
+      if(!e.wageHistory) e.wageHistory=[];
+      e.wageHistory.push({ date:date||'', oldWage:old, newWage:newWage, note:note||'' });
+      e.wage=newWage;
+      save();
+      return e;
+    },
+    // ===== Timecards =====
+    get timecards(){ return _data.timecards || []; },
+    addTimecard: function(tc){
+      var n=(_data.timecards||[]).length+1;
+      tc.id = tc.id || ('TC-'+String(1000+n));
+      tc.createdAt = tc.createdAt || Date.now();
+      _data.timecards.push(tc);
+      save();
+      return tc;
+    },
+    timecardsForEmployee: function(empId){
+      return (_data.timecards||[]).filter(function(t){ return String(t.employeeId)===String(empId); })
+        .sort(function(a,b){ return (b.createdAt||0)-(a.createdAt||0); });
+    },
+    deleteTimecard: function(id){
+      _data.timecards = (_data.timecards||[]).filter(function(t){ return t.id!==id; });
+      save();
+    },
+    unpaidBills: function(){
+      return (_data.bills||[]).filter(function(b){ return b.status==='unpaid' || b.status==='partial'; });
+    },
+    payBills: function(ids, account, accountName, date){
+      // Mark each bill paid and record a bill payment (money out). Returns {count,total}.
+      var total=0, count=0, idset={};
+      (ids||[]).forEach(function(i){ idset[String(i)]=1; });
+      (_data.bills||[]).forEach(function(b){
+        if(idset[String(b.id)] && b.status!=='paid'){
+          var owed = (b.netAmount!=null?b.netAmount:b.amount) || 0;
+          total+=owed; count++;
+          b.status='paid';
+          b.paidDate=date||'';
+          b.paidFrom=accountName||'';
+        }
+      });
+      if(count>0){
+        _data.billPayments.push({ id:'BP-'+Date.now(), date:date||'', account:account||'', accountName:accountName||'',
+          billIds:(ids||[]).slice(), total:total, count:count });
+        save();
+      }
+      return {count:count, total:total};
+    },
     get accounts(){ return _data.accounts || []; },
     get manualEntries(){ return _data.manualEntries || []; },
+    get deposits(){ return _data.deposits || []; },
+    // ===== Vendor Credits (overpayment/return credit toward future bills) =====
+    get vendorCredits(){ return _data.vendorCredits || []; },
+    // ===== Purchase Orders (to vendors) =====
+    get purchaseOrders(){ return _data.purchaseOrders || []; },
+    addPurchaseOrder: function(po){
+      // po: {vendorId, vendorName, date, lines:[{desc,amount}], total, status, memo}
+      var n=(_data.purchaseOrders||[]).length+1;
+      po.id = po.id || ('PO-'+String(1000+n));
+      po.status = po.status || 'Draft';
+      po.createdAt = po.createdAt || Date.now();
+      _data.purchaseOrders.push(po);
+      save();
+      return po;
+    },
+    updatePurchaseOrder: function(id, patch){
+      var po=(_data.purchaseOrders||[]).find(function(p){ return p.id===id; });
+      if(po){ Object.keys(patch||{}).forEach(function(k){ po[k]=patch[k]; }); save(); }
+      return po;
+    },
+    deletePurchaseOrder: function(id){
+      _data.purchaseOrders = (_data.purchaseOrders||[]).filter(function(p){ return p.id!==id; });
+      save();
+    },
+    addVendorCredit: function(vc){
+      // vc: {vendorId, vendorName, amount, date, account, memo}
+      vc.id = vc.id || ('VC-'+Date.now());
+      vc.remaining = (vc.remaining!=null)?vc.remaining:vc.amount;   // unused balance
+      _data.vendorCredits.push(vc);
+      save();
+      return vc;
+    },
+    vendorCreditBalance: function(vendorId){
+      return (_data.vendorCredits||[]).filter(function(c){ return String(c.vendorId)===String(vendorId); })
+        .reduce(function(s,c){ return s+(c.remaining||0); }, 0);
+    },
+    applyVendorCredit: function(vendorId, amount){
+      // consume available credit for this vendor up to `amount`; returns amount applied
+      var remaining=amount, applied=0;
+      (_data.vendorCredits||[]).forEach(function(c){
+        if(String(c.vendorId)!==String(vendorId) || remaining<=0) return;
+        var take=Math.min(c.remaining||0, remaining);
+        c.remaining=(c.remaining||0)-take; remaining-=take; applied+=take;
+      });
+      if(applied>0) save();
+      return applied;
+    },
+    deleteVendorCredit: function(id){
+      _data.vendorCredits = (_data.vendorCredits||[]).filter(function(c){ return c.id!==id; });
+      save();
+    },
+    // ===== Deposits / Undeposited Funds (QuickBooks-style) =====
+    // Every customer payment lives on an invoice's payments[]. A payment is
+    // "undeposited" until its id appears in a deposit's paymentIds[].
+    undepositedPayments: function(){
+      var out=[], deposited={};
+      (_data.deposits||[]).forEach(function(d){ (d.paymentIds||[]).forEach(function(pid){ deposited[pid]=1; }); });
+      (_data.customers||[]).forEach(function(c){
+        var jobs=[];
+        (c.contacts||[]).forEach(function(ct){ (ct.jobs||[]).forEach(function(j){ jobs.push(j); }); });
+        (c.jobs||[]).forEach(function(j){ jobs.push(j); });
+        var jseen={};
+        jobs.forEach(function(j){
+          var jk=j.est||JSON.stringify(j.address||'');
+          if(jseen[jk]) return; jseen[jk]=1;
+          (j.invoices||[]).forEach(function(iv){
+            (iv.payments||[]).forEach(function(p){
+              if(p.id && !deposited[p.id]){
+                out.push({ id:p.id, date:p.date||'', amount:p.amount, method:p.method||'', ref:p.ref||'',
+                  note:p.note||'', invoice:iv.est, customer:c.name||'', project:(iv.projectName||j.projectName||j.jobName||'') });
+              }
+            });
+          });
+        });
+      });
+      return out;
+    },
+    addDeposit: function(dep){
+      // dep: {date, account, accountName, paymentIds:[], total, memo}
+      dep.id = dep.id || ('DEP-'+Date.now());
+      _data.deposits.push(dep);
+      save();
+      return dep;
+    },
+    deleteDeposit: function(id){
+      _data.deposits = (_data.deposits||[]).filter(function(d){ return d.id!==id; });
+      save();
+    },
     save: save,
     // replace a whole collection
     setCustomers: function(arr){ _data.customers = arr; save(); },
@@ -773,6 +949,6 @@
       save();
     },
     // wipe everything back to the original seed (handy for testing)
-    resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); _data.manualEntries=[]; save(); }
+    resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); _data.manualEntries=[]; _data.deposits=[]; _data.vendorCredits=[]; _data.purchaseOrders=[]; _data.billPayments=[]; _data.employees=[]; _data.timecards=[]; save(); }
   };
 })();

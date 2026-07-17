@@ -1596,7 +1596,7 @@ function renderList(){
       + activeJobsList.map(j=>{
           const label=j.projectName||j.jobName||j.address||j.est||'Job';
           const isActiveJob=(activeId===c.id && String(activeJobEst)===String(j.est));
-          const baseBg=isActiveJob?'#1f2630':'';
+          const baseBg=isActiveJob?'var(--gold)':'';
           const lblCol=isActiveJob?'#fff':'var(--text)';
           // Build the estimates sub-list (3rd level) when this job is expanded
           const jobEstimates = (j.estimates||[]);
@@ -1606,6 +1606,7 @@ function renderList(){
                 const isActiveEst=(activeEstimateId===e.est && activeId===c.id);
                 const eBg=isActiveEst?'#1f2630':'';
                 const eCol=isActiveEst?'#e0b94a':'var(--muted)';
+                const eBorder=isActiveEst?'border-left:3px solid #e0b94a;':'';
                 // Sub-tree: change orders (with their invoices) + direct invoices, shown when this estimate is active
                 let subTree='';
                 if(isActiveEst){
@@ -1676,7 +1677,7 @@ function renderList(){
                     subTree=`<div style="margin-left:10px;margin-top:2px;margin-bottom:6px;border-left:2px solid #3a3f48;padding-left:8px;">`+originalHtml+coHtml+`</div>`;
                   }
                 }
-                return `<div onclick="event.stopPropagation();selectEstimate(${c.id},'${j.est}','${e.est}')" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:7px;cursor:pointer;background:${eBg};${isActiveEst?'box-shadow:0 1px 4px rgba(0,0,0,.25);margin-left:-8px;padding-left:10px;':''}" onmouseover="if(!(${isActiveEst}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${eBg}'">`
+                return `<div onclick="event.stopPropagation();selectEstimate(${c.id},'${j.est}','${e.est}')" style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:7px;cursor:pointer;background:${eBg};${eBorder}${isActiveEst?'box-shadow:0 1px 4px rgba(0,0,0,.25);margin-left:-8px;padding-left:10px;':''}" onmouseover="if(!(${isActiveEst}))this.style.background='var(--surface2)'" onmouseout="this.style.background='${eBg}'">`
                   +`<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${isActiveEst?'#e0b94a':'var(--muted2)'}" stroke-width="2" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
                   +`<span style="font-size:12px;font-weight:600;color:${isActiveEst?'#fff':'var(--text)'};flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.est}</span>`
                   +`<span style="font-size:10px;color:${eCol};">${e.amount||''}</span>`
@@ -5701,6 +5702,21 @@ function _jobInvoicePickPM(customerId, est, pmId){
       +(l.scope?'<span style="font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+l.scope+'</span>':'')+'</span>'
       +'<span style="font-size:13px;font-weight:700;flex-shrink:0;">'+(l.amount||'$0')+'</span></button>';
   }).join('') : '<div style="padding:14px;text-align:center;font-size:13px;color:var(--muted);font-style:italic;border:1px dashed var(--border2);border-radius:10px;">All estimates on this job have already been invoiced.</div>';
+  // Does the customer have ANY estimates/COs at all (across every job)?
+  var _custHasEstimates=false;
+  (getAllJobs(c)||[]).forEach(function(jj){
+    if((jj.estimates&&jj.estimates.length)||(jj.changeOrders&&jj.changeOrders.length)) _custHasEstimates=true;
+  });
+  // Header text: available estimates → prompt to select; none at all → tell the user the
+  // customer has no estimates; otherwise (all invoiced) keep the neutral prompt.
+  var _estHeader;
+  if(lines.length) _estHeader='Select Existing Estimate to Invoice';
+  else if(!_custHasEstimates) _estHeader='This customer has no estimates with the company';
+  else _estHeader='Select Existing Estimate to Invoice';
+  // When the customer truly has no estimates, show a clearer empty message
+  if(!lines.length && !_custHasEstimates){
+    estListHTML='<div style="padding:14px;text-align:center;font-size:13px;color:var(--muted);font-style:italic;border:1px dashed var(--border2);border-radius:10px;">This customer has no estimates with the company yet. You can create a standalone invoice below.</div>';
+  }
   bg.innerHTML='<div style="background:#fff;border-radius:16px;max-width:520px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);font-family:Barlow,sans-serif;overflow:hidden;max-height:85vh;display:flex;flex-direction:column;">'
     +'<div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">'
       +'<div><div style="font-size:20px;font-weight:700;">Create invoice</div>'
@@ -5708,7 +5724,7 @@ function _jobInvoicePickPM(customerId, est, pmId){
       +'<button onclick="document.getElementById(\'_jdInvTypeBg\').remove()" style="border:none;background:none;font-size:20px;color:var(--muted);cursor:pointer;">✕</button>'
     +'</div>'
     +'<div style="padding:20px 24px;overflow-y:auto;">'
-      +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">From an estimate without an invoice</div>'
+      +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;">'+_estHeader+'</div>'
       +estListHTML
       +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:18px 0 8px;">Or create a standalone invoice</div>'
       +'<button onclick="_jdInvoiceStandalone()" style="display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px;border:1.5px solid var(--border2);border-radius:12px;background:#fff;cursor:pointer;" onmouseover="this.style.borderColor=\'#22c55e\'" onmouseout="this.style.borderColor=\'var(--border2)\'">'
