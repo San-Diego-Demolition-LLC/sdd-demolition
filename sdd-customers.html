@@ -9358,7 +9358,12 @@ document.addEventListener('DOMContentLoaded', function(){
     var _est=_p.get('est');
     if(_est){
       _est=decodeURIComponent(_est);
-      setTimeout(function(){ if(typeof goToEstimate==='function') goToEstimate(_est); }, 120);
+      var _wantPay=(_p.get('pay')==='1');
+      setTimeout(function(){
+        if(typeof goToEstimate==='function') goToEstimate(_est);
+        // ?est=INV-x&pay=1 → after navigating, open the Record Payment modal for it
+        if(_wantPay){ setTimeout(function(){ if(typeof _recordPayment==='function') _recordPayment(_est); }, 400); }
+      }, 120);
     }
     var njf=_p.get('newJobFor');
     if(njf){
