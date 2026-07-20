@@ -32,6 +32,9 @@
     manualEntries:  { table:'manual_entries' }
   };
   var _cloudReady = false;
+  // Edge Function endpoint that sends email via Resend.
+  // (Supabase kept the original slug 'swift-processor' as the URL.)
+  var EMAIL_FN_URL = SUPABASE_URL + '/functions/v1/swift-processor';
   function _sbHeaders(){
     // New sb_publishable_* keys must go ONLY in the apikey header.
     // Putting them in Authorization: Bearer causes 401 (they are not JWTs).
@@ -870,6 +873,18 @@
       syncAll: cloudSyncAll,
       isReady: function(){ return _cloudReady; },
       status: function(){ return { url:SUPABASE_URL, ready:_cloudReady }; }
+    },
+    // ===== Email (via Supabase Edge Function + Resend) =====
+    // Returns a Promise. usage: SDD.sendEmail({to, subject, html, cc}).then(...)
+    sendEmail: function(opts){
+      opts = opts || {};
+      return fetch(EMAIL_FN_URL, {
+        method:'POST',
+        headers:{ 'apikey':SUPABASE_KEY, 'Content-Type':'application/json' },
+        body:JSON.stringify({ to:opts.to, subject:opts.subject, html:opts.html||opts.body||'', cc:opts.cc, attachments:opts.attachments })
+      }).then(function(r){
+        return r.json().then(function(data){ return { ok:r.ok, status:r.status, data:data }; });
+      });
     },
     // ===== Company profile (single source of truth for letterheads) =====
     COMPANY: {

@@ -90,7 +90,7 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
       <text x="4" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">S</text>
       <text x="44" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">DD</text>
     </svg>
-    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v2.9</span>
+    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v3.1</span>
   </div>
   <nav class="nav">
     <a class="nav-item active" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
@@ -814,12 +814,55 @@ function _stmtConfirmSend(cid){
     var cb=r.querySelector('._stmtrecip_cb');
     if(cb&&cb.checked) picked.push(r.getAttribute('data-email'));
   });
+  if(!picked.length){
+    var w=document.createElement('div');
+    w.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#D94F4F;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;';
+    w.textContent='Select at least one recipient.';
+    document.body.appendChild(w); setTimeout(function(){w.remove();},2500);
+    return;
+  }
+  var to = picked[0];
+  var cc = picked.slice(1);
+  // Build the statement email HTML
+  var invRows=(o&&o.invoices?o.invoices:[]).map(function(iv){
+    return '<tr><td style="padding:6px 10px;border-bottom:1px solid #eee;">'+(iv.est||iv.num||'')+'</td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #eee;">'+(iv.date||'')+'</td>'
+      +'<td style="padding:6px 10px;border-bottom:1px solid #eee;text-align:right;">'+_estFmt(iv.amount||iv.balance||0)+'</td></tr>';
+  }).join('');
+  var html='<div style="font-family:Arial,sans-serif;max-width:600px;">'
+    +'<h2 style="color:#1a1a1a;">Statement from San Diego Demolition, LLC</h2>'
+    +'<p>Dear '+(o?o.customer:'Customer')+',</p>'
+    +'<p>Please find below your current account statement.</p>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:14px;">'
+    +'<thead><tr style="background:#f2f0eb;"><th style="padding:8px 10px;text-align:left;">Invoice</th><th style="padding:8px 10px;text-align:left;">Date</th><th style="padding:8px 10px;text-align:right;">Amount Due</th></tr></thead>'
+    +'<tbody>'+invRows+'</tbody></table>'
+    +'<p style="font-size:16px;font-weight:bold;margin-top:16px;">Total Due: '+_estFmt(o?o.total:0)+'</p>'
+    +'<p style="color:#777;font-size:12px;margin-top:24px;">San Diego Demolition, LLC · License 1082669 · 5755 Oberlin Drive Suite 301, San Diego CA 92121 · (619) 273-3467</p>'
+    +'</div>';
   var sb=document.getElementById('_stmtSendBg'); if(sb) sb.remove();
   var pb=document.getElementById('_stmtPrevBg'); if(pb) pb.remove();
+  // Show "sending..." then the real result
   var f=document.createElement('div');
-  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3A9E6A;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
-  f.textContent='✓ Statement sent to '+(o?o.customer:'client')+(picked.length?' ('+picked.length+' recipient'+(picked.length>1?'s':'')+')':'');
-  document.body.appendChild(f); setTimeout(function(){f.remove();},3000);
+  f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2630;color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);';
+  f.textContent='Sending statement…';
+  document.body.appendChild(f);
+  if(window.SDD && SDD.sendEmail){
+    SDD.sendEmail({ to:to, cc:cc.length?cc:undefined, subject:'Statement from San Diego Demolition, LLC', html:html })
+      .then(function(res){
+        f.style.background = res.ok ? '#3A9E6A' : '#D94F4F';
+        f.textContent = res.ok
+          ? '✓ Statement emailed to '+to+(cc.length?' (+'+cc.length+' cc)':'')
+          : '✗ Could not send: '+((res.data&&res.data.error)||'error');
+        setTimeout(function(){f.remove();},4000);
+      })
+      .catch(function(){
+        f.style.background='#D94F4F'; f.textContent='✗ Network error sending email';
+        setTimeout(function(){f.remove();},4000);
+      });
+  } else {
+    f.style.background='#3A9E6A'; f.textContent='✓ Statement sent to '+(o?o.customer:'client');
+    setTimeout(function(){f.remove();},3000);
+  }
 }
 
 // ═══════════ RECEIVE PAYMENTS SLIDE-OVER ═══════════
@@ -1797,23 +1840,56 @@ function _tcLogoSVG(){
 function _tcSignLink(id){
   var t=(window.SDD && SDD.timecards)?SDD.timecards.find(function(x){return x.id===id;}):null;
   if(!t) return;
+  var emp=(window.SDD && SDD.employees)?SDD.employees.find(function(e){return e.id===t.employeeId;}):null;
+  var empEmail=emp?(emp.email||''):'';
   var base=window.location.origin+window.location.pathname.replace(/[^/]*$/,'');
   var url=base+'sdd-home.html?sign='+encodeURIComponent(t.id)+'&tok='+encodeURIComponent(t.signToken||'');
+  window._tcSignUrlValue=url; window._tcSignEmpEmail=empEmail; window._tcSignEmpName=t.employeeName; window._tcSignWeek=t.weekLabel||'';
   var ex=document.getElementById('_tcSignBg'); if(ex) ex.remove();
   var bg=document.createElement('div');
   bg.id='_tcSignBg';
   bg.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000095;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Barlow,sans-serif;';
   bg.innerHTML='<div style="background:#fff;border-radius:14px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;">'
     +'<div style="padding:18px 22px 6px;font-size:18px;font-weight:800;">Signature link — '+t.employeeName+'</div>'
-    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Send this link to the employee. They will review the hours and sign electronically.</div>'
+    +'<div style="padding:0 22px 12px;font-size:13px;color:var(--muted);">Email the link to the employee, or copy it to send another way. They will review the hours and sign electronically.</div>'
     +'<div style="padding:0 22px 10px;"><input id="_tcSignUrl" readonly value="'+url+'" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;background:var(--surface2);"></div>'
+    +'<div style="padding:0 22px 10px;"><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted2);margin-bottom:4px;">Employee email</label>'
+      +'<input id="_tcSignEmail" value="'+empEmail+'" placeholder="name@email.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:13px;color:var(--text);"></div>'
     +'<div style="padding:0 22px 14px;">'+(t.signed?'<div style="font-size:12px;color:#0a7a3f;font-weight:700;">✓ Already signed on '+(t.signedDate||'')+'</div>':'<div style="font-size:12px;color:var(--muted);">Status: awaiting signature</div>')+'</div>'
-    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;">'
+    +'<div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">'
       +'<button onclick="document.getElementById(\'_tcSignBg\').remove()" style="padding:9px 16px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Close</button>'
-      +'<button onclick="_tcCopySignLink()" style="padding:9px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Copy link</button>'
+      +'<button onclick="_tcCopySignLink()" style="padding:9px 16px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Copy link</button>'
+      +'<button onclick="_tcEmailSignLink()" style="padding:9px 18px;border:none;border-radius:8px;background:#C8822A;color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">✉ Email link</button>'
     +'</div></div>';
   document.body.appendChild(bg);
   bg.onclick=function(ev){ if(ev.target===bg) bg.remove(); };
+}
+function _tcEmailSignLink(){
+  var to=(document.getElementById('_tcSignEmail')||{}).value||'';
+  if(!to.trim()){ alert('Enter the employee email.'); return; }
+  var url=window._tcSignUrlValue||'';
+  var name=window._tcSignEmpName||'';
+  var week=window._tcSignWeek||'';
+  var html='<div style="font-family:Arial,sans-serif;max-width:600px;">'
+    +'<h2 style="color:#1a1a1a;">Timecard signature request</h2>'
+    +'<p>Hi '+name+',</p>'
+    +'<p>Please review and sign your timecard'+(week?(' for the week of '+week):'')+'. Click the button below to review your hours and add your signature.</p>'
+    +'<p style="margin:24px 0;"><a href="'+url+'" style="background:#C8822A;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">Review &amp; sign timecard</a></p>'
+    +'<p style="color:#777;font-size:12px;">Or copy this link: '+url+'</p>'
+    +'<p style="color:#777;font-size:12px;margin-top:24px;">San Diego Demolition, LLC</p>'
+    +'</div>';
+  var btn=event.target; var orig=btn.textContent; btn.textContent='Sending…'; btn.disabled=true;
+  if(window.SDD && SDD.sendEmail){
+    SDD.sendEmail({ to:to, subject:'Please sign your timecard — SDD Demolition', html:html })
+      .then(function(res){
+        var bg=document.getElementById('_tcSignBg'); if(bg) bg.remove();
+        var f=document.createElement('div');
+        f.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:#fff;padding:12px 22px;border-radius:8px;font-family:Barlow,sans-serif;font-size:14px;font-weight:600;z-index:2000;box-shadow:0 6px 20px rgba(0,0,0,.25);background:'+(res.ok?'#3A9E6A':'#D94F4F');
+        f.textContent=res.ok?'✓ Sign link emailed to '+to:'✗ Could not send: '+((res.data&&res.data.error)||'error');
+        document.body.appendChild(f); setTimeout(function(){f.remove();},4000);
+      })
+      .catch(function(){ btn.textContent=orig; btn.disabled=false; alert('Network error sending email.'); });
+  }
 }
 function _tcCopySignLink(){
   var el=document.getElementById('_tcSignUrl'); if(!el) return;
