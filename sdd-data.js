@@ -33,7 +33,9 @@
   };
   var _cloudReady = false;
   function _sbHeaders(){
-    return { 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type':'application/json' };
+    // New sb_publishable_* keys must go ONLY in the apikey header.
+    // Putting them in Authorization: Bearer causes 401 (they are not JWTs).
+    return { 'apikey':SUPABASE_KEY, 'Content-Type':'application/json' };
   }
   // Push one record (upsert) to its cloud table. Fire-and-forget.
   function cloudUpsert(storeKey, record){
