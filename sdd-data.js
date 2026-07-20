@@ -8,6 +8,97 @@
 (function(){
   var STORAGE_KEY = 'sdd_data_v8';
 
+  // ============================================================
+  // SUPABASE CLOUD SYNC
+  // ------------------------------------------------------------
+  // The app keeps working instantly from localStorage, and mirrors
+  // every change up to Supabase in the background. On startup it
+  // tries to pull the latest data from the cloud.
+  // ============================================================
+  var SUPABASE_URL = 'https://zqrntmdsjbmodieubxsh.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_XThWshOmQcIEXVUqcnDzfA_1M0ajKlR';
+  // Map each in-app store (key in _data) to its Supabase table + how to get a row id
+  var CLOUD_TABLES = {
+    customers:      { table:'customers',       extra:function(r){ return { name:r.name||'' }; } },
+    estimates:      { table:'estimates' },
+    bills:          { table:'bills',           extra:function(r){ return { status:r.status||'' }; } },
+    accounts:       { table:'accounts' },
+    deposits:       { table:'deposits' },
+    employees:      { table:'employees',       extra:function(r){ return { name:r.name||'', status:r.status||'' }; } },
+    timecards:      { table:'timecards',       extra:function(r){ return { employee_id:r.employeeId||'', week_start:r.weekStart||'', signed:!!r.signed }; } },
+    purchaseOrders: { table:'purchase_orders', extra:function(r){ return { status:r.status||'' }; } },
+    billPayments:   { table:'bill_payments' },
+    vendorCredits:  { table:'vendor_credits',  extra:function(r){ return { vendor_id:r.vendorId||'' }; } },
+    manualEntries:  { table:'manual_entries' }
+  };
+  var _cloudReady = false;
+  function _sbHeaders(){
+    return { 'apikey':SUPABASE_KEY, 'Authorization':'Bearer '+SUPABASE_KEY, 'Content-Type':'application/json' };
+  }
+  // Push one record (upsert) to its cloud table. Fire-and-forget.
+  function cloudUpsert(storeKey, record){
+    if(!record || !record.id) return;
+    var cfg = CLOUD_TABLES[storeKey]; if(!cfg) return;
+    var row = { id:String(record.id), data:record };
+    if(cfg.extra){ var ex=cfg.extra(record); for(var k in ex) row[k]=ex[k]; }
+    try{
+      fetch(SUPABASE_URL+'/rest/v1/'+cfg.table, {
+        method:'POST',
+        headers:Object.assign({}, _sbHeaders(), { 'Prefer':'resolution=merge-duplicates' }),
+        body:JSON.stringify(row)
+      }).catch(function(){});
+    }catch(e){}
+  }
+  // Delete one record from its cloud table.
+  function cloudDelete(storeKey, id){
+    var cfg = CLOUD_TABLES[storeKey]; if(!cfg || !id) return;
+    try{
+      fetch(SUPABASE_URL+'/rest/v1/'+cfg.table+'?id=eq.'+encodeURIComponent(id), {
+        method:'DELETE', headers:_sbHeaders()
+      }).catch(function(){});
+    }catch(e){}
+  }
+  // Push an entire store array to the cloud (used after bulk changes).
+  function cloudSyncStore(storeKey){
+    var arr = _data[storeKey]; if(!Array.isArray(arr)) return;
+    arr.forEach(function(rec){ cloudUpsert(storeKey, rec); });
+  }
+  // Push EVERYTHING currently in _data to the cloud.
+  function cloudSyncAll(){
+    Object.keys(CLOUD_TABLES).forEach(function(k){ cloudSyncStore(k); });
+  }
+  // Pull all tables from the cloud into _data (replaces local). Async.
+  function cloudPull(done){
+    var keys = Object.keys(CLOUD_TABLES);
+    var remaining = keys.length;
+    var pulled = {};
+    var anyData = false;
+    keys.forEach(function(k){
+      var cfg = CLOUD_TABLES[k];
+      fetch(SUPABASE_URL+'/rest/v1/'+cfg.table+'?select=data', { headers:_sbHeaders() })
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(rows){
+          if(Array.isArray(rows) && rows.length){
+            pulled[k] = rows.map(function(x){ return x.data; });
+            anyData = true;
+          }
+        })
+        .catch(function(){})
+        .then(function(){
+          remaining--;
+          if(remaining===0){
+            if(anyData){
+              Object.keys(pulled).forEach(function(k){ _data[k] = pulled[k]; });
+              try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); } catch(e){}
+            }
+            _cloudReady = true;
+            if(done) done(anyData);
+          }
+        });
+    });
+    if(!keys.length && done) done(false);
+  }
+
   // ---- DEFAULT SEED DATA (used the first time, before anything is saved) ----
   var SEED = {
     customers: [
@@ -627,6 +718,13 @@
   function save(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); }
     catch(e){ console.warn('SDD: could not save storage', e); }
+    // Mirror the whole dataset to the cloud in the background (debounced).
+    _cloudSaveDebounced();
+  }
+  var _cloudSaveTimer = null;
+  function _cloudSaveDebounced(){
+    if(_cloudSaveTimer) clearTimeout(_cloudSaveTimer);
+    _cloudSaveTimer = setTimeout(function(){ try{ cloudSyncAll(); }catch(e){} }, 800);
   }
 
   // ===== General Ledger engine (double-entry) =====
@@ -745,6 +843,13 @@
 
   // ---- Public API ----
   window.SDD = {
+    // ===== Cloud sync (Supabase) =====
+    cloud: {
+      pull: cloudPull,
+      syncAll: cloudSyncAll,
+      isReady: function(){ return _cloudReady; },
+      status: function(){ return { url:SUPABASE_URL, ready:_cloudReady }; }
+    },
     // ===== Company profile (single source of truth for letterheads) =====
     COMPANY: {
       name: 'San Diego Demolition, LLC',
@@ -859,6 +964,47 @@
     deleteTimecard: function(id){
       _data.timecards = (_data.timecards||[]).filter(function(t){ return t.id!==id; });
       save();
+    },
+    // ===== Payroll / weekly grouping =====
+    // Pay for one timecard: reg hrs × wage + OT hrs × wage × 1.5 + per diem
+    timecardPay: function(tc){
+      var emp=(_data.employees||[]).find(function(e){ return e.id===tc.employeeId; });
+      var wage=emp?(emp.wage||0):0;
+      var reg=(tc.totalReg||0)*wage;
+      var ot=(tc.totalOT||0)*wage*1.5;
+      var pd=(tc.perDiem||0);
+      return { wage:wage, regPay:reg, otPay:ot, perDiem:pd, total:reg+ot+pd };
+    },
+    // Group timecards by week (weekStart). Returns array sorted newest first.
+    timecardsByWeek: function(){
+      var groups={};
+      (_data.timecards||[]).forEach(function(t){
+        var key=t.weekStart||t.weekLabel||'unknown';
+        if(!groups[key]) groups[key]={ weekStart:t.weekStart||'', weekLabel:t.weekLabel||key, cards:[] };
+        groups[key].cards.push(t);
+      });
+      return Object.keys(groups).map(function(k){ return groups[k]; })
+        .sort(function(a,b){ return (b.weekStart||'').localeCompare(a.weekStart||''); });
+    },
+    // Timecards awaiting signature (pending hours)
+    unsignedTimecards: function(){
+      return (_data.timecards||[]).filter(function(t){ return !t.signed; });
+    },
+    // Signed compliance records — permanent audit trail (never auto-deleted)
+    signedTimecardRecords: function(){
+      return (_data.timecards||[]).filter(function(t){ return t.signed; })
+        .map(function(t){ return { id:t.id, employeeName:t.employeeName, weekLabel:t.weekLabel,
+          signedDate:t.signedDate||'', signedName:t.signedName||'', hasSignature:!!t.signatureImg,
+          totalReg:t.totalReg||0, totalOT:t.totalOT||0 }; })
+        .sort(function(a,b){ return (b.signedDate||'').localeCompare(a.signedDate||''); });
+    },
+    // Timecards grouped by employee (each with all their cards, newest first)
+    timecardsByEmployee: function(){
+      return (_data.employees||[]).map(function(e){
+        var cards=(_data.timecards||[]).filter(function(t){ return String(t.employeeId)===String(e.id); })
+          .sort(function(a,b){ return (b.weekStart||'').localeCompare(a.weekStart||''); });
+        return { employee:e, cards:cards };
+      });
     },
     unpaidBills: function(){
       return (_data.bills||[]).filter(function(b){ return b.status==='unpaid' || b.status==='partial'; });
@@ -1001,4 +1147,21 @@
     // wipe everything back to the original seed (handy for testing)
     resetAll: function(){ _data = JSON.parse(JSON.stringify(SEED)); _data.manualEntries=[]; _data.deposits=[]; _data.vendorCredits=[]; _data.purchaseOrders=[]; _data.billPayments=[]; _data.employees=[]; _data.timecards=[]; save(); }
   };
+
+  // ---- Initial cloud sync ----
+  // On load, pull the latest from Supabase. If the cloud is empty
+  // (first run), push whatever we have locally up to it so both match.
+  // When data arrives, fire a 'sdd-cloud-ready' event so open screens
+  // can refresh themselves.
+  try{
+    cloudPull(function(hadCloudData){
+      if(!hadCloudData){
+        // Cloud empty → seed it from local data (first-time upload)
+        try{ cloudSyncAll(); }catch(e){}
+      }
+      try{
+        window.dispatchEvent(new CustomEvent('sdd-cloud-ready', { detail:{ hadCloudData:hadCloudData } }));
+      }catch(e){}
+    });
+  }catch(e){ /* offline or blocked → app still works from localStorage */ }
 })();

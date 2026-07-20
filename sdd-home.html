@@ -90,7 +90,7 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
       <text x="4" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">S</text>
       <text x="44" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">DD</text>
     </svg>
-    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v2.5</span>
+    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v2.7</span>
   </div>
   <nav class="nav">
     <a class="nav-item active" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
@@ -314,6 +314,23 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
     </div>
   </div>
 
+  <!-- PAYROLL view (slides in from the right) -->
+  <div class="est-view" id="viewPR">
+    <button class="est-back" onclick="closePayrollPanel()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </button>
+    <div class="welcome-bar">
+      <div class="welcome-title">Payroll</div>
+      <div class="welcome-sub">Weekly pay by employee, pending hours, and signed-timecard records</div>
+    </div>
+    <div id="prAlert"></div>
+    <div class="card">
+      <div class="est-statusbar" id="prTabs"></div>
+      <div id="prContent" style="margin-top:14px;"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -338,13 +355,13 @@ var WF_BANDS = [
     nodes:[
       {ico:'people', label:'Employees', arrow:true, onclick:'openEmployeesPanel()'},
       {ico:'clock', label:'Enter time', arrow:true, onclick:'openTimecardPanel()'},
-      {ico:'payroll', label:'Payroll', arrow:true},
+      {ico:'payroll', label:'Payroll', arrow:true, onclick:'openPayrollPanel()'},
     ]},
   { key:'banking', label:'Banking', color:'#3A7ED4',
     nodes:[
-      {ico:'bank', label:'Bank transactions'},
-      {ico:'reconcile', label:'Reconcile', arrow:true},
-      {ico:'card', label:'Credit cards', arrow:true},
+      {ico:'bank', label:'Bank transactions', href:'/sdd-banking.html?view=banking'},
+      {ico:'reconcile', label:'Reconcile', arrow:true, href:'/sdd-banking.html?view=recon'},
+      {ico:'card', label:'Credit cards', arrow:true, href:'/sdd-banking.html?view=cc'},
     ]},
   { key:'company', label:'Company', color:'#6B6B66',
     nodes:[
@@ -1324,7 +1341,7 @@ function _empView(id){
         +'</div>'
         +'<span style="font-size:18px;font-weight:800;color:#C8822A;">'+_estFmt(e.wage||0)+'/hr</span></div>'
       +'<div style="display:flex;gap:8px;margin-bottom:12px;">'
-        +'<button onclick="_empWageModal(\''+e.id+'\')" style="flex:1;padding:8px 12px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">+ Registrar cambio de wage</button>'
+        +'<button onclick="_empWageModal(\''+e.id+'\')" style="flex:1;padding:8px 12px;border:1.5px solid #C8822A;border-radius:8px;background:#fff;color:#C8822A;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">+ Record wage change</button>'
         +((e.wageHistory&&e.wageHistory.length)?'<button onclick="_empWageToggle(\''+e.id+'\')" style="padding:8px 14px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">History ('+e.wageHistory.length+') <span id="_whCaret_'+e.id+'">▾</span></button>':'')
       +'</div>'
       +'<div id="_wageHist_'+e.id+'" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
@@ -1997,6 +2014,137 @@ function _tcPreview(id){
   doc.open(); doc.write(html); doc.close();
 }
 
+// ═══════════ PAYROLL SLIDE-OVER ═══════════
+var _prTab='weekly';
+function openPayrollPanel(){
+  _prTab='weekly';
+  renderPayroll();
+  document.getElementById('viewHome').classList.add('slid-out');
+  document.getElementById('viewPR').classList.add('slid-in');
+}
+function closePayrollPanel(){
+  document.getElementById('viewHome').classList.remove('slid-out');
+  document.getElementById('viewPR').classList.remove('slid-in');
+}
+function _prSetTab(t){ _prTab=t; renderPayroll(); }
+function renderPayroll(){
+  // Alert banner: pending (unsigned) timecards
+  var unsigned=(window.SDD && SDD.unsignedTimecards)?SDD.unsignedTimecards():[];
+  var alertEl=document.getElementById('prAlert');
+  if(alertEl){
+    if(unsigned.length){
+      alertEl.innerHTML='<div style="margin-bottom:14px;padding:14px 16px;background:rgba(217,79,79,.08);border:1px solid rgba(217,79,79,.25);border-radius:10px;display:flex;align-items:center;gap:12px;">'
+        +'<span style="font-size:20px;">⚠️</span>'
+        +'<div style="flex:1;"><div style="font-weight:800;color:#D94F4F;font-size:14px;">'+unsigned.length+' timecard'+(unsigned.length>1?'s':'')+' pending signature</div>'
+          +'<div style="font-size:12px;color:var(--muted);">These hours are not yet approved by the employee. Send the sign link to collect signatures.</div></div>'
+        +'<button onclick="_prSetTab(\'pending\')" style="padding:8px 14px;border:none;border-radius:8px;background:#D94F4F;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Review</button>'
+      +'</div>';
+    } else {
+      alertEl.innerHTML='<div style="margin-bottom:14px;padding:12px 16px;background:rgba(10,122,63,.07);border:1px solid rgba(10,122,63,.2);border-radius:10px;font-size:13px;color:#0a7a3f;font-weight:600;">✓ All timecards are signed. No pending hours.</div>';
+    }
+  }
+  // Tabs
+  var tabs=[['weekly','Weekly Pay'],['employee','By Employee'],['pending','Pending Hours ('+unsigned.length+')'],['records','Signed Records']];
+  var tb=document.getElementById('prTabs');
+  if(tb) tb.innerHTML=tabs.map(function(t){ return '<button class="'+(_prTab===t[0]?'active':'')+'" onclick="_prSetTab(\''+t[0]+'\')">'+t[1]+'</button>'; }).join('');
+  var content=document.getElementById('prContent');
+  if(!content) return;
+  if(_prTab==='weekly') content.innerHTML=_prWeekly();
+  else if(_prTab==='employee') content.innerHTML=_prByEmployee();
+  else if(_prTab==='pending') content.innerHTML=_prPending();
+  else content.innerHTML=_prRecords();
+}
+function _prWeekly(){
+  var weeks=(window.SDD && SDD.timecardsByWeek)?SDD.timecardsByWeek():[];
+  if(!weeks.length) return '<div class="est-empty">No timecards yet. Create timecards in “Enter time”.</div>';
+  return weeks.map(function(w){
+    var weekTotal=0, allSigned=true;
+    var rows=w.cards.map(function(t){
+      var pay=SDD.timecardPay(t); weekTotal+=pay.total;
+      if(!t.signed) allSigned=false;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--border);">'
+        +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(t.employeeName||'')+(t.signed?' <span style="font-size:10px;color:#0a7a3f;">✓</span>':' <span style="font-size:10px;color:#D94F4F;">pending</span>')+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);">'+(t.totalReg||0).toFixed(2)+' reg + '+(t.totalOT||0).toFixed(2)+' OT · '+_estFmt(pay.wage)+'/hr'+(pay.perDiem>0?' · '+_estFmt(pay.perDiem)+' per diem':'')+'</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:14px;font-weight:800;color:#C8822A;">'+_estFmt(pay.total)+'</div>'
+          +'<button onclick="_tcPreview(\''+t.id+'\')" style="font-size:11px;color:var(--info);background:none;border:none;cursor:pointer;font-family:inherit;">View ›</button></div>'
+      +'</div>';
+    }).join('');
+    return '<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden;">'
+      +'<div style="padding:12px 14px;background:#1f2630;color:#fff;display:flex;justify-content:space-between;align-items:center;">'
+        +'<div><div style="font-weight:800;font-size:14px;">'+(w.weekLabel||'Week')+'</div>'
+          +'<div style="font-size:11px;color:rgba(255,255,255,.6);">'+w.cards.length+' employee'+(w.cards.length>1?'s':'')+(allSigned?' · all signed':' · signatures pending')+'</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;">Week total</div>'
+          +'<div style="font-size:20px;font-weight:800;color:#e0b94a;">'+_estFmt(weekTotal)+'</div></div>'
+      +'</div>'+rows
+    +'</div>';
+  }).join('');
+}
+function _prByEmployee(){
+  var groups=(window.SDD && SDD.timecardsByEmployee)?SDD.timecardsByEmployee():[];
+  var withCards=groups.filter(function(g){ return g.cards.length>0; });
+  if(!withCards.length) return '<div class="est-empty">No timecards yet. Create timecards in “Enter time”.</div>';
+  return withCards.map(function(g){
+    var e=g.employee;
+    var isOpen=(window._prEmpOpen&&window._prEmpOpen[e.id]);
+    var totalPay=0, unsignedCount=0;
+    g.cards.forEach(function(t){ totalPay+=SDD.timecardPay(t).total; if(!t.signed) unsignedCount++; });
+    var cardRows=g.cards.map(function(t){
+      var pay=SDD.timecardPay(t);
+      return '<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-top:1px solid var(--border);cursor:pointer;" onclick="_tcPreview(\''+t.id+'\')">'
+        +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(t.weekLabel||t.id)+(t.signed?' <span style="font-size:10px;color:#0a7a3f;">✓ signed</span>':' <span style="font-size:10px;color:#D94F4F;">pending</span>')+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);">'+(t.totalReg||0).toFixed(2)+' reg + '+(t.totalOT||0).toFixed(2)+' OT'+((t.perDiem||0)>0?' · '+_estFmt(t.perDiem)+' per diem':'')+'</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:#C8822A;">'+_estFmt(pay.total)+'</div>'
+          +'<span style="font-size:11px;color:var(--info);">View ›</span></div>'
+      +'</div>';
+    }).join('');
+    return '<div style="margin-bottom:10px;border:1px solid var(--border);border-radius:12px;overflow:hidden;">'
+      +'<div style="padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;background:var(--surface2);" onclick="_prEmpToggle(\''+e.id+'\')">'
+        +'<span id="_prCaret_'+e.id+'" style="color:var(--muted);font-size:12px;">'+(isOpen?'▾':'▸')+'</span>'
+        +'<div style="width:34px;height:34px;border-radius:50%;background:#C8822A22;color:#C8822A;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">'+(e.name||'?').split(' ').map(function(w){return w[0];}).slice(0,2).join('')+'</div>'
+        +'<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;">'+e.name+'</div>'
+          +'<div style="font-size:11px;color:var(--muted);">'+g.cards.length+' timecard'+(g.cards.length>1?'s':'')+(unsignedCount>0?' · <span style="color:#D94F4F;font-weight:700;">'+unsignedCount+' pending</span>':' · all signed')+'</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;">Total paid</div>'
+          +'<div style="font-size:15px;font-weight:800;color:#C8822A;">'+_estFmt(totalPay)+'</div></div>'
+      +'</div>'
+      +'<div id="_prEmpBody_'+e.id+'" style="display:'+(isOpen?'block':'none')+';">'+cardRows+'</div>'
+    +'</div>';
+  }).join('');
+}
+function _prEmpToggle(id){
+  if(!window._prEmpOpen) window._prEmpOpen={};
+  window._prEmpOpen[id]=!window._prEmpOpen[id];
+  var body=document.getElementById('_prEmpBody_'+id);
+  var caret=document.getElementById('_prCaret_'+id);
+  if(body) body.style.display=window._prEmpOpen[id]?'block':'none';
+  if(caret) caret.textContent=window._prEmpOpen[id]?'▾':'▸';
+}
+function _prPending(){
+  var unsigned=(window.SDD && SDD.unsignedTimecards)?SDD.unsignedTimecards():[];
+  if(!unsigned.length) return '<div style="padding:20px;text-align:center;color:#0a7a3f;font-weight:600;">✓ No pending hours — all timecards are signed.</div>';
+  return '<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">These timecards have hours that the employee has not yet signed off on. Send the sign link to collect their signature.</div>'
+    +unsigned.map(function(t){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(217,79,79,.25);border-radius:8px;margin-bottom:8px;background:rgba(217,79,79,.03);">'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(t.employeeName||'')+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);">'+(t.weekLabel||'')+' · '+(t.totalReg||0).toFixed(2)+' reg + '+(t.totalOT||0).toFixed(2)+' OT hrs</div></div>'
+      +'<button onclick="_tcSignLink(\''+t.id+'\')" style="padding:6px 12px;border:1px solid #C8822A;border-radius:7px;background:none;color:#C8822A;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Sign link</button>'
+      +'<button onclick="_tcPreview(\''+t.id+'\')" style="padding:6px 12px;border:1px solid var(--info);border-radius:7px;background:none;color:var(--info);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">View</button>'
+    +'</div>';
+  }).join('');
+}
+function _prRecords(){
+  var recs=(window.SDD && SDD.signedTimecardRecords)?SDD.signedTimecardRecords():[];
+  var intro='<div style="font-size:12px;color:var(--muted);margin-bottom:10px;padding:10px 12px;background:var(--surface2);border-radius:8px;">📋 <b>Compliance record.</b> California law requires keeping signed timecard records. Every signed week is stored here permanently as an audit trail.</div>';
+  if(!recs.length) return intro+'<div class="est-empty">No signed timecards yet.</div>';
+  return intro+recs.map(function(r){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;cursor:pointer;" onclick="_tcPreview(\''+r.id+'\')">'
+      +'<span style="display:inline-flex;width:26px;height:26px;border-radius:50%;background:#0a7a3f;color:#fff;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">✓</span>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;">'+(r.employeeName||'')+' <span style="font-size:11px;color:var(--muted);font-weight:500;">· '+(r.weekLabel||'')+'</span></div>'
+        +'<div style="font-size:11px;color:var(--muted);">Signed '+(r.signedDate||'')+(r.signedName?' by '+r.signedName:'')+' · '+(r.hasSignature?'✍ signature on file':'name signature')+'</div></div>'
+      +'<span style="font-size:11px;color:var(--info);">View ›</span>'
+    +'</div>';
+  }).join('');
+}
+
 // ═══════════ INVOICES SLIDE-OVER ═══════════
 var invStatusFilter='open';
 var INV_STATUS_COLORS={
@@ -2092,6 +2240,11 @@ function renderInvList(){
 }
 
 renderWorkflowMap();
+
+// When cloud data arrives, refresh the workflow map (counts, etc.)
+window.addEventListener('sdd-cloud-ready', function(){
+  try{ renderWorkflowMap(); }catch(e){}
+});
 
 // If opened via a signature link (?sign=TC-xxx&tok=...), show the employee signing page
 (function(){

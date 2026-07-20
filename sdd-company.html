@@ -91,7 +91,7 @@ td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:middle
 <div class="header">
   <div style="display:flex;align-items:center;gap:10px;">
     <svg class="logo-svg" width="38" height="26" viewBox="0 0 60 40"><rect class="s-bar" x="4" y="6" width="11" height="28" rx="2"/><text class="letters" x="20" y="29" font-family="Barlow Condensed" font-size="26" font-weight="700">DD</text></svg>
-    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v2.5</span>
+    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v2.7</span>
   </div>
   <nav class="nav" style="display:flex;gap:4px;">
     <a class="nav-item" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
@@ -1089,16 +1089,45 @@ function renderFleet(){
         +'<button class="co-btn co-btn-sm" onclick="coRenewDoc('+v.id+',\''+d.kind+'\')">Renew</button></div></div>';
     }).join('');
     var assetLine=v.asset?('<span class="pill doc-ok">Asset</span> <span style="font-size:12px;color:var(--muted);">Linked to '+coAcctName(v.assetAccountId)+'</span>'):'<span style="font-size:12px;color:var(--muted);">Not an asset</span>';
-    return '<div class="co-card"><h3>'+v.name+' <span style="font-size:12px;font-weight:400;color:var(--muted);">· '+v.type+'</span>'
-      +'<button class="co-btn co-btn-sm" style="float:right;" onclick="coAddDoc('+v.id+')">+ Add Document</button></h3>'
-      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Plate: '+v.plate+' · VIN: '+v.vin+'</div>'
-      +'<div style="margin-bottom:10px;">'+assetLine+'</div>'
-      +docRows
+    // Compliance summary badges (collapsed view)
+    var docs=v.docs||[];
+    var counts={ok:0,soon:0,bad:0};
+    docs.forEach(function(d){ var s=coDocStatus(d.expires); if(s.cls==='doc-ok')counts.ok++; else if(s.cls==='doc-warn')counts.soon++; else counts.bad++; });
+    var summary='';
+    if(counts.bad>0) summary+='<span class="pill doc-bad" style="margin-left:6px;">'+counts.bad+' expired</span>';
+    if(counts.soon>0) summary+='<span class="pill doc-warn" style="margin-left:6px;">'+counts.soon+' due soon</span>';
+    if(counts.bad===0&&counts.soon===0&&docs.length>0) summary+='<span class="pill doc-ok" style="margin-left:6px;">All valid</span>';
+    var isOpen=(window._fleetOpen&&window._fleetOpen[v.id]);
+    return '<div class="co-card">'
+      +'<h3 style="cursor:pointer;" onclick="coToggleVehicle('+v.id+')">'
+        +'<span id="_vehCaret_'+v.id+'" style="display:inline-block;width:16px;color:var(--muted);transition:transform .15s;">'+(isOpen?'▾':'▸')+'</span> '
+        +v.name+' <span style="font-size:12px;font-weight:400;color:var(--muted);">· '+v.type+'</span>'
+        +'<span style="font-size:12px;font-weight:400;">'+summary+'</span>'
+        +'<button class="co-btn co-btn-sm" style="float:right;" onclick="event.stopPropagation();coAddDoc('+v.id+')">+ Add Document</button></h3>'
+      +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Plate: '+v.plate+' · VIN: '+v.vin+' · '+docs.length+' document'+(docs.length!==1?'s':'')+'</div>'
+      +'<div id="_vehBody_'+v.id+'" style="display:'+(isOpen?'block':'none')+';">'
+        +'<div style="margin-bottom:10px;">'+assetLine+'</div>'
+        +docRows
+      +'</div>'
     +'</div>';
   }).join('');
   return '<div class="co-card" style="background:var(--surface2);"><h3>Fleet — Vehicles <button class="co-btn co-btn-gold co-btn-sm" style="float:right;" onclick="coAddVehicle()">+ New Vehicle</button></h3>'
-    +'<div style="font-size:12px;color:var(--muted);">California compliance tracked per vehicle: Insurance, DMV Registration, Clean Truck Check, BIT Inspection, Smog Check, and Permits. Vehicles marked as assets link to a Chart of Accounts entry.</div></div>'
+    +'<div style="font-size:12px;color:var(--muted);">California compliance tracked per vehicle: Insurance, DMV Registration, Clean Truck Check, BIT Inspection, Smog Check, and Permits. Click a vehicle to see its documents. Vehicles marked as assets link to a Chart of Accounts entry.</div>'
+    +'<div style="margin-top:10px;"><button class="co-btn co-btn-sm" onclick="coExpandAllVehicles(true)">Expand all</button> <button class="co-btn co-btn-sm" onclick="coExpandAllVehicles(false)">Collapse all</button></div></div>'
     +cards;
+}
+function coToggleVehicle(vid){
+  if(!window._fleetOpen) window._fleetOpen={};
+  window._fleetOpen[vid]=!window._fleetOpen[vid];
+  var body=document.getElementById('_vehBody_'+vid);
+  var caret=document.getElementById('_vehCaret_'+vid);
+  if(body) body.style.display=window._fleetOpen[vid]?'block':'none';
+  if(caret) caret.textContent=window._fleetOpen[vid]?'▾':'▸';
+}
+function coExpandAllVehicles(open){
+  if(!window._fleetOpen) window._fleetOpen={};
+  FLEET.forEach(function(v){ window._fleetOpen[v.id]=open; });
+  var el=document.getElementById('co-content'); if(el) el.innerHTML=renderFleet();
 }
 function coAddVehicle(){ coFlash('New vehicle form (demo)'); }
 function coAddDoc(vid){ coFlash('Add document to vehicle (upload + expiry date)'); }
