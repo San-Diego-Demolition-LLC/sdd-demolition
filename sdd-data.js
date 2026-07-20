@@ -60,10 +60,29 @@
       }).catch(function(){});
     }catch(e){}
   }
-  // Push an entire store array to the cloud (used after bulk changes).
+  // Push an entire store array to the cloud in ONE batched request
+  // (instead of one request per record — that floods the network).
   function cloudSyncStore(storeKey){
-    var arr = _data[storeKey]; if(!Array.isArray(arr)) return;
-    arr.forEach(function(rec){ cloudUpsert(storeKey, rec); });
+    var arr = _data[storeKey]; if(!Array.isArray(arr) || !arr.length) return;
+    var cfg = CLOUD_TABLES[storeKey]; if(!cfg) return;
+    var rows = arr.filter(function(r){ return r && r.id; }).map(function(record){
+      var row = { id:String(record.id), data:record };
+      if(cfg.extra){ var ex=cfg.extra(record); for(var k in ex) row[k]=ex[k]; }
+      return row;
+    });
+    if(!rows.length) return;
+    // Send in chunks so a single request never gets too large.
+    var CHUNK = 100;
+    for(var i=0;i<rows.length;i+=CHUNK){
+      var slice = rows.slice(i, i+CHUNK);
+      try{
+        fetch(SUPABASE_URL+'/rest/v1/'+cfg.table, {
+          method:'POST',
+          headers:Object.assign({}, _sbHeaders(), { 'Prefer':'resolution=merge-duplicates' }),
+          body:JSON.stringify(slice)
+        }).catch(function(){});
+      }catch(e){}
+    }
   }
   // Push EVERYTHING currently in _data to the cloud.
   function cloudSyncAll(){
