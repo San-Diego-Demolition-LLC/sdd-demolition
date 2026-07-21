@@ -370,7 +370,27 @@ function _pcBuildPages(f, containerId, measureId){
   function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
   function num(v){return parseFloat(String(v||'').replace(/[$,]/g,''))||0;}
   function getParam(k){var m=new RegExp('[?&]'+k+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}
-  function loadApproval(id){try{var a=JSON.parse(localStorage.getItem(APPROVAL_KEY)||'{}');return a[id]||null;}catch(e){return null;}}
+  function loadApproval(id){
+    // Consider a document signed if EITHER the cloud document carries a
+    // signature/approved status, OR we have a local record. This makes the
+    // "sign once" rule work from any device (the signature lives in Supabase).
+    try{
+      var cust=(SDD.customers||[])[0];
+      if(cust){
+        var found=null;
+        (cust.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(job){
+          (job.estimates||[]).concat(job.changeOrders||[]).concat(job.invoices||[]).forEach(function(d){
+            if((d.est||d.num)===id){ found=d; }
+          });
+        });});
+        if(found && (found._signature || /approved|signed/i.test(found.status||''))){
+          var s=found._signature||{};
+          return { name:s.name||'', image:s.image||'', date:s.date||found.dateApproved||'', status:'approved', fromCloud:true };
+        }
+      }
+    }catch(e){}
+    try{var a=JSON.parse(localStorage.getItem(APPROVAL_KEY)||'{}');return a[id]||null;}catch(e){return null;}
+  }
   function saveApproval(id,o){
     var a={};try{a=JSON.parse(localStorage.getItem(APPROVAL_KEY)||'{}');}catch(e){}a[id]=o;localStorage.setItem(APPROVAL_KEY,JSON.stringify(a));
     // Also write the approval back to Supabase so the SDD team sees it.
@@ -498,8 +518,8 @@ function _pcBuildPages(f, containerId, measureId){
     var item=arr[idx];if(!item)return;
     var d=item.doc,job=item.job;
     var estId=d.est||d.num||d.inv;
-    var ap=(kind==='est')?loadApproval(estId):null;
-    var canSign=(kind==='est')&&!ap&&!/void/i.test(d.status||'');
+    var ap=(kind==='est'||kind==='co')?loadApproval(estId):null;
+    var canSign=(kind==='est'||kind==='co')&&!ap&&!/void/i.test(d.status||'');
     // Map portal kind → engine kind
     var ekind=(kind==='inv')?'invoice':(kind==='co'?'co':'estimate');
     var f={doc:d,job:job,cust:CLIENT.cust,kind:ekind};
