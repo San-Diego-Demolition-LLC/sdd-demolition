@@ -90,7 +90,7 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
       <text x="4" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">S</text>
       <text x="44" y="50" font-family="Arial Black,sans-serif" font-weight="900" font-size="46" class="letters">DD</text>
     </svg>
-    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v3.3</span>
+    <span class="logo-text">Demolition</span><span class="app-version" style="font-family:Barlow,sans-serif;font-size:10px;font-weight:700;color:#B8922A;background:rgba(184,146,42,0.12);padding:2px 7px;border-radius:20px;margin-left:8px;letter-spacing:.03em;">v4.2</span>
   </div>
   <nav class="nav">
     <a class="nav-item active" href="/sdd-home.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
@@ -148,7 +148,38 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
         <button id="estTabCo" onclick="estSetKind('co')">Change Orders</button>
       </div>
       <input class="est-search" id="estSearch" placeholder="Search by number, project, customer…" oninput="renderEstList()">
-      <div class="est-statusbar" id="estStatusBar"></div>
+      <div class="est-toolbar" id="estToolbar" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:10px 0 4px;">
+        <!-- SORT group: reorders the list (shows everything) -->
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;background:var(--surface2);border-radius:10px;">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);padding-left:6px;">Sort by</span>
+          <select id="estSortBy" onchange="_estSortByChanged()" style="padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;">
+            <option value="date">Date</option>
+            <option value="amt">Amount</option>
+            <option value="num">Number</option>
+          </select>
+          <button id="estSortDir" onclick="_estToggleDir()" style="padding:7px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text);background:#fff;cursor:pointer;white-space:nowrap;">Newest</button>
+        </div>
+        <!-- FILTER group: choose ONE filter type, only that control shows -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px 4px 4px;background:rgba(200,130,42,.07);border-radius:10px;">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#C8822A;padding-left:6px;">Filter by</span>
+          <select id="estFilterBy" onchange="_estFilterByChanged()" style="padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;">
+            <option value="">None</option>
+            <option value="cust">Customer</option>
+            <option value="status">Status</option>
+            <option value="date">Date range</option>
+          </select>
+          <input id="estCustFilter" oninput="renderEstList()" placeholder="Customer name…" style="display:none;padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);width:150px;">
+          <select id="estStatusSelect" onchange="renderEstList()" style="display:none;padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;max-width:180px;">
+            <option value="all">All statuses</option>
+          </select>
+          <span id="estDateWrap" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="font-size:11px;color:var(--muted2);">From</span><input type="date" id="estDateFrom" onchange="renderEstList()" style="padding:6px 8px;border:1.5px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;"></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="font-size:11px;color:var(--muted2);">To</span><input type="date" id="estDateTo" onchange="renderEstList()" style="padding:6px 8px;border:1.5px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;"></span>
+          </span>
+          <button id="estClearBtn" onclick="_estClearFilters()" style="display:none;padding:7px 12px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--muted);background:#fff;cursor:pointer;">Clear</button>
+        </div>
+      </div>
+      <div id="estCount" style="font-size:12px;color:var(--muted);margin-bottom:6px;"></div>
       <div class="est-list" id="estList"></div>
     </div>
   </div>
@@ -165,7 +196,40 @@ input::placeholder,textarea::placeholder{color:var(--muted2);}
     </div>
     <div class="card">
       <input class="est-search" id="invSearch" placeholder="Search by number, project, customer…" oninput="renderInvList()">
-      <div class="est-statusbar" id="invStatusBar"></div>
+      <div class="est-toolbar" id="invToolbar" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:10px 0 4px;">
+        <!-- SORT group -->
+        <div style="display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;background:var(--surface2);border-radius:10px;">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted2);padding-left:6px;">Sort by</span>
+          <select id="invSortBy" onchange="_invSortByChanged()" style="padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;">
+            <option value="date">Invoice date</option>
+            <option value="due">Due date</option>
+            <option value="amt">Amount</option>
+            <option value="num">Number</option>
+          </select>
+          <button id="invSortDir" onclick="_invToggleDir()" style="padding:7px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;color:var(--text);background:#fff;cursor:pointer;white-space:nowrap;">Newest</button>
+        </div>
+        <!-- FILTER group -->
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px 4px 4px;background:rgba(200,130,42,.07);border-radius:10px;">
+          <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#C8822A;padding-left:6px;">Filter by</span>
+          <select id="invFilterBy" onchange="_invFilterByChanged()" style="padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;">
+            <option value="">None</option>
+            <option value="cust">Customer</option>
+            <option value="status">Status</option>
+            <option value="date">Invoice date</option>
+            <option value="due">Due date</option>
+          </select>
+          <input id="invCustFilter" oninput="renderInvList()" placeholder="Customer name…" style="display:none;padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);width:150px;">
+          <select id="invStatusSelect" onchange="renderInvList()" style="display:none;padding:7px 10px;border:1.5px solid var(--border2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--text);background:#fff;cursor:pointer;max-width:180px;">
+            <option value="all">All statuses</option>
+          </select>
+          <span id="invDateWrap" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span id="invDateLbl" style="font-size:11px;color:var(--muted2);">From</span><input type="date" id="invDateFrom" onchange="renderInvList()" style="padding:6px 8px;border:1.5px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;"></span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><span style="font-size:11px;color:var(--muted2);">To</span><input type="date" id="invDateTo" onchange="renderInvList()" style="padding:6px 8px;border:1.5px solid var(--border2);border-radius:7px;font-family:inherit;font-size:12px;"></span>
+          </span>
+          <button id="invClearBtn" onclick="_invClearFilters()" style="display:none;padding:7px 12px;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--muted);background:#fff;cursor:pointer;">Clear</button>
+        </div>
+      </div>
+      <div id="invCount" style="font-size:12px;color:var(--muted);margin-bottom:6px;"></div>
       <div class="est-list" id="invList"></div>
     </div>
   </div>
@@ -340,7 +404,7 @@ var WF_BANDS = [
       {ico:'customer', label:'Customers', href:'/sdd-customers.html'},
       {ico:'doc', label:'Estimates & change orders', arrow:true, onclick:'openEstimatesPanel()'},
       {ico:'invoice', label:'Invoices', arrow:true, onclick:'openInvoicesPanel()'},
-      {ico:'send', label:'Send / statements', arrow:true, onclick:'openStatementsPanel()'},
+      {ico:'statement', label:'Statements', arrow:true, onclick:'openStatementsPanel()'},
       {ico:'receive', label:'Receive payments', arrow:true, onclick:'openReceivePanel()'},
       {ico:'deposit', label:'Record deposits', arrow:true, onclick:'openDepositPanel()'},
     ]},
@@ -382,6 +446,7 @@ var WF_ICONS = {
   doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
   invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="11" x2="12" y2="19"/><path d="M9 13.5h4.5a1.5 1.5 0 0 1 0 3H10"/>',
   send:'<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+  statement:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/><line x1="8" y1="9" x2="10" y2="9"/>',
   receive:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
   deposit:'<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
   clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
@@ -489,9 +554,14 @@ function _gatherEstimates(kind){
 function openEstimatesPanel(){
   estKind='estimate'; estStatusFilter='open';
   var s=document.getElementById('estSearch'); if(s) s.value='';
+  var sb=document.getElementById('estSortBy'); if(sb) sb.value='date';
+  var fb=document.getElementById('estFilterBy'); if(fb) fb.value='';
+  var cf=document.getElementById('estCustFilter'); if(cf) cf.value='';
+  var ss=document.getElementById('estStatusSelect'); if(ss) ss.value='all';
+  _estSortDir='desc';
   estSyncTabs();
-  renderEstList();
-  // slide home out to the left, estimates view in from the right
+  _estUpdateDirLabel();
+  _estFilterByChanged();
   document.getElementById('viewHome').classList.add('slid-out');
   document.getElementById('viewEst').classList.add('slid-in');
 }
@@ -499,41 +569,134 @@ function closeEstimatesPanel(){
   document.getElementById('viewHome').classList.remove('slid-out');
   document.getElementById('viewEst').classList.remove('slid-in');
 }
-function estSetKind(k){ estKind=k; estStatusFilter='open'; estSyncTabs(); renderEstList(); }
+function estSetKind(k){ estKind=k; estStatusFilter='open'; var ss=document.getElementById('estStatusSelect'); if(ss) ss.value='all'; renderEstList(); estSyncTabs(); }
 function estSyncTabs(){
   document.getElementById('estTabEst').classList.toggle('active', estKind==='estimate');
   document.getElementById('estTabCo').classList.toggle('active', estKind==='co');
   document.getElementById('estPanelTitle').textContent = estKind==='co'?'Change Orders':'Estimates';
 }
 function estSetStatus(st){ estStatusFilter=st; renderEstList(); }
+var _estSortDir='desc';
+// Labels for the direction button, per sort field
+var _EST_DIR_LABELS={
+  date: { desc:'Newest', asc:'Oldest' },
+  amt:  { desc:'High → Low', asc:'Low → High' },
+  num:  { desc:'Z → A', asc:'A → Z' }
+};
+var _EST_DIR_DEFAULT={ date:'desc', amt:'desc', num:'asc' };
+function _estUpdateDirLabel(){
+  var by=(document.getElementById('estSortBy')||{}).value||'date';
+  var btn=document.getElementById('estSortDir');
+  var lbl=(_EST_DIR_LABELS[by]||{})[_estSortDir]||_estSortDir;
+  if(btn) btn.textContent=lbl;
+}
+function _estSortByChanged(){
+  var by=(document.getElementById('estSortBy')||{}).value||'date';
+  _estSortDir=_EST_DIR_DEFAULT[by]||'desc';
+  _estUpdateDirLabel();
+  renderEstList();
+}
+function _estToggleDir(){
+  _estSortDir = (_estSortDir==='desc') ? 'asc' : 'desc';
+  _estUpdateDirLabel();
+  renderEstList();
+}
+function _estClearFilters(){
+  var ids=['estDateFrom','estDateTo','estCustFilter'];
+  ids.forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  var ss=document.getElementById('estStatusSelect'); if(ss) ss.value='all';
+  var fb=document.getElementById('estFilterBy'); if(fb) fb.value='';
+  _estFilterByChanged();
+}
+// Show only the filter control that matches the chosen filter type
+function _estFilterByChanged(){
+  var by=(document.getElementById('estFilterBy')||{}).value||'';
+  var cust=document.getElementById('estCustFilter');
+  var stat=document.getElementById('estStatusSelect');
+  var date=document.getElementById('estDateWrap');
+  var clr=document.getElementById('estClearBtn');
+  if(cust) cust.style.display='none';
+  if(stat) stat.style.display='none';
+  if(date) date.style.display='none';
+  // reset values when switching filter type so old filters don't linger
+  if(by!=='cust' && cust) cust.value='';
+  if(by!=='status' && stat) stat.value='all';
+  if(by!=='date'){ var df=document.getElementById('estDateFrom'), dt=document.getElementById('estDateTo'); if(df) df.value=''; if(dt) dt.value=''; }
+  if(by==='cust' && cust){ cust.style.display=''; cust.focus(); }
+  else if(by==='status' && stat){ stat.style.display=''; }
+  else if(by==='date' && date){ date.style.display='inline-flex'; }
+  if(clr) clr.style.display = by ? '' : 'none';
+  renderEstList();
+}
+// Parse a human date like "May 2, 2026" into a sortable number
+function _estDateVal(s){
+  if(!s) return 0;
+  var t=Date.parse(s);
+  return isNaN(t)?0:t;
+}
 
 function renderEstList(){
   var all=_gatherEstimates(estKind);
   var openCount=all.filter(function(o){return _estIsOpen(o.status);}).length;
-  // build the status filter bar: Open + All + each present status
-  var statuses=['open','all']; var seen={};
-  all.forEach(function(o){ if(!seen[o.status]){ seen[o.status]=1; statuses.push(o.status); } });
-  var bar=document.getElementById('estStatusBar');
-  if(bar){
-    bar.innerHTML=statuses.map(function(st){
-      var label;
-      if(st==='open') label='Open ('+openCount+')';
-      else if(st==='all') label='All ('+all.length+')';
-      else label=st;
-      return '<button class="'+(estStatusFilter===st?'active':'')+'" onclick="estSetStatus(\''+st.replace(/'/g,"\\'")+'\')">'+label+'</button>';
+  // populate the STATUS dropdown (All + each present status)
+  var statusSel=document.getElementById('estStatusSelect');
+  if(statusSel){
+    var curStatus=statusSel.value||'all';
+    var statuses=['all']; var sseen={};
+    all.forEach(function(o){ if(o.status && !sseen[o.status]){ sseen[o.status]=1; statuses.push(o.status); } });
+    statusSel.innerHTML=statuses.map(function(st){
+      var label = st==='all' ? ('All statuses ('+all.length+')') : st;
+      return '<option value="'+String(st).replace(/"/g,'&quot;')+'"'+(st===curStatus?' selected':'')+'>'+label+'</option>';
     }).join('');
   }
-  // apply search + status filters
+  // apply filters
   var q=(document.getElementById('estSearch').value||'').toLowerCase().trim();
+  var custFilter=((document.getElementById('estCustFilter')||{}).value||'').toLowerCase().trim();
+  var statusPick=(document.getElementById('estStatusSelect')||{}).value||'all';
+  var dFrom=(document.getElementById('estDateFrom')||{}).value||'';
+  var dTo=(document.getElementById('estDateTo')||{}).value||'';
+  var fromVal=dFrom?Date.parse(dFrom+'T00:00:00'):null;
+  var toVal=dTo?Date.parse(dTo+'T23:59:59'):null;
   var rows=all.filter(function(o){
-    if(estStatusFilter==='open'){ if(!_estIsOpen(o.status)) return false; }
-    else if(estStatusFilter!=='all' && o.status!==estStatusFilter) return false;
+    // status: only filter when a specific status is chosen (not "all")
+    if(statusPick && statusPick!=='all' && o.status!==statusPick) return false;
+    // customer: partial text match
+    if(custFilter && (o.customer||'').toLowerCase().indexOf(custFilter)===-1) return false;
+    // date range
+    if(fromVal!==null || toVal!==null){
+      var dv=_estDateVal(o.date);
+      if(fromVal!==null && dv && dv<fromVal) return false;
+      if(toVal!==null && dv && dv>toVal) return false;
+      if(!dv && (fromVal!==null||toVal!==null)) return false;
+    }
+    // free text search
     if(q){
       var hay=(o.est+' '+o.project+' '+o.customer+' '+o.job).toLowerCase();
       if(hay.indexOf(q)===-1) return false;
     }
     return true;
   });
+  // apply sort (field + direction)
+  var sortBy=(document.getElementById('estSortBy')||{}).value||'date';
+  var dir=(_estSortDir==='asc')?1:-1;
+  rows.sort(function(a,b){
+    var r=0;
+    switch(sortBy){
+      case 'amt':    r=_estMoney(a.amount)-_estMoney(b.amount); break;
+      case 'num':    r=String(a.est).localeCompare(String(b.est)); break;
+      case 'cust':   r=String(a.customer).localeCompare(String(b.customer)); break;
+      case 'status': r=String(a.status).localeCompare(String(b.status)); break;
+      case 'date':
+      default:       r=_estDateVal(a.date)-_estDateVal(b.date); break;
+    }
+    return r*dir;
+  });
+  // result count
+  var cnt=document.getElementById('estCount');
+  if(cnt){
+    var total=rows.reduce(function(s,o){ return s+_estMoney(o.amount); },0);
+    cnt.textContent=rows.length+' '+(estKind==='co'?'change order':'estimate')+(rows.length!==1?'s':'')+' · '+_estFmt(total)+' total';
+  }
   var list=document.getElementById('estList');
   if(!rows.length){ list.innerHTML='<div class="est-empty">No '+(estKind==='co'?'change orders':'estimates')+' found.</div>'; return; }
   list.innerHTML=rows.map(function(o){
@@ -588,7 +751,7 @@ function _gatherStatements(){
     });
     if(pend.length){
       var total=pend.reduce(function(s,iv){return s+_estMoney(iv.amount);},0);
-      out.push({ id:c.id, customer:c.name||'', invoices:pend, total:total, billing:billing });
+      out.push({ id:c.id, customer:c.name||'', invoices:pend, total:total, billing:billing, paymentTerms:(c.paymentTerms||'net-30') });
     }
   });
   return out;
@@ -661,6 +824,40 @@ function estGoTo(est){ window.location.href='/sdd-customers.html?est='+encodeURI
 
 // Build + show the statement PDF preview for a company, with a Send button.
 // Page 1 = statement summary; then one full page per pending invoice.
+// Convert payment terms like "net-15" / "Net 30" into a number of days.
+function _stmtTermDays(terms){
+  if(!terms) return 30;
+  var m=String(terms).match(/(\d+)/);
+  return m ? parseInt(m[1],10) : 30;
+}
+// Format a date to MM/DD/YY (e.g. 05/06/26). Falls back to original string.
+function _stmtFmtDate(s){
+  if(!s) return '';
+  var t=Date.parse(s);
+  if(isNaN(t)) return s;
+  var d=new Date(t);
+  var mm=String(d.getMonth()+1).padStart(2,'0');
+  var dd=String(d.getDate()).padStart(2,'0');
+  var yy=String(d.getFullYear()).slice(-2);
+  return mm+'/'+dd+'/'+yy;
+}
+// Aging: days overdue, counted AFTER the customer's payment term window.
+// termDays = the customer's net terms (net-15 → 15). No colors; plain text.
+function _stmtAging(iv, termDays){
+  var st=(iv.status||'').toLowerCase();
+  var paid = st.indexOf('paid')>-1 && st.indexOf('unpaid')===-1 && st.indexOf('partial')===-1;
+  if(paid) return { days:0, label:'Paid' };
+  // Base date: invoice due date if present, else invoice date
+  var baseStr=iv.due||iv.date||'';
+  var baseVal=Date.parse(baseStr);
+  if(isNaN(baseVal)) return { days:0, label:'Current' };
+  // The invoice becomes overdue termDays after the base date
+  var dueVal = baseVal + (termDays||0)*86400000;
+  var today=new Date(); today.setHours(0,0,0,0);
+  var diff=Math.floor((today.getTime()-dueVal)/86400000);
+  if(diff<=0) return { days:0, label:'Current' };
+  return { days:diff, label:diff+' day'+(diff!==1?'s':'')+' overdue' };
+}
 function openStatementPreview(cid){
   var o=(window._stmtCache||{})[cid]; if(!o) return;
   var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
@@ -675,11 +872,14 @@ function openStatementPreview(cid){
   var pageStyle='background:#fff;padding:40px 44px;font-family:Barlow,sans-serif;color:#1a1a1a;max-width:760px;margin:0 auto 20px;box-shadow:0 2px 12px rgba(0,0,0,.08);';
 
   // PAGE 1: statement summary
+  var _termDays=_stmtTermDays(o.paymentTerms);
   var rowsHTML=o.invoices.map(function(iv){
+    var ag=_stmtAging(iv, _termDays);
     return '<tr>'
       +'<td style="padding:9px 12px;border-bottom:1px solid #eee;font-weight:600;">'+iv.est+'</td>'
       +'<td style="padding:9px 12px;border-bottom:1px solid #eee;color:#555;">'+(iv.project||'')+'</td>'
-      +'<td style="padding:9px 12px;border-bottom:1px solid #eee;color:#555;">'+(iv.due?iv.due:(iv.date||''))+'</td>'
+      +'<td style="padding:9px 12px;border-bottom:1px solid #eee;color:#555;">'+_stmtFmtDate(iv.due||iv.date)+'</td>'
+      +'<td style="padding:9px 12px;border-bottom:1px solid #eee;text-align:center;color:#555;">'+ag.label+'</td>'
       +'<td style="padding:9px 12px;border-bottom:1px solid #eee;text-align:center;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:'+_invColor(iv.status)+'22;color:'+_invColor(iv.status)+';">'+iv.status+'</span></td>'
       +'<td style="padding:9px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:700;">'+_estFmt(_estMoney(iv.amount))+'</td>'
     +'</tr>';
@@ -693,6 +893,7 @@ function openStatementPreview(cid){
         +'<th style="padding:9px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Invoice</th>'
         +'<th style="padding:9px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Project</th>'
         +'<th style="padding:9px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Due</th>'
+        +'<th style="padding:9px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Aging</th>'
         +'<th style="padding:9px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Status</th>'
         +'<th style="padding:9px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777;">Amount</th>'
       +'</tr></thead><tbody>'+rowsHTML+'</tbody></table>'
@@ -2263,7 +2464,13 @@ function _gatherInvoices(){
 function openInvoicesPanel(){
   invStatusFilter='open';
   var s=document.getElementById('invSearch'); if(s) s.value='';
-  renderInvList();
+  var sb=document.getElementById('invSortBy'); if(sb) sb.value='date';
+  var fb=document.getElementById('invFilterBy'); if(fb) fb.value='';
+  var cf=document.getElementById('invCustFilter'); if(cf) cf.value='';
+  var ss=document.getElementById('invStatusSelect'); if(ss) ss.value='all';
+  _invSortDir='desc'; window._invDateFilterField='date';
+  _invUpdateDirLabel();
+  _invFilterByChanged();
   document.getElementById('viewHome').classList.add('slid-out');
   document.getElementById('viewInv').classList.add('slid-in');
 }
@@ -2272,7 +2479,135 @@ function closeInvoicesPanel(){
   document.getElementById('viewInv').classList.remove('slid-in');
 }
 function invSetStatus(st){ invStatusFilter=st; renderInvList(); }
+var _invSortDir='desc';
+var _INV_DIR_LABELS={
+  date: { desc:'Newest', asc:'Oldest' },
+  due:  { desc:'Latest', asc:'Earliest' },
+  amt:  { desc:'High → Low', asc:'Low → High' },
+  num:  { desc:'Z → A', asc:'A → Z' }
+};
+var _INV_DIR_DEFAULT={ date:'desc', due:'asc', amt:'desc', num:'asc' };
+function _invUpdateDirLabel(){
+  var by=(document.getElementById('invSortBy')||{}).value||'date';
+  var btn=document.getElementById('invSortDir');
+  var lbl=(_INV_DIR_LABELS[by]||{})[_invSortDir]||_invSortDir;
+  if(btn) btn.textContent=lbl;
+}
+function _invSortByChanged(){
+  var by=(document.getElementById('invSortBy')||{}).value||'date';
+  _invSortDir=_INV_DIR_DEFAULT[by]||'desc';
+  _invUpdateDirLabel();
+  renderInvList();
+}
+function _invToggleDir(){
+  _invSortDir = (_invSortDir==='desc') ? 'asc' : 'desc';
+  _invUpdateDirLabel();
+  renderInvList();
+}
+function _invClearFilters(){
+  ['invDateFrom','invDateTo','invCustFilter'].forEach(function(id){ var e=document.getElementById(id); if(e) e.value=''; });
+  var ss=document.getElementById('invStatusSelect'); if(ss) ss.value='all';
+  var fb=document.getElementById('invFilterBy'); if(fb) fb.value='';
+  _invFilterByChanged();
+}
+function _invFilterByChanged(){
+  var by=(document.getElementById('invFilterBy')||{}).value||'';
+  var cust=document.getElementById('invCustFilter');
+  var stat=document.getElementById('invStatusSelect');
+  var date=document.getElementById('invDateWrap');
+  var clr=document.getElementById('invClearBtn');
+  var lbl=document.getElementById('invDateLbl');
+  if(cust) cust.style.display='none';
+  if(stat) stat.style.display='none';
+  if(date) date.style.display='none';
+  if(by!=='cust' && cust) cust.value='';
+  if(by!=='status' && stat) stat.value='all';
+  if(by!=='date' && by!=='due'){ var df=document.getElementById('invDateFrom'), dt=document.getElementById('invDateTo'); if(df) df.value=''; if(dt) dt.value=''; }
+  if(by==='cust' && cust){ cust.style.display=''; cust.focus(); }
+  else if(by==='status' && stat){ stat.style.display=''; }
+  else if((by==='date'||by==='due') && date){ date.style.display='inline-flex'; if(lbl) lbl.textContent='From'; }
+  if(clr) clr.style.display = by ? '' : 'none';
+  // remember which date field to filter on
+  window._invDateFilterField = (by==='due') ? 'due' : 'date';
+  renderInvList();
+}
+function _invDateVal(s){ if(!s) return 0; var t=Date.parse(s); return isNaN(t)?0:t; }
 function renderInvList(){
+  var all=_gatherInvoices();
+  var openCount=all.filter(function(o){return _invIsOpen(o.status);}).length;
+  // populate STATUS dropdown
+  var statusSel=document.getElementById('invStatusSelect');
+  if(statusSel){
+    var curStatus=statusSel.value||'all';
+    var statuses=['all']; var sseen={};
+    all.forEach(function(o){ if(o.status && !sseen[o.status]){ sseen[o.status]=1; statuses.push(o.status); } });
+    statusSel.innerHTML=statuses.map(function(st){
+      var label = st==='all' ? ('All statuses ('+all.length+')') : st;
+      return '<option value="'+String(st).replace(/"/g,'&quot;')+'"'+(st===curStatus?' selected':'')+'>'+label+'</option>';
+    }).join('');
+  }
+  // filters
+  var q=(document.getElementById('invSearch').value||'').toLowerCase().trim();
+  var custFilter=((document.getElementById('invCustFilter')||{}).value||'').toLowerCase().trim();
+  var statusPick=(document.getElementById('invStatusSelect')||{}).value||'all';
+  var dFrom=(document.getElementById('invDateFrom')||{}).value||'';
+  var dTo=(document.getElementById('invDateTo')||{}).value||'';
+  var fromVal=dFrom?Date.parse(dFrom+'T00:00:00'):null;
+  var toVal=dTo?Date.parse(dTo+'T23:59:59'):null;
+  var dateField=window._invDateFilterField||'date';
+  var rows=all.filter(function(o){
+    if(statusPick && statusPick!=='all' && o.status!==statusPick) return false;
+    if(custFilter && (o.customer||'').toLowerCase().indexOf(custFilter)===-1) return false;
+    if(fromVal!==null || toVal!==null){
+      var dv=_invDateVal(o[dateField]);
+      if(fromVal!==null && dv && dv<fromVal) return false;
+      if(toVal!==null && dv && dv>toVal) return false;
+      if(!dv && (fromVal!==null||toVal!==null)) return false;
+    }
+    if(q){
+      var hay=(o.est+' '+o.project+' '+o.customer+' '+o.job).toLowerCase();
+      if(hay.indexOf(q)===-1) return false;
+    }
+    return true;
+  });
+  // sort
+  var sortBy=(document.getElementById('invSortBy')||{}).value||'date';
+  var dir=(_invSortDir==='asc')?1:-1;
+  rows.sort(function(a,b){
+    var r=0;
+    switch(sortBy){
+      case 'due': r=_invDateVal(a.due)-_invDateVal(b.due); break;
+      case 'amt': r=_estMoney(a.amount)-_estMoney(b.amount); break;
+      case 'num': r=String(a.est).localeCompare(String(b.est)); break;
+      case 'date':
+      default:    r=_invDateVal(a.date)-_invDateVal(b.date); break;
+    }
+    return r*dir;
+  });
+  // count + total
+  var cnt=document.getElementById('invCount');
+  if(cnt){
+    var total=rows.reduce(function(s,o){ return s+_estMoney(o.amount); },0);
+    cnt.textContent=rows.length+' invoice'+(rows.length!==1?'s':'')+' · '+_estFmt(total)+' total';
+  }
+  var list=document.getElementById('invList');
+  if(!rows.length){ list.innerHTML='<div class="est-empty">No invoices found.</div>'; return; }
+  list.innerHTML=rows.map(function(o){
+    var col=_invColor(o.status);
+    return '<div class="est-row" onclick="estGoTo(\''+o.est+'\')">'
+      +'<div class="est-dot" style="background:'+col+';"></div>'
+      +'<div class="est-rmain">'
+        +'<div class="est-rnum">'+o.est+'</div>'
+        +'<div class="est-rsub">'+(o.project?o.project+' · ':'')+o.customer+(o.due?' · due '+o.due:'')+'</div>'
+      +'</div>'
+      +'<div style="text-align:right;flex-shrink:0;">'
+        +'<div class="est-ramt">'+_estFmt(_estMoney(o.amount))+'</div>'
+        +'<span class="est-rstatus" style="background:'+col+'22;color:'+col+';">'+o.status+'</span>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+function _renderInvListOLD(){
   var all=_gatherInvoices();
   var openCount=all.filter(function(o){return _invIsOpen(o.status);}).length;
   var statuses=['open','all']; var seen={};

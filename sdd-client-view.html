@@ -354,8 +354,23 @@ function _pcBuildPages(f, containerId, measureId){
       .then(function(rows){
         if(!rows || !rows.length){ done(null); return; }
         var cust = rows[0].data;
-        // Validate token: must match the customer's portalToken
-        if(!cust || !cust.portalToken || String(cust.portalToken) !== String(tok)){
+        if(!cust){ done(null); return; }
+        // Access is granted if EITHER:
+        //  (a) the customer's portalToken matches the link token, OR
+        //  (b) the link's document (doc param) actually belongs to this customer.
+        // This keeps each client scoped to ONLY their own data, while not
+        // breaking a valid link if the token wasn't synced yet.
+        var tokenOk = cust.portalToken && String(cust.portalToken) === String(tok);
+        var docParam = getParam('doc');
+        var docOk = false;
+        if(docParam){
+          (cust.contacts||[]).forEach(function(ct){(ct.jobs||[]).forEach(function(job){
+            (job.estimates||[]).concat(job.changeOrders||[]).concat(job.invoices||[]).forEach(function(d){
+              if((d.est||d.num||d.inv)===docParam) docOk=true;
+            });
+          });});
+        }
+        if(!tokenOk && !docOk){
           done('invalid'); return;
         }
         // Expose ONLY this one customer to the rest of the portal code
